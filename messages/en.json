@@ -1,0 +1,269 @@
+{
+  "Navigation": {
+    "home": "Home",
+    "properties": "Properties",
+    "about": "About Us",
+    "contact": "Contact",
+    "viewAll": "View All Properties",
+    "scheduleViewing": "Schedule a Viewing",
+    "forSale": "For Sale",
+    "newDevelopments": "New Developments",
+    "developers": "Developers",
+    "propertyTypes": "Property Types",
+    "popularCities": "Popular Cities",
+    "featuredSection": "Featured",
+    "latestListings": "Latest Listings",
+    "mostPopular": "Most Popular",
+    "popularDevelopers": "Popular Developers",
+    "byCity": "By City",
+    "viewAllProperties": "View All Properties",
+    "viewAllDevelopers": "View All Developers"
+  },
+  "HomePage": {
+    "hero": {
+      "title": "Luxury Living in Transylvania",
+      "subtitle": "Discover Exceptional Properties Across Romania's Most Prestigious Addresses",
+      "cta": "Explore Properties"
+    },
+    "featured": {
+      "subtitle": "Curated Selection",
+      "title": "Featured Properties",
+      "viewAll": "View All"
+    },
+    "showcase": {
+      "subtitle": "Why Choose Us",
+      "title": "A Legacy of Excellence",
+      "heritage": {
+        "title": "Heritage & Modernity",
+        "description": "We blend centuries of Transylvanian architectural heritage with contemporary luxury design, creating homes that honor the past while embracing the future."
+      },
+      "curated": {
+        "title": "Curated Portfolio",
+        "description": "Each property in our collection is hand-selected to meet the highest standards of luxury and exclusivity, ensuring only the finest make it to our clients."
+      },
+      "service": {
+        "title": "White-Glove Service",
+        "description": "From first viewing to final signature, our dedicated team ensures an unparalleled experience tailored to your unique preferences and lifestyle."
+      }
+    },
+    "stats": {
+      "propertiesSold": "Properties Sold",
+      "yearsExperience": "Years of Experience",
+      "citiesServed": "Cities Served",
+      "portfolioValue": "Portfolio Value (M\u00a0EUR)"
+    },
+    "cities": {
+      "subtitle": "Explore By Region",
+      "title": "Our Exclusive Destinations"
+    },
+    "about": {
+      "subtitle": "About Transylvania Grand Estate",
+      "title": "Redefining Luxury Real Estate in Romania",
+      "description": "With over a decade of expertise, we are Romania's premier luxury real estate consultancy, connecting discerning buyers with exceptional properties across Transylvania and beyond.",
+      "cta": "Our Story"
+    },
+    "testimonials": {
+      "subtitle": "Client Stories",
+      "title": "What Our Clients Say"
+    },
+    "developers": {
+      "subtitle": "Our Partners",
+      "title": "Trusted Developer Partners",
+      "viewAll": "View All Developers"
+    },
+    "cta": {
+      "title": "Ready to Find Your Dream Property?",
+      "subtitle": "Let our expert team guide you through Romania's finest luxury residences.",
+      "button": "Schedule a Private Viewing"
+    }
+  },
+  "DevelopersPage": {
+    "hero": {
+      "title": "Our Developer Partners",
+      "subtitle": "Trusted Partners Building Romania's Finest Properties"
+    },
+    "description": "We partner with Romania's most respected property developers to bring you exclusive access to premium residential projects across Transylvania. Each developer in our network has been carefully vetted for quality, reliability, and design excellence.",
+    "cta": {
+      "title": "Want to Partner With Us?",
+      "subtitle": "If you're a developer with premium projects, we'd love to hear from you.",
+      "button": "Get in Touch"
+    }
+  },
+  "PropertiesPage": {
+    "hero": {
+      "title": "Our Exclusive Portfolio",
+      "subtitle": "Discover Romania's Finest Luxury Properties"
+    },
+    "filter": {
+      "search": "Search properties...",
+      "city": "City",
+      "type": "Property Type",
+      "priceRange": "Price Range",
+      "sort": "Sort By",
+      "allCities": "All Cities",
+      "allTypes": "All Types",
+      "allPrices": "All Prices",
+      "priceLowHigh": "Price: Low to High",
+      "priceHighLow": "Price: High to Low",
+      "newest": "Newest First",
+      "results": "{count} properties found",
+      "searchButton": "Search",
+      "clearAll": "Clear All",
+      "activeFilters": "Active Filters",
+      "filterBy": "Filter By",
+      "priceUnder500k": "Under \u20ac500K",
+      "price500kTo1m": "\u20ac500K - \u20ac1M",
+      "price1to15": "\u20ac1M - \u20ac1.5M",
+      "price15to2": "\u20ac1.5M - \u20ac2M",
+      "price2to3": "\u20ac2M - \u20ac3M",
+      "price3plus": "\u20ac3M+"
+    },
+    "noResults": {
+      "title": "No Properties Found",
+      "description": "Try adjusting your filters to find what you're looking for."
+    },
+    "cta": {
+      "title": "Can't Find What You're Looking For?",
+      "subtitle": "Our team has access to exclusive off-market properties.",
+      "button": "Contact Our Team"
+    }
+  },
+  "PropertyDetail": {
+    "backToProperties": "Back to Properties",
+    "overview": "Overview",
+    "features": "Features & Amenities",
+    "location": "Location",
+    "specs": {
+      "bedrooms": "Bedrooms",
+      "bathrooms": "Bathrooms",
+      "area": "Living Area",
+      "landArea": "Land Area",
+      "floors": "Floors",
+      "yearBuilt": "Year Built",
+      "garage": "Garage Spaces"
+    },
+    "description": "Description",
+    "requestInfo": "Request Information",
+    "scheduleViewing": "Schedule Viewing",
+    "shareProperty": "Share Property",
+    "similarProperties": {
+      "subtitle": "You May Also Like",
+      "title": "Similar Properties"
+    },
+    "price": "Price",
+    "status": {
+      "available": "Available",
+      "sold": "Sold",
+      "reserved": "Reserved"
+    }
+  },
+  "AboutPage": {
+    "hero": {
+      "title": "Our Story",
+      "subtitle": "A Decade of Luxury Real Estate Excellence"
+    },
+    "story": {
+      "founding": {
+        "title": "Founded on Passion",
+        "description": "Established in 2014, Transylvania Grand Estate was born from a vision to transform Romania's luxury real estate landscape. Our founders recognized the untapped potential of Transylvania's architectural heritage and set out to create a consultancy that matches world-class properties with discerning buyers."
+      },
+      "mission": {
+        "title": "Our Mission",
+        "description": "To connect discerning individuals with extraordinary properties that reflect their aspirations and lifestyle. We believe that a home is more than walls and a roof — it's a statement of who you are and how you choose to live."
+      },
+      "approach": {
+        "title": "Our Approach",
+        "description": "Every client relationship begins with understanding. We listen, we learn, and we deliver beyond expectations. Our intimate knowledge of Romania's luxury market, combined with a global perspective, allows us to offer unparalleled guidance at every step."
+      }
+    },
+    "values": {
+      "subtitle": "What Drives Us",
+      "title": "Our Core Values",
+      "excellence": {
+        "title": "Excellence",
+        "description": "We set the highest standards in everything we do, from property selection to client service, ensuring an experience worthy of the exceptional properties we represent."
+      },
+      "discretion": {
+        "title": "Discretion",
+        "description": "We understand that luxury transactions require the utmost confidentiality. Your privacy is our priority at every stage of the process."
+      },
+      "heritage": {
+        "title": "Heritage",
+        "description": "We celebrate Romania's rich architectural and cultural heritage, preserving the stories that make each property unique while integrating modern luxury."
+      },
+      "innovation": {
+        "title": "Innovation",
+        "description": "We embrace cutting-edge technology and forward-thinking approaches to marketing, presentation, and client communication."
+      }
+    },
+    "team": {
+      "subtitle": "Meet the Experts",
+      "title": "Our Leadership Team"
+    }
+  },
+  "ContactPage": {
+    "hero": {
+      "title": "Get in Touch",
+      "subtitle": "We'd Love to Hear From You"
+    },
+    "form": {
+      "title": "Send Us an Inquiry",
+      "fullName": "Full Name",
+      "email": "Email Address",
+      "phone": "Phone Number",
+      "property": "Interested Property (Optional)",
+      "selectProperty": "Select a property...",
+      "budget": "Budget Range",
+      "selectBudget": "Select budget range...",
+      "message": "Your Message",
+      "messagePlaceholder": "Tell us about your ideal property...",
+      "submit": "Send Inquiry",
+      "success": {
+        "title": "Thank You!",
+        "message": "We've received your inquiry and will respond within 24 hours."
+      },
+      "budgetOptions": {
+        "1to15": "\u20ac1M - \u20ac1.5M",
+        "15to2": "\u20ac1.5M - \u20ac2M",
+        "2to3": "\u20ac2M - \u20ac3M",
+        "3plus": "\u20ac3M+"
+      }
+    },
+    "offices": {
+      "subtitle": "Visit Our Offices",
+      "title": "Our Locations"
+    }
+  },
+  "Common": {
+    "currency": "EUR",
+    "sqm": "m\u00b2",
+    "viewProperty": "View Property",
+    "learnMore": "Learn More",
+    "readMore": "Read More",
+    "available": "Available",
+    "sold": "Sold",
+    "reserved": "Reserved",
+    "new": "New",
+    "featured": "Featured",
+    "propertyTypes": {
+      "apartment": "Apartment",
+      "house": "House",
+      "villa": "Villa",
+      "terrain": "Terrain",
+      "penthouse": "Penthouse",
+      "estate": "Estate",
+      "chalet": "Chalet",
+      "mansion": "Mansion",
+      "palace": "Palace"
+    }
+  },
+  "Footer": {
+    "tagline": "Romania's Premier Luxury Real Estate Consultancy",
+    "quickLinks": "Quick Links",
+    "contact": "Contact Us",
+    "followUs": "Follow Us",
+    "copyright": "\u00a9 {year} Transylvania Grand Estate. All rights reserved.",
+    "privacy": "Privacy Policy",
+    "terms": "Terms of Service"
+  }
+}
