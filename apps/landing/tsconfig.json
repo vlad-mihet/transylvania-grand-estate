@@ -1,0 +1,34 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "baseUrl": ".",
+    "plugins": [{ "name": "next" }],
+    "paths": {
+      "@/*": ["./src/*"],
+      "@tge/types": ["../../packages/types/src/index.ts"],
+      "@tge/types/*": ["../../packages/types/src/*"],
+      "@tge/utils": ["../../packages/utils/src/index.ts"],
+      "@tge/utils/*": ["../../packages/utils/src/*"],
+      "@tge/hooks": ["../../packages/hooks/src/index.ts"],
+      "@tge/hooks/*": ["../../packages/hooks/src/*"],
+      "@tge/ui": ["../../packages/ui/src/index.ts"],
+      "@tge/ui/*": ["../../packages/ui/src/*"],
+      "@tge/i18n": ["../../packages/i18n/src/index.ts"],
+      "@tge/i18n/*": ["../../packages/i18n/src/*"],
+      "@tge/data": ["../../packages/data/src/index.ts"],
+      "@tge/data/*": ["../../packages/data/src/*"],
+      "@tge/tailwind-config": ["../../packages/tailwind-config/src/index.ts"]
+    }
+  },
+  "include": [
+    "next-env.d.ts",
+    "**/*.ts",
+    "**/*.tsx",
+    ".next/types/**/*.ts",
+    ".next/dev/types/**/*.ts",
+    "**/*.mts",
+    "../../packages/*/src/**/*.ts",
+    "../../packages/*/src/**/*.tsx"
+  ],
+  "exclude": ["node_modules", ".next", "out"]
+}

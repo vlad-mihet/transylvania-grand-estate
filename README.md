@@ -1,36 +1,87 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Transylvania Grand Estate
+
+Luxury real estate consultancy platform — an Nx monorepo powered by Next.js, React, and TypeScript.
+
+## Project Structure
+
+```
+apps/
+  landing/          Landing page (Next.js 16, App Router)
+
+packages/
+  types/            Shared TypeScript type definitions (@tge/types)
+  utils/            Utility functions — cn(), formatPrice(), formatArea() (@tge/utils)
+  hooks/            React hooks — useIntersectionObserver, useScrollDirection (@tge/hooks)
+  ui/               shadcn/ui primitives + shared components (@tge/ui)
+  i18n/             Shared i18n routing & navigation config (@tge/i18n)
+  data/             Static data — properties, developers, cities, etc. (@tge/data)
+  tailwind-config/  Shared TailwindCSS 4 theme (@tge/tailwind-config)
+```
+
+## Tech Stack
+
+- **Framework:** Next.js 16 (App Router, Turbopack)
+- **Language:** TypeScript 5
+- **Styling:** TailwindCSS 4, shadcn/ui
+- **Internationalization:** next-intl (English & Romanian)
+- **Monorepo:** Nx + pnpm workspaces
+- **Icons:** Lucide React
 
 ## Getting Started
 
-First, run the development server:
+### Prerequisites
+
+- Node.js 22+
+- pnpm 10+
+
+### Install
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+pnpm install
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### Development
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```bash
+# Run the landing page dev server
+pnpm dev
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+# Or via Nx directly
+npx nx dev landing
+```
 
-## Learn More
+Open [http://localhost:3000](http://localhost:3000) to view the site.
 
-To learn more about Next.js, take a look at the following resources:
+### Build
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+```bash
+# Production build
+pnpm build
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+# Build all apps
+pnpm build:all
+```
 
-## Deploy on Vercel
+### Lint
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+```bash
+pnpm lint
+```
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## Adding a New App
+
+1. Create a directory under `apps/` (e.g. `apps/admin/`)
+2. Add `workspace:*` dependencies on any `@tge/*` packages you need
+3. Add a `project.json` for Nx
+4. Run `pnpm install`
+
+## Adding shadcn/ui Components
+
+From the landing app directory:
+
+```bash
+cd apps/landing
+npx shadcn@latest add <component>
+```
+
+Components are installed into `packages/ui/src/components/ui/` via the alias config in `components.json`.

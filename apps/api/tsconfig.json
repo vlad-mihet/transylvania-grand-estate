@@ -1,0 +1,36 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "baseUrl": ".",
+    "module": "commonjs",
+    "moduleResolution": "node",
+    "target": "ES2021",
+    "outDir": "./dist",
+    "noEmit": false,
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
+    "allowSyntheticDefaultImports": true,
+    "strict": false,
+    "strictNullChecks": true,
+    "noImplicitAny": true,
+    "strictBindCallApply": true,
+    "strictPropertyInitialization": false,
+    "forceConsistentCasingInFileNames": true,
+    "noFallthroughCasesInSwitch": true,
+    "declaration": false,
+    "declarationMap": false,
+    "paths": {
+      "@tge/types": ["../../packages/types/src/index.ts"],
+      "@tge/types/*": ["../../packages/types/src/*"],
+      "@tge/data": ["../../packages/data/src/index.ts"],
+      "@tge/data/*": ["../../packages/data/src/*"]
+    }
+  },
+  "include": [
+    "src/**/*.ts",
+    "prisma/**/*.ts",
+    "../../packages/types/src/**/*.ts",
+    "../../packages/data/src/**/*.ts"
+  ],
+  "exclude": ["node_modules", "dist"]
+}

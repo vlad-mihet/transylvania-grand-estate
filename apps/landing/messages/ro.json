@@ -1,0 +1,428 @@
+{
+  "Navigation": {
+    "home": "Acasă",
+    "properties": "Proprietăți",
+    "about": "Despre Noi",
+    "contact": "Contact",
+    "viewAll": "Vezi Toate Proprietățile",
+    "scheduleViewing": "Programează o Vizionare",
+    "forSale": "De vânzare",
+    "newDevelopments": "Ansambluri rezidențiale",
+    "developers": "Dezvoltatori",
+    "propertyTypes": "Tipuri de proprietăți",
+    "popularCities": "Orașe populare",
+    "featuredSection": "Recomandate",
+    "latestListings": "Cele mai noi",
+    "mostPopular": "Cele mai populare",
+    "popularDevelopers": "Dezvoltatori populari",
+    "byCity": "După oraș",
+    "viewAllProperties": "Vezi toate proprietățile",
+    "viewAllDevelopers": "Vezi toți dezvoltatorii",
+    "cities": "Orașe",
+    "viewAllCities": "Vezi Toate Orașele"
+  },
+  "HomePage": {
+    "hero": {
+      "title": "Viața de Lux în Transilvania",
+      "subtitle": "Descoperă Proprietăți Excepționale în Cele Mai Prestigioase Adrese din România",
+      "cta": "Explorează Proprietățile"
+    },
+    "featured": {
+      "subtitle": "Selecție Curată",
+      "title": "Proprietăți de Excepție",
+      "viewAll": "Vezi Toate"
+    },
+    "showcase": {
+      "subtitle": "De Ce Să Ne Alegi",
+      "title": "O Moștenire a Excelenței",
+      "heritage": {
+        "title": "Patrimoniu & Modernitate",
+        "description": "Îmbinăm secole de patrimoniu arhitectural transilvănean cu design de lux contemporan, creând case care onorează trecutul în timp ce îmbrățișează viitorul."
+      },
+      "curated": {
+        "title": "Portofoliu Selectat",
+        "description": "Fiecare proprietate din colecția noastră este selectată manual pentru a îndeplini cele mai înalte standarde de lux și exclusivitate, asigurând că doar cele mai fine ajung la clienții noștri."
+      },
+      "service": {
+        "title": "Serviciu de Elită",
+        "description": "De la prima vizionare până la semnătura finală, echipa noastră dedicată asigură o experiență de neatins, adaptată preferințelor și stilului tău de viață unic."
+      }
+    },
+    "stats": {
+      "propertiesSold": "Proprietăți Vândute",
+      "yearsExperience": "Ani de Experiență",
+      "citiesServed": "Orașe Deservite",
+      "portfolioValue": "Valoare Portofoliu (M\u00a0EUR)"
+    },
+    "cities": {
+      "subtitle": "Explorează După Regiune",
+      "title": "Destinațiile Noastre Exclusive",
+      "propertyCount": "{count} proprietăți"
+    },
+    "about": {
+      "subtitle": "Despre Transylvania Grand Estate",
+      "title": "Redefinim Imobiliarele de Lux în România",
+      "description": "Cu peste un deceniu de expertiză, suntem consultanța imobiliară de lux premier din România, conectând cumpărători exigenți cu proprietăți excepționale din Transilvania și nu numai.",
+      "cta": "Povestea Noastră"
+    },
+    "testimonials": {
+      "subtitle": "Povești ale Clienților",
+      "title": "Ce Spun Clienții Noștri"
+    },
+    "developers": {
+      "subtitle": "Partenerii Noștri",
+      "title": "Dezvoltatori Parteneri de Încredere",
+      "viewAll": "Vezi Toți Dezvoltatorii"
+    },
+    "cta": {
+      "title": "Pregătit Să Găsești Proprietatea Visurilor Tale?",
+      "subtitle": "Lasă echipa noastră de experți să te ghideze prin cele mai fine reședințe de lux din România.",
+      "button": "Programează o Vizionare Privată"
+    }
+  },
+  "DeveloperDetail": {
+    "backToDevelopers": "Înapoi la Dezvoltatori",
+    "properties": "Proprietăți de la {name}",
+    "noProperties": "Nu sunt proprietăți listate încă.",
+    "website": "Vizitează Website-ul",
+    "projects": "{count} proiecte"
+  },
+  "DeveloperShowcase": {
+    "scrollDown": "Derulează pentru a explora",
+    "ourVision": "Viziunea Noastră",
+    "viewProjects": "Vezi Proiectele",
+    "visitWebsite": "Vizitează Website-ul",
+    "contactDeveloper": "Contactează Dezvoltatorul",
+    "exploreProperties": "Explorează Proprietățile",
+    "portfolio": "Portofoliul Nostru",
+    "curatedProperties": "Proprietăți Selectate",
+    "selectedProjects": "Proiecte Selectate",
+    "gallery": "Galerie",
+    "fullPortfolio": "Portofoliu Complet",
+    "all": "Toate",
+    "ourJourney": "Parcursul Nostru",
+    "milestones": "Repere",
+    "propertyPortfolio": "Portofoliu de Proprietăți",
+    "exploreDevelopments": "Explorează Dezvoltările Noastre",
+    "viewProperty": "Vezi Proprietatea",
+    "aboutDeveloper": "Despre {name}",
+    "projects": "{count} Proiecte",
+    "yearsActive": "Ani de Activitate",
+    "homesBuilt": "Locuințe Construite",
+    "cities": "Orașe",
+    "projectsLabel": "Proiecte",
+    "projectsDelivered": "Proiecte Livrate",
+    "happyClients": "Clienți Mulțumiți",
+    "awardsWon": "Premii Câștigate",
+    "viewAll": "Vezi Toate Proprietățile",
+    "interested": "Interesat de proiectele acestui dezvoltator?",
+    "interestedSubtitle": "Contactați-ne pentru acces exclusiv la dezvoltările viitoare.",
+    "getInTouch": "Contactați-ne",
+    "milestonesData": {
+      "maurer-imobiliare": [
+        { "year": "2008", "title": "Fondarea Companiei", "description": "Maurer Imobiliare a fost înființată cu viziunea de a redefini dezvoltarea rezidențială în Transilvania, aducând standarde europene de construcție pe piața românească." },
+        { "year": "2010", "title": "Primul Complex Rezidențial", "description": "A lansat proiectul rezidențial inaugural, un complex de 120 de unități care a stabilit noi standarde de calitate și design în regiune." },
+        { "year": "2014", "title": "Expansiune în Mai Multe Orașe", "description": "A extins operațiunile în trei orașe importante din Transilvania, câștigând o reputație pentru livrarea de spații de locuit premium la timp și în buget." },
+        { "year": "2018", "title": "Reper de 3.000 de Locuințe", "description": "A sărbătorit livrarea a peste 3.000 de locuințe, consolidând poziția companiei ca unul dintre principalii dezvoltatori rezidențiali din România." },
+        { "year": "2022", "title": "Angajament pentru Sustenabilitate", "description": "A adoptat practici de construcție ecologică și principii de design eficient energetic în toate dezvoltările noi, obținând certificări de mediu." },
+        { "year": "2024", "title": "Lansarea Portofoliului de Lux", "description": "A introdus o linie premium de reședințe de lux, combinând arhitectura tradițională cu confortul contemporan pentru cumpărătorul exigent." }
+      ],
+      "gran-via": [
+        { "year": "2012", "title": "Fondarea Companiei", "description": "Gran Via a fost înființată cu accent pe crearea de dezvoltări rezidențiale distinctive care îmbină estetica modernă cu eleganța funcțională." },
+        { "year": "2015", "title": "Primul Proiect Premiat", "description": "A primit recunoaștere pentru designul arhitectural remarcabil, marcând compania ca inovator în peisajul imobiliar românesc." },
+        { "year": "2019", "title": "Intrarea în Segmentul Premium", "description": "S-a extins pe piața rezidențială premium, introducând finisaje de înaltă clasă și opțiuni de design personalizat pentru dezvoltări selecte." },
+        { "year": "2023", "title": "Dezvoltări Centrate pe Comunitate", "description": "A lansat concepte de locuire integrată cu spații verzi comune, facilități de wellness și centre comunitare." }
+      ],
+      "nova-building": [
+        { "year": "2014", "title": "Fondarea Companiei", "description": "Nova Building a început cu un angajament față de tehnicile inovatoare de construcție și o filozofie de design centrată pe client." },
+        { "year": "2017", "title": "Integrarea Tehnologiei", "description": "A fost pionier în integrarea caselor inteligente în toate dezvoltările noi, oferind rezidenților experiențe de locuire de ultimă generație." },
+        { "year": "2020", "title": "Faza de Creștere Rapidă", "description": "A dublat portofoliul de proiecte și a extins echipa, livrând simultan mai multe dezvoltări în întreaga regiune." },
+        { "year": "2024", "title": "Proiectul de Lux Principal", "description": "A dezvăluit un complex rezidențial exclusiv de lux, poziționând compania în fruntea imobiliarelor premium." }
+      ],
+      "default": [
+        { "year": "2015", "title": "Fondarea Companiei", "description": "{name} a fost înființată cu misiunea de a crea spații de locuit excepționale în {city}, combinând meșteșugul de calitate cu designul atent." },
+        { "year": "2018", "title": "Prima Dezvoltare Majoră", "description": "A livrat cu succes primul proiect rezidențial la scară largă, câștigând încrederea cumpărătorilor și stabilind o prezență puternică pe piață." },
+        { "year": "2021", "title": "Extinderea Portofoliului", "description": "A extins portofoliul de dezvoltare cu tipuri diverse de proprietăți, de la apartamente moderne la vile premium, răspunzând unei game mai largi de cumpărători exigenți." },
+        { "year": "2024", "title": "Excelență Recunoscută", "description": "A atins un reper în locuințele livrate și a câștigat recunoaștere pentru angajamentul față de calitate, sustenabilitate și satisfacția clienților." }
+      ]
+    }
+  },
+  "DevelopersPage": {
+    "hero": {
+      "title": "Dezvoltatorii Noștri Parteneri",
+      "subtitle": "Parteneri de Încredere Care Construiesc Cele Mai Fine Proprietăți din România"
+    },
+    "description": "Colaborăm cu cei mai respectați dezvoltatori imobiliari din România pentru a vă oferi acces exclusiv la proiecte rezidențiale premium din Transilvania. Fiecare dezvoltator din rețeaua noastră a fost atent verificat pentru calitate, fiabilitate și excelență în design.",
+    "filter": {
+      "allCities": "Toate Orașele",
+      "results": "{count} dezvoltatori",
+      "activeFilters": "Filtre Active"
+    },
+    "cta": {
+      "title": "Doriți Să Deveniți Partener?",
+      "subtitle": "Dacă sunteți un dezvoltator cu proiecte premium, ne-ar plăcea să auzim de la dumneavoastră.",
+      "button": "Contactați-ne"
+    }
+  },
+  "PropertiesPage": {
+    "hero": {
+      "title": "Portofoliul Nostru Exclusiv",
+      "subtitle": "Descoperă Cele Mai Fine Proprietăți de Lux din România"
+    },
+    "contextual": {
+      "propertiesInCity": "Proprietăți în {city}",
+      "propertiesByDeveloper": "Proprietăți de la {developer}",
+      "exploreCityDetails": "Explorează {city}",
+      "aboutDeveloper": "Despre {developer}"
+    },
+    "filter": {
+      "search": "Caută proprietăți...",
+      "city": "Oraș",
+      "type": "Tip Proprietate",
+      "priceRange": "Interval Preț",
+      "sort": "Sortează După",
+      "allCities": "Toate Orașele",
+      "allTypes": "Toate Tipurile",
+      "allPrices": "Toate Prețurile",
+      "priceLowHigh": "Preț: Crescător",
+      "priceHighLow": "Preț: Descrescător",
+      "newest": "Cele Mai Noi",
+      "results": "{count} proprietăți găsite",
+      "searchButton": "Caută",
+      "clearAll": "Șterge Tot",
+      "activeFilters": "Filtre Active",
+      "filterBy": "Filtrează După",
+      "priceUnder500k": "Sub €500K",
+      "price500kTo1m": "€500K - €1M",
+      "price1to15": "€1M - €1.5M",
+      "price15to2": "€1.5M - €2M",
+      "price2to3": "€2M - €3M",
+      "price3plus": "€3M+"
+    },
+    "noResults": {
+      "title": "Nicio Proprietate Găsită",
+      "description": "Încearcă să ajustezi filtrele pentru a găsi ce cauți."
+    },
+    "cta": {
+      "title": "Nu Găsești Ce Cauți?",
+      "subtitle": "Echipa noastră are acces la proprietăți exclusive off-market.",
+      "button": "Contactează Echipa Noastră"
+    }
+  },
+  "PropertyDetail": {
+    "backToProperties": "Înapoi la Proprietăți",
+    "overview": "Prezentare Generală",
+    "features": "Caracteristici & Facilități",
+    "location": "Locație",
+    "specs": {
+      "bedrooms": "Dormitoare",
+      "bathrooms": "Băi",
+      "area": "Suprafață Locuibilă",
+      "landArea": "Suprafață Teren",
+      "floors": "Etaje",
+      "yearBuilt": "Anul Construcției",
+      "garage": "Locuri Garaj"
+    },
+    "description": "Descriere",
+    "requestInfo": "Solicită Informații",
+    "scheduleViewing": "Programează Vizionare",
+    "shareProperty": "Distribuie Proprietatea",
+    "similarProperties": {
+      "subtitle": "S-ar Putea Să Îți Placă",
+      "title": "Proprietăți Similare"
+    },
+    "price": "Preț",
+    "status": {
+      "available": "Disponibil",
+      "sold": "Vândut",
+      "reserved": "Rezervat"
+    }
+  },
+  "AboutPage": {
+    "hero": {
+      "title": "Povestea Noastră",
+      "subtitle": "Un Deceniu de Excelență în Imobiliare de Lux"
+    },
+    "story": {
+      "founding": {
+        "title": "Fondat din Pasiune",
+        "description": "Înființat în 2014, Transylvania Grand Estate s-a născut dintr-o viziune de a transforma peisajul imobiliar de lux din România. Fondatorii noștri au recunoscut potențialul neexploatat al patrimoniului arhitectural al Transilvaniei și au pornit să creeze o consultanță care potrivește proprietăți de clasă mondială cu cumpărători exigenți."
+      },
+      "mission": {
+        "title": "Misiunea Noastră",
+        "description": "Să conectăm persoane exigente cu proprietăți extraordinare care reflectă aspirațiile și stilul lor de viață. Credem că o casă este mai mult decât pereți și acoperiș — este o declarație despre cine ești și cum alegi să trăiești."
+      },
+      "approach": {
+        "title": "Abordarea Noastră",
+        "description": "Fiecare relație cu clientul începe cu înțelegerea. Ascultăm, învățăm și livrăm peste așteptări. Cunoașterea noastră intimă a pieței de lux din România, combinată cu o perspectivă globală, ne permite să oferim ghidare de neatins la fiecare pas."
+      }
+    },
+    "values": {
+      "subtitle": "Ce Ne Motivează",
+      "title": "Valorile Noastre Fundamentale",
+      "excellence": {
+        "title": "Excelență",
+        "description": "Stabilim cele mai înalte standarde în tot ceea ce facem, de la selecția proprietăților până la serviciul clienți, asigurând o experiență demnă de proprietățile excepționale pe care le reprezentăm."
+      },
+      "discretion": {
+        "title": "Discreție",
+        "description": "Înțelegem că tranzacțiile de lux necesită cea mai mare confidențialitate. Intimitatea ta este prioritatea noastră în fiecare etapă a procesului."
+      },
+      "heritage": {
+        "title": "Patrimoniu",
+        "description": "Celebrăm bogatul patrimoniu arhitectural și cultural al României, păstrând poveștile care fac fiecare proprietate unică în timp ce integrăm luxul modern."
+      },
+      "innovation": {
+        "title": "Inovație",
+        "description": "Îmbrățișăm tehnologia de vârf și abordări inovatoare în marketing, prezentare și comunicarea cu clienții."
+      }
+    },
+    "cta": {
+      "title": "Lucrează cu Noi",
+      "subtitle": "Alătură-te echipei de top din imobiliarele de lux din România.",
+      "button": "Contactează-ne"
+    }
+  },
+  "ContactPage": {
+    "hero": {
+      "title": "Contactează-ne",
+      "subtitle": "Ne-ar Face Plăcere Să Auzim De La Tine"
+    },
+    "form": {
+      "title": "Trimite-ne o Cerere",
+      "fullName": "Nume Complet",
+      "email": "Adresă de Email",
+      "phone": "Număr de Telefon",
+      "property": "Proprietate de Interes (Opțional)",
+      "selectProperty": "Selectează o proprietate...",
+      "budget": "Interval Buget",
+      "selectBudget": "Selectează interval buget...",
+      "message": "Mesajul Tău",
+      "messagePlaceholder": "Spune-ne despre proprietatea ideală...",
+      "submit": "Trimite Cererea",
+      "success": {
+        "title": "Mulțumim!",
+        "message": "Am primit cererea ta și vom răspunde în 24 de ore."
+      },
+      "budgetOptions": {
+        "1to15": "€1M - €1.5M",
+        "15to2": "€1.5M - €2M",
+        "2to3": "€2M - €3M",
+        "3plus": "€3M+"
+      }
+    },
+    "offices": {
+      "subtitle": "Vizitează Birourile Noastre",
+      "title": "Locațiile Noastre"
+    }
+  },
+  "InquiryModal": {
+    "titleGeneral": "Contactați-ne",
+    "titleProperty": "Interesat de {name}",
+    "titleDeveloper": "Contact despre {name}",
+    "description": "Completați formularul de mai jos și vă vom răspunde în 24 de ore.",
+    "name": "Nume complet",
+    "email": "Adresă de email",
+    "message": "Mesajul dvs.",
+    "messagePlaceholder": "Spuneți-ne cum vă putem ajuta...",
+    "regarding": "Referitor la:",
+    "about": "Despre:",
+    "submit": "Trimite cererea",
+    "success": {
+      "title": "Vă mulțumim!",
+      "message": "Am primit cererea dvs. și vă vom răspunde în 24 de ore."
+    },
+    "error": "Ceva nu a funcționat. Vă rugăm încercați din nou."
+  },
+  "Common": {
+    "currency": "EUR",
+    "sqm": "m²",
+    "viewProperty": "Vezi Proprietatea",
+    "learnMore": "Află Mai Multe",
+    "readMore": "Citește Mai Mult",
+    "available": "Disponibil",
+    "sold": "Vândut",
+    "reserved": "Rezervat",
+    "new": "Nou",
+    "featured": "Recomandat",
+    "propertyTypes": {
+      "apartment": "Apartament",
+      "house": "Casă",
+      "villa": "Vilă",
+      "terrain": "Teren",
+      "penthouse": "Penthouse",
+      "estate": "Domeniu",
+      "chalet": "Chalet",
+      "mansion": "Conac",
+      "palace": "Palat"
+    }
+  },
+  "Breadcrumb": {
+    "home": "Acasă",
+    "properties": "Proprietăți",
+    "developers": "Dezvoltatori",
+    "cities": "Orașe"
+  },
+  "CitiesPage": {
+    "hero": {
+      "title": "Destinațiile Noastre Exclusive",
+      "subtitle": "Explorează Cele Mai Prestigioase Orașe din România"
+    },
+    "description": "Descoperă proprietăți de lux în cele mai fine orașe ale Transilvaniei. Fiecare destinație oferă un amestec unic de patrimoniu, cultură și viață modernă de lux.",
+    "card": {
+      "properties": "{count} proprietăți",
+      "developers": "{count} dezvoltatori"
+    },
+    "cta": {
+      "title": "Cauți Ceva Specific?",
+      "subtitle": "Echipa noastră te poate ajuta să găsești proprietatea perfectă în orice oraș.",
+      "button": "Contactează-ne"
+    }
+  },
+  "CityDetail": {
+    "stats": {
+      "properties": "Proprietăți Disponibile",
+      "developers": "Dezvoltatori Activi",
+      "priceRange": "Interval Preț",
+      "neighborhoods": "Cartiere"
+    },
+    "developers": {
+      "subtitle": "Partenerii Noștri de Încredere",
+      "title": "Dezvoltatori în {city}",
+      "viewAll": "Vezi Toți Dezvoltatorii"
+    },
+    "properties": {
+      "subtitle": "Proprietăți Disponibile",
+      "title": "Proprietăți în {city}",
+      "allTypes": "Toate",
+      "viewAll": "Vezi Toate Proprietățile",
+      "loadMore": "Încarcă Mai Multe",
+      "sort": {
+        "newest": "Cele Mai Noi",
+        "priceLowHigh": "Preț: Crescător",
+        "priceHighLow": "Preț: Descrescător"
+      },
+      "noResults": "Nicio proprietate nu corespunde filtrelor selectate."
+    },
+    "cta": {
+      "title": "Găsește-ți Locuința în {city}",
+      "subtitle": "Programează o vizionare privată cu experții noștri locali.",
+      "button": "Programează Vizionare"
+    }
+  },
+  "Footer": {
+    "tagline": "Consultanța Imobiliară de Lux Premier din România",
+    "quickLinks": "Linkuri Rapide",
+    "contact": "Contactează-ne",
+    "followUs": "Urmărește-ne",
+    "copyright": "© {year} Transylvania Grand Estate. Toate drepturile rezervate.",
+    "privacy": "Politica de Confidențialitate",
+    "terms": "Termeni și Condiții"
+  },
+  "NotFoundPage": {
+    "title": "Pagină Negăsită",
+    "description": "Proprietatea pe care o cauți poate fi mutată sau nu mai există. Lasă-ne să te ajutăm să îți găsești locuința visurilor.",
+    "goHome": "Acasă",
+    "browseProperties": "Răsfoiește Proprietăți"
+  }
+}

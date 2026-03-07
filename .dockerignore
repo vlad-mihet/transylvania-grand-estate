@@ -1,0 +1,9 @@
+node_modules
+.next
+dist
+.git
+.nx
+*.md
+.env*
+!.env.production.example
+apps/api/uploads

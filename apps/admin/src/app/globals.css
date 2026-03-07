@@ -1,0 +1,160 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+
+@custom-variant dark (&:is(.dark *));
+
+/* Scan package source directories for Tailwind class names */
+@source "../../../../packages/ui/src";
+
+/* Import shared theme structure for radius, fonts, animations */
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+
+  --color-copper: #C47F5A;
+  --color-copper-light: #D4956A;
+  --color-copper-dark: #A66B4A;
+  --color-cream: #F0EDE8;
+
+  --color-sidebar: var(--sidebar-bg);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-active: var(--sidebar-active);
+
+  --font-sans: var(--font-inter);
+  --font-serif: var(--font-playfair);
+
+  --ease-luxury: cubic-bezier(0.33, 1, 0.68, 1);
+
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+  --radius-2xl: calc(var(--radius) + 8px);
+}
+
+/* Admin warm light theme */
+:root {
+  --radius: 0.625rem;
+  --background: #FAFAF8;
+  --foreground: #2C2823;
+  --card: #ffffff;
+  --card-foreground: #2C2823;
+  --popover: #ffffff;
+  --popover-foreground: #2C2823;
+  --primary: #C47F5A;
+  --primary-foreground: #ffffff;
+  --secondary: #F5F2ED;
+  --secondary-foreground: #2C2823;
+  --muted: #F5F2ED;
+  --muted-foreground: #8A8279;
+  --accent: #F8F6F2;
+  --accent-foreground: #C47F5A;
+  --destructive: #B91C1C;
+  --border: rgba(196, 127, 90, 0.12);
+  --input: rgba(196, 127, 90, 0.15);
+  --ring: #C47F5A;
+
+  --sidebar-bg: #1c1c22;
+  --sidebar-foreground: #F0EDE8;
+  --sidebar-active: #C47F5A;
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground font-sans antialiased;
+  }
+  h1, h2, h3 {
+    font-family: var(--font-playfair), serif;
+  }
+}
+
+@layer components {
+  /* Input/select overrides for light admin theme */
+  [data-slot="input"] {
+    background: transparent;
+    transition: all 200ms var(--ease-luxury);
+  }
+  [data-slot="input"]:hover {
+    background: rgba(196, 127, 90, 0.03);
+  }
+  [data-slot="select-trigger"] {
+    background: transparent;
+    transition: all 200ms var(--ease-luxury);
+  }
+  [data-slot="select-trigger"]:hover {
+    background: rgba(196, 127, 90, 0.03);
+  }
+
+  /* Table header warm tint */
+  [data-slot="table-header"] [data-slot="table-row"] {
+    background: rgba(196, 127, 90, 0.03);
+    border-bottom-color: rgba(196, 127, 90, 0.08);
+  }
+  [data-slot="table-head"] {
+    font-size: 0.7rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+  }
+  [data-slot="table-row"] {
+    transition: background-color 200ms var(--ease-luxury);
+  }
+
+  /* Interactive card hover */
+  .card-hover {
+    cursor: pointer;
+    transition: box-shadow 400ms var(--ease-luxury),
+                border-color 400ms var(--ease-luxury);
+  }
+  .card-hover:hover {
+    box-shadow: 0 4px 24px -4px rgba(196, 127, 90, 0.08);
+    border-color: rgba(196, 127, 90, 0.2);
+  }
+
+  /* Copper gradient divider */
+  .divider-copper {
+    height: 1px;
+    width: 100%;
+    background: linear-gradient(
+      to right,
+      transparent,
+      rgba(196, 127, 90, 0.15) 20%,
+      rgba(196, 127, 90, 0.15) 80%,
+      transparent
+    );
+  }
+
+  /* Custom scrollbar */
+  ::-webkit-scrollbar {
+    width: 6px;
+  }
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: rgba(196, 127, 90, 0.15);
+    border-radius: 3px;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: rgba(196, 127, 90, 0.3);
+  }
+}

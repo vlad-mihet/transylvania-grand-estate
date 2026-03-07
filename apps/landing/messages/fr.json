@@ -1,0 +1,428 @@
+{
+  "Navigation": {
+    "home": "Accueil",
+    "properties": "Propriétés",
+    "about": "À Propos",
+    "contact": "Contact",
+    "viewAll": "Voir Toutes les Propriétés",
+    "scheduleViewing": "Planifier une Visite",
+    "forSale": "À Vendre",
+    "newDevelopments": "Nouveaux Projets",
+    "developers": "Promoteurs",
+    "propertyTypes": "Types de Propriétés",
+    "popularCities": "Villes Populaires",
+    "featuredSection": "En Vedette",
+    "latestListings": "Dernières Annonces",
+    "mostPopular": "Les Plus Populaires",
+    "popularDevelopers": "Promoteurs Populaires",
+    "byCity": "Par Ville",
+    "viewAllProperties": "Voir Toutes les Propriétés",
+    "viewAllDevelopers": "Voir Tous les Promoteurs",
+    "cities": "Villes",
+    "viewAllCities": "Voir Toutes les Villes"
+  },
+  "HomePage": {
+    "hero": {
+      "title": "Vie de Luxe en Transylvanie",
+      "subtitle": "Découvrez des Propriétés d'Exception aux Adresses les Plus Prestigieuses de Roumanie",
+      "cta": "Explorer les Propriétés"
+    },
+    "featured": {
+      "subtitle": "Sélection Exclusive",
+      "title": "Propriétés en Vedette",
+      "viewAll": "Voir Tout"
+    },
+    "showcase": {
+      "subtitle": "Pourquoi Nous Choisir",
+      "title": "Un Héritage d'Excellence",
+      "heritage": {
+        "title": "Patrimoine & Modernité",
+        "description": "Nous allions des siècles de patrimoine architectural transylvanien au design de luxe contemporain, créant des demeures qui honorent le passé tout en embrassant l'avenir."
+      },
+      "curated": {
+        "title": "Portfolio Sélectionné",
+        "description": "Chaque propriété de notre collection est soigneusement sélectionnée pour répondre aux plus hauts standards de luxe et d'exclusivité, garantissant que seules les plus belles parviennent à nos clients."
+      },
+      "service": {
+        "title": "Service Haut de Gamme",
+        "description": "De la première visite à la signature finale, notre équipe dédiée assure une expérience inégalée, adaptée à vos préférences et votre style de vie uniques."
+      }
+    },
+    "stats": {
+      "propertiesSold": "Propriétés Vendues",
+      "yearsExperience": "Années d'Expérience",
+      "citiesServed": "Villes Desservies",
+      "portfolioValue": "Valeur du Portfolio (M\u00a0EUR)"
+    },
+    "cities": {
+      "subtitle": "Explorer par Région",
+      "title": "Nos Destinations Exclusives",
+      "propertyCount": "{count} propriétés"
+    },
+    "about": {
+      "subtitle": "À Propos de Transylvania Grand Estate",
+      "title": "Redéfinir l'Immobilier de Luxe en Roumanie",
+      "description": "Avec plus d'une décennie d'expertise, nous sommes le premier cabinet de conseil en immobilier de luxe en Roumanie, mettant en relation des acheteurs exigeants avec des propriétés exceptionnelles à travers la Transylvanie et au-delà.",
+      "cta": "Notre Histoire"
+    },
+    "testimonials": {
+      "subtitle": "Témoignages Clients",
+      "title": "Ce Que Disent Nos Clients"
+    },
+    "developers": {
+      "subtitle": "Nos Partenaires",
+      "title": "Promoteurs Partenaires de Confiance",
+      "viewAll": "Voir Tous les Promoteurs"
+    },
+    "cta": {
+      "title": "Prêt à Trouver la Propriété de Vos Rêves ?",
+      "subtitle": "Laissez notre équipe d'experts vous guider parmi les plus belles résidences de luxe de Roumanie.",
+      "button": "Planifier une Visite Privée"
+    }
+  },
+  "DeveloperDetail": {
+    "backToDevelopers": "Retour aux Promoteurs",
+    "properties": "Propriétés de {name}",
+    "noProperties": "Aucune propriété répertoriée pour le moment.",
+    "website": "Visiter le Site Web",
+    "projects": "{count} projets"
+  },
+  "DeveloperShowcase": {
+    "scrollDown": "Faites défiler pour explorer",
+    "ourVision": "Notre Vision",
+    "viewProjects": "Voir les Projets",
+    "visitWebsite": "Visiter le Site Web",
+    "contactDeveloper": "Contacter le Promoteur",
+    "exploreProperties": "Explorer les Propriétés",
+    "portfolio": "Notre Portfolio",
+    "curatedProperties": "Propriétés Sélectionnées",
+    "selectedProjects": "Projets Sélectionnés",
+    "gallery": "Galerie",
+    "fullPortfolio": "Portfolio Complet",
+    "all": "Tous",
+    "ourJourney": "Notre Parcours",
+    "milestones": "Jalons",
+    "propertyPortfolio": "Portfolio Immobilier",
+    "exploreDevelopments": "Explorez Nos Développements",
+    "viewProperty": "Voir la Propriété",
+    "aboutDeveloper": "À Propos de {name}",
+    "projects": "{count} Projets",
+    "yearsActive": "Années d'Activité",
+    "homesBuilt": "Logements Construits",
+    "cities": "Villes",
+    "projectsLabel": "Projets",
+    "projectsDelivered": "Projets Livrés",
+    "happyClients": "Clients Satisfaits",
+    "awardsWon": "Prix Remportés",
+    "viewAll": "Voir Toutes les Propriétés",
+    "interested": "Intéressé par les Projets de ce Promoteur ?",
+    "interestedSubtitle": "Contactez-nous pour un accès exclusif aux développements à venir.",
+    "getInTouch": "Nous Contacter",
+    "milestonesData": {
+      "maurer-imobiliare": [
+        { "year": "2008", "title": "Fondation de l'Entreprise", "description": "Maurer Imobiliare a été fondée avec la vision de redéfinir le développement résidentiel en Transylvanie, apportant les standards de construction européens au marché roumain." },
+        { "year": "2010", "title": "Premier Complexe Résidentiel", "description": "Lancement du projet résidentiel inaugural, un complexe de 120 logements qui a établi de nouvelles références en matière de qualité et de design dans la région." },
+        { "year": "2014", "title": "Expansion dans Plusieurs Villes", "description": "Extension des opérations dans trois grandes villes de Transylvanie, établissant une réputation de livraison d'espaces de vie premium dans les délais et le budget." },
+        { "year": "2018", "title": "Cap des 3 000 Logements", "description": "Célébration de la livraison de plus de 3 000 logements, consolidant la position de l'entreprise comme l'un des principaux promoteurs résidentiels de Roumanie." },
+        { "year": "2022", "title": "Engagement Développement Durable", "description": "Adoption de pratiques de construction écologique et de principes de conception écoénergétique dans tous les nouveaux développements, obtenant des certifications environnementales." },
+        { "year": "2024", "title": "Lancement du Portfolio Luxe", "description": "Introduction d'une ligne premium de résidences de luxe, alliant architecture patrimoniale et conforts contemporains pour l'acheteur exigeant." }
+      ],
+      "gran-via": [
+        { "year": "2012", "title": "Fondation de l'Entreprise", "description": "Gran Via a été fondée avec l'ambition de créer des développements résidentiels distinctifs alliant esthétique moderne et élégance fonctionnelle." },
+        { "year": "2015", "title": "Premier Projet Primé", "description": "Reconnaissance pour un design architectural exceptionnel, positionnant l'entreprise comme innovateur dans le paysage immobilier roumain." },
+        { "year": "2019", "title": "Entrée dans le Segment Premium", "description": "Expansion sur le marché résidentiel premium, avec des finitions haut de gamme et des options de design sur mesure pour des développements sélectionnés." },
+        { "year": "2023", "title": "Développements Axés Communauté", "description": "Lancement de concepts d'habitat intégré avec espaces verts partagés, installations de bien-être et centres communautaires." }
+      ],
+      "nova-building": [
+        { "year": "2014", "title": "Fondation de l'Entreprise", "description": "Nova Building a débuté avec un engagement envers les techniques de construction innovantes et une philosophie de design centrée sur le client." },
+        { "year": "2017", "title": "Intégration Technologique", "description": "Pionnier de l'intégration de la maison intelligente dans tous les nouveaux développements, offrant aux résidents des expériences de vie à la pointe de la technologie." },
+        { "year": "2020", "title": "Phase de Croissance Rapide", "description": "Doublement du portfolio de projets et expansion de l'équipe, avec la livraison simultanée de plusieurs développements dans la région." },
+        { "year": "2024", "title": "Projet Phare de Luxe", "description": "Dévoilement d'un complexe résidentiel exclusif de luxe, positionnant l'entreprise à l'avant-garde de l'immobilier premium." }
+      ],
+      "default": [
+        { "year": "2015", "title": "Fondation de l'Entreprise", "description": "{name} a été fondée avec la mission de créer des espaces de vie exceptionnels à {city}, alliant artisanat de qualité et design réfléchi." },
+        { "year": "2018", "title": "Premier Grand Développement", "description": "Livraison réussie du premier projet résidentiel à grande échelle, gagnant la confiance des acheteurs et établissant une forte présence sur le marché." },
+        { "year": "2021", "title": "Expansion du Portfolio", "description": "Expansion du portfolio avec des types de propriétés diversifiés, des appartements modernes aux villas premium, répondant à une gamme plus large d'acheteurs exigeants." },
+        { "year": "2024", "title": "Excellence Reconnue", "description": "Franchissement d'un cap en logements livrés et reconnaissance pour l'engagement envers la qualité, la durabilité et la satisfaction client." }
+      ]
+    }
+  },
+  "DevelopersPage": {
+    "hero": {
+      "title": "Nos Promoteurs Partenaires",
+      "subtitle": "Des Partenaires de Confiance Construisant les Plus Belles Propriétés de Roumanie"
+    },
+    "description": "Nous collaborons avec les promoteurs immobiliers les plus respectés de Roumanie pour vous offrir un accès exclusif à des projets résidentiels haut de gamme à travers la Transylvanie. Chaque promoteur de notre réseau a été rigoureusement sélectionné pour sa qualité, sa fiabilité et l'excellence de son design.",
+    "filter": {
+      "allCities": "Toutes les Villes",
+      "results": "{count} promoteurs",
+      "activeFilters": "Filtres Actifs"
+    },
+    "cta": {
+      "title": "Vous Souhaitez Devenir Partenaire ?",
+      "subtitle": "Si vous êtes un promoteur avec des projets premium, nous serions ravis de vous entendre.",
+      "button": "Nous Contacter"
+    }
+  },
+  "PropertiesPage": {
+    "hero": {
+      "title": "Notre Portfolio Exclusif",
+      "subtitle": "Découvrez les Plus Belles Propriétés de Luxe de Roumanie"
+    },
+    "contextual": {
+      "propertiesInCity": "Propriétés à {city}",
+      "propertiesByDeveloper": "Propriétés par {developer}",
+      "exploreCityDetails": "Explorer {city}",
+      "aboutDeveloper": "À propos de {developer}"
+    },
+    "filter": {
+      "search": "Rechercher des propriétés...",
+      "city": "Ville",
+      "type": "Type de Propriété",
+      "priceRange": "Gamme de Prix",
+      "sort": "Trier Par",
+      "allCities": "Toutes les Villes",
+      "allTypes": "Tous les Types",
+      "allPrices": "Tous les Prix",
+      "priceLowHigh": "Prix : Croissant",
+      "priceHighLow": "Prix : Décroissant",
+      "newest": "Les Plus Récentes",
+      "results": "{count} propriétés trouvées",
+      "searchButton": "Rechercher",
+      "clearAll": "Tout Effacer",
+      "activeFilters": "Filtres Actifs",
+      "filterBy": "Filtrer Par",
+      "priceUnder500k": "Moins de 500K\u00a0€",
+      "price500kTo1m": "500K\u00a0€ - 1M\u00a0€",
+      "price1to15": "1M\u00a0€ - 1,5M\u00a0€",
+      "price15to2": "1,5M\u00a0€ - 2M\u00a0€",
+      "price2to3": "2M\u00a0€ - 3M\u00a0€",
+      "price3plus": "3M\u00a0€+"
+    },
+    "noResults": {
+      "title": "Aucune Propriété Trouvée",
+      "description": "Essayez d'ajuster vos filtres pour trouver ce que vous recherchez."
+    },
+    "cta": {
+      "title": "Vous Ne Trouvez Pas Ce Que Vous Cherchez ?",
+      "subtitle": "Notre équipe a accès à des propriétés exclusives hors marché.",
+      "button": "Contacter Notre Équipe"
+    }
+  },
+  "PropertyDetail": {
+    "backToProperties": "Retour aux Propriétés",
+    "overview": "Aperçu",
+    "features": "Caractéristiques & Équipements",
+    "location": "Emplacement",
+    "specs": {
+      "bedrooms": "Chambres",
+      "bathrooms": "Salles de Bain",
+      "area": "Surface Habitable",
+      "landArea": "Surface du Terrain",
+      "floors": "Étages",
+      "yearBuilt": "Année de Construction",
+      "garage": "Places de Garage"
+    },
+    "description": "Description",
+    "requestInfo": "Demander des Informations",
+    "scheduleViewing": "Planifier une Visite",
+    "shareProperty": "Partager la Propriété",
+    "similarProperties": {
+      "subtitle": "Vous Pourriez Aussi Aimer",
+      "title": "Propriétés Similaires"
+    },
+    "price": "Prix",
+    "status": {
+      "available": "Disponible",
+      "sold": "Vendu",
+      "reserved": "Réservé"
+    }
+  },
+  "AboutPage": {
+    "hero": {
+      "title": "Notre Histoire",
+      "subtitle": "Une Décennie d'Excellence en Immobilier de Luxe"
+    },
+    "story": {
+      "founding": {
+        "title": "Fondé sur la Passion",
+        "description": "Fondé en 2014, Transylvania Grand Estate est né d'une vision de transformer le paysage de l'immobilier de luxe en Roumanie. Nos fondateurs ont reconnu le potentiel inexploité du patrimoine architectural de la Transylvanie et ont entrepris de créer un cabinet qui associe des propriétés de classe mondiale à des acheteurs exigeants."
+      },
+      "mission": {
+        "title": "Notre Mission",
+        "description": "Mettre en relation des personnes exigeantes avec des propriétés extraordinaires qui reflètent leurs aspirations et leur style de vie. Nous croyons qu'une maison est bien plus que des murs et un toit — c'est une déclaration de qui vous êtes et de comment vous choisissez de vivre."
+      },
+      "approach": {
+        "title": "Notre Approche",
+        "description": "Chaque relation client commence par la compréhension. Nous écoutons, nous apprenons et nous dépassons les attentes. Notre connaissance intime du marché du luxe roumain, combinée à une perspective mondiale, nous permet d'offrir un accompagnement inégalé à chaque étape."
+      }
+    },
+    "values": {
+      "subtitle": "Ce Qui Nous Anime",
+      "title": "Nos Valeurs Fondamentales",
+      "excellence": {
+        "title": "Excellence",
+        "description": "Nous fixons les plus hauts standards dans tout ce que nous faisons, de la sélection des propriétés au service client, garantissant une expérience digne des propriétés exceptionnelles que nous représentons."
+      },
+      "discretion": {
+        "title": "Discrétion",
+        "description": "Nous comprenons que les transactions de luxe exigent la plus grande confidentialité. Votre vie privée est notre priorité à chaque étape du processus."
+      },
+      "heritage": {
+        "title": "Patrimoine",
+        "description": "Nous célébrons le riche patrimoine architectural et culturel de la Roumanie, préservant les histoires qui rendent chaque propriété unique tout en intégrant le luxe moderne."
+      },
+      "innovation": {
+        "title": "Innovation",
+        "description": "Nous adoptons les technologies de pointe et les approches innovantes en matière de marketing, de présentation et de communication client."
+      }
+    },
+    "cta": {
+      "title": "Travaillez Avec Nous",
+      "subtitle": "Rejoignez l'équipe leader de l'immobilier de luxe en Roumanie.",
+      "button": "Nous Contacter"
+    }
+  },
+  "ContactPage": {
+    "hero": {
+      "title": "Contactez-Nous",
+      "subtitle": "Nous Serions Ravis de Vous Entendre"
+    },
+    "form": {
+      "title": "Envoyez-Nous une Demande",
+      "fullName": "Nom Complet",
+      "email": "Adresse E-mail",
+      "phone": "Numéro de Téléphone",
+      "property": "Propriété d'Intérêt (Optionnel)",
+      "selectProperty": "Sélectionnez une propriété...",
+      "budget": "Gamme de Budget",
+      "selectBudget": "Sélectionnez une gamme de budget...",
+      "message": "Votre Message",
+      "messagePlaceholder": "Décrivez-nous votre propriété idéale...",
+      "submit": "Envoyer la Demande",
+      "success": {
+        "title": "Merci !",
+        "message": "Nous avons bien reçu votre demande et vous répondrons dans les 24 heures."
+      },
+      "budgetOptions": {
+        "1to15": "1M\u00a0€ - 1,5M\u00a0€",
+        "15to2": "1,5M\u00a0€ - 2M\u00a0€",
+        "2to3": "2M\u00a0€ - 3M\u00a0€",
+        "3plus": "3M\u00a0€+"
+      }
+    },
+    "offices": {
+      "subtitle": "Visitez Nos Bureaux",
+      "title": "Nos Emplacements"
+    }
+  },
+  "InquiryModal": {
+    "titleGeneral": "Contactez-nous",
+    "titleProperty": "Renseignement sur {name}",
+    "titleDeveloper": "Contact à propos de {name}",
+    "description": "Remplissez le formulaire ci-dessous et nous vous répondrons sous 24 heures.",
+    "name": "Nom complet",
+    "email": "Adresse e-mail",
+    "message": "Votre message",
+    "messagePlaceholder": "Dites-nous comment nous pouvons vous aider...",
+    "regarding": "Concernant :",
+    "about": "À propos de :",
+    "submit": "Envoyer la demande",
+    "success": {
+      "title": "Merci !",
+      "message": "Nous avons reçu votre demande et vous répondrons sous 24 heures."
+    },
+    "error": "Une erreur est survenue. Veuillez réessayer."
+  },
+  "Common": {
+    "currency": "EUR",
+    "sqm": "m²",
+    "viewProperty": "Voir la Propriété",
+    "learnMore": "En Savoir Plus",
+    "readMore": "Lire la Suite",
+    "available": "Disponible",
+    "sold": "Vendu",
+    "reserved": "Réservé",
+    "new": "Nouveau",
+    "featured": "En Vedette",
+    "propertyTypes": {
+      "apartment": "Appartement",
+      "house": "Maison",
+      "villa": "Villa",
+      "terrain": "Terrain",
+      "penthouse": "Penthouse",
+      "estate": "Domaine",
+      "chalet": "Chalet",
+      "mansion": "Manoir",
+      "palace": "Palais"
+    }
+  },
+  "Breadcrumb": {
+    "home": "Accueil",
+    "properties": "Propriétés",
+    "developers": "Promoteurs",
+    "cities": "Villes"
+  },
+  "CitiesPage": {
+    "hero": {
+      "title": "Nos Destinations Exclusives",
+      "subtitle": "Explorez les Villes les Plus Prestigieuses de Roumanie"
+    },
+    "description": "Découvrez des propriétés de luxe dans les plus belles villes de Transylvanie. Chaque destination offre un mélange unique de patrimoine, de culture et de vie de luxe moderne.",
+    "card": {
+      "properties": "{count} propriétés",
+      "developers": "{count} promoteurs"
+    },
+    "cta": {
+      "title": "Vous Cherchez Quelque Chose de Spécifique ?",
+      "subtitle": "Notre équipe peut vous aider à trouver la propriété parfaite dans n'importe quelle ville.",
+      "button": "Nous Contacter"
+    }
+  },
+  "CityDetail": {
+    "stats": {
+      "properties": "Propriétés Disponibles",
+      "developers": "Promoteurs Actifs",
+      "priceRange": "Gamme de Prix",
+      "neighborhoods": "Quartiers"
+    },
+    "developers": {
+      "subtitle": "Nos Partenaires de Confiance",
+      "title": "Promoteurs à {city}",
+      "viewAll": "Voir Tous les Promoteurs"
+    },
+    "properties": {
+      "subtitle": "Propriétés Disponibles",
+      "title": "Propriétés à {city}",
+      "allTypes": "Tous",
+      "viewAll": "Voir Toutes les Propriétés",
+      "loadMore": "Charger Plus",
+      "sort": {
+        "newest": "Les Plus Récentes",
+        "priceLowHigh": "Prix : Croissant",
+        "priceHighLow": "Prix : Décroissant"
+      },
+      "noResults": "Aucune propriété ne correspond aux filtres sélectionnés."
+    },
+    "cta": {
+      "title": "Trouvez Votre Maison à {city}",
+      "subtitle": "Planifiez une visite privée avec nos experts locaux.",
+      "button": "Planifier une Visite"
+    }
+  },
+  "Footer": {
+    "tagline": "Premier Cabinet de Conseil en Immobilier de Luxe en Roumanie",
+    "quickLinks": "Liens Rapides",
+    "contact": "Contactez-Nous",
+    "followUs": "Suivez-Nous",
+    "copyright": "© {year} Transylvania Grand Estate. Tous droits réservés.",
+    "privacy": "Politique de Confidentialité",
+    "terms": "Conditions d'Utilisation"
+  },
+  "NotFoundPage": {
+    "title": "Page Non Trouvée",
+    "description": "La propriété que vous recherchez a peut-être été déplacée ou n'existe plus. Laissez-nous vous aider à trouver la maison de vos rêves.",
+    "goHome": "Accueil",
+    "browseProperties": "Parcourir les Propriétés"
+  }
+}

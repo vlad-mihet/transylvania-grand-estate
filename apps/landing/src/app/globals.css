@@ -1,0 +1,9 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+@import "shadcn/tailwind.css";
+@import "../../../../packages/tailwind-config/src/theme.css";
+
+@custom-variant dark (&:is(.dark *));
+
+/* Scan package source directories for Tailwind class names */
+@source "../../../../packages/ui/src";

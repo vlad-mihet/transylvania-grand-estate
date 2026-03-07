@@ -1,0 +1,227 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ─── Enums ───────────────────────────────────────────────
+
+enum PropertyType {
+  apartment
+  house
+  villa
+  terrain
+  penthouse
+  estate
+  chalet
+  mansion
+  palace
+}
+
+enum PropertyStatus {
+  available
+  sold
+  reserved
+}
+
+enum AdminRole {
+  SUPER_ADMIN
+  ADMIN
+  EDITOR
+}
+
+enum InquiryType {
+  general
+  property
+  developer
+}
+
+enum InquiryStatus {
+  new
+  read
+  archived
+}
+
+// ─── Admin ───────────────────────────────────────────────
+
+model AdminUser {
+  id           String    @id @default(uuid())
+  email        String    @unique
+  passwordHash String    @map("password_hash")
+  name         String
+  role         AdminRole @default(EDITOR)
+  createdAt    DateTime  @default(now()) @map("created_at")
+  updatedAt    DateTime  @updatedAt @map("updated_at")
+
+  @@map("admin_users")
+}
+
+// ─── Property ────────────────────────────────────────────
+
+model Property {
+  id               String         @id @default(uuid())
+  slug             String         @unique
+  title            Json           // LocalizedString {en, ro}
+  description      Json           // LocalizedString
+  shortDescription Json           @map("short_description") // LocalizedString
+  price            Float
+  currency         String         @default("EUR")
+  type             PropertyType
+  status           PropertyStatus @default(available)
+
+  // Location (flattened)
+  city         String
+  citySlug     String @map("city_slug")
+  neighborhood String
+  address      Json   // LocalizedString
+  latitude     Float
+  longitude    Float
+
+  // Specs (flattened)
+  bedrooms  Int
+  bathrooms Int
+  area      Float
+  landArea  Float?   @map("land_area")
+  floors    Int
+  yearBuilt Int      @map("year_built")
+  garage    Int?
+  pool      Boolean? @default(false)
+
+  // Features as JSON array of LocalizedString[]
+  features Json @default("[]")
+
+  featured Boolean @default(false)
+  isNew    Boolean @default(false) @map("is_new")
+
+  // Relations
+  developerId String?    @map("developer_id")
+  developer   Developer? @relation(fields: [developerId], references: [id], onDelete: SetNull)
+  images      PropertyImage[]
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@index([citySlug])
+  @@index([type])
+  @@index([status])
+  @@index([price])
+  @@index([featured])
+  @@map("properties")
+}
+
+model PropertyImage {
+  id        String  @id @default(uuid())
+  src       String
+  alt       Json    // LocalizedString
+  isHero    Boolean @default(false) @map("is_hero")
+  sortOrder Int     @default(0) @map("sort_order")
+
+  propertyId String   @map("property_id")
+  property   Property @relation(fields: [propertyId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now()) @map("created_at")
+
+  @@map("property_images")
+}
+
+// ─── Developer ───────────────────────────────────────────
+
+model Developer {
+  id               String  @id @default(uuid())
+  slug             String  @unique
+  name             String
+  logo             String
+  description      Json    // LocalizedString
+  shortDescription Json    @map("short_description") // LocalizedString
+  city             String
+  citySlug         String  @map("city_slug")
+  website          String?
+  projectCount     Int     @default(0) @map("project_count")
+  featured         Boolean @default(false)
+  coverImage       String?  @map("cover_image")
+  tagline          Json?    // LocalizedString
+
+  properties Property[]
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@map("developers")
+}
+
+// ─── City ────────────────────────────────────────────────
+
+model City {
+  id            String @id @default(uuid())
+  name          String @unique
+  slug          String @unique
+  description   Json   // LocalizedString
+  image         String
+  propertyCount Int    @default(0) @map("property_count")
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@map("cities")
+}
+
+// ─── Testimonial ─────────────────────────────────────────
+
+model Testimonial {
+  id           String @id @default(uuid())
+  clientName   String @map("client_name")
+  location     String
+  propertyType String @map("property_type")
+  quote        Json   // LocalizedString
+  rating       Int    @default(5)
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@map("testimonials")
+}
+
+// ─── Inquiry ────────────────────────────────────────────
+
+model Inquiry {
+  id           String        @id @default(uuid())
+  type         InquiryType   @default(general)
+  status       InquiryStatus @default(new)
+
+  name         String
+  email        String
+  phone        String?
+  message      String        @db.Text
+
+  entityName   String?       @map("entity_name")
+  entitySlug   String?       @map("entity_slug")
+
+  budget       String?
+  propertySlug String?       @map("property_slug")
+
+  createdAt    DateTime      @default(now()) @map("created_at")
+  updatedAt    DateTime      @updatedAt @map("updated_at")
+
+  @@index([type])
+  @@index([status])
+  @@index([createdAt])
+  @@map("inquiries")
+}
+
+// ─── Site Config (singleton) ─────────────────────────────
+
+model SiteConfig {
+  id          String @id @default("singleton")
+  name        String
+  tagline     Json   // LocalizedString
+  description Json   // LocalizedString
+  contact     Json   // {phone, email, whatsapp?}
+  socialLinks Json   @map("social_links") // SocialLink[]
+
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@map("site_config")
+}

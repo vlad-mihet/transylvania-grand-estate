@@ -1,0 +1,428 @@
+{
+  "Navigation": {
+    "home": "Startseite",
+    "properties": "Immobilien",
+    "about": "Über Uns",
+    "contact": "Kontakt",
+    "viewAll": "Alle Immobilien Ansehen",
+    "scheduleViewing": "Besichtigung Vereinbaren",
+    "forSale": "Zum Verkauf",
+    "newDevelopments": "Neubauprojekte",
+    "developers": "Bauträger",
+    "propertyTypes": "Immobilientypen",
+    "popularCities": "Beliebte Städte",
+    "featuredSection": "Empfohlen",
+    "latestListings": "Neueste Angebote",
+    "mostPopular": "Am Beliebtesten",
+    "popularDevelopers": "Beliebte Bauträger",
+    "byCity": "Nach Stadt",
+    "viewAllProperties": "Alle Immobilien Ansehen",
+    "viewAllDevelopers": "Alle Bauträger Ansehen",
+    "cities": "Städte",
+    "viewAllCities": "Alle Städte Ansehen"
+  },
+  "HomePage": {
+    "hero": {
+      "title": "Luxuriöses Wohnen in Siebenbürgen",
+      "subtitle": "Entdecken Sie Außergewöhnliche Immobilien an Rumäniens Prestigeträchtigsten Adressen",
+      "cta": "Immobilien Entdecken"
+    },
+    "featured": {
+      "subtitle": "Kuratierte Auswahl",
+      "title": "Ausgewählte Immobilien",
+      "viewAll": "Alle Ansehen"
+    },
+    "showcase": {
+      "subtitle": "Warum Uns Wählen",
+      "title": "Ein Vermächtnis der Exzellenz",
+      "heritage": {
+        "title": "Erbe & Moderne",
+        "description": "Wir verbinden Jahrhunderte siebenbürgischen architektonischen Erbes mit zeitgenössischem Luxusdesign und schaffen Häuser, die die Vergangenheit ehren und gleichzeitig die Zukunft umarmen."
+      },
+      "curated": {
+        "title": "Kuratiertes Portfolio",
+        "description": "Jede Immobilie in unserer Kollektion ist handverlesen, um höchste Standards an Luxus und Exklusivität zu erfüllen, sodass nur die besten unsere Kunden erreichen."
+      },
+      "service": {
+        "title": "Erstklassiger Service",
+        "description": "Von der ersten Besichtigung bis zur letzten Unterschrift sorgt unser engagiertes Team für ein unvergleichliches Erlebnis, das auf Ihre individuellen Vorlieben und Ihren Lebensstil zugeschnitten ist."
+      }
+    },
+    "stats": {
+      "propertiesSold": "Verkaufte Immobilien",
+      "yearsExperience": "Jahre Erfahrung",
+      "citiesServed": "Betreute Städte",
+      "portfolioValue": "Portfoliowert (Mio.\u00a0EUR)"
+    },
+    "cities": {
+      "subtitle": "Nach Region Entdecken",
+      "title": "Unsere Exklusiven Destinationen",
+      "propertyCount": "{count} Immobilien"
+    },
+    "about": {
+      "subtitle": "Über Transylvania Grand Estate",
+      "title": "Luxusimmobilien in Rumänien Neu Definiert",
+      "description": "Mit über einem Jahrzehnt Expertise sind wir Rumäniens führende Beratung für Luxusimmobilien und verbinden anspruchsvolle Käufer mit außergewöhnlichen Immobilien in Siebenbürgen und darüber hinaus.",
+      "cta": "Unsere Geschichte"
+    },
+    "testimonials": {
+      "subtitle": "Kundenstimmen",
+      "title": "Was Unsere Kunden Sagen"
+    },
+    "developers": {
+      "subtitle": "Unsere Partner",
+      "title": "Vertrauenswürdige Bauträgerpartner",
+      "viewAll": "Alle Bauträger Ansehen"
+    },
+    "cta": {
+      "title": "Bereit, Ihre Traumimmobilie zu Finden?",
+      "subtitle": "Lassen Sie sich von unserem Expertenteam durch Rumäniens feinste Luxusresidenzen führen.",
+      "button": "Private Besichtigung Vereinbaren"
+    }
+  },
+  "DeveloperDetail": {
+    "backToDevelopers": "Zurück zu Bauträgern",
+    "properties": "Immobilien von {name}",
+    "noProperties": "Noch keine Immobilien aufgelistet.",
+    "website": "Website Besuchen",
+    "projects": "{count} Projekte"
+  },
+  "DeveloperShowcase": {
+    "scrollDown": "Scrollen zum Entdecken",
+    "ourVision": "Unsere Vision",
+    "viewProjects": "Projekte Ansehen",
+    "visitWebsite": "Website Besuchen",
+    "contactDeveloper": "Bauträger Kontaktieren",
+    "exploreProperties": "Immobilien Entdecken",
+    "portfolio": "Unser Portfolio",
+    "curatedProperties": "Kuratierte Immobilien",
+    "selectedProjects": "Ausgewählte Projekte",
+    "gallery": "Galerie",
+    "fullPortfolio": "Gesamtes Portfolio",
+    "all": "Alle",
+    "ourJourney": "Unser Werdegang",
+    "milestones": "Meilensteine",
+    "propertyPortfolio": "Immobilienportfolio",
+    "exploreDevelopments": "Entdecken Sie Unsere Projekte",
+    "viewProperty": "Immobilie Ansehen",
+    "aboutDeveloper": "Über {name}",
+    "projects": "{count} Projekte",
+    "yearsActive": "Jahre Aktiv",
+    "homesBuilt": "Gebaute Häuser",
+    "cities": "Städte",
+    "projectsLabel": "Projekte",
+    "projectsDelivered": "Gelieferte Projekte",
+    "happyClients": "Zufriedene Kunden",
+    "awardsWon": "Gewonnene Auszeichnungen",
+    "viewAll": "Alle Immobilien Ansehen",
+    "interested": "Interessiert an den Projekten dieses Bauträgers?",
+    "interestedSubtitle": "Kontaktieren Sie uns für exklusiven Zugang zu kommenden Entwicklungen.",
+    "getInTouch": "Kontakt Aufnehmen",
+    "milestonesData": {
+      "maurer-imobiliare": [
+        { "year": "2008", "title": "Unternehmensgründung", "description": "Maurer Imobiliare wurde mit der Vision gegründet, die Wohnbauentwicklung in Siebenbürgen neu zu definieren und europäische Baustandards auf den rumänischen Markt zu bringen." },
+        { "year": "2010", "title": "Erster Wohnkomplex", "description": "Start des ersten Wohnprojekts, ein Komplex mit 120 Einheiten, der neue Maßstäbe für Qualität und Design in der Region setzte." },
+        { "year": "2014", "title": "Expansion in Mehrere Städte", "description": "Ausweitung der Geschäftstätigkeit auf drei große siebenbürgische Städte, mit dem Ruf, erstklassige Wohnräume termingerecht und im Budget zu liefern." },
+        { "year": "2018", "title": "Meilenstein 3.000 Wohnungen", "description": "Feier der Übergabe von über 3.000 Wohnungen, was die Position des Unternehmens als einer der führenden Wohnbauträger Rumäniens festigte." },
+        { "year": "2022", "title": "Nachhaltigkeitsverpflichtung", "description": "Einführung umweltfreundlicher Baupraktiken und energieeffizienter Designprinzipien in allen neuen Entwicklungen, mit Erhalt von Umweltzertifizierungen." },
+        { "year": "2024", "title": "Start des Luxus-Portfolios", "description": "Einführung einer Premium-Luxuslinie von Residenzen, die historische Architektur mit zeitgenössischem Komfort für den anspruchsvollen Käufer verbindet." }
+      ],
+      "gran-via": [
+        { "year": "2012", "title": "Unternehmensgründung", "description": "Gran Via wurde mit dem Fokus gegründet, markante Wohnentwicklungen zu schaffen, die moderne Ästhetik mit funktionaler Eleganz verbinden." },
+        { "year": "2015", "title": "Erstes Preisgekröntes Projekt", "description": "Auszeichnung für herausragendes architektonisches Design, das das Unternehmen als Innovator in der rumänischen Immobilienlandschaft positionierte." },
+        { "year": "2019", "title": "Einstieg ins Premium-Segment", "description": "Expansion in den Premium-Wohnungsmarkt mit hochwertigen Ausstattungen und maßgeschneiderten Designoptionen für ausgewählte Entwicklungen." },
+        { "year": "2023", "title": "Gemeinschaftsorientierte Entwicklungen", "description": "Start integrierter Wohnkonzepte mit gemeinsamen Grünflächen, Wellnesseinrichtungen und Gemeinschaftszentren." }
+      ],
+      "nova-building": [
+        { "year": "2014", "title": "Unternehmensgründung", "description": "Nova Building startete mit dem Engagement für innovative Bautechniken und eine kundenorientierte Designphilosophie." },
+        { "year": "2017", "title": "Technologieintegration", "description": "Pionier der Smart-Home-Integration in allen neuen Entwicklungen, die Bewohnern modernste Wohnerfahrungen bietet." },
+        { "year": "2020", "title": "Schnelle Wachstumsphase", "description": "Verdopplung des Projektportfolios und Teamausbau, mit gleichzeitiger Lieferung mehrerer Entwicklungen in der gesamten Region." },
+        { "year": "2024", "title": "Flaggschiff-Luxusprojekt", "description": "Enthüllung eines exklusiven Luxus-Wohnkomplexes, der das Unternehmen an die Spitze des Premium-Immobilienmarktes positioniert." }
+      ],
+      "default": [
+        { "year": "2015", "title": "Unternehmensgründung", "description": "{name} wurde mit der Mission gegründet, außergewöhnliche Wohnräume in {city} zu schaffen, die Qualitätshandwerk mit durchdachtem Design verbinden." },
+        { "year": "2018", "title": "Erste Große Entwicklung", "description": "Erfolgreiche Lieferung des ersten großen Wohnprojekts, das das Vertrauen der Käufer gewann und eine starke Marktpräsenz etablierte." },
+        { "year": "2021", "title": "Portfolio-Erweiterung", "description": "Erweiterung des Entwicklungsportfolios mit vielfältigen Immobilientypen, von modernen Wohnungen bis zu Premium-Villen, für eine breitere Palette anspruchsvoller Käufer." },
+        { "year": "2024", "title": "Anerkannte Exzellenz", "description": "Erreichen eines Meilensteins bei gelieferten Wohnungen und Anerkennung für das Engagement für Qualität, Nachhaltigkeit und Kundenzufriedenheit." }
+      ]
+    }
+  },
+  "DevelopersPage": {
+    "hero": {
+      "title": "Unsere Bauträgerpartner",
+      "subtitle": "Vertrauenswürdige Partner, die Rumäniens Feinste Immobilien Bauen"
+    },
+    "description": "Wir arbeiten mit Rumäniens angesehensten Immobilienentwicklern zusammen, um Ihnen exklusiven Zugang zu erstklassigen Wohnprojekten in ganz Siebenbürgen zu bieten. Jeder Bauträger in unserem Netzwerk wurde sorgfältig auf Qualität, Zuverlässigkeit und Designexzellenz geprüft.",
+    "filter": {
+      "allCities": "Alle Städte",
+      "results": "{count} Bauträger",
+      "activeFilters": "Aktive Filter"
+    },
+    "cta": {
+      "title": "Möchten Sie Partner Werden?",
+      "subtitle": "Wenn Sie ein Bauträger mit Premium-Projekten sind, würden wir gerne von Ihnen hören.",
+      "button": "Kontakt Aufnehmen"
+    }
+  },
+  "PropertiesPage": {
+    "hero": {
+      "title": "Unser Exklusives Portfolio",
+      "subtitle": "Entdecken Sie Rumäniens Feinste Luxusimmobilien"
+    },
+    "contextual": {
+      "propertiesInCity": "Immobilien in {city}",
+      "propertiesByDeveloper": "Immobilien von {developer}",
+      "exploreCityDetails": "{city} Entdecken",
+      "aboutDeveloper": "Über {developer}"
+    },
+    "filter": {
+      "search": "Immobilien suchen...",
+      "city": "Stadt",
+      "type": "Immobilientyp",
+      "priceRange": "Preisspanne",
+      "sort": "Sortieren Nach",
+      "allCities": "Alle Städte",
+      "allTypes": "Alle Typen",
+      "allPrices": "Alle Preise",
+      "priceLowHigh": "Preis: Aufsteigend",
+      "priceHighLow": "Preis: Absteigend",
+      "newest": "Neueste Zuerst",
+      "results": "{count} Immobilien gefunden",
+      "searchButton": "Suchen",
+      "clearAll": "Alle Löschen",
+      "activeFilters": "Aktive Filter",
+      "filterBy": "Filtern Nach",
+      "priceUnder500k": "Unter 500K\u00a0€",
+      "price500kTo1m": "500K\u00a0€ - 1 Mio.\u00a0€",
+      "price1to15": "1 Mio.\u00a0€ - 1,5 Mio.\u00a0€",
+      "price15to2": "1,5 Mio.\u00a0€ - 2 Mio.\u00a0€",
+      "price2to3": "2 Mio.\u00a0€ - 3 Mio.\u00a0€",
+      "price3plus": "3 Mio.\u00a0€+"
+    },
+    "noResults": {
+      "title": "Keine Immobilien Gefunden",
+      "description": "Versuchen Sie, Ihre Filter anzupassen, um das Gewünschte zu finden."
+    },
+    "cta": {
+      "title": "Nicht Gefunden, Was Sie Suchen?",
+      "subtitle": "Unser Team hat Zugang zu exklusiven Off-Market-Immobilien.",
+      "button": "Unser Team Kontaktieren"
+    }
+  },
+  "PropertyDetail": {
+    "backToProperties": "Zurück zu Immobilien",
+    "overview": "Überblick",
+    "features": "Ausstattung & Annehmlichkeiten",
+    "location": "Lage",
+    "specs": {
+      "bedrooms": "Schlafzimmer",
+      "bathrooms": "Badezimmer",
+      "area": "Wohnfläche",
+      "landArea": "Grundstücksfläche",
+      "floors": "Stockwerke",
+      "yearBuilt": "Baujahr",
+      "garage": "Garagenplätze"
+    },
+    "description": "Beschreibung",
+    "requestInfo": "Informationen Anfordern",
+    "scheduleViewing": "Besichtigung Vereinbaren",
+    "shareProperty": "Immobilie Teilen",
+    "similarProperties": {
+      "subtitle": "Das Könnte Ihnen Auch Gefallen",
+      "title": "Ähnliche Immobilien"
+    },
+    "price": "Preis",
+    "status": {
+      "available": "Verfügbar",
+      "sold": "Verkauft",
+      "reserved": "Reserviert"
+    }
+  },
+  "AboutPage": {
+    "hero": {
+      "title": "Unsere Geschichte",
+      "subtitle": "Ein Jahrzehnt Exzellenz im Luxusimmobilienmarkt"
+    },
+    "story": {
+      "founding": {
+        "title": "Gegründet aus Leidenschaft",
+        "description": "Gegründet im Jahr 2014, entstand Transylvania Grand Estate aus der Vision, Rumäniens Luxusimmobilienmarkt zu transformieren. Unsere Gründer erkannten das ungenutzte Potenzial des architektonischen Erbes Siebenbürgens und machten sich daran, eine Beratung zu schaffen, die erstklassige Immobilien mit anspruchsvollen Käufern zusammenbringt."
+      },
+      "mission": {
+        "title": "Unsere Mission",
+        "description": "Anspruchsvolle Menschen mit außergewöhnlichen Immobilien zu verbinden, die ihre Ambitionen und ihren Lebensstil widerspiegeln. Wir glauben, dass ein Zuhause mehr ist als Wände und ein Dach — es ist ein Ausdruck dessen, wer Sie sind und wie Sie leben möchten."
+      },
+      "approach": {
+        "title": "Unser Ansatz",
+        "description": "Jede Kundenbeziehung beginnt mit Verständnis. Wir hören zu, wir lernen und wir übertreffen Erwartungen. Unsere intime Kenntnis des rumänischen Luxusmarktes, kombiniert mit einer globalen Perspektive, ermöglicht es uns, bei jedem Schritt eine unvergleichliche Beratung zu bieten."
+      }
+    },
+    "values": {
+      "subtitle": "Was Uns Antreibt",
+      "title": "Unsere Kernwerte",
+      "excellence": {
+        "title": "Exzellenz",
+        "description": "Wir setzen in allem, was wir tun, die höchsten Maßstäbe — von der Immobilienauswahl bis zum Kundenservice — und gewährleisten ein Erlebnis, das der außergewöhnlichen Immobilien würdig ist, die wir vertreten."
+      },
+      "discretion": {
+        "title": "Diskretion",
+        "description": "Wir verstehen, dass Luxustransaktionen höchste Vertraulichkeit erfordern. Ihre Privatsphäre hat bei jedem Schritt des Prozesses oberste Priorität."
+      },
+      "heritage": {
+        "title": "Erbe",
+        "description": "Wir feiern Rumäniens reiches architektonisches und kulturelles Erbe, bewahren die Geschichten, die jede Immobilie einzigartig machen, und integrieren gleichzeitig modernen Luxus."
+      },
+      "innovation": {
+        "title": "Innovation",
+        "description": "Wir setzen auf modernste Technologie und zukunftsweisende Ansätze in Marketing, Präsentation und Kundenkommunikation."
+      }
+    },
+    "cta": {
+      "title": "Arbeiten Sie Mit Uns",
+      "subtitle": "Werden Sie Teil des führenden Luxusimmobilienteams in Rumänien.",
+      "button": "Kontakt Aufnehmen"
+    }
+  },
+  "ContactPage": {
+    "hero": {
+      "title": "Kontaktieren Sie Uns",
+      "subtitle": "Wir Freuen Uns, Von Ihnen zu Hören"
+    },
+    "form": {
+      "title": "Senden Sie Uns eine Anfrage",
+      "fullName": "Vollständiger Name",
+      "email": "E-Mail-Adresse",
+      "phone": "Telefonnummer",
+      "property": "Interessierte Immobilie (Optional)",
+      "selectProperty": "Immobilie auswählen...",
+      "budget": "Budgetrahmen",
+      "selectBudget": "Budgetrahmen auswählen...",
+      "message": "Ihre Nachricht",
+      "messagePlaceholder": "Erzählen Sie uns von Ihrer idealen Immobilie...",
+      "submit": "Anfrage Senden",
+      "success": {
+        "title": "Vielen Dank!",
+        "message": "Wir haben Ihre Anfrage erhalten und werden innerhalb von 24 Stunden antworten."
+      },
+      "budgetOptions": {
+        "1to15": "1 Mio.\u00a0€ - 1,5 Mio.\u00a0€",
+        "15to2": "1,5 Mio.\u00a0€ - 2 Mio.\u00a0€",
+        "2to3": "2 Mio.\u00a0€ - 3 Mio.\u00a0€",
+        "3plus": "3 Mio.\u00a0€+"
+      }
+    },
+    "offices": {
+      "subtitle": "Besuchen Sie Unsere Büros",
+      "title": "Unsere Standorte"
+    }
+  },
+  "InquiryModal": {
+    "titleGeneral": "Kontaktieren Sie uns",
+    "titleProperty": "Anfrage zu {name}",
+    "titleDeveloper": "Kontakt zu {name}",
+    "description": "Füllen Sie das Formular aus und wir melden uns innerhalb von 24 Stunden.",
+    "name": "Vollständiger Name",
+    "email": "E-Mail-Adresse",
+    "message": "Ihre Nachricht",
+    "messagePlaceholder": "Teilen Sie uns mit, wie wir Ihnen helfen können...",
+    "regarding": "Bezüglich:",
+    "about": "Über:",
+    "submit": "Anfrage senden",
+    "success": {
+      "title": "Vielen Dank!",
+      "message": "Wir haben Ihre Anfrage erhalten und werden innerhalb von 24 Stunden antworten."
+    },
+    "error": "Etwas ist schiefgelaufen. Bitte versuchen Sie es erneut."
+  },
+  "Common": {
+    "currency": "EUR",
+    "sqm": "m²",
+    "viewProperty": "Immobilie Ansehen",
+    "learnMore": "Mehr Erfahren",
+    "readMore": "Weiterlesen",
+    "available": "Verfügbar",
+    "sold": "Verkauft",
+    "reserved": "Reserviert",
+    "new": "Neu",
+    "featured": "Empfohlen",
+    "propertyTypes": {
+      "apartment": "Wohnung",
+      "house": "Haus",
+      "villa": "Villa",
+      "terrain": "Grundstück",
+      "penthouse": "Penthouse",
+      "estate": "Anwesen",
+      "chalet": "Chalet",
+      "mansion": "Herrenhaus",
+      "palace": "Palast"
+    }
+  },
+  "Breadcrumb": {
+    "home": "Startseite",
+    "properties": "Immobilien",
+    "developers": "Bauträger",
+    "cities": "Städte"
+  },
+  "CitiesPage": {
+    "hero": {
+      "title": "Unsere Exklusiven Destinationen",
+      "subtitle": "Entdecken Sie Rumäniens Prestigeträchtigste Städte"
+    },
+    "description": "Entdecken Sie Luxusimmobilien in den feinsten Städten Siebenbürgens. Jede Destination bietet eine einzigartige Mischung aus Erbe, Kultur und modernem Luxusleben.",
+    "card": {
+      "properties": "{count} Immobilien",
+      "developers": "{count} Bauträger"
+    },
+    "cta": {
+      "title": "Suchen Sie Etwas Bestimmtes?",
+      "subtitle": "Unser Team kann Ihnen helfen, die perfekte Immobilie in jeder Stadt zu finden.",
+      "button": "Kontakt Aufnehmen"
+    }
+  },
+  "CityDetail": {
+    "stats": {
+      "properties": "Verfügbare Immobilien",
+      "developers": "Aktive Bauträger",
+      "priceRange": "Preisspanne",
+      "neighborhoods": "Stadtteile"
+    },
+    "developers": {
+      "subtitle": "Unsere Vertrauenswürdigen Partner",
+      "title": "Bauträger in {city}",
+      "viewAll": "Alle Bauträger Ansehen"
+    },
+    "properties": {
+      "subtitle": "Verfügbare Immobilien",
+      "title": "Immobilien in {city}",
+      "allTypes": "Alle",
+      "viewAll": "Alle Immobilien Ansehen",
+      "loadMore": "Mehr Laden",
+      "sort": {
+        "newest": "Neueste",
+        "priceLowHigh": "Preis: Aufsteigend",
+        "priceHighLow": "Preis: Absteigend"
+      },
+      "noResults": "Keine Immobilien entsprechen den gewählten Filtern."
+    },
+    "cta": {
+      "title": "Finden Sie Ihr Zuhause in {city}",
+      "subtitle": "Vereinbaren Sie eine private Besichtigung mit unseren lokalen Experten.",
+      "button": "Besichtigung Vereinbaren"
+    }
+  },
+  "Footer": {
+    "tagline": "Rumäniens Führende Beratung für Luxusimmobilien",
+    "quickLinks": "Schnelllinks",
+    "contact": "Kontaktieren Sie Uns",
+    "followUs": "Folgen Sie Uns",
+    "copyright": "© {year} Transylvania Grand Estate. Alle Rechte vorbehalten.",
+    "privacy": "Datenschutzrichtlinie",
+    "terms": "Nutzungsbedingungen"
+  },
+  "NotFoundPage": {
+    "title": "Seite Nicht Gefunden",
+    "description": "Die gesuchte Immobilie wurde möglicherweise verschoben oder existiert nicht mehr. Lassen Sie uns Ihnen helfen, Ihr Traumzuhause zu finden.",
+    "goHome": "Startseite",
+    "browseProperties": "Immobilien Durchsuchen"
+  }
+}
