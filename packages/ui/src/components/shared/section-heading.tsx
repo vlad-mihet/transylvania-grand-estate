@@ -3,7 +3,7 @@ import { cn } from "@tge/utils";
 interface SectionHeadingProps {
   title: string;
   subtitle?: string;
-  alignment?: "left" | "center";
+  alignment?: "left" | "center" | "right";
   className?: string;
 }
 
@@ -18,6 +18,7 @@ export function SectionHeading({
       className={cn(
         "mb-12 md:mb-16",
         alignment === "center" && "text-center",
+        alignment === "right" && "text-right",
         className
       )}
     >
@@ -29,7 +30,13 @@ export function SectionHeading({
       <h2 className="font-serif text-3xl md:text-4xl lg:text-5xl text-cream">
         {title}
       </h2>
-      <div className="mt-4 mx-auto h-px w-16 bg-gradient-to-r from-transparent via-copper to-transparent" />
+      <div
+        className={cn(
+          "mt-4 h-px w-16 bg-gradient-to-r from-transparent via-copper to-transparent",
+          alignment === "center" && "mx-auto",
+          alignment === "right" && "ml-auto"
+        )}
+      />
     </div>
   );
 }
