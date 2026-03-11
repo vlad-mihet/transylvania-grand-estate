@@ -42,7 +42,7 @@ export default async function CitiesPage() {
     <>
       <HeroSection
         images={[
-          "https://images.unsplash.com/photo-1558642452-9d2a7deb7f62?w=1920&q=80",
+          "/images/nature/mountain-valley.jpg",
         ]}
         title={t("hero.title")}
         subtitle={t("hero.subtitle")}

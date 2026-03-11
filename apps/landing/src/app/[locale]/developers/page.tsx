@@ -29,7 +29,7 @@ export default async function DevelopersPage() {
   return (
     <>
       <HeroSection
-        images={["https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=1920&q=80"]}
+        images={["/images/towns/city-buildings.jpg"]}
         title={t("hero.title")}
         subtitle={t("hero.subtitle")}
         height="medium"

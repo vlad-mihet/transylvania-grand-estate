@@ -88,7 +88,9 @@ async function main() {
   for (const city of cities) {
     await prisma.city.upsert({
       where: { slug: city.slug },
-      update: {},
+      update: {
+        image: city.image,
+      },
       create: {
         name: city.name,
         slug: city.slug,

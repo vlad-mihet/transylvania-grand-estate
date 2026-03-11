@@ -17,7 +17,7 @@ export function AboutPreview() {
           <ScrollReveal direction="left">
             <div className="relative aspect-[4/3] rounded-2xl overflow-hidden">
               <Image
-                src="https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=1200&q=80"
+                src="/images/interiors/villa-exterior.jpg"
                 alt="Luxury property"
                 fill
                 className="object-cover"

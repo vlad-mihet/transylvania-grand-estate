@@ -22,7 +22,7 @@ export default async function ContactPage() {
   return (
     <>
       <HeroSection
-        images={["https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=1920&q=80"]}
+        images={["/images/interiors/modern-interior.jpg"]}
         title={t("hero.title")}
         subtitle={t("hero.subtitle")}
       />
