@@ -2,10 +2,11 @@ import { getTranslations } from "next-intl/server";
 import { fetchApi } from "@/lib/api";
 import { mapApiProperties } from "@/lib/mappers";
 import type { City, Developer, Testimonial } from "@tge/types";
-import { HeroSection } from "@/components/sections/hero-section";
+import { VideoHeroSection } from "@/components/sections/video-hero-section";
 import { FeaturedProperties } from "@/components/sections/featured-properties";
 import { ZigZagShowcase } from "@/components/sections/zigzag-showcase";
-import { StatsSection } from "@/components/sections/stats-section";
+// import { StatsSection } from "@/components/sections/stats-section";
+import { InvestTransylvania } from "@/components/sections/invest-transylvania";
 import { CityShowcase } from "@/components/sections/city-showcase";
 import { AboutPreview } from "@/components/sections/about-preview";
 import { TestimonialsSection } from "@/components/sections/testimonials-section";
@@ -25,17 +26,17 @@ export default async function HomePage() {
 
   const showcaseItems = [
     {
-      image: "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=1200&q=80",
+      image: "/images/interiors/villa-pool.jpg",
       title: t("showcase.heritage.title"),
       description: t("showcase.heritage.description"),
     },
     {
-      image: "https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=1200&q=80",
+      image: "/images/interiors/modern-interior.jpg",
       title: t("showcase.curated.title"),
       description: t("showcase.curated.description"),
     },
     {
-      image: "https://images.unsplash.com/photo-1600566753190-17f0baa2a6c3?w=1200&q=80",
+      image: "/images/interiors/cozy-living.jpg",
       title: t("showcase.service.title"),
       description: t("showcase.service.description"),
     },
@@ -43,13 +44,9 @@ export default async function HomePage() {
 
   return (
     <>
-      <HeroSection
-        images={[
-          "https://images.unsplash.com/photo-1564013799919-ab600027ffc6?w=1920&q=80",
-          "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=1920&q=80",
-          "https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=1920&q=80",
-          "https://images.unsplash.com/photo-1613490493576-7fde63acd811?w=1920&q=80",
-        ]}
+      <VideoHeroSection
+        videoSrc="/videos/hero.mp4"
+        posterImage="/images/interiors/mansion-exterior.jpg"
         title={t("hero.title")}
         subtitle={t("hero.subtitle")}
         ctaText={t("hero.cta")}
@@ -61,7 +58,8 @@ export default async function HomePage() {
         subtitle={t("showcase.subtitle")}
         items={showcaseItems}
       />
-      <StatsSection />
+      {/* <StatsSection /> */}
+      <InvestTransylvania />
       <CityShowcase cities={cities} />
       <DeveloperShowcase developers={developers} />
       <AboutPreview />

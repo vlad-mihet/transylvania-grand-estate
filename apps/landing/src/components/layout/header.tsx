@@ -120,9 +120,9 @@ export function Header({ developers }: HeaderProps) {
       {/* Main navigation bar */}
       <Container className="max-w-screen-2xl">
         {/* Desktop nav — logo left, nav center, CTA right */}
-        <div className="hidden xl:grid grid-cols-[auto_1fr_auto] items-center h-20">
+        <div className="hidden xl:grid grid-cols-[1fr_auto_1fr] items-center h-20">
           {/* Left: logo */}
-          <Link href="/" className="flex items-center gap-4 group pr-8">
+          <Link href="/" className="flex items-center gap-4 group">
             <span className="font-serif xl:text-[22px] 2xl:text-[26px] font-medium text-cream tracking-[0.03em] leading-none whitespace-nowrap transition-colors duration-300">
               Transylvania
               <span className="text-copper logo-glow group-hover:text-copper-light">
@@ -132,7 +132,7 @@ export function Header({ developers }: HeaderProps) {
           </Link>
 
           {/* Center: navigation */}
-          <div className="flex items-center justify-center xl:gap-4 2xl:gap-8">
+          <div className="flex items-center justify-center xl:gap-3 2xl:gap-8">
             <NavDropdown
               label={t("forSale")}
               isActive={activeMenu === "forSale"}
@@ -154,7 +154,7 @@ export function Header({ developers }: HeaderProps) {
           </div>
 
           {/* Right: CTA */}
-          <div className="flex items-center justify-end pl-8">
+          <div className="flex items-center justify-end">
             <InquiryTrigger context={{ type: "general" }}>
               <AccentButton
                 accentVariant="solid"

@@ -49,8 +49,8 @@ export default async function LocaleLayout({
   }
 
   return (
-    <html lang={locale} className={`${playfair.variable} ${inter.variable}`}>
-      <body className="font-sans antialiased bg-background text-foreground">
+    <html lang={locale} className={`${playfair.variable} ${inter.variable}`} suppressHydrationWarning>
+      <body className="font-sans antialiased bg-background text-foreground" suppressHydrationWarning>
         <NextIntlClientProvider messages={messages}>
           <InquiryProvider>
             <Header developers={developers} />

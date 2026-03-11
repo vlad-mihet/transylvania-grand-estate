@@ -16,7 +16,7 @@ export function SimilarProperties({ properties }: SimilarPropertiesProps) {
   if (properties.length === 0) return null;
 
   return (
-    <section className="section-padding bg-[#0f0a04]">
+    <section className="section-padding bg-background">
       <Container>
         <SectionHeading title={t("title")} subtitle={t("subtitle")} />
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
