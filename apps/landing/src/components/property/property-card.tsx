@@ -56,7 +56,7 @@ export function PropertyCard({ property }: PropertyCardProps) {
             </span>
           </div>
           <div className="border-t border-copper/[0.06] pt-4 mt-2">
-            <PropertySpecs specs={property.specs} variant="compact" />
+            <PropertySpecs specs={property.specs} propertyType={property.type} variant="compact" />
           </div>
         </CardContent>
       </Card>

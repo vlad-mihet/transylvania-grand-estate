@@ -1,17 +1,18 @@
 "use client";
 
 import { useTranslations } from "next-intl";
-import { PropertySpecs as PropertySpecsType } from "@tge/types";
-import { Bed, Bath, Ruler, Layers, Calendar, Car } from "lucide-react";
+import { PropertySpecs as PropertySpecsType, PropertyType } from "@tge/types";
+import { Bed, Bath, Ruler, Layers, Calendar, Car, LandPlot } from "lucide-react";
 import { cn } from "@tge/utils";
 
 interface PropertySpecsProps {
   specs: PropertySpecsType;
+  propertyType?: PropertyType;
   variant?: "compact" | "full";
   className?: string;
 }
 
-const specConfig = [
+const defaultSpecConfig = [
   { key: "bedrooms" as const, icon: Bed, labelKey: "bedrooms" as const, suffix: "" },
   { key: "bathrooms" as const, icon: Bath, labelKey: "bathrooms" as const, suffix: "" },
   { key: "area" as const, icon: Ruler, labelKey: "area" as const, suffix: " m²" },
@@ -20,14 +21,23 @@ const specConfig = [
   { key: "garage" as const, icon: Car, labelKey: "garage" as const, suffix: "" },
 ];
 
+const terrainSpecConfig = [
+  { key: "landArea" as const, icon: LandPlot, labelKey: "landArea" as const, suffix: " m²" },
+  { key: "area" as const, icon: Ruler, labelKey: "area" as const, suffix: " m²" },
+];
+
 export function PropertySpecs({
   specs,
+  propertyType,
   variant = "compact",
   className,
 }: PropertySpecsProps) {
   const t = useTranslations("PropertyDetail.specs");
 
-  const compactKeys = ["bedrooms", "bathrooms", "area"];
+  const isTerrain = propertyType === "terrain";
+  const specConfig = isTerrain ? terrainSpecConfig : defaultSpecConfig;
+
+  const compactKeys = isTerrain ? ["landArea", "area"] : ["bedrooms", "bathrooms", "area"];
   const displaySpecs = variant === "compact"
     ? specConfig.filter((s) => compactKeys.includes(s.key))
     : specConfig;
@@ -42,7 +52,7 @@ export function PropertySpecs({
     >
       {displaySpecs.map(({ key, icon: Icon, labelKey, suffix }) => {
         const value = specs[key as keyof PropertySpecsType];
-        if (value === undefined || value === false) return null;
+        if (value === undefined || value === false || value === 0 || value === null) return null;
 
         return (
           <div key={key} className={cn(

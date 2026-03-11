@@ -29,7 +29,7 @@ import {
   Separator,
 } from "@tge/ui";
 import { Loader2 } from "lucide-react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { apiClient } from "@/lib/api-client";
 import { useTranslations } from "next-intl";
@@ -96,6 +96,19 @@ export function PropertyForm({
       ...defaultValues,
     },
   });
+
+  const watchedType = form.watch("type");
+  const isTerrain = watchedType === "terrain";
+
+  useEffect(() => {
+    if (isTerrain) {
+      form.setValue("bedrooms", 0);
+      form.setValue("bathrooms", 0);
+      form.setValue("floors", 0);
+      form.setValue("yearBuilt", 0);
+      form.setValue("garage", null);
+    }
+  }, [isTerrain, form]);
 
   const { data: developers } = useQuery({
     queryKey: ["developers-select"],
@@ -340,14 +353,18 @@ export function PropertyForm({
         </CardHeader>
         <CardContent>
           <div className="grid gap-4 sm:grid-cols-3 lg:grid-cols-4">
-            <div className="space-y-2">
-              <Label>{t("bedrooms")}</Label>
-              <Input type="number" {...form.register("bedrooms")} />
-            </div>
-            <div className="space-y-2">
-              <Label>{t("bathrooms")}</Label>
-              <Input type="number" {...form.register("bathrooms")} />
-            </div>
+            {!isTerrain && (
+              <div className="space-y-2">
+                <Label>{t("bedrooms")}</Label>
+                <Input type="number" {...form.register("bedrooms")} />
+              </div>
+            )}
+            {!isTerrain && (
+              <div className="space-y-2">
+                <Label>{t("bathrooms")}</Label>
+                <Input type="number" {...form.register("bathrooms")} />
+              </div>
+            )}
             <div className="space-y-2">
               <Label>{t("area")}</Label>
               <Input type="number" {...form.register("area")} />
@@ -356,18 +373,24 @@ export function PropertyForm({
               <Label>{t("landArea")}</Label>
               <Input type="number" {...form.register("landArea")} />
             </div>
-            <div className="space-y-2">
-              <Label>{t("floors")}</Label>
-              <Input type="number" {...form.register("floors")} />
-            </div>
-            <div className="space-y-2">
-              <Label>{t("yearBuilt")}</Label>
-              <Input type="number" {...form.register("yearBuilt")} />
-            </div>
-            <div className="space-y-2">
-              <Label>{t("garageSpots")}</Label>
-              <Input type="number" {...form.register("garage")} />
-            </div>
+            {!isTerrain && (
+              <div className="space-y-2">
+                <Label>{t("floors")}</Label>
+                <Input type="number" {...form.register("floors")} />
+              </div>
+            )}
+            {!isTerrain && (
+              <div className="space-y-2">
+                <Label>{t("yearBuilt")}</Label>
+                <Input type="number" {...form.register("yearBuilt")} />
+              </div>
+            )}
+            {!isTerrain && (
+              <div className="space-y-2">
+                <Label>{t("garageSpots")}</Label>
+                <Input type="number" {...form.register("garage")} />
+              </div>
+            )}
             <label className="flex items-center gap-2 text-sm pt-7">
               <Switch
                 checked={form.watch("pool")}

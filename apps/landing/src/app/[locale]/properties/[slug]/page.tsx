@@ -123,6 +123,7 @@ export default async function PropertyDetailPage({
 
               <PropertySpecs
                 specs={property.specs}
+                propertyType={property.type}
                 variant="full"
                 className="mb-8"
               />
@@ -156,40 +157,67 @@ export default async function PropertyDetailPage({
                 </p>
 
                 <div className="space-y-3 mb-6">
-                  <div className="flex justify-between text-sm">
-                    <span className="text-cream-muted">
-                      {t("specs.area")}
-                    </span>
-                    <span className="text-cream">
-                      {formatArea(property.specs.area, locale)}
-                    </span>
-                  </div>
-                  {property.specs.landArea && (
-                    <div className="flex justify-between text-sm">
-                      <span className="text-cream-muted">
-                        {t("specs.landArea")}
-                      </span>
-                      <span className="text-cream">
-                        {formatArea(property.specs.landArea, locale)}
-                      </span>
-                    </div>
+                  {property.type === "terrain" ? (
+                    <>
+                      {property.specs.landArea && (
+                        <div className="flex justify-between text-sm">
+                          <span className="text-cream-muted">
+                            {t("specs.landArea")}
+                          </span>
+                          <span className="text-cream">
+                            {formatArea(property.specs.landArea, locale)}
+                          </span>
+                        </div>
+                      )}
+                      {property.specs.area > 0 && (
+                        <div className="flex justify-between text-sm">
+                          <span className="text-cream-muted">
+                            {t("specs.area")}
+                          </span>
+                          <span className="text-cream">
+                            {formatArea(property.specs.area, locale)}
+                          </span>
+                        </div>
+                      )}
+                    </>
+                  ) : (
+                    <>
+                      <div className="flex justify-between text-sm">
+                        <span className="text-cream-muted">
+                          {t("specs.area")}
+                        </span>
+                        <span className="text-cream">
+                          {formatArea(property.specs.area, locale)}
+                        </span>
+                      </div>
+                      {property.specs.landArea && (
+                        <div className="flex justify-between text-sm">
+                          <span className="text-cream-muted">
+                            {t("specs.landArea")}
+                          </span>
+                          <span className="text-cream">
+                            {formatArea(property.specs.landArea, locale)}
+                          </span>
+                        </div>
+                      )}
+                      <div className="flex justify-between text-sm">
+                        <span className="text-cream-muted">
+                          {t("specs.bedrooms")}
+                        </span>
+                        <span className="text-cream">
+                          {property.specs.bedrooms}
+                        </span>
+                      </div>
+                      <div className="flex justify-between text-sm">
+                        <span className="text-cream-muted">
+                          {t("specs.bathrooms")}
+                        </span>
+                        <span className="text-cream">
+                          {property.specs.bathrooms}
+                        </span>
+                      </div>
+                    </>
                   )}
-                  <div className="flex justify-between text-sm">
-                    <span className="text-cream-muted">
-                      {t("specs.bedrooms")}
-                    </span>
-                    <span className="text-cream">
-                      {property.specs.bedrooms}
-                    </span>
-                  </div>
-                  <div className="flex justify-between text-sm">
-                    <span className="text-cream-muted">
-                      {t("specs.bathrooms")}
-                    </span>
-                    <span className="text-cream">
-                      {property.specs.bathrooms}
-                    </span>
-                  </div>
                 </div>
 
                 <div className="space-y-3">
