@@ -134,6 +134,16 @@ npx prisma migrate dev  # Create/apply migrations
 npx prisma db seed      # Seed database
 ```
 
+## Documentation
+
+For detailed guides beyond setup:
+
+- [Architecture Overview](docs/ARCHITECTURE.md) — System design, data flow, and conventions
+- [Authentication](docs/AUTH.md) — JWT auth flow, roles, and how the admin BFF proxy works
+- [Admin Guide](docs/ADMIN-GUIDE.md) — CRUD patterns, forms, and adding new entities
+- [Landing Guide](docs/LANDING-GUIDE.md) — Server-side data fetching, templates, and i18n
+- **API Reference** — Run the API and visit `http://localhost:3333/api/docs` (Swagger)
+
 ## Production
 
 See `.env.production.example` at the project root for all required production variables (R2 storage, JWT secrets, CORS, etc.).
