@@ -62,7 +62,7 @@
     "about": {
       "subtitle": "Despre Transylvania Grand Estate",
       "title": "Redefinim Imobiliarele de Lux în România",
-      "description": "Cu peste un deceniu de expertiză, suntem consultanța imobiliară de lux premier din România, conectând cumpărători exigenți cu proprietăți excepționale din Transilvania și nu numai.",
+      "description": "Suntem consultanța imobiliară de lux premier din România, conectând cumpărători exigenți cu proprietăți excepționale din Transilvania și nu numai.",
       "cta": "Povestea Noastră"
     },
     "testimonials": {
@@ -73,6 +73,30 @@
       "subtitle": "Partenerii Noștri",
       "title": "Dezvoltatori Parteneri de Încredere",
       "viewAll": "Vezi Toți Dezvoltatorii"
+    },
+    "investTransylvania": {
+      "subtitle": "Oportunitate de Investiție",
+      "title": "Investește în Transilvania",
+      "description": "Descoperă de ce Transilvania devine una dintre cele mai atractive destinații de investiții imobiliare din Europa.",
+      "cta": "Explorează Transilvania",
+      "slides": {
+        "nature": {
+          "title": "Frumusețe Naturală Impresionantă",
+          "description": "Coline ondulate, păduri seculare și maiestuoșii Munți Carpați creează un cadru incomparabil pentru viața de lux."
+        },
+        "heritage": {
+          "title": "Patrimoniu Cultural Bogat",
+          "description": "Cetăți medievale, biserici fortificate și secole de istorie oferă un fundal unic pentru imobiliarele premium."
+        },
+        "market": {
+          "title": "Piață de Investiții în Creștere",
+          "description": "O economie în creștere, membru UE și interesul internațional tot mai mare fac din Transilvania o alegere inteligentă de investiție."
+        },
+        "lifestyle": {
+          "title": "Calitate Excepțională a Vieții",
+          "description": "Gastronomie de clasă mondială, scene culturale vibrante și natură neîntinată se combină pentru a oferi un stil de viață de invidiat."
+        }
+      }
     },
     "cta": {
       "title": "Pregătit Să Găsești Proprietatea Visurilor Tale?",
@@ -241,12 +265,12 @@
   "AboutPage": {
     "hero": {
       "title": "Povestea Noastră",
-      "subtitle": "Un Deceniu de Excelență în Imobiliare de Lux"
+      "subtitle": "Un Nou Standard în Imobiliare de Lux"
     },
     "story": {
       "founding": {
         "title": "Fondat din Pasiune",
-        "description": "Înființat în 2014, Transylvania Grand Estate s-a născut dintr-o viziune de a transforma peisajul imobiliar de lux din România. Fondatorii noștri au recunoscut potențialul neexploatat al patrimoniului arhitectural al Transilvaniei și au pornit să creeze o consultanță care potrivește proprietăți de clasă mondială cu cumpărători exigenți."
+        "description": "Transylvania Grand Estate s-a născut dintr-o viziune de a transforma peisajul imobiliar de lux din România. Fondatorii noștri au recunoscut potențialul neexploatat al patrimoniului arhitectural al Transilvaniei și au pornit să creeze o consultanță care potrivește proprietăți de clasă mondială cu cumpărători exigenți."
       },
       "mission": {
         "title": "Misiunea Noastră",
@@ -408,6 +432,130 @@
       "title": "Găsește-ți Locuința în {city}",
       "subtitle": "Programează o vizionare privată cu experții noștri locali.",
       "button": "Programează Vizionare"
+    }
+  },
+  "TransylvaniaPage": {
+    "hero": {
+      "headline": "Unde Legendele Prind Viață",
+      "brandLine": "Transylvania Grand Estate"
+    },
+    "narrative": {
+      "label": "O Invitație",
+      "manifesto": "De secole, Transilvania și-a păzit comorile în spatele pădurilor străvechi și al trecătorilor montane. Deschidem porțile pentru câțiva aleși \u2014 cei care înțeleg că adevăratul lux nu se cumpără, ci se moștenește de la pământul însuși.",
+      "teaser": "Descoperă ce se ascunde dincolo."
+    },
+    "story": {
+      "chapters": {
+        "nature": {
+          "title": "Înălțimile Carpatine",
+          "body": "Unde păduri virgine întâlnesc pajiști alpine, iar râurile sculptează văi neatinse de timp. Acesta este cadrul unei vieți fără compromis."
+        },
+        "heritage": {
+          "title": "Castele & Cetăți",
+          "body": "Șapte secole de biserici fortificate, cetăți medievale și moșii nobiliare. Istoria aici nu este conservată sub sticlă \u2014 este trăită."
+        },
+        "market": {
+          "title": "O Frontieră Emergentă",
+          "body": "Membru UE, apreciere cu două cifre și un reflector global care se îndreaptă spre est. Cei mai perspicace investitori sunt deja aici."
+        },
+        "lifestyle": {
+          "title": "O Viață Rafinată",
+          "body": "Gastronomie de calibru Michelin, regiuni viticole de clasă mondială și sezoane culturale rivalizând orice capitală europeană. Aceasta nu este o retragere \u2014 este o sosire."
+        }
+      }
+    },
+    "stats": {
+      "propertiesSold": "Proprietăți Vândute",
+      "yearsExperience": "Ani de Excelență",
+      "citiesServed": "Orașe Deservite",
+      "portfolioValue": "Valoare Portofoliu (M\u00a0EUR)"
+    },
+    "collection": {
+      "subtitle": "Colecția",
+      "title": "Domenii de Distincție",
+      "viewPortfolio": "Vezi Portofoliul Complet",
+      "revealMore": "Descoperă Mai Multe"
+    },
+    "destinations": {
+      "subtitle": "Destinații",
+      "title": "Tărâmuri de Oportunitate",
+      "estatesAwait": "{count} domenii te așteaptă"
+    },
+    "partners": {
+      "subtitle": "Parteneri de Încredere",
+      "explore": "Explorează Partenerii Noștri Dezvoltatori"
+    },
+    "testimonials": {
+      "label": "Voci de Distincție"
+    },
+    "brand": {
+      "label": "Etosul Nostru",
+      "title": "Redefinim Ce Înseamnă Luxul",
+      "description": "Nu vindem doar proprietăți. Curăm moșteniri \u2014 conectând indivizi vizionari cu domenii care vor defini familiile lor pentru generații. În Transilvania, am găsit un tărâm unde extraordinarul este încă posibil.",
+      "cta": "Descoperă Povestea Noastră"
+    },
+    "landmarks": {
+      "subtitle": "Repere Iconice",
+      "title": "Unde Istoria Stă de Veghe",
+      "pairs": {
+        "strongholds": {
+          "theme": "Fortărețele",
+          "primary": {
+            "name": "Castelul Bran",
+            "tagline": "Unde legenda și piatra devin una",
+            "location": "Județul Brașov"
+          },
+          "secondary": {
+            "name": "Castelul Corvinilor",
+            "tagline": "Grandoare gotică deasupra Zlașului",
+            "location": "Hunedoara"
+          }
+        },
+        "crowns": {
+          "theme": "Coroanele",
+          "primary": {
+            "name": "Castelul Peleș",
+            "tagline": "O capodoperă regală între pinii Carpaților",
+            "location": "Sinaia"
+          },
+          "secondary": {
+            "name": "Biserica Neagră",
+            "tagline": "Șapte secole de rezonanță sacră",
+            "location": "Brașov"
+          }
+        },
+        "timecapsules": {
+          "theme": "Capsulele Timpului",
+          "primary": {
+            "name": "Cetatea Sighișoara",
+            "tagline": "Ultima cetate medievală locuită din Europa",
+            "location": "Sighișoara"
+          },
+          "secondary": {
+            "name": "Biserica Fortificată Biertan",
+            "tagline": "Credință saxonă, sculptată în colină",
+            "location": "Biertan"
+          }
+        },
+        "wonders": {
+          "theme": "Minunile",
+          "primary": {
+            "name": "Transfăgărășan",
+            "tagline": "Cel mai spectaculos drum montan din lume",
+            "location": "Munții Făgăraș"
+          },
+          "secondary": {
+            "name": "Salina Turda",
+            "tagline": "O catedrală subterană de lumină",
+            "location": "Turda"
+          }
+        }
+      }
+    },
+    "closing": {
+      "headline": "Moștenirea Ta Te Așteaptă",
+      "subline": "Aranjează o consultație privată cu echipa noastră.",
+      "cta": "Solicită o Vizionare Privată"
     }
   },
   "Footer": {

@@ -62,7 +62,7 @@
     "about": {
       "subtitle": "À Propos de Transylvania Grand Estate",
       "title": "Redéfinir l'Immobilier de Luxe en Roumanie",
-      "description": "Avec plus d'une décennie d'expertise, nous sommes le premier cabinet de conseil en immobilier de luxe en Roumanie, mettant en relation des acheteurs exigeants avec des propriétés exceptionnelles à travers la Transylvanie et au-delà.",
+      "description": "Nous sommes le premier cabinet de conseil en immobilier de luxe en Roumanie, mettant en relation des acheteurs exigeants avec des propriétés exceptionnelles à travers la Transylvanie et au-delà.",
       "cta": "Notre Histoire"
     },
     "testimonials": {
@@ -73,6 +73,30 @@
       "subtitle": "Nos Partenaires",
       "title": "Promoteurs Partenaires de Confiance",
       "viewAll": "Voir Tous les Promoteurs"
+    },
+    "investTransylvania": {
+      "subtitle": "Opportunité d'Investissement",
+      "title": "Investir en Transylvanie",
+      "description": "Découvrez pourquoi la Transylvanie devient l'une des destinations d'investissement immobilier les plus attractives d'Europe.",
+      "cta": "Explorer la Transylvanie",
+      "slides": {
+        "nature": {
+          "title": "Beauté Naturelle Époustouflante",
+          "description": "Collines vallonnées, forêts ancestrales et majestueux Carpates créent un cadre incomparable pour une vie de luxe."
+        },
+        "heritage": {
+          "title": "Riche Patrimoine Culturel",
+          "description": "Citadelles médiévales, églises fortifiées et des siècles d'histoire offrent un décor unique pour l'immobilier premium."
+        },
+        "market": {
+          "title": "Marché d'Investissement Émergent",
+          "description": "Une économie en croissance, l'adhésion à l'UE et l'intérêt international croissant font de la Transylvanie un choix d'investissement judicieux."
+        },
+        "lifestyle": {
+          "title": "Qualité de Vie Exceptionnelle",
+          "description": "Gastronomie de renommée mondiale, scènes culturelles dynamiques et nature préservée se combinent pour offrir un style de vie enviable."
+        }
+      }
     },
     "cta": {
       "title": "Prêt à Trouver la Propriété de Vos Rêves ?",
@@ -241,12 +265,12 @@
   "AboutPage": {
     "hero": {
       "title": "Notre Histoire",
-      "subtitle": "Une Décennie d'Excellence en Immobilier de Luxe"
+      "subtitle": "Une Nouvelle Référence en Immobilier de Luxe"
     },
     "story": {
       "founding": {
         "title": "Fondé sur la Passion",
-        "description": "Fondé en 2014, Transylvania Grand Estate est né d'une vision de transformer le paysage de l'immobilier de luxe en Roumanie. Nos fondateurs ont reconnu le potentiel inexploité du patrimoine architectural de la Transylvanie et ont entrepris de créer un cabinet qui associe des propriétés de classe mondiale à des acheteurs exigeants."
+        "description": "Transylvania Grand Estate est né d'une vision de transformer le paysage de l'immobilier de luxe en Roumanie. Nos fondateurs ont reconnu le potentiel inexploité du patrimoine architectural de la Transylvanie et ont entrepris de créer un cabinet qui associe des propriétés de classe mondiale à des acheteurs exigeants."
       },
       "mission": {
         "title": "Notre Mission",
@@ -408,6 +432,130 @@
       "title": "Trouvez Votre Maison à {city}",
       "subtitle": "Planifiez une visite privée avec nos experts locaux.",
       "button": "Planifier une Visite"
+    }
+  },
+  "TransylvaniaPage": {
+    "hero": {
+      "headline": "Là Où Vivent les Légendes",
+      "brandLine": "Transylvania Grand Estate"
+    },
+    "narrative": {
+      "label": "Une Invitation",
+      "manifesto": "Depuis des siècles, la Transylvanie garde ses trésors derrière des forêts ancestrales et des cols montagneux. Nous ouvrons les portes à quelques élus \u2014 ceux qui comprennent que le vrai luxe ne s'achète pas, mais s'hérite de la terre elle-même.",
+      "teaser": "Découvrez ce qui se cache au-delà."
+    },
+    "story": {
+      "chapters": {
+        "nature": {
+          "title": "Les Hauts Plateaux des Carpates",
+          "body": "Là où des forêts vierges rencontrent des prairies alpines, et où les rivières sculptent des vallées intactes par le temps. C'est le cadre d'une vie sans compromis."
+        },
+        "heritage": {
+          "title": "Châteaux & Citadelles",
+          "body": "Sept siècles d'églises fortifiées, de citadelles médiévales et de domaines nobiliaires. Ici, l'histoire n'est pas conservée sous verre \u2014 elle se vit."
+        },
+        "market": {
+          "title": "Une Frontière Émergente",
+          "body": "Membre de l'UE, appréciation à deux chiffres et un projecteur mondial tourné vers l'est. Les investisseurs les plus avisés sont déjà ici."
+        },
+        "lifestyle": {
+          "title": "Une Vie Raffinée",
+          "body": "Gastronomie de calibre Michelin, régions viticoles de classe mondiale et saisons culturelles rivalisant avec toute capitale européenne. Ce n'est pas une retraite \u2014 c'est une arrivée."
+        }
+      }
+    },
+    "stats": {
+      "propertiesSold": "Propriétés Vendues",
+      "yearsExperience": "Années d'Excellence",
+      "citiesServed": "Villes Desservies",
+      "portfolioValue": "Valeur du Portfolio (M\u00a0EUR)"
+    },
+    "collection": {
+      "subtitle": "La Collection",
+      "title": "Domaines de Distinction",
+      "viewPortfolio": "Voir le Portfolio Complet",
+      "revealMore": "Découvrir Plus"
+    },
+    "destinations": {
+      "subtitle": "Destinations",
+      "title": "Terres d'Opportunité",
+      "estatesAwait": "{count} domaines vous attendent"
+    },
+    "partners": {
+      "subtitle": "Partenaires de Confiance",
+      "explore": "Découvrir Nos Promoteurs Partenaires"
+    },
+    "testimonials": {
+      "label": "Voix de Distinction"
+    },
+    "brand": {
+      "label": "Notre Éthique",
+      "title": "Redéfinir le Sens du Luxe",
+      "description": "Nous ne vendons pas simplement des propriétés. Nous curons des héritages \u2014 reliant des individus visionnaires à des domaines qui définiront leurs familles pour des générations. En Transylvanie, nous avons trouvé une terre où l'extraordinaire est encore possible.",
+      "cta": "Découvrir Notre Histoire"
+    },
+    "landmarks": {
+      "subtitle": "Monuments Emblématiques",
+      "title": "Là Où l'Histoire Demeure",
+      "pairs": {
+        "strongholds": {
+          "theme": "Les Forteresses",
+          "primary": {
+            "name": "Château de Bran",
+            "tagline": "Là où la légende et la pierre ne font qu'un",
+            "location": "Comté de Brașov"
+          },
+          "secondary": {
+            "name": "Château des Corvins",
+            "tagline": "Grandeur gothique au-dessus du Zlaști",
+            "location": "Hunedoara"
+          }
+        },
+        "crowns": {
+          "theme": "Les Couronnes",
+          "primary": {
+            "name": "Château de Peleș",
+            "tagline": "Un chef-d'œuvre royal parmi les pins des Carpates",
+            "location": "Sinaia"
+          },
+          "secondary": {
+            "name": "L'Église Noire",
+            "tagline": "Sept siècles de résonance sacrée",
+            "location": "Brașov"
+          }
+        },
+        "timecapsules": {
+          "theme": "Les Capsules Temporelles",
+          "primary": {
+            "name": "Citadelle de Sighișoara",
+            "tagline": "La dernière citadelle médiévale habitée d'Europe",
+            "location": "Sighișoara"
+          },
+          "secondary": {
+            "name": "Église Fortifiée de Biertan",
+            "tagline": "La foi saxonne, sculptée dans la colline",
+            "location": "Biertan"
+          }
+        },
+        "wonders": {
+          "theme": "Les Merveilles",
+          "primary": {
+            "name": "Route Transfăgărășan",
+            "tagline": "La route de montagne la plus spectaculaire au monde",
+            "location": "Monts Făgăraș"
+          },
+          "secondary": {
+            "name": "Mine de Sel de Turda",
+            "tagline": "Une cathédrale souterraine de lumière",
+            "location": "Turda"
+          }
+        }
+      }
+    },
+    "closing": {
+      "headline": "Votre Héritage Vous Attend",
+      "subline": "Organisez une consultation privée avec notre équipe.",
+      "cta": "Demander une Visite Privée"
     }
   },
   "Footer": {

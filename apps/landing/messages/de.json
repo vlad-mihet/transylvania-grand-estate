@@ -62,7 +62,7 @@
     "about": {
       "subtitle": "Über Transylvania Grand Estate",
       "title": "Luxusimmobilien in Rumänien Neu Definiert",
-      "description": "Mit über einem Jahrzehnt Expertise sind wir Rumäniens führende Beratung für Luxusimmobilien und verbinden anspruchsvolle Käufer mit außergewöhnlichen Immobilien in Siebenbürgen und darüber hinaus.",
+      "description": "Wir sind Rumäniens führende Beratung für Luxusimmobilien und verbinden anspruchsvolle Käufer mit außergewöhnlichen Immobilien in Siebenbürgen und darüber hinaus.",
       "cta": "Unsere Geschichte"
     },
     "testimonials": {
@@ -73,6 +73,30 @@
       "subtitle": "Unsere Partner",
       "title": "Vertrauenswürdige Bauträgerpartner",
       "viewAll": "Alle Bauträger Ansehen"
+    },
+    "investTransylvania": {
+      "subtitle": "Investitionsmöglichkeit",
+      "title": "Investieren in Siebenbürgen",
+      "description": "Entdecken Sie, warum Siebenbürgen zu einer der attraktivsten Immobilien-Investitionsdestinationen Europas wird.",
+      "cta": "Siebenbürgen Entdecken",
+      "slides": {
+        "nature": {
+          "title": "Atemberaubende Naturschönheit",
+          "description": "Sanfte Hügel, uralte Wälder und die majestätischen Karpaten schaffen einen unvergleichlichen Rahmen für luxuriöses Wohnen."
+        },
+        "heritage": {
+          "title": "Reiches Kulturerbe",
+          "description": "Mittelalterliche Zitadellen, Kirchenburgen und Jahrhunderte Geschichte bieten eine einzigartige Kulisse für Premium-Immobilien."
+        },
+        "market": {
+          "title": "Aufstrebender Investitionsmarkt",
+          "description": "Eine wachsende Wirtschaft, EU-Mitgliedschaft und zunehmendes internationales Interesse machen Siebenbürgen zu einer klugen Investitionswahl."
+        },
+        "lifestyle": {
+          "title": "Außergewöhnliche Lebensqualität",
+          "description": "Weltklasse-Gastronomie, lebendige Kulturszenen und unberührte Natur vereinen sich zu einem beneidenswerten Lebensstil."
+        }
+      }
     },
     "cta": {
       "title": "Bereit, Ihre Traumimmobilie zu Finden?",
@@ -241,12 +265,12 @@
   "AboutPage": {
     "hero": {
       "title": "Unsere Geschichte",
-      "subtitle": "Ein Jahrzehnt Exzellenz im Luxusimmobilienmarkt"
+      "subtitle": "Ein Neuer Maßstab im Luxusimmobilienmarkt"
     },
     "story": {
       "founding": {
         "title": "Gegründet aus Leidenschaft",
-        "description": "Gegründet im Jahr 2014, entstand Transylvania Grand Estate aus der Vision, Rumäniens Luxusimmobilienmarkt zu transformieren. Unsere Gründer erkannten das ungenutzte Potenzial des architektonischen Erbes Siebenbürgens und machten sich daran, eine Beratung zu schaffen, die erstklassige Immobilien mit anspruchsvollen Käufern zusammenbringt."
+        "description": "Transylvania Grand Estate entstand aus der Vision, Rumäniens Luxusimmobilienmarkt zu transformieren. Unsere Gründer erkannten das ungenutzte Potenzial des architektonischen Erbes Siebenbürgens und machten sich daran, eine Beratung zu schaffen, die erstklassige Immobilien mit anspruchsvollen Käufern zusammenbringt."
       },
       "mission": {
         "title": "Unsere Mission",
@@ -408,6 +432,130 @@
       "title": "Finden Sie Ihr Zuhause in {city}",
       "subtitle": "Vereinbaren Sie eine private Besichtigung mit unseren lokalen Experten.",
       "button": "Besichtigung Vereinbaren"
+    }
+  },
+  "TransylvaniaPage": {
+    "hero": {
+      "headline": "Wo Legenden Leben",
+      "brandLine": "Transylvania Grand Estate"
+    },
+    "narrative": {
+      "label": "Eine Einladung",
+      "manifesto": "Seit Jahrhunderten hütet Siebenbürgen seine Schätze hinter uralten Wäldern und Gebirgspässen. Wir öffnen die Tore für wenige Auserwählte \u2014 jene, die verstehen, dass wahrer Luxus nicht gekauft, sondern vom Land selbst geerbt wird.",
+      "teaser": "Entdecken Sie, was dahinter liegt."
+    },
+    "story": {
+      "chapters": {
+        "nature": {
+          "title": "Das Karpaten-Hochland",
+          "body": "Wo unberührte Wälder auf Almwiesen treffen und Flüsse Täler formen, die von der Zeit unberührt sind. Dies ist die Kulisse für ein Leben ohne Kompromisse."
+        },
+        "heritage": {
+          "title": "Burgen & Zitadellen",
+          "body": "Sieben Jahrhunderte Kirchenburgen, mittelalterliche Zitadellen und Adelsgüter. Geschichte wird hier nicht hinter Glas bewahrt \u2014 sie wird gelebt."
+        },
+        "market": {
+          "title": "Eine Aufstrebende Grenze",
+          "body": "EU-Mitgliedschaft, zweistellige Wertsteigerung und ein globaler Fokus, der sich nach Osten richtet. Die klügsten Investoren sind bereits hier."
+        },
+        "lifestyle": {
+          "title": "Ein Verfeinertes Leben",
+          "body": "Michelin-Gastronomie, Weinregionen von Weltrang und Kultursaisons, die jeder europäischen Hauptstadt ebenbürtig sind. Dies ist kein Rückzug \u2014 es ist eine Ankunft."
+        }
+      }
+    },
+    "stats": {
+      "propertiesSold": "Verkaufte Immobilien",
+      "yearsExperience": "Jahre der Exzellenz",
+      "citiesServed": "Betreute Städte",
+      "portfolioValue": "Portfoliowert (Mio.\u00a0EUR)"
+    },
+    "collection": {
+      "subtitle": "Die Kollektion",
+      "title": "Anwesen von Distinktion",
+      "viewPortfolio": "Gesamtes Portfolio Ansehen",
+      "revealMore": "Mehr Entdecken"
+    },
+    "destinations": {
+      "subtitle": "Destinationen",
+      "title": "Länder der Möglichkeiten",
+      "estatesAwait": "{count} Anwesen erwarten Sie"
+    },
+    "partners": {
+      "subtitle": "Vertrauenswürdige Partner",
+      "explore": "Unsere Bauträgerpartner Entdecken"
+    },
+    "testimonials": {
+      "label": "Stimmen der Distinktion"
+    },
+    "brand": {
+      "label": "Unser Ethos",
+      "title": "Was Luxus Bedeutet, Neu Definiert",
+      "description": "Wir verkaufen nicht nur Immobilien. Wir kuratieren Vermächtnisse \u2014 und verbinden visionäre Persönlichkeiten mit Anwesen, die ihre Familien über Generationen definieren werden. In Siebenbürgen haben wir ein Land gefunden, wo das Außergewöhnliche noch möglich ist.",
+      "cta": "Unsere Geschichte Entdecken"
+    },
+    "landmarks": {
+      "subtitle": "Ikonische Wahrzeichen",
+      "title": "Wo Geschichte Lebt",
+      "pairs": {
+        "strongholds": {
+          "theme": "Die Festungen",
+          "primary": {
+            "name": "Schloss Bran",
+            "tagline": "Wo Legende und Stein eins werden",
+            "location": "Kreis Brașov"
+          },
+          "secondary": {
+            "name": "Burg der Corviner",
+            "tagline": "Gotische Pracht über dem Zlaști",
+            "location": "Hunedoara"
+          }
+        },
+        "crowns": {
+          "theme": "Die Kronen",
+          "primary": {
+            "name": "Schloss Peleș",
+            "tagline": "Ein königliches Meisterwerk in den Karpatenkiefern",
+            "location": "Sinaia"
+          },
+          "secondary": {
+            "name": "Die Schwarze Kirche",
+            "tagline": "Sieben Jahrhunderte sakraler Resonanz",
+            "location": "Brașov"
+          }
+        },
+        "timecapsules": {
+          "theme": "Die Zeitkapseln",
+          "primary": {
+            "name": "Zitadelle Sighișoara",
+            "tagline": "Europas letzte bewohnte mittelalterliche Festung",
+            "location": "Sighișoara"
+          },
+          "secondary": {
+            "name": "Kirchenburg Biertan",
+            "tagline": "Sächsischer Glaube, in den Hügel gemeißelt",
+            "location": "Biertan"
+          }
+        },
+        "wonders": {
+          "theme": "Die Wunder",
+          "primary": {
+            "name": "Transfăgărășan-Straße",
+            "tagline": "Die spektakulärste Bergstraße der Welt",
+            "location": "Făgăraș-Gebirge"
+          },
+          "secondary": {
+            "name": "Salzbergwerk Turda",
+            "tagline": "Eine unterirdische Kathedrale des Lichts",
+            "location": "Turda"
+          }
+        }
+      }
+    },
+    "closing": {
+      "headline": "Ihr Vermächtnis Erwartet Sie",
+      "subline": "Vereinbaren Sie eine private Beratung mit unserem Team.",
+      "cta": "Private Besichtigung Anfragen"
     }
   },
   "Footer": {
