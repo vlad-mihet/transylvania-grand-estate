@@ -260,6 +260,10 @@
       "available": "Verfügbar",
       "sold": "Verkauft",
       "reserved": "Reserviert"
+    },
+    "cta": {
+      "title": "Interessiert an dieser Immobilie?",
+      "subtitle": "Kontaktieren Sie uns für eine private Besichtigung oder weitere Informationen."
     }
   },
   "AboutPage": {
@@ -432,6 +436,10 @@
       "title": "Finden Sie Ihr Zuhause in {city}",
       "subtitle": "Vereinbaren Sie eine private Besichtigung mit unseren lokalen Experten.",
       "button": "Besichtigung Vereinbaren"
+    },
+    "meta": {
+      "title": "{city} — Luxusimmobilien",
+      "notFound": "Stadt nicht gefunden"
     }
   },
   "TransylvaniaPage": {

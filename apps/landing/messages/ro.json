@@ -260,6 +260,10 @@
       "available": "Disponibil",
       "sold": "Vândut",
       "reserved": "Rezervat"
+    },
+    "cta": {
+      "title": "Interesat de această proprietate?",
+      "subtitle": "Contactați-ne pentru o vizionare privată sau mai multe informații."
     }
   },
   "AboutPage": {
@@ -432,6 +436,10 @@
       "title": "Găsește-ți Locuința în {city}",
       "subtitle": "Programează o vizionare privată cu experții noștri locali.",
       "button": "Programează Vizionare"
+    },
+    "meta": {
+      "title": "{city} — Proprietăți de lux",
+      "notFound": "Orașul nu a fost găsit"
     }
   },
   "TransylvaniaPage": {

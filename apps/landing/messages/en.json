@@ -260,6 +260,10 @@
       "available": "Available",
       "sold": "Sold",
       "reserved": "Reserved"
+    },
+    "cta": {
+      "title": "Interested in This Property?",
+      "subtitle": "Contact us for a private viewing or more information."
     }
   },
   "AboutPage": {
@@ -432,6 +436,10 @@
       "title": "Find Your Home in {city}",
       "subtitle": "Schedule a private viewing with our local experts.",
       "button": "Schedule Viewing"
+    },
+    "meta": {
+      "title": "{city} — Luxury Properties",
+      "notFound": "City Not Found"
     }
   },
   "Footer": {

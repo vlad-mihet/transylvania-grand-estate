@@ -260,6 +260,10 @@
       "available": "Disponible",
       "sold": "Vendu",
       "reserved": "Réservé"
+    },
+    "cta": {
+      "title": "Intéressé par cette propriété ?",
+      "subtitle": "Contactez-nous pour une visite privée ou plus d'informations."
     }
   },
   "AboutPage": {
@@ -432,6 +436,10 @@
       "title": "Trouvez Votre Maison à {city}",
       "subtitle": "Planifiez une visite privée avec nos experts locaux.",
       "button": "Planifier une Visite"
+    },
+    "meta": {
+      "title": "{city} — Propriétés de luxe",
+      "notFound": "Ville introuvable"
     }
   },
   "TransylvaniaPage": {
