@@ -52,7 +52,8 @@
     "created": "Property created",
     "createFailed": "Failed to create property",
     "updated": "Property updated",
-    "updateFailed": "Failed to update property"
+    "updateFailed": "Failed to update property",
+    "imageUploadFailed": "Saved but image upload failed. Edit to retry."
   },
   "Developers": {
     "title": "Developers",
@@ -69,7 +70,8 @@
     "deleted": "Developer deleted",
     "deleteFailed": "Failed to delete developer",
     "created": "Developer created",
-    "updated": "Developer updated"
+    "updated": "Developer updated",
+    "imageUploadFailed": "Saved but logo upload failed. Edit to retry."
   },
   "Cities": {
     "title": "Cities",
@@ -85,7 +87,8 @@
     "deleted": "City deleted",
     "deleteFailed": "Failed to delete city",
     "created": "City created",
-    "updated": "City updated"
+    "updated": "City updated",
+    "imageUploadFailed": "Saved but image upload failed. Edit to retry."
   },
   "Testimonials": {
     "title": "Testimonials",
@@ -156,6 +159,22 @@
     "garageSpots": "Garage spots",
     "pool": "Pool",
     "images": "Images",
+    "types": {
+      "apartment": "Apartment",
+      "house": "House",
+      "villa": "Villa",
+      "terrain": "Terrain",
+      "penthouse": "Penthouse",
+      "estate": "Estate",
+      "chalet": "Chalet",
+      "mansion": "Mansion",
+      "palace": "Palace"
+    },
+    "statuses": {
+      "available": "Available",
+      "reserved": "Reserved",
+      "sold": "Sold"
+    },
     "saveProperty": "Save Property"
   },
   "DeveloperForm": {
@@ -209,7 +228,12 @@
     "hero": "HERO",
     "setAsHero": "Set as hero",
     "english": "English",
-    "romanian": "Romanian"
+    "romanian": "Romanian",
+    "french": "French",
+    "german": "German",
+    "loadError": "Failed to load data",
+    "tryAgain": "Try again",
+    "featuredError": "Failed to update featured status"
   },
   "Status": {
     "AVAILABLE": "Available",

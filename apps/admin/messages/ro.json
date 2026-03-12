@@ -52,7 +52,8 @@
     "created": "Proprietate creată",
     "createFailed": "Eroare la crearea proprietății",
     "updated": "Proprietate actualizată",
-    "updateFailed": "Eroare la actualizarea proprietății"
+    "updateFailed": "Eroare la actualizarea proprietății",
+    "imageUploadFailed": "Salvat, dar încărcarea imaginii a eșuat. Editează pentru a reîncerca."
   },
   "Developers": {
     "title": "Dezvoltatori",
@@ -69,7 +70,8 @@
     "deleted": "Dezvoltator șters",
     "deleteFailed": "Eroare la ștergerea dezvoltatorului",
     "created": "Dezvoltator creat",
-    "updated": "Dezvoltator actualizat"
+    "updated": "Dezvoltator actualizat",
+    "imageUploadFailed": "Salvat, dar încărcarea logo-ului a eșuat. Editează pentru a reîncerca."
   },
   "Cities": {
     "title": "Orașe",
@@ -85,7 +87,8 @@
     "deleted": "Oraș șters",
     "deleteFailed": "Eroare la ștergerea orașului",
     "created": "Oraș creat",
-    "updated": "Oraș actualizat"
+    "updated": "Oraș actualizat",
+    "imageUploadFailed": "Salvat, dar încărcarea imaginii a eșuat. Editează pentru a reîncerca."
   },
   "Testimonials": {
     "title": "Testimoniale",
@@ -156,6 +159,22 @@
     "garageSpots": "Locuri garaj",
     "pool": "Piscină",
     "images": "Imagini",
+    "types": {
+      "apartment": "Apartament",
+      "house": "Casă",
+      "villa": "Vilă",
+      "terrain": "Teren",
+      "penthouse": "Penthouse",
+      "estate": "Proprietate",
+      "chalet": "Cabană",
+      "mansion": "Conac",
+      "palace": "Palat"
+    },
+    "statuses": {
+      "available": "Disponibil",
+      "reserved": "Rezervat",
+      "sold": "Vândut"
+    },
     "saveProperty": "Salvează proprietatea"
   },
   "DeveloperForm": {
@@ -209,7 +228,12 @@
     "hero": "PRINCIPALĂ",
     "setAsHero": "Setează ca principală",
     "english": "Engleză",
-    "romanian": "Română"
+    "romanian": "Română",
+    "french": "Franceză",
+    "german": "Germană",
+    "loadError": "Eroare la încărcarea datelor",
+    "tryAgain": "Încearcă din nou",
+    "featuredError": "Eroare la actualizarea statusului de promovare"
   },
   "Status": {
     "AVAILABLE": "Disponibil",
