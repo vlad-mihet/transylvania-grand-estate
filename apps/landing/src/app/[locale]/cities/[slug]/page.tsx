@@ -21,15 +21,16 @@ export async function generateMetadata({
 }: CityDetailPageProps): Promise<Metadata> {
   const { slug } = await params;
   const locale = (await getLocale()) as Locale;
+  const t = await getTranslations("CityDetail");
   try {
     const raw = await fetchApi<any>(`/cities/${slug}`);
     const city = mapApiCity(raw);
     return {
-      title: `${city.name} — Luxury Properties`,
+      title: t("meta.title", { city: city.name }),
       description: localize(city.description, locale),
     };
   } catch {
-    return { title: "City Not Found" };
+    return { title: t("meta.notFound") };
   }
 }
 

@@ -1,6 +1,7 @@
 import { notFound } from "next/navigation";
 import { getLocale } from "next-intl/server";
 import { Locale } from "@tge/types";
+import { localize } from "@tge/utils";
 import { fetchApi } from "@/lib/api";
 import { mapApiDeveloper, mapApiProperties } from "@/lib/mappers";
 import { developerTemplateMap, DEFAULT_TEMPLATE } from "./template-map";
@@ -15,11 +16,12 @@ export async function generateMetadata({
   params: Promise<{ slug: string; locale: string }>;
 }): Promise<Metadata> {
   const { slug } = await params;
+  const locale = (await getLocale()) as Locale;
   try {
     const developer = await fetchApi<any>(`/developers/${slug}`);
     return {
       title: developer.name,
-      description: developer.shortDescription?.en ?? "",
+      description: developer.shortDescription ? localize(developer.shortDescription, locale) : "",
     };
   } catch {
     return {};

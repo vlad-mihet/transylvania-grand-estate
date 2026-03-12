@@ -1,4 +1,6 @@
-import { getTranslations } from "next-intl/server";
+import { getTranslations, getLocale } from "next-intl/server";
+import { Locale } from "@tge/types";
+import { localize } from "@tge/utils";
 import { fetchApi } from "@/lib/api";
 import { mapApiProperties } from "@/lib/mappers";
 import { HeroSection } from "@/components/sections/hero-section";
@@ -16,6 +18,7 @@ export async function generateMetadata(): Promise<Metadata> {
 
 export default async function ContactPage() {
   const t = await getTranslations("ContactPage");
+  const locale = (await getLocale()) as Locale;
   const raw = await fetchApi<any[]>("/properties?limit=100");
   const properties = mapApiProperties(raw);
 
@@ -28,7 +31,7 @@ export default async function ContactPage() {
       />
       <section className="relative z-10 -mt-28 pb-16 md:pb-20 lg:pb-24">
         <Container className="max-w-3xl">
-          <ContactForm properties={properties.map(p => ({ id: p.id, slug: p.slug, title: { en: p.title.en } }))} />
+          <ContactForm properties={properties.map(p => ({ id: p.id, slug: p.slug, title: localize(p.title, locale) }))} />
         </Container>
       </section>
       <OfficeLocations />

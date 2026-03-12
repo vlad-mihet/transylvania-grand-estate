@@ -17,7 +17,7 @@ import { CheckCircle, Loader2 } from "lucide-react";
 import { mutateApi } from "@/lib/api";
 
 interface ContactFormProps {
-  properties: { id: string; slug: string; title: { en: string } }[];
+  properties: { id: string; slug: string; title: string }[];
 }
 
 export function ContactForm({ properties }: ContactFormProps) {
@@ -136,7 +136,7 @@ export function ContactForm({ properties }: ContactFormProps) {
             <SelectContent className="bg-popover border-copper/10">
               {properties.map((p) => (
                 <SelectItem key={p.id} value={p.slug}>
-                  {p.title.en}
+                  {p.title}
                 </SelectItem>
               ))}
             </SelectContent>

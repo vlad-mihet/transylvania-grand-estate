@@ -252,8 +252,8 @@ export default async function PropertyDetailPage({
 
       <SimilarProperties properties={similar} />
       <CTABanner
-        title="Interested in This Property?"
-        subtitle="Contact us for a private viewing or more information."
+        title={t("cta.title")}
+        subtitle={t("cta.subtitle")}
         buttonText={t("requestInfo")}
         inquiryContext={{
           type: "property",
