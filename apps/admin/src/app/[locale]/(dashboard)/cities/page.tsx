@@ -6,6 +6,7 @@ import { DataTable, ColumnDef } from "@/components/shared/data-table";
 import { PageHeader } from "@/components/shared/page-header";
 import { DeleteDialog } from "@/components/shared/delete-dialog";
 import { TableSkeleton } from "@/components/shared/table-skeleton";
+import { QueryError } from "@/components/shared/query-error";
 import { Button } from "@tge/ui";
 import { Pencil, Trash2 } from "lucide-react";
 import { Link } from "@/i18n/navigation";
@@ -27,7 +28,7 @@ export default function CitiesPage() {
   const [deleteId, setDeleteId] = useState<string | null>(null);
   const t = useTranslations("Cities");
 
-  const { data: cities = [], isLoading } = useQuery({
+  const { data: cities = [], isLoading, isError, refetch } = useQuery({
     queryKey: ["cities"],
     queryFn: () => apiClient<City[]>("/cities"),
   });
@@ -47,16 +48,21 @@ export default function CitiesPage() {
       accessorKey: "image",
       header: "",
       enableSorting: false,
-      cell: ({ getValue }) => (
-        <Image
-          src={getValue() as string}
-          alt=""
-          width={80}
-          height={60}
-          className="rounded object-cover"
-          style={{ width: 80, height: 60 }}
-        />
-      ),
+      cell: ({ getValue }) => {
+        const src = getValue() as string | null;
+        return src ? (
+          <Image
+            src={src}
+            alt=""
+            width={80}
+            height={60}
+            className="rounded object-cover"
+            style={{ width: 80, height: 60 }}
+          />
+        ) : (
+          <div className="h-[60px] w-[80px] rounded bg-muted" />
+        );
+      },
     },
     { accessorKey: "name", header: t("columnName") },
     { accessorKey: "slug", header: t("columnSlug") },
@@ -90,6 +96,8 @@ export default function CitiesPage() {
       />
       {isLoading ? (
         <TableSkeleton rows={5} columns={4} />
+      ) : isError ? (
+        <QueryError onRetry={refetch} />
       ) : (
         <DataTable columns={columns} data={cities} />
       )}

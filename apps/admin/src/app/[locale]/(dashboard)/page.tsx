@@ -11,6 +11,7 @@ import {
 } from "lucide-react";
 import { Link } from "@/i18n/navigation";
 import { useTranslations } from "next-intl";
+import { QueryError } from "@/components/shared/query-error";
 
 interface Stats {
   properties: number;
@@ -25,23 +26,23 @@ function useStats() {
     queryFn: async () => {
       const [properties, developers, cities, testimonials] =
         await Promise.all([
-          apiClient<{ data: unknown[]; meta?: { total: number } }>("/properties?limit=1"),
+          apiClient<unknown[]>("/properties?limit=100"),
           apiClient<unknown[]>("/developers"),
           apiClient<unknown[]>("/cities"),
           apiClient<unknown[]>("/testimonials"),
         ]);
       return {
-        properties: Array.isArray(properties) ? properties.length : (properties as any)?.meta?.total ?? (properties as any)?.length ?? 0,
+        properties: Array.isArray(properties) ? properties.length : 0,
         developers: Array.isArray(developers) ? developers.length : 0,
         cities: Array.isArray(cities) ? cities.length : 0,
         testimonials: Array.isArray(testimonials) ? testimonials.length : 0,
-      } as Stats;
+      } satisfies Stats;
     },
   });
 }
 
 export default function DashboardPage() {
-  const { data: stats, isLoading } = useStats();
+  const { data: stats, isLoading, isError, refetch } = useStats();
   const t = useTranslations("Dashboard");
 
   const statCards = [
@@ -60,29 +61,33 @@ export default function DashboardPage() {
         </p>
       </div>
 
-      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
-        {statCards.map((card) => (
-          <Link key={card.key} href={card.href}>
-            <Card className="card-hover">
-              <CardHeader className="flex flex-row items-center justify-between pb-2">
-                <CardTitle className="text-[11px] font-semibold uppercase tracking-[0.06em] text-muted-foreground">
-                  {card.label}
-                </CardTitle>
-                <card.icon className={`h-5 w-5 ${card.color}`} />
-              </CardHeader>
-              <CardContent>
-                {isLoading ? (
-                  <div className="h-8 w-16 animate-pulse rounded bg-muted" />
-                ) : (
-                  <p className="text-3xl font-semibold font-serif">
-                    {stats?.[card.key] ?? 0}
-                  </p>
-                )}
-              </CardContent>
-            </Card>
-          </Link>
-        ))}
-      </div>
+      {isError ? (
+        <QueryError onRetry={refetch} />
+      ) : (
+        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
+          {statCards.map((card) => (
+            <Link key={card.key} href={card.href}>
+              <Card className="card-hover">
+                <CardHeader className="flex flex-row items-center justify-between pb-2">
+                  <CardTitle className="text-[11px] font-semibold uppercase tracking-[0.06em] text-muted-foreground">
+                    {card.label}
+                  </CardTitle>
+                  <card.icon className={`h-5 w-5 ${card.color}`} />
+                </CardHeader>
+                <CardContent>
+                  {isLoading ? (
+                    <div className="h-8 w-16 animate-pulse rounded bg-muted" />
+                  ) : (
+                    <p className="text-3xl font-semibold font-serif">
+                      {stats?.[card.key] ?? 0}
+                    </p>
+                  )}
+                </CardContent>
+              </Card>
+            </Link>
+          ))}
+        </div>
+      )}
     </div>
   );
 }

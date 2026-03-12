@@ -6,12 +6,13 @@ import { DataTable, ColumnDef } from "@/components/shared/data-table";
 import { PageHeader } from "@/components/shared/page-header";
 import { DeleteDialog } from "@/components/shared/delete-dialog";
 import { TableSkeleton } from "@/components/shared/table-skeleton";
+import { QueryError } from "@/components/shared/query-error";
 import { Button } from "@tge/ui";
 import { Pencil, Trash2, Star } from "lucide-react";
 import { Link } from "@/i18n/navigation";
 import { useState } from "react";
 import { toast } from "sonner";
-import { useTranslations } from "next-intl";
+import { useTranslations, useLocale } from "next-intl";
 
 interface Testimonial {
   id: string;
@@ -26,8 +27,9 @@ export default function TestimonialsPage() {
   const queryClient = useQueryClient();
   const [deleteId, setDeleteId] = useState<string | null>(null);
   const t = useTranslations("Testimonials");
+  const locale = useLocale();
 
-  const { data: testimonials = [], isLoading } = useQuery({
+  const { data: testimonials = [], isLoading, isError, refetch } = useQuery({
     queryKey: ["testimonials"],
     queryFn: () => apiClient<Testimonial[]>("/testimonials"),
   });
@@ -62,7 +64,7 @@ export default function TestimonialsPage() {
       header: t("columnQuote"),
       cell: ({ getValue }) => {
         const val = getValue();
-        const text = typeof val === "string" ? val : (val as any)?.en ?? "";
+        const text = typeof val === "string" ? val : (val as any)?.[locale] ?? (val as any)?.en ?? "";
         return (
           <p className="max-w-[300px] truncate text-sm text-muted-foreground">
             {text}
@@ -99,6 +101,8 @@ export default function TestimonialsPage() {
       />
       {isLoading ? (
         <TableSkeleton rows={5} columns={5} />
+      ) : isError ? (
+        <QueryError onRetry={refetch} />
       ) : (
         <DataTable columns={columns} data={testimonials} />
       )}

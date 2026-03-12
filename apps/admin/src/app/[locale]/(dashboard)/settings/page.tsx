@@ -22,13 +22,16 @@ import { Plus, X, Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import { useEffect } from "react";
 import { useTranslations } from "next-intl";
+import { QueryError } from "@/components/shared/query-error";
+import { BilingualInput } from "@/components/shared/bilingual-input";
+import { BilingualTextarea } from "@/components/shared/bilingual-textarea";
 
 export default function SettingsPage() {
   const queryClient = useQueryClient();
   const t = useTranslations("Settings");
   const tc = useTranslations("Common");
 
-  const { data: config, isLoading } = useQuery({
+  const { data: config, isLoading, isError, refetch } = useQuery({
     queryKey: ["site-config"],
     queryFn: () => apiClient<any>("/site-config"),
   });
@@ -37,8 +40,8 @@ export default function SettingsPage() {
     resolver: zodResolver(siteConfigSchema),
     defaultValues: {
       name: "",
-      tagline: "",
-      description: "",
+      tagline: { en: "", ro: "", fr: "", de: "" },
+      description: { en: "", ro: "", fr: "", de: "" },
       contact: { email: "", phone: "" },
       socialLinks: [],
     },
@@ -48,8 +51,8 @@ export default function SettingsPage() {
     if (config) {
       form.reset({
         name: config.name ?? "",
-        tagline: config.tagline ?? "",
-        description: config.description ?? "",
+        tagline: config.tagline ?? { en: "", ro: "", fr: "", de: "" },
+        description: config.description ?? { en: "", ro: "", fr: "", de: "" },
         contact: config.contact ?? { email: "", phone: "" },
         socialLinks: config.socialLinks ?? [],
       });
@@ -80,6 +83,13 @@ export default function SettingsPage() {
     </div>
   );
 
+  if (isError) return (
+    <div className="space-y-6">
+      <PageHeader title={t("title")} description={t("description")} />
+      <QueryError onRetry={refetch} />
+    </div>
+  );
+
   return (
     <div className="space-y-6">
       <PageHeader title={t("title")} description={t("description")} />
@@ -96,15 +106,32 @@ export default function SettingsPage() {
                 <Label>{t("companyName")}</Label>
                 <Input {...form.register("name")} />
               </div>
-              <div className="space-y-2">
-                <Label>{t("tagline")}</Label>
-                <Input {...form.register("tagline")} />
-              </div>
             </div>
-            <div className="space-y-2">
-              <Label>{t("settingsDescription")}</Label>
-              <Textarea {...form.register("description")} rows={3} />
-            </div>
+            <BilingualInput
+              label={t("tagline")}
+              valueEn={form.watch("tagline.en")}
+              valueRo={form.watch("tagline.ro")}
+              onChangeEn={(v) => form.setValue("tagline.en", v)}
+              onChangeRo={(v) => form.setValue("tagline.ro", v)}
+              valueFr={form.watch("tagline.fr") ?? ""}
+              valueDe={form.watch("tagline.de") ?? ""}
+              onChangeFr={(v) => form.setValue("tagline.fr", v)}
+              onChangeDe={(v) => form.setValue("tagline.de", v)}
+              required
+            />
+            <BilingualTextarea
+              label={t("settingsDescription")}
+              valueEn={form.watch("description.en")}
+              valueRo={form.watch("description.ro")}
+              onChangeEn={(v) => form.setValue("description.en", v)}
+              onChangeRo={(v) => form.setValue("description.ro", v)}
+              valueFr={form.watch("description.fr") ?? ""}
+              valueDe={form.watch("description.de") ?? ""}
+              onChangeFr={(v) => form.setValue("description.fr", v)}
+              onChangeDe={(v) => form.setValue("description.de", v)}
+              required
+              rows={3}
+            />
           </CardContent>
         </Card>
 

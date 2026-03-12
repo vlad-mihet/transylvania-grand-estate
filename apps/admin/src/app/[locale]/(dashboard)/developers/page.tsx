@@ -6,6 +6,7 @@ import { DataTable, ColumnDef } from "@/components/shared/data-table";
 import { PageHeader } from "@/components/shared/page-header";
 import { DeleteDialog } from "@/components/shared/delete-dialog";
 import { TableSkeleton } from "@/components/shared/table-skeleton";
+import { QueryError } from "@/components/shared/query-error";
 import { Button, Switch } from "@tge/ui";
 import { Pencil, Trash2 } from "lucide-react";
 import { Link } from "@/i18n/navigation";
@@ -28,8 +29,9 @@ export default function DevelopersPage() {
   const queryClient = useQueryClient();
   const [deleteId, setDeleteId] = useState<string | null>(null);
   const t = useTranslations("Developers");
+  const tc = useTranslations("Common");
 
-  const { data: developers = [], isLoading } = useQuery({
+  const { data: developers = [], isLoading, isError, refetch } = useQuery({
     queryKey: ["developers"],
     queryFn: () => apiClient<Developer[]>("/developers"),
   });
@@ -48,6 +50,10 @@ export default function DevelopersPage() {
     mutationFn: ({ id, featured }: { id: string; featured: boolean }) =>
       apiClient(`/developers/${id}`, { method: "PATCH", body: { featured } }),
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ["developers"] }),
+    onError: () => {
+      toast.error(tc("featuredError"));
+      queryClient.invalidateQueries({ queryKey: ["developers"] });
+    },
   });
 
   const columns: ColumnDef<Developer, any>[] = [
@@ -55,15 +61,14 @@ export default function DevelopersPage() {
       accessorKey: "logo",
       header: "",
       enableSorting: false,
-      cell: ({ getValue }) => (
-        <Image
-          src={getValue() as string}
-          alt="Logo"
-          width={40}
-          height={40}
-          className="rounded"
-        />
-      ),
+      cell: ({ getValue }) => {
+        const src = getValue() as string | null;
+        return src ? (
+          <Image src={src} alt="Logo" width={40} height={40} className="rounded" />
+        ) : (
+          <div className="h-[40px] w-[40px] rounded bg-muted" />
+        );
+      },
     },
     { accessorKey: "name", header: t("columnName") },
     { accessorKey: "city", header: t("columnCity") },
@@ -109,6 +114,8 @@ export default function DevelopersPage() {
       />
       {isLoading ? (
         <TableSkeleton rows={5} columns={5} />
+      ) : isError ? (
+        <QueryError onRetry={refetch} />
       ) : (
         <DataTable columns={columns} data={developers} />
       )}

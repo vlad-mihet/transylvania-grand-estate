@@ -7,6 +7,7 @@ import { PageHeader } from "@/components/shared/page-header";
 import { StatusBadge } from "@/components/shared/status-badge";
 import { TableSkeleton } from "@/components/shared/table-skeleton";
 import { DeleteDialog } from "@/components/shared/delete-dialog";
+import { QueryError } from "@/components/shared/query-error";
 import { Button, Switch } from "@tge/ui";
 import { Pencil, Trash2 } from "lucide-react";
 import { Link } from "@/i18n/navigation";
@@ -14,7 +15,7 @@ import Image from "next/image";
 import { useState } from "react";
 import { toast } from "sonner";
 import { formatPrice } from "@tge/utils";
-import { useTranslations } from "next-intl";
+import { useTranslations, useLocale } from "next-intl";
 
 interface Property {
   id: string;
@@ -33,15 +34,16 @@ export default function PropertiesPage() {
   const queryClient = useQueryClient();
   const [deleteId, setDeleteId] = useState<string | null>(null);
   const t = useTranslations("Properties");
+  const tf = useTranslations("PropertyForm");
+  const tc = useTranslations("Common");
+  const locale = useLocale();
 
-  const { data: result, isLoading } = useQuery({
+  const { data: result, isLoading, isError, refetch } = useQuery({
     queryKey: ["properties"],
-    queryFn: () => apiClient<any>("/properties?limit=100"),
+    queryFn: () => apiClient<Property[]>("/properties?limit=100"),
   });
 
-  const properties: Property[] = Array.isArray(result)
-    ? result
-    : result?.data ?? [];
+  const properties: Property[] = Array.isArray(result) ? result : [];
 
   const deleteMutation = useMutation({
     mutationFn: (id: string) => apiClient(`/properties/${id}`, { method: "DELETE" }),
@@ -60,6 +62,10 @@ export default function PropertiesPage() {
         body: { featured },
       }),
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ["properties"] }),
+    onError: () => {
+      toast.error(tc("featuredError"));
+      queryClient.invalidateQueries({ queryKey: ["properties"] });
+    },
   });
 
   const columns: ColumnDef<Property, any>[] = [
@@ -84,12 +90,12 @@ export default function PropertiesPage() {
       },
     },
     {
-      accessorFn: (row) => row.title.en,
+      accessorFn: (row) => (row.title as Record<string, string>)[locale] ?? row.title.en,
       id: "title",
       header: t("columnTitle"),
       cell: ({ row }) => (
         <div>
-          <p className="font-medium">{row.original.title.en}</p>
+          <p className="font-medium">{(row.original.title as Record<string, string>)[locale] ?? row.original.title.en}</p>
           <p className="text-xs text-muted-foreground">{row.original.slug}</p>
         </div>
       ),
@@ -101,9 +107,10 @@ export default function PropertiesPage() {
     {
       accessorKey: "type",
       header: t("columnType"),
-      cell: ({ getValue }) => (
-        <span className="text-sm">{(getValue() as string).replace(/_/g, " ")}</span>
-      ),
+      cell: ({ getValue }) => {
+        const type = getValue() as string;
+        return <span className="text-sm capitalize">{tf.has(`types.${type}`) ? tf(`types.${type}` as any) : type.replace(/_/g, " ")}</span>;
+      },
     },
     {
       accessorKey: "status",
@@ -156,6 +163,15 @@ export default function PropertiesPage() {
       <div className="space-y-4">
         <PageHeader title={t("title")} createHref="/properties/new" />
         <TableSkeleton rows={5} columns={7} />
+      </div>
+    );
+  }
+
+  if (isError) {
+    return (
+      <div className="space-y-4">
+        <PageHeader title={t("title")} createHref="/properties/new" />
+        <QueryError onRetry={refetch} />
       </div>
     );
   }
