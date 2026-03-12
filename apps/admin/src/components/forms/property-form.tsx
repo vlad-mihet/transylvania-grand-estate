@@ -34,22 +34,12 @@ import { useQuery } from "@tanstack/react-query";
 import { apiClient } from "@/lib/api-client";
 import { useTranslations } from "next-intl";
 
-const PROPERTY_TYPES = [
-  { value: "apartment", label: "Apartment" },
-  { value: "house", label: "House" },
-  { value: "villa", label: "Villa" },
-  { value: "terrain", label: "Terrain" },
-  { value: "penthouse", label: "Penthouse" },
-  { value: "estate", label: "Estate" },
-  { value: "chalet", label: "Chalet" },
-  { value: "mansion", label: "Mansion" },
-  { value: "palace", label: "Palace" },
+const PROPERTY_TYPE_VALUES = [
+  "apartment", "house", "villa", "terrain", "penthouse", "estate", "chalet", "mansion", "palace",
 ] as const;
 
-const PROPERTY_STATUSES = [
-  { value: "available", label: "Available" },
-  { value: "reserved", label: "Reserved" },
-  { value: "sold", label: "Sold" },
+const PROPERTY_STATUS_VALUES = [
+  "available", "reserved", "sold",
 ] as const;
 
 interface PropertyFormProps {
@@ -73,9 +63,9 @@ export function PropertyForm({
   const form = useForm<PropertyFormValues>({
     resolver: zodResolver(propertySchema),
     defaultValues: {
-      title: { en: "", ro: "" },
-      description: { en: "", ro: "" },
-      shortDescription: { en: "", ro: "" },
+      title: { en: "", ro: "", fr: "", de: "" },
+      description: { en: "", ro: "", fr: "", de: "" },
+      shortDescription: { en: "", ro: "", fr: "", de: "" },
       slug: "",
       price: 0,
       currency: "EUR",
@@ -84,7 +74,7 @@ export function PropertyForm({
       city: "",
       citySlug: "",
       neighborhood: "",
-      address: { en: "", ro: "" },
+      address: { en: "", ro: "", fr: "", de: "" },
       bedrooms: 0,
       bathrooms: 0,
       area: 0,
@@ -157,6 +147,10 @@ export function PropertyForm({
             valueRo={form.watch("title.ro")}
             onChangeEn={(v) => form.setValue("title.en", v)}
             onChangeRo={(v) => form.setValue("title.ro", v)}
+            valueFr={form.watch("title.fr") ?? ""}
+            valueDe={form.watch("title.de") ?? ""}
+            onChangeFr={(v) => form.setValue("title.fr", v)}
+            onChangeDe={(v) => form.setValue("title.de", v)}
             required
           />
           <div className="flex gap-3 items-end">
@@ -174,6 +168,10 @@ export function PropertyForm({
             valueRo={form.watch("description.ro")}
             onChangeEn={(v) => form.setValue("description.en", v)}
             onChangeRo={(v) => form.setValue("description.ro", v)}
+            valueFr={form.watch("description.fr") ?? ""}
+            valueDe={form.watch("description.de") ?? ""}
+            onChangeFr={(v) => form.setValue("description.fr", v)}
+            onChangeDe={(v) => form.setValue("description.de", v)}
             required
             rows={5}
           />
@@ -183,6 +181,10 @@ export function PropertyForm({
             valueRo={form.watch("shortDescription.ro")}
             onChangeEn={(v) => form.setValue("shortDescription.en", v)}
             onChangeRo={(v) => form.setValue("shortDescription.ro", v)}
+            valueFr={form.watch("shortDescription.fr") ?? ""}
+            valueDe={form.watch("shortDescription.de") ?? ""}
+            onChangeFr={(v) => form.setValue("shortDescription.fr", v)}
+            onChangeDe={(v) => form.setValue("shortDescription.de", v)}
             required
             rows={2}
           />
@@ -206,9 +208,9 @@ export function PropertyForm({
                   <SelectValue placeholder={t("selectType")} />
                 </SelectTrigger>
                 <SelectContent>
-                  {PROPERTY_TYPES.map((pt) => (
-                    <SelectItem key={pt.value} value={pt.value}>
-                      {pt.label}
+                  {PROPERTY_TYPE_VALUES.map((type) => (
+                    <SelectItem key={type} value={type}>
+                      {t(`types.${type}`)}
                     </SelectItem>
                   ))}
                 </SelectContent>
@@ -224,9 +226,9 @@ export function PropertyForm({
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  {PROPERTY_STATUSES.map((s) => (
-                    <SelectItem key={s.value} value={s.value}>
-                      {s.label}
+                  {PROPERTY_STATUS_VALUES.map((status) => (
+                    <SelectItem key={status} value={status}>
+                      {t(`statuses.${status}`)}
                     </SelectItem>
                   ))}
                 </SelectContent>
@@ -331,6 +333,10 @@ export function PropertyForm({
             valueRo={form.watch("address.ro")}
             onChangeEn={(v) => form.setValue("address.en", v)}
             onChangeRo={(v) => form.setValue("address.ro", v)}
+            valueFr={form.watch("address.fr") ?? ""}
+            valueDe={form.watch("address.de") ?? ""}
+            onChangeFr={(v) => form.setValue("address.fr", v)}
+            onChangeDe={(v) => form.setValue("address.de", v)}
             required
           />
           <div className="grid gap-4 sm:grid-cols-2">

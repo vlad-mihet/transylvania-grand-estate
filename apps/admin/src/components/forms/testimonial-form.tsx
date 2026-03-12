@@ -37,7 +37,7 @@ export function TestimonialForm({ defaultValues, onSubmit, loading }: Testimonia
       clientName: "",
       location: "",
       propertyType: "",
-      quote: { en: "", ro: "" },
+      quote: { en: "", ro: "", fr: "", de: "" },
       rating: 5,
       ...defaultValues,
     },
@@ -90,6 +90,10 @@ export function TestimonialForm({ defaultValues, onSubmit, loading }: Testimonia
             valueRo={form.watch("quote.ro")}
             onChangeEn={(v) => form.setValue("quote.en", v)}
             onChangeRo={(v) => form.setValue("quote.ro", v)}
+            valueFr={form.watch("quote.fr") ?? ""}
+            valueDe={form.watch("quote.de") ?? ""}
+            onChangeFr={(v) => form.setValue("quote.fr", v)}
+            onChangeDe={(v) => form.setValue("quote.de", v)}
             required
             rows={4}
           />

@@ -42,8 +42,8 @@ export function DeveloperForm({
     defaultValues: {
       name: "",
       slug: "",
-      description: { en: "", ro: "" },
-      shortDescription: { en: "", ro: "" },
+      description: { en: "", ro: "", fr: "", de: "" },
+      shortDescription: { en: "", ro: "", fr: "", de: "" },
       city: "",
       citySlug: "",
       website: "",
@@ -93,6 +93,10 @@ export function DeveloperForm({
             valueRo={form.watch("description.ro")}
             onChangeEn={(v) => form.setValue("description.en", v)}
             onChangeRo={(v) => form.setValue("description.ro", v)}
+            valueFr={form.watch("description.fr") ?? ""}
+            valueDe={form.watch("description.de") ?? ""}
+            onChangeFr={(v) => form.setValue("description.fr", v)}
+            onChangeDe={(v) => form.setValue("description.de", v)}
             required
           />
           <BilingualInput
@@ -101,6 +105,10 @@ export function DeveloperForm({
             valueRo={form.watch("shortDescription.ro")}
             onChangeEn={(v) => form.setValue("shortDescription.en", v)}
             onChangeRo={(v) => form.setValue("shortDescription.ro", v)}
+            valueFr={form.watch("shortDescription.fr") ?? ""}
+            valueDe={form.watch("shortDescription.de") ?? ""}
+            onChangeFr={(v) => form.setValue("shortDescription.fr", v)}
+            onChangeDe={(v) => form.setValue("shortDescription.de", v)}
             required
           />
           <div className="grid gap-4 sm:grid-cols-3">

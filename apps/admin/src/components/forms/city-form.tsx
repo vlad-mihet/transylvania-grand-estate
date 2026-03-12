@@ -35,7 +35,7 @@ export function CityForm({ defaultValues, imageUrl, onSubmit, loading }: CityFor
     defaultValues: {
       name: "",
       slug: "",
-      description: { en: "", ro: "" },
+      description: { en: "", ro: "", fr: "", de: "" },
       propertyCount: 0,
       ...defaultValues,
     },
@@ -77,6 +77,10 @@ export function CityForm({ defaultValues, imageUrl, onSubmit, loading }: CityFor
             valueRo={form.watch("description.ro")}
             onChangeEn={(v) => form.setValue("description.en", v)}
             onChangeRo={(v) => form.setValue("description.ro", v)}
+            valueFr={form.watch("description.fr") ?? ""}
+            valueDe={form.watch("description.de") ?? ""}
+            onChangeFr={(v) => form.setValue("description.fr", v)}
+            onChangeDe={(v) => form.setValue("description.de", v)}
             required
           />
           <div className="space-y-2">
