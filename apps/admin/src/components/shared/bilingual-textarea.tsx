@@ -9,6 +9,10 @@ interface BilingualTextareaProps {
   valueRo: string;
   onChangeEn: (value: string) => void;
   onChangeRo: (value: string) => void;
+  valueFr?: string;
+  valueDe?: string;
+  onChangeFr?: (value: string) => void;
+  onChangeDe?: (value: string) => void;
   placeholder?: string;
   required?: boolean;
   rows?: number;
@@ -20,6 +24,10 @@ export function BilingualTextarea({
   valueRo,
   onChangeEn,
   onChangeRo,
+  valueFr,
+  valueDe,
+  onChangeFr,
+  onChangeDe,
   placeholder,
   required,
   rows = 4,
@@ -33,6 +41,8 @@ export function BilingualTextarea({
         <TabsList className="h-8 bg-copper/[0.06]">
           <TabsTrigger value="en" className="text-xs px-3 tracking-[0.1em] font-semibold data-[state=active]:text-copper">EN</TabsTrigger>
           <TabsTrigger value="ro" className="text-xs px-3 tracking-[0.1em] font-semibold data-[state=active]:text-copper">RO</TabsTrigger>
+          {onChangeFr && <TabsTrigger value="fr" className="text-xs px-3 tracking-[0.1em] font-semibold data-[state=active]:text-copper">FR</TabsTrigger>}
+          {onChangeDe && <TabsTrigger value="de" className="text-xs px-3 tracking-[0.1em] font-semibold data-[state=active]:text-copper">DE</TabsTrigger>}
         </TabsList>
         <TabsContent value="en" className="mt-2">
           <Textarea
@@ -50,6 +60,26 @@ export function BilingualTextarea({
             rows={rows}
           />
         </TabsContent>
+        {onChangeFr && (
+          <TabsContent value="fr" className="mt-2">
+            <Textarea
+              value={valueFr ?? ""}
+              onChange={(e) => onChangeFr(e.target.value)}
+              placeholder={placeholder ? `${placeholder} (${t("french")})` : t("french")}
+              rows={rows}
+            />
+          </TabsContent>
+        )}
+        {onChangeDe && (
+          <TabsContent value="de" className="mt-2">
+            <Textarea
+              value={valueDe ?? ""}
+              onChange={(e) => onChangeDe(e.target.value)}
+              placeholder={placeholder ? `${placeholder} (${t("german")})` : t("german")}
+              rows={rows}
+            />
+          </TabsContent>
+        )}
       </Tabs>
     </div>
   );

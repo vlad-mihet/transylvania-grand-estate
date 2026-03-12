@@ -9,6 +9,10 @@ interface BilingualInputProps {
   valueRo: string;
   onChangeEn: (value: string) => void;
   onChangeRo: (value: string) => void;
+  valueFr?: string;
+  valueDe?: string;
+  onChangeFr?: (value: string) => void;
+  onChangeDe?: (value: string) => void;
   placeholder?: string;
   required?: boolean;
 }
@@ -19,6 +23,10 @@ export function BilingualInput({
   valueRo,
   onChangeEn,
   onChangeRo,
+  valueFr,
+  valueDe,
+  onChangeFr,
+  onChangeDe,
   placeholder,
   required,
 }: BilingualInputProps) {
@@ -31,6 +39,8 @@ export function BilingualInput({
         <TabsList className="h-8 bg-copper/[0.06]">
           <TabsTrigger value="en" className="text-xs px-3 tracking-[0.1em] font-semibold data-[state=active]:text-copper">EN</TabsTrigger>
           <TabsTrigger value="ro" className="text-xs px-3 tracking-[0.1em] font-semibold data-[state=active]:text-copper">RO</TabsTrigger>
+          {onChangeFr && <TabsTrigger value="fr" className="text-xs px-3 tracking-[0.1em] font-semibold data-[state=active]:text-copper">FR</TabsTrigger>}
+          {onChangeDe && <TabsTrigger value="de" className="text-xs px-3 tracking-[0.1em] font-semibold data-[state=active]:text-copper">DE</TabsTrigger>}
         </TabsList>
         <TabsContent value="en" className="mt-2">
           <Input
@@ -46,6 +56,24 @@ export function BilingualInput({
             placeholder={placeholder ? `${placeholder} (${t("romanian")})` : t("romanian")}
           />
         </TabsContent>
+        {onChangeFr && (
+          <TabsContent value="fr" className="mt-2">
+            <Input
+              value={valueFr ?? ""}
+              onChange={(e) => onChangeFr(e.target.value)}
+              placeholder={placeholder ? `${placeholder} (${t("french")})` : t("french")}
+            />
+          </TabsContent>
+        )}
+        {onChangeDe && (
+          <TabsContent value="de" className="mt-2">
+            <Input
+              value={valueDe ?? ""}
+              onChange={(e) => onChangeDe(e.target.value)}
+              placeholder={placeholder ? `${placeholder} (${t("german")})` : t("german")}
+            />
+          </TabsContent>
+        )}
       </Tabs>
     </div>
   );

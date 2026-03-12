@@ -2,8 +2,8 @@ import { z } from "zod";
 
 export const siteConfigSchema = z.object({
   name: z.string().min(1),
-  tagline: z.string().min(1),
-  description: z.string().min(1),
+  tagline: z.object({ en: z.string().min(1), ro: z.string().min(1), fr: z.string().optional(), de: z.string().optional() }),
+  description: z.object({ en: z.string().min(1), ro: z.string().min(1), fr: z.string().optional(), de: z.string().optional() }),
   contact: z.object({
     email: z.string().email(),
     phone: z.string().min(1),
