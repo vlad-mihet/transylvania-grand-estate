@@ -46,23 +46,10 @@ export async function apiClient<T = unknown>(
     headers["Content-Type"] = "application/json";
   }
 
-  const res = await fetch(url, {
-    ...options,
-    headers,
-    body:
-      options.body instanceof FormData
-        ? options.body
-        : options.body
-          ? JSON.stringify(options.body)
-          : undefined,
-  });
-
-  // Try to refresh on 401
-  if (res.status === 401 && accessToken) {
-    const newToken = await refreshAccessToken();
-    if (newToken) {
-      headers["Authorization"] = `Bearer ${newToken}`;
-      const retryRes = await fetch(url, {
+  function buildRequest(): [string, RequestInit] {
+    return [
+      url,
+      {
         ...options,
         headers,
         body:
@@ -71,7 +58,18 @@ export async function apiClient<T = unknown>(
             : options.body
               ? JSON.stringify(options.body)
               : undefined,
-      });
+      },
+    ];
+  }
+
+  const res = await fetch(...buildRequest());
+
+  // Try to refresh on 401
+  if (res.status === 401 && accessToken) {
+    const newToken = await refreshAccessToken();
+    if (newToken) {
+      headers["Authorization"] = `Bearer ${newToken}`;
+      const retryRes = await fetch(...buildRequest());
       if (!retryRes.ok) {
         const error = await retryRes.json().catch(() => ({}));
         throw new ApiError(

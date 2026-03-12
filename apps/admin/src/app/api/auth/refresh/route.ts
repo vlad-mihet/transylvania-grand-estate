@@ -27,13 +27,23 @@ export async function POST(req: NextRequest) {
     return response;
   }
 
+  const tokens = data?.data;
+  if (!tokens?.accessToken || !tokens?.refreshToken || !tokens?.user) {
+    const response = NextResponse.json(
+      { error: { message: "Invalid response from auth service" } },
+      { status: 502 },
+    );
+    response.cookies.delete("refreshToken");
+    return response;
+  }
+
   const response = NextResponse.json({
-    accessToken: data.data.accessToken,
-    user: data.data.user,
+    accessToken: tokens.accessToken,
+    user: tokens.user,
   });
 
   // Update refresh token cookie
-  response.cookies.set("refreshToken", data.data.refreshToken, {
+  response.cookies.set("refreshToken", tokens.refreshToken, {
     httpOnly: true,
     secure: process.env.NODE_ENV === "production",
     sameSite: "lax",

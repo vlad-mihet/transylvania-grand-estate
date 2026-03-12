@@ -17,7 +17,7 @@ export function middleware(req: NextRequest) {
   // Determine the effective path without locale prefix
   const segments = pathname.split("/").filter(Boolean);
   const firstSegment = segments[0];
-  const isLocalePrefixed = routing.locales.includes(firstSegment as "en" | "ro");
+  const isLocalePrefixed = routing.locales.includes(firstSegment as (typeof routing.locales)[number]);
   const effectivePath = isLocalePrefixed
     ? "/" + segments.slice(1).join("/") || "/"
     : pathname;
@@ -32,8 +32,8 @@ export function middleware(req: NextRequest) {
   }
 
   // Auth check for protected pages
-  const refreshToken = req.cookies.get("refreshToken");
-  if (!refreshToken) {
+  const refreshToken = req.cookies.get("refreshToken")?.value;
+  if (!refreshToken || refreshToken.split(".").length !== 3) {
     const locale = isLocalePrefixed ? firstSegment : routing.defaultLocale;
     const loginPath =
       locale === routing.defaultLocale ? "/login" : `/${locale}/login`;

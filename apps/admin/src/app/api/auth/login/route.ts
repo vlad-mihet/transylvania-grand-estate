@@ -16,13 +16,21 @@ export async function POST(req: NextRequest) {
     return NextResponse.json(data, { status: res.status });
   }
 
+  const tokens = data?.data;
+  if (!tokens?.accessToken || !tokens?.refreshToken || !tokens?.user) {
+    return NextResponse.json(
+      { error: { message: "Invalid response from auth service" } },
+      { status: 502 },
+    );
+  }
+
   const response = NextResponse.json({
-    accessToken: data.data.accessToken,
-    user: data.data.user,
+    accessToken: tokens.accessToken,
+    user: tokens.user,
   });
 
   // Set refresh token as httpOnly cookie
-  response.cookies.set("refreshToken", data.data.refreshToken, {
+  response.cookies.set("refreshToken", tokens.refreshToken, {
     httpOnly: true,
     secure: process.env.NODE_ENV === "production",
     sameSite: "lax",

@@ -39,8 +39,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           setAccessToken(data.accessToken);
           setUser(data.user);
         }
-      } catch {
-        // No valid session
+      } catch (err) {
+        console.error("Session restore failed:", err);
       } finally {
         setIsLoading(false);
       }
