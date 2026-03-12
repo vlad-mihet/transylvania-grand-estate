@@ -19,7 +19,7 @@ export function CTABanner({
   inquiryContext,
 }: CTABannerProps) {
   return (
-    <section className="py-16 md:py-20 bg-[#101014] border-y border-copper/10">
+    <section id="cta-section" className="relative overflow-hidden pt-24 md:pt-28 pb-16 md:pb-20 bg-[#101014] border-y border-copper/10 cta-diamond-glow">
       <Container>
         <div className="text-center max-w-2xl mx-auto">
           <h2 className="font-serif text-3xl md:text-4xl text-cream mb-4">
