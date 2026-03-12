@@ -1,4 +1,4 @@
-import { IsString, IsNotEmpty } from 'class-validator';
+import { IsString, IsNotEmpty, IsOptional } from 'class-validator';
 
 export class LocalizedStringDto {
   @IsString()
@@ -8,4 +8,12 @@ export class LocalizedStringDto {
   @IsString()
   @IsNotEmpty()
   ro: string;
+
+  @IsOptional()
+  @IsString()
+  fr?: string;
+
+  @IsOptional()
+  @IsString()
+  de?: string;
 }

@@ -47,6 +47,8 @@ export class PropertiesService {
       where.OR = [
         { title: { path: ['en'], string_contains: search } },
         { title: { path: ['ro'], string_contains: search } },
+        { title: { path: ['fr'], string_contains: search } },
+        { title: { path: ['de'], string_contains: search } },
         { city: { contains: search, mode: 'insensitive' } },
       ];
     }
