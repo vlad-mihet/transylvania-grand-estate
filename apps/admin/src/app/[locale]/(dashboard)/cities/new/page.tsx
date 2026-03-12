@@ -15,11 +15,15 @@ export default function NewCityPage() {
 
   const createMutation = useMutation({
     mutationFn: async ({ data, image }: { data: CityFormValues; image: File | null }) => {
-      const city = await apiClient<any>("/cities", { method: "POST", body: data });
+      const city = await apiClient<{ id: string }>("/cities", { method: "POST", body: data });
       if (image) {
         const fd = new FormData();
         fd.append("image", image);
-        await apiClient(`/cities/${city.id}/image`, { method: "POST", body: fd });
+        try {
+          await apiClient(`/cities/${city.id}/image`, { method: "POST", body: fd });
+        } catch {
+          toast.warning(t("imageUploadFailed"));
+        }
       }
       return city;
     },

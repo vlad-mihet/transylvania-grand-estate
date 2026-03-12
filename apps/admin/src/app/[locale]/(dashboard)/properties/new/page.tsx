@@ -24,7 +24,7 @@ export default function NewPropertyPage() {
       images: GalleryImage[];
     }) => {
       // Create property
-      const property = await apiClient<any>("/properties", {
+      const property = await apiClient<{ id: string }>("/properties", {
         method: "POST",
         body: toPropertyPayload(data),
       });
@@ -36,10 +36,14 @@ export default function NewPropertyPage() {
         newImages.forEach((img) => {
           if (img.file) formData.append("images", img.file);
         });
-        await apiClient(`/properties/${property.id}/images`, {
-          method: "POST",
-          body: formData,
-        });
+        try {
+          await apiClient(`/properties/${property.id}/images`, {
+            method: "POST",
+            body: formData,
+          });
+        } catch {
+          toast.warning(t("imageUploadFailed"));
+        }
       }
 
       return property;

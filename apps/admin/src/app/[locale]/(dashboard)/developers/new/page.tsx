@@ -15,11 +15,15 @@ export default function NewDeveloperPage() {
 
   const createMutation = useMutation({
     mutationFn: async ({ data, logo }: { data: DeveloperFormValues; logo: File | null }) => {
-      const dev = await apiClient<any>("/developers", { method: "POST", body: data });
+      const dev = await apiClient<{ id: string }>("/developers", { method: "POST", body: data });
       if (logo) {
         const formData = new FormData();
         formData.append("logo", logo);
-        await apiClient(`/developers/${dev.id}/logo`, { method: "POST", body: formData });
+        try {
+          await apiClient(`/developers/${dev.id}/logo`, { method: "POST", body: formData });
+        } catch {
+          toast.warning(t("imageUploadFailed"));
+        }
       }
       return dev;
     },

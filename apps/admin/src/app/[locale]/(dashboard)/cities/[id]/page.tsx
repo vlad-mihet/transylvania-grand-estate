@@ -28,7 +28,11 @@ export default function EditCityPage() {
       if (image) {
         const fd = new FormData();
         fd.append("image", image);
-        await apiClient(`/cities/${id}/image`, { method: "POST", body: fd });
+        try {
+          await apiClient(`/cities/${id}/image`, { method: "POST", body: fd });
+        } catch {
+          toast.warning(t("imageUploadFailed"));
+        }
       }
     },
     onSuccess: () => {

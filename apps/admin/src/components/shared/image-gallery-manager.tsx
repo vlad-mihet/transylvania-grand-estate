@@ -46,6 +46,8 @@ export function ImageGalleryManager({
   });
 
   const removeImage = (index: number) => {
+    const removed = images[index];
+    if (removed.file) URL.revokeObjectURL(removed.src);
     const updated = images.filter((_, i) => i !== index);
     // If we removed the hero, set first remaining as hero
     if (updated.length > 0 && !updated.some((img) => img.isHero)) {

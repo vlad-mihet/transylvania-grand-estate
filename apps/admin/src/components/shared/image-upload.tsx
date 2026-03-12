@@ -21,11 +21,12 @@ export function ImageUpload({ value, onChange, label }: ImageUploadProps) {
     (accepted: File[]) => {
       const file = accepted[0];
       if (file) {
+        if (preview) URL.revokeObjectURL(preview);
         onChange(file);
         setPreview(URL.createObjectURL(file));
       }
     },
-    [onChange],
+    [onChange, preview],
   );
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
@@ -38,6 +39,7 @@ export function ImageUpload({ value, onChange, label }: ImageUploadProps) {
   const displaySrc = preview || value;
 
   const clear = () => {
+    if (preview) URL.revokeObjectURL(preview);
     onChange(null);
     setPreview(null);
   };

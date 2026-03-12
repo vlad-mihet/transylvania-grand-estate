@@ -28,7 +28,11 @@ export default function EditDeveloperPage() {
       if (logo) {
         const formData = new FormData();
         formData.append("logo", logo);
-        await apiClient(`/developers/${id}/logo`, { method: "POST", body: formData });
+        try {
+          await apiClient(`/developers/${id}/logo`, { method: "POST", body: formData });
+        } catch {
+          toast.warning(t("imageUploadFailed"));
+        }
       }
     },
     onSuccess: () => {

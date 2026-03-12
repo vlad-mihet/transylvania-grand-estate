@@ -44,10 +44,14 @@ export default function EditPropertyPage() {
         newImages.forEach((img) => {
           if (img.file) formData.append("images", img.file);
         });
-        await apiClient(`/properties/${id}/images`, {
-          method: "POST",
-          body: formData,
-        });
+        try {
+          await apiClient(`/properties/${id}/images`, {
+            method: "POST",
+            body: formData,
+          });
+        } catch {
+          toast.warning(t("imageUploadFailed"));
+        }
       }
     },
     onSuccess: () => {
