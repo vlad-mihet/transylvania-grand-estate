@@ -12,6 +12,7 @@ import { AboutPreview } from "@/components/sections/about-preview";
 import { TestimonialsSection } from "@/components/sections/testimonials-section";
 import { DeveloperShowcase } from "@/components/sections/developer-showcase";
 import { CTABanner } from "@/components/sections/cta-banner";
+import { FloatingDiamond } from "@/components/layout/floating-diamond";
 
 export default async function HomePage() {
   const t = await getTranslations("HomePage");
@@ -44,6 +45,7 @@ export default async function HomePage() {
 
   return (
     <>
+      <FloatingDiamond />
       <VideoHeroSection
         videoSrc="/videos/hero.mp4"
         posterImage="/images/interiors/mansion-exterior.jpg"
