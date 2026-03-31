@@ -139,6 +139,18 @@
 }
 
 @layer components {
+  /* Floating diamond — responsive positioning to avoid logo collision */
+  .floating-diamond {
+    top: 52px;
+    left: -4px;
+  }
+
+  @media (min-width: 1600px) {
+    .floating-diamond {
+      left: max(0.5rem, calc((100vw - 1536px) / 2 - 1.4rem));
+    }
+  }
+
   .frosted-glass {
     @apply bg-card border border-copper/[0.08] rounded-2xl;
     box-shadow:

@@ -85,13 +85,25 @@ export function FloatingDiamond() {
       window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     setReducedMotion(prefersReduced);
 
-    // Store initial left position for CTA arrival calculations
-    if (elementRef.current) {
-      initialLeftRef.current = elementRef.current.getBoundingClientRect().left;
-    }
+    // Read left position after paint to ensure CSS class is applied
+    requestAnimationFrame(() => {
+      if (elementRef.current) {
+        initialLeftRef.current = elementRef.current.getBoundingClientRect().left;
+      }
+    });
 
+    const handleResize = () => {
+      if (elementRef.current) {
+        initialLeftRef.current = elementRef.current.getBoundingClientRect().left;
+      }
+    };
+
+    window.addEventListener("resize", handleResize);
     const timer = setTimeout(() => setMounted(true), 300);
-    return () => clearTimeout(timer);
+    return () => {
+      clearTimeout(timer);
+      window.removeEventListener("resize", handleResize);
+    };
   }, []);
 
   useEffect(() => {
@@ -177,10 +189,8 @@ export function FloatingDiamond() {
   return (
     <div
       ref={elementRef}
-      className="fixed z-[51] pointer-events-none hidden xl:block"
+      className="floating-diamond fixed z-[51] pointer-events-none hidden xl:block"
       style={{
-        top: 52,
-        left: "max(0.5rem, calc((100vw - 1536px) / 2 - 1.4rem))",
         opacity: mounted ? (reducedMotion ? 0.7 : 0.5) : 0,
         transition: "opacity 1s var(--ease-luxury)",
         willChange: "transform, opacity",
