@@ -5,7 +5,7 @@
     "about": "Despre Noi",
     "contact": "Contact",
     "viewAll": "Vezi Toate Proprietățile",
-    "scheduleViewing": "Programează o Vizionare",
+    "scheduleViewing": "Începe un Proiect",
     "forSale": "De vânzare",
     "newDevelopments": "Ansambluri rezidențiale",
     "developers": "Dezvoltatori",
@@ -37,19 +37,19 @@
       "title": "O Moștenire a Excelenței",
       "heritage": {
         "title": "Patrimoniu & Modernitate",
-        "description": "Îmbinăm secole de patrimoniu arhitectural transilvănean cu design de lux contemporan, creând case care onorează trecutul în timp ce îmbrățișează viitorul."
+        "description": "Împletim secole de patrimoniu arhitectural transilvănean în narațiuni de brand contemporane, creând povești care onorează trecutul în timp ce vorbesc viitorului."
       },
       "curated": {
-        "title": "Portofoliu Selectat",
-        "description": "Fiecare proprietate din colecția noastră este selectată manual pentru a îndeplini cele mai înalte standarde de lux și exclusivitate, asigurând că doar cele mai fine ajung la clienții noștri."
+        "title": "Strategie de Brand",
+        "description": "Creăm identități de brand distinctive pentru fiecare proprietate pe care o reprezentăm, transformând spații excepționale în narațiuni aspiraționale de lifestyle care captivează audiența potrivită."
       },
       "service": {
-        "title": "Serviciu de Elită",
-        "description": "De la prima vizionare până la semnătura finală, echipa noastră dedicată asigură o experiență de neatins, adaptată preferințelor și stilului tău de viață unic."
+        "title": "Producție Creativă",
+        "description": "De la brief-ul creativ inițial până la lansarea campaniei, echipa noastră livrează conținut editorial de excepție, vizualuri cinematice și experiențe imersive care diferențiază fiecare proprietate."
       }
     },
     "stats": {
-      "propertiesSold": "Proprietăți Vândute",
+      "propertiesSold": "Proprietăți Promovate",
       "yearsExperience": "Ani de Experiență",
       "citiesServed": "Orașe Deservite",
       "portfolioValue": "Valoare Portofoliu (M\u00a0EUR)"
@@ -61,8 +61,8 @@
     },
     "about": {
       "subtitle": "Despre Transylvania Grand Estate",
-      "title": "Redefinim Imobiliarele de Lux în România",
-      "description": "Suntem consultanța imobiliară de lux premier din România, conectând cumpărători exigenți cu proprietăți excepționale din Transilvania și nu numai.",
+      "title": "Redefinim Marketingul Imobiliar de Lux în România",
+      "description": "Suntem agenția de marketing imobiliar de lux premier din România, creând narațiuni și strategii de brand care ridică proprietăți excepționale din Transilvania și nu numai.",
       "cta": "Povestea Noastră"
     },
     "testimonials": {
@@ -99,9 +99,9 @@
       }
     },
     "cta": {
-      "title": "Pregătit Să Găsești Proprietatea Visurilor Tale?",
-      "subtitle": "Lasă echipa noastră de experți să te ghideze prin cele mai fine reședințe de lux din România.",
-      "button": "Programează o Vizionare Privată"
+      "title": "Pregătit Să Ridici Următorul Tău Proiect?",
+      "subtitle": "Lasă echipa noastră creativă să conceapă o strategie de brand care să poziționeze proprietatea ta printre cele mai fine din România.",
+      "button": "Începe o Conversație"
     }
   },
   "DeveloperDetail": {
@@ -140,7 +140,7 @@
     "awardsWon": "Premii Câștigate",
     "viewAll": "Vezi Toate Proprietățile",
     "interested": "Interesat de proiectele acestui dezvoltator?",
-    "interestedSubtitle": "Contactați-ne pentru acces exclusiv la dezvoltările viitoare.",
+    "interestedSubtitle": "Descoperă cum aducem aceste dezvoltări pe piață.",
     "getInTouch": "Contactați-ne",
     "milestonesData": {
       "maurer-imobiliare": [
@@ -190,7 +190,7 @@
   },
   "PropertiesPage": {
     "hero": {
-      "title": "Portofoliul Nostru Exclusiv",
+      "title": "Vitrina Noastră",
       "subtitle": "Descoperă Cele Mai Fine Proprietăți de Lux din România"
     },
     "contextual": {
@@ -228,9 +228,9 @@
       "description": "Încearcă să ajustezi filtrele pentru a găsi ce cauți."
     },
     "cta": {
-      "title": "Nu Găsești Ce Cauți?",
-      "subtitle": "Echipa noastră are acces la proprietăți exclusive off-market.",
-      "button": "Contactează Echipa Noastră"
+      "title": "Ai o Proprietate Care Merită Atenție?",
+      "subtitle": "Colaborăm cu dezvoltatori vizionari pentru a aduce cele mai fine proiecte la viață prin marketing strategic.",
+      "button": "Contactează-ne"
     }
   },
   "PropertyDetail": {
@@ -249,7 +249,7 @@
     },
     "description": "Descriere",
     "requestInfo": "Solicită Informații",
-    "scheduleViewing": "Programează Vizionare",
+    "scheduleViewing": "Solicită Detalii",
     "shareProperty": "Distribuie Proprietatea",
     "similarProperties": {
       "subtitle": "S-ar Putea Să Îți Placă",
@@ -263,7 +263,7 @@
     },
     "cta": {
       "title": "Interesat de această proprietate?",
-      "subtitle": "Contactați-ne pentru o vizionare privată sau mai multe informații."
+      "subtitle": "Contactați-ne pentru a afla mai multe despre acest proiect."
     }
   },
   "AboutPage": {
@@ -274,15 +274,15 @@
     "story": {
       "founding": {
         "title": "Fondat din Pasiune",
-        "description": "Transylvania Grand Estate s-a născut dintr-o viziune de a transforma peisajul imobiliar de lux din România. Fondatorii noștri au recunoscut potențialul neexploatat al patrimoniului arhitectural al Transilvaniei și au pornit să creeze o consultanță care potrivește proprietăți de clasă mondială cu cumpărători exigenți."
+        "description": "Transylvania Grand Estate s-a născut dintr-o viziune de a transforma modul în care imobiliarele de lux sunt prezentate în România. Fondatorii noștri au recunoscut potențialul neexploatat al patrimoniului arhitectural al Transilvaniei și au pornit să creeze o agenție de marketing care spune poveștile celor mai extraordinare proprietăți din lume."
       },
       "mission": {
         "title": "Misiunea Noastră",
-        "description": "Să conectăm persoane exigente cu proprietăți extraordinare care reflectă aspirațiile și stilul lor de viață. Credem că o casă este mai mult decât pereți și acoperiș — este o declarație despre cine ești și cum alegi să trăiești."
+        "description": "Să ridicăm proprietățile de lux prin storytelling captivant de brand, poziționare strategică și marketing de lifestyle. Credem că o proprietate este mai mult decât pereți și acoperiș — este o narațiune care așteaptă să fie spusă, un brand care așteaptă să fie construit."
       },
       "approach": {
         "title": "Abordarea Noastră",
-        "description": "Fiecare relație cu clientul începe cu înțelegerea. Ascultăm, învățăm și livrăm peste așteptări. Cunoașterea noastră intimă a pieței de lux din România, combinată cu o perspectivă globală, ne permite să oferim ghidare de neatins la fiecare pas."
+        "description": "Fiecare proiect începe cu înțelegerea. Ne cufundăm în povestea proprietății, viziunea dezvoltatorului și dorința pieței. Cunoașterea noastră intimă a peisajului de lux din România, combinată cu o perspectivă globală, ne permite să creăm campanii care rezonează la fiecare nivel."
       }
     },
     "values": {
@@ -294,7 +294,7 @@
       },
       "discretion": {
         "title": "Discreție",
-        "description": "Înțelegem că tranzacțiile de lux necesită cea mai mare confidențialitate. Intimitatea ta este prioritatea noastră în fiecare etapă a procesului."
+        "description": "Înțelegem că parteneriatele de lux și campaniile pre-lansare necesită cea mai mare confidențialitate. Intimitatea ta este prioritatea noastră în fiecare etapă a procesului."
       },
       "heritage": {
         "title": "Patrimoniu",
@@ -307,7 +307,7 @@
     },
     "cta": {
       "title": "Lucrează cu Noi",
-      "subtitle": "Alătură-te echipei de top din imobiliarele de lux din România.",
+      "subtitle": "Devino partener al echipei de top din marketingul imobiliar de lux din România.",
       "button": "Contactează-ne"
     }
   },
@@ -326,7 +326,7 @@
       "budget": "Interval Buget",
       "selectBudget": "Selectează interval buget...",
       "message": "Mesajul Tău",
-      "messagePlaceholder": "Spune-ne despre proprietatea ideală...",
+      "messagePlaceholder": "Spune-ne despre proiectul tău...",
       "submit": "Trimite Cererea",
       "success": {
         "title": "Mulțumim!",
@@ -433,9 +433,9 @@
       "noResults": "Nicio proprietate nu corespunde filtrelor selectate."
     },
     "cta": {
-      "title": "Găsește-ți Locuința în {city}",
-      "subtitle": "Programează o vizionare privată cu experții noștri locali.",
-      "button": "Programează Vizionare"
+      "title": "Descoperă Luxul în {city}",
+      "subtitle": "Descoperă cum promovăm cele mai fine proprietăți din {city}.",
+      "button": "Contactează-ne"
     },
     "meta": {
       "title": "{city} — Proprietăți de lux",
@@ -473,7 +473,7 @@
       }
     },
     "stats": {
-      "propertiesSold": "Proprietăți Vândute",
+      "propertiesSold": "Proprietăți Promovate",
       "yearsExperience": "Ani de Excelență",
       "citiesServed": "Orașe Deservite",
       "portfolioValue": "Valoare Portofoliu (M\u00a0EUR)"
@@ -499,7 +499,7 @@
     "brand": {
       "label": "Etosul Nostru",
       "title": "Redefinim Ce Înseamnă Luxul",
-      "description": "Nu vindem doar proprietăți. Curăm moșteniri \u2014 conectând indivizi vizionari cu domenii care vor defini familiile lor pentru generații. În Transilvania, am găsit un tărâm unde extraordinarul este încă posibil.",
+      "description": "Nu prezentăm doar proprietăți. Curăm moșteniri \u2014 conectând indivizi vizionari cu domenii care vor defini familiile lor pentru generații. În Transilvania, am găsit un tărâm unde extraordinarul este încă posibil.",
       "cta": "Descoperă Povestea Noastră"
     },
     "landmarks": {
@@ -562,12 +562,12 @@
     },
     "closing": {
       "headline": "Moștenirea Ta Te Așteaptă",
-      "subline": "Aranjează o consultație privată cu echipa noastră.",
-      "cta": "Solicită o Vizionare Privată"
+      "subline": "Aranjează o consultație creativă cu echipa noastră.",
+      "cta": "Începe o Conversație"
     }
   },
   "Footer": {
-    "tagline": "Consultanța Imobiliară de Lux Premier din România",
+    "tagline": "Agenția de Marketing Imobiliar de Lux Premier din România",
     "quickLinks": "Linkuri Rapide",
     "contact": "Contactează-ne",
     "followUs": "Urmărește-ne",
@@ -577,7 +577,7 @@
   },
   "NotFoundPage": {
     "title": "Pagină Negăsită",
-    "description": "Proprietatea pe care o cauți poate fi mutată sau nu mai există. Lasă-ne să te ajutăm să îți găsești locuința visurilor.",
+    "description": "Pagina pe care o cauți poate fi mutată sau nu mai există. Lasă-ne să te ajutăm să găsești ceea ce cauți.",
     "goHome": "Acasă",
     "browseProperties": "Răsfoiește Proprietăți"
   }

@@ -5,7 +5,7 @@
     "about": "About Us",
     "contact": "Contact",
     "viewAll": "View All Properties",
-    "scheduleViewing": "Schedule a Viewing",
+    "scheduleViewing": "Start a Project",
     "forSale": "For Sale",
     "newDevelopments": "New Developments",
     "developers": "Developers",
@@ -37,19 +37,19 @@
       "title": "A Legacy of Excellence",
       "heritage": {
         "title": "Heritage & Modernity",
-        "description": "We blend centuries of Transylvanian architectural heritage with contemporary luxury design, creating homes that honor the past while embracing the future."
+        "description": "We weave centuries of Transylvanian architectural heritage into contemporary brand narratives, crafting stories that honor the past while speaking to the future."
       },
       "curated": {
-        "title": "Curated Portfolio",
-        "description": "Each property in our collection is hand-selected to meet the highest standards of luxury and exclusivity, ensuring only the finest make it to our clients."
+        "title": "Brand Strategy",
+        "description": "We craft distinctive brand identities for every property we represent, transforming exceptional spaces into aspirational lifestyle narratives that captivate the right audience."
       },
       "service": {
-        "title": "White-Glove Service",
-        "description": "From first viewing to final signature, our dedicated team ensures an unparalleled experience tailored to your unique preferences and lifestyle."
+        "title": "Creative Production",
+        "description": "From initial creative brief to campaign launch, our team delivers editorial-grade content, cinematic visuals, and immersive experiences that set each property apart."
       }
     },
     "stats": {
-      "propertiesSold": "Properties Sold",
+      "propertiesSold": "Properties Marketed",
       "yearsExperience": "Years of Experience",
       "citiesServed": "Cities Served",
       "portfolioValue": "Portfolio Value (M\u00a0EUR)"
@@ -61,8 +61,8 @@
     },
     "about": {
       "subtitle": "About Transylvania Grand Estate",
-      "title": "Redefining Luxury Real Estate in Romania",
-      "description": "We are Romania's premier luxury real estate consultancy, connecting discerning buyers with exceptional properties across Transylvania and beyond.",
+      "title": "Redefining Luxury Real Estate Marketing in Romania",
+      "description": "We are Romania's premier luxury real estate marketing agency, crafting compelling narratives and brand strategies that elevate exceptional properties across Transylvania and beyond.",
       "cta": "Our Story"
     },
     "testimonials": {
@@ -99,9 +99,9 @@
       }
     },
     "cta": {
-      "title": "Ready to Find Your Dream Property?",
-      "subtitle": "Let our expert team guide you through Romania's finest luxury residences.",
-      "button": "Schedule a Private Viewing"
+      "title": "Ready to Elevate Your Next Project?",
+      "subtitle": "Let our creative team craft a brand strategy that positions your property among Romania's finest.",
+      "button": "Start a Conversation"
     }
   },
   "DeveloperDetail": {
@@ -140,7 +140,7 @@
     "awardsWon": "Awards Won",
     "viewAll": "View All Properties",
     "interested": "Interested in This Developer's Projects?",
-    "interestedSubtitle": "Contact us for exclusive access to upcoming developments.",
+    "interestedSubtitle": "Discover how we bring these developments to market.",
     "getInTouch": "Get in Touch",
     "milestonesData": {
       "maurer-imobiliare": [
@@ -190,7 +190,7 @@
   },
   "PropertiesPage": {
     "hero": {
-      "title": "Our Exclusive Portfolio",
+      "title": "Our Showcase",
       "subtitle": "Discover Romania's Finest Luxury Properties"
     },
     "contextual": {
@@ -228,9 +228,9 @@
       "description": "Try adjusting your filters to find what you're looking for."
     },
     "cta": {
-      "title": "Can't Find What You're Looking For?",
-      "subtitle": "Our team has access to exclusive off-market properties.",
-      "button": "Contact Our Team"
+      "title": "Have a Property That Deserves the Spotlight?",
+      "subtitle": "We partner with visionary developers to bring their finest projects to life through strategic marketing.",
+      "button": "Get in Touch"
     }
   },
   "PropertyDetail": {
@@ -249,7 +249,7 @@
     },
     "description": "Description",
     "requestInfo": "Request Information",
-    "scheduleViewing": "Schedule Viewing",
+    "scheduleViewing": "Request Details",
     "shareProperty": "Share Property",
     "similarProperties": {
       "subtitle": "You May Also Like",
@@ -263,7 +263,7 @@
     },
     "cta": {
       "title": "Interested in This Property?",
-      "subtitle": "Contact us for a private viewing or more information."
+      "subtitle": "Get in touch to learn more about this project."
     }
   },
   "AboutPage": {
@@ -274,15 +274,15 @@
     "story": {
       "founding": {
         "title": "Founded on Passion",
-        "description": "Transylvania Grand Estate was born from a vision to transform Romania's luxury real estate landscape. Our founders recognized the untapped potential of Transylvania's architectural heritage and set out to create a consultancy that matches world-class properties with discerning buyers."
+        "description": "Transylvania Grand Estate was born from a vision to transform how luxury real estate is presented in Romania. Our founders recognized the untapped potential of Transylvania's architectural heritage and set out to create a marketing agency that tells the stories of the world's most extraordinary properties."
       },
       "mission": {
         "title": "Our Mission",
-        "description": "To connect discerning individuals with extraordinary properties that reflect their aspirations and lifestyle. We believe that a home is more than walls and a roof — it's a statement of who you are and how you choose to live."
+        "description": "To elevate luxury properties through compelling brand storytelling, strategic positioning, and lifestyle marketing. We believe that a property is more than walls and a roof — it's a narrative waiting to be told, a brand waiting to be built."
       },
       "approach": {
         "title": "Our Approach",
-        "description": "Every client relationship begins with understanding. We listen, we learn, and we deliver beyond expectations. Our intimate knowledge of Romania's luxury market, combined with a global perspective, allows us to offer unparalleled guidance at every step."
+        "description": "Every project begins with understanding. We immerse ourselves in the property's story, the developer's vision, and the market's desire. Our intimate knowledge of Romania's luxury landscape, combined with a global perspective, allows us to craft campaigns that resonate at every level."
       }
     },
     "values": {
@@ -294,7 +294,7 @@
       },
       "discretion": {
         "title": "Discretion",
-        "description": "We understand that luxury transactions require the utmost confidentiality. Your privacy is our priority at every stage of the process."
+        "description": "We understand that luxury partnerships and pre-launch campaigns require the utmost confidentiality. Your privacy is our priority at every stage of the process."
       },
       "heritage": {
         "title": "Heritage",
@@ -307,7 +307,7 @@
     },
     "cta": {
       "title": "Work With Us",
-      "subtitle": "Join Romania's leading luxury real estate team.",
+      "subtitle": "Partner with Romania's leading luxury property marketing team.",
       "button": "Get in Touch"
     }
   },
@@ -326,7 +326,7 @@
       "budget": "Budget Range",
       "selectBudget": "Select budget range...",
       "message": "Your Message",
-      "messagePlaceholder": "Tell us about your ideal property...",
+      "messagePlaceholder": "Tell us about your project...",
       "submit": "Send Inquiry",
       "success": {
         "title": "Thank You!",
@@ -433,9 +433,9 @@
       "noResults": "No properties match the selected filters."
     },
     "cta": {
-      "title": "Find Your Home in {city}",
-      "subtitle": "Schedule a private viewing with our local experts.",
-      "button": "Schedule Viewing"
+      "title": "Discover Luxury in {city}",
+      "subtitle": "Explore how we showcase the finest properties in {city}.",
+      "button": "Get in Touch"
     },
     "meta": {
       "title": "{city} — Luxury Properties",
@@ -443,7 +443,7 @@
     }
   },
   "Footer": {
-    "tagline": "Romania's Premier Luxury Real Estate Consultancy",
+    "tagline": "Romania's Premier Luxury Real Estate Marketing Agency",
     "quickLinks": "Quick Links",
     "contact": "Contact Us",
     "followUs": "Follow Us",
@@ -482,7 +482,7 @@
       }
     },
     "stats": {
-      "propertiesSold": "Properties Sold",
+      "propertiesSold": "Properties Marketed",
       "yearsExperience": "Years of Excellence",
       "citiesServed": "Cities Served",
       "portfolioValue": "Portfolio Value (M\u00a0EUR)"
@@ -508,7 +508,7 @@
     "brand": {
       "label": "Our Ethos",
       "title": "Redefining What Luxury Means",
-      "description": "We do not merely sell properties. We curate legacies \u2014 connecting visionary individuals with estates that will define their families for generations. In Transylvania, we have found a land where the extraordinary is still possible.",
+      "description": "We do not merely present properties. We curate legacies \u2014 connecting visionary individuals with estates that will define their families for generations. In Transylvania, we have found a land where the extraordinary is still possible.",
       "cta": "Discover Our Story"
     },
     "landmarks": {
@@ -571,13 +571,13 @@
     },
     "closing": {
       "headline": "Your Legacy Awaits",
-      "subline": "Arrange a private consultation with our team.",
-      "cta": "Request a Private Viewing"
+      "subline": "Arrange a creative consultation with our team.",
+      "cta": "Start a Conversation"
     }
   },
   "NotFoundPage": {
     "title": "Page Not Found",
-    "description": "The property you're looking for may have been moved or no longer exists. Let us help you find your dream home.",
+    "description": "The page you're looking for may have been moved or no longer exists. Let us help you find what you're looking for.",
     "goHome": "Go Home",
     "browseProperties": "Browse Properties"
   }

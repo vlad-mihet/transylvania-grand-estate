@@ -5,7 +5,7 @@
     "about": "À Propos",
     "contact": "Contact",
     "viewAll": "Voir Toutes les Propriétés",
-    "scheduleViewing": "Planifier une Visite",
+    "scheduleViewing": "Démarrer un Projet",
     "forSale": "À Vendre",
     "newDevelopments": "Nouveaux Projets",
     "developers": "Promoteurs",
@@ -37,19 +37,19 @@
       "title": "Un Héritage d'Excellence",
       "heritage": {
         "title": "Patrimoine & Modernité",
-        "description": "Nous allions des siècles de patrimoine architectural transylvanien au design de luxe contemporain, créant des demeures qui honorent le passé tout en embrassant l'avenir."
+        "description": "Nous tissons des siècles de patrimoine architectural transylvanien dans des récits de marque contemporains, créant des histoires qui honorent le passé tout en parlant à l'avenir."
       },
       "curated": {
-        "title": "Portfolio Sélectionné",
-        "description": "Chaque propriété de notre collection est soigneusement sélectionnée pour répondre aux plus hauts standards de luxe et d'exclusivité, garantissant que seules les plus belles parviennent à nos clients."
+        "title": "Stratégie de Marque",
+        "description": "Nous créons des identités de marque distinctives pour chaque propriété que nous représentons, transformant des espaces exceptionnels en récits de lifestyle aspirationnels qui captivent le bon public."
       },
       "service": {
-        "title": "Service Haut de Gamme",
-        "description": "De la première visite à la signature finale, notre équipe dédiée assure une expérience inégalée, adaptée à vos préférences et votre style de vie uniques."
+        "title": "Production Créative",
+        "description": "Du brief créatif initial au lancement de campagne, notre équipe livre un contenu éditorial d'exception, des visuels cinématiques et des expériences immersives qui distinguent chaque propriété."
       }
     },
     "stats": {
-      "propertiesSold": "Propriétés Vendues",
+      "propertiesSold": "Propriétés Promues",
       "yearsExperience": "Années d'Expérience",
       "citiesServed": "Villes Desservies",
       "portfolioValue": "Valeur du Portfolio (M\u00a0EUR)"
@@ -61,8 +61,8 @@
     },
     "about": {
       "subtitle": "À Propos de Transylvania Grand Estate",
-      "title": "Redéfinir l'Immobilier de Luxe en Roumanie",
-      "description": "Nous sommes le premier cabinet de conseil en immobilier de luxe en Roumanie, mettant en relation des acheteurs exigeants avec des propriétés exceptionnelles à travers la Transylvanie et au-delà.",
+      "title": "Redéfinir le Marketing Immobilier de Luxe en Roumanie",
+      "description": "Nous sommes la première agence de marketing immobilier de luxe en Roumanie, créant des récits et des stratégies de marque qui élèvent des propriétés exceptionnelles à travers la Transylvanie et au-delà.",
       "cta": "Notre Histoire"
     },
     "testimonials": {
@@ -99,9 +99,9 @@
       }
     },
     "cta": {
-      "title": "Prêt à Trouver la Propriété de Vos Rêves ?",
-      "subtitle": "Laissez notre équipe d'experts vous guider parmi les plus belles résidences de luxe de Roumanie.",
-      "button": "Planifier une Visite Privée"
+      "title": "Prêt à Sublimer Votre Prochain Projet ?",
+      "subtitle": "Laissez notre équipe créative concevoir une stratégie de marque qui positionne votre propriété parmi les plus prestigieuses de Roumanie.",
+      "button": "Engager la Conversation"
     }
   },
   "DeveloperDetail": {
@@ -140,7 +140,7 @@
     "awardsWon": "Prix Remportés",
     "viewAll": "Voir Toutes les Propriétés",
     "interested": "Intéressé par les Projets de ce Promoteur ?",
-    "interestedSubtitle": "Contactez-nous pour un accès exclusif aux développements à venir.",
+    "interestedSubtitle": "Découvrez comment nous portons ces développements sur le marché.",
     "getInTouch": "Nous Contacter",
     "milestonesData": {
       "maurer-imobiliare": [
@@ -190,7 +190,7 @@
   },
   "PropertiesPage": {
     "hero": {
-      "title": "Notre Portfolio Exclusif",
+      "title": "Notre Vitrine",
       "subtitle": "Découvrez les Plus Belles Propriétés de Luxe de Roumanie"
     },
     "contextual": {
@@ -228,9 +228,9 @@
       "description": "Essayez d'ajuster vos filtres pour trouver ce que vous recherchez."
     },
     "cta": {
-      "title": "Vous Ne Trouvez Pas Ce Que Vous Cherchez ?",
-      "subtitle": "Notre équipe a accès à des propriétés exclusives hors marché.",
-      "button": "Contacter Notre Équipe"
+      "title": "Vous Avez une Propriété Qui Mérite d'Être Mise en Lumière ?",
+      "subtitle": "Nous collaborons avec des promoteurs visionnaires pour donner vie à leurs meilleurs projets grâce au marketing stratégique.",
+      "button": "Nous Contacter"
     }
   },
   "PropertyDetail": {
@@ -249,7 +249,7 @@
     },
     "description": "Description",
     "requestInfo": "Demander des Informations",
-    "scheduleViewing": "Planifier une Visite",
+    "scheduleViewing": "Demander des Détails",
     "shareProperty": "Partager la Propriété",
     "similarProperties": {
       "subtitle": "Vous Pourriez Aussi Aimer",
@@ -263,7 +263,7 @@
     },
     "cta": {
       "title": "Intéressé par cette propriété ?",
-      "subtitle": "Contactez-nous pour une visite privée ou plus d'informations."
+      "subtitle": "Contactez-nous pour en savoir plus sur ce projet."
     }
   },
   "AboutPage": {
@@ -274,15 +274,15 @@
     "story": {
       "founding": {
         "title": "Fondé sur la Passion",
-        "description": "Transylvania Grand Estate est né d'une vision de transformer le paysage de l'immobilier de luxe en Roumanie. Nos fondateurs ont reconnu le potentiel inexploité du patrimoine architectural de la Transylvanie et ont entrepris de créer un cabinet qui associe des propriétés de classe mondiale à des acheteurs exigeants."
+        "description": "Transylvania Grand Estate est né d'une vision de transformer la manière dont l'immobilier de luxe est présenté en Roumanie. Nos fondateurs ont reconnu le potentiel inexploité du patrimoine architectural de la Transylvanie et ont entrepris de créer une agence de marketing qui raconte les histoires des propriétés les plus extraordinaires du monde."
       },
       "mission": {
         "title": "Notre Mission",
-        "description": "Mettre en relation des personnes exigeantes avec des propriétés extraordinaires qui reflètent leurs aspirations et leur style de vie. Nous croyons qu'une maison est bien plus que des murs et un toit — c'est une déclaration de qui vous êtes et de comment vous choisissez de vivre."
+        "description": "Sublimer les propriétés de luxe par un storytelling de marque captivant, un positionnement stratégique et un marketing de lifestyle. Nous croyons qu'une propriété est bien plus que des murs et un toit — c'est un récit qui attend d'être raconté, une marque qui attend d'être construite."
       },
       "approach": {
         "title": "Notre Approche",
-        "description": "Chaque relation client commence par la compréhension. Nous écoutons, nous apprenons et nous dépassons les attentes. Notre connaissance intime du marché du luxe roumain, combinée à une perspective mondiale, nous permet d'offrir un accompagnement inégalé à chaque étape."
+        "description": "Chaque projet commence par la compréhension. Nous nous immergeons dans l'histoire de la propriété, la vision du promoteur et le désir du marché. Notre connaissance intime du paysage du luxe roumain, combinée à une perspective mondiale, nous permet de créer des campagnes qui résonnent à chaque niveau."
       }
     },
     "values": {
@@ -294,7 +294,7 @@
       },
       "discretion": {
         "title": "Discrétion",
-        "description": "Nous comprenons que les transactions de luxe exigent la plus grande confidentialité. Votre vie privée est notre priorité à chaque étape du processus."
+        "description": "Nous comprenons que les partenariats de luxe et les campagnes pré-lancement exigent la plus grande confidentialité. Votre vie privée est notre priorité à chaque étape du processus."
       },
       "heritage": {
         "title": "Patrimoine",
@@ -307,7 +307,7 @@
     },
     "cta": {
       "title": "Travaillez Avec Nous",
-      "subtitle": "Rejoignez l'équipe leader de l'immobilier de luxe en Roumanie.",
+      "subtitle": "Associez-vous à l'équipe leader du marketing immobilier de luxe en Roumanie.",
       "button": "Nous Contacter"
     }
   },
@@ -326,7 +326,7 @@
       "budget": "Gamme de Budget",
       "selectBudget": "Sélectionnez une gamme de budget...",
       "message": "Votre Message",
-      "messagePlaceholder": "Décrivez-nous votre propriété idéale...",
+      "messagePlaceholder": "Décrivez-nous votre projet...",
       "submit": "Envoyer la Demande",
       "success": {
         "title": "Merci !",
@@ -433,9 +433,9 @@
       "noResults": "Aucune propriété ne correspond aux filtres sélectionnés."
     },
     "cta": {
-      "title": "Trouvez Votre Maison à {city}",
-      "subtitle": "Planifiez une visite privée avec nos experts locaux.",
-      "button": "Planifier une Visite"
+      "title": "Découvrez le Luxe à {city}",
+      "subtitle": "Découvrez comment nous mettons en valeur les plus belles propriétés de {city}.",
+      "button": "Nous Contacter"
     },
     "meta": {
       "title": "{city} — Propriétés de luxe",
@@ -473,7 +473,7 @@
       }
     },
     "stats": {
-      "propertiesSold": "Propriétés Vendues",
+      "propertiesSold": "Propriétés Promues",
       "yearsExperience": "Années d'Excellence",
       "citiesServed": "Villes Desservies",
       "portfolioValue": "Valeur du Portfolio (M\u00a0EUR)"
@@ -499,7 +499,7 @@
     "brand": {
       "label": "Notre Éthique",
       "title": "Redéfinir le Sens du Luxe",
-      "description": "Nous ne vendons pas simplement des propriétés. Nous curons des héritages \u2014 reliant des individus visionnaires à des domaines qui définiront leurs familles pour des générations. En Transylvanie, nous avons trouvé une terre où l'extraordinaire est encore possible.",
+      "description": "Nous ne présentons pas simplement des propriétés. Nous curons des héritages \u2014 reliant des individus visionnaires à des domaines qui définiront leurs familles pour des générations. En Transylvanie, nous avons trouvé une terre où l'extraordinaire est encore possible.",
       "cta": "Découvrir Notre Histoire"
     },
     "landmarks": {
@@ -562,12 +562,12 @@
     },
     "closing": {
       "headline": "Votre Héritage Vous Attend",
-      "subline": "Organisez une consultation privée avec notre équipe.",
-      "cta": "Demander une Visite Privée"
+      "subline": "Organisez une consultation créative avec notre équipe.",
+      "cta": "Engager la Conversation"
     }
   },
   "Footer": {
-    "tagline": "Premier Cabinet de Conseil en Immobilier de Luxe en Roumanie",
+    "tagline": "Première Agence de Marketing Immobilier de Luxe en Roumanie",
     "quickLinks": "Liens Rapides",
     "contact": "Contactez-Nous",
     "followUs": "Suivez-Nous",
@@ -577,7 +577,7 @@
   },
   "NotFoundPage": {
     "title": "Page Non Trouvée",
-    "description": "La propriété que vous recherchez a peut-être été déplacée ou n'existe plus. Laissez-nous vous aider à trouver la maison de vos rêves.",
+    "description": "La page que vous recherchez a peut-être été déplacée ou n'existe plus. Laissez-nous vous aider à trouver ce que vous cherchez.",
     "goHome": "Accueil",
     "browseProperties": "Parcourir les Propriétés"
   }

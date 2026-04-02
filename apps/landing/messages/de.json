@@ -5,7 +5,7 @@
     "about": "Über Uns",
     "contact": "Kontakt",
     "viewAll": "Alle Immobilien Ansehen",
-    "scheduleViewing": "Besichtigung Vereinbaren",
+    "scheduleViewing": "Projekt Starten",
     "forSale": "Zum Verkauf",
     "newDevelopments": "Neubauprojekte",
     "developers": "Bauträger",
@@ -37,19 +37,19 @@
       "title": "Ein Vermächtnis der Exzellenz",
       "heritage": {
         "title": "Erbe & Moderne",
-        "description": "Wir verbinden Jahrhunderte siebenbürgischen architektonischen Erbes mit zeitgenössischem Luxusdesign und schaffen Häuser, die die Vergangenheit ehren und gleichzeitig die Zukunft umarmen."
+        "description": "Wir verweben Jahrhunderte siebenbürgischen architektonischen Erbes in zeitgenössische Markennarrative und schaffen Geschichten, die die Vergangenheit ehren und gleichzeitig zur Zukunft sprechen."
       },
       "curated": {
-        "title": "Kuratiertes Portfolio",
-        "description": "Jede Immobilie in unserer Kollektion ist handverlesen, um höchste Standards an Luxus und Exklusivität zu erfüllen, sodass nur die besten unsere Kunden erreichen."
+        "title": "Markenstrategie",
+        "description": "Wir entwickeln unverwechselbare Markenidentitäten für jede Immobilie, die wir vertreten, und verwandeln außergewöhnliche Räume in aspirative Lifestyle-Narrative, die das richtige Publikum fesseln."
       },
       "service": {
-        "title": "Erstklassiger Service",
-        "description": "Von der ersten Besichtigung bis zur letzten Unterschrift sorgt unser engagiertes Team für ein unvergleichliches Erlebnis, das auf Ihre individuellen Vorlieben und Ihren Lebensstil zugeschnitten ist."
+        "title": "Kreativproduktion",
+        "description": "Vom ersten Kreativbriefing bis zum Kampagnenstart liefert unser Team redaktionellen Premiumcontent, cinematische Visuals und immersive Erlebnisse, die jede Immobilie hervorheben."
       }
     },
     "stats": {
-      "propertiesSold": "Verkaufte Immobilien",
+      "propertiesSold": "Vermarktete Immobilien",
       "yearsExperience": "Jahre Erfahrung",
       "citiesServed": "Betreute Städte",
       "portfolioValue": "Portfoliowert (Mio.\u00a0EUR)"
@@ -61,8 +61,8 @@
     },
     "about": {
       "subtitle": "Über Transylvania Grand Estate",
-      "title": "Luxusimmobilien in Rumänien Neu Definiert",
-      "description": "Wir sind Rumäniens führende Beratung für Luxusimmobilien und verbinden anspruchsvolle Käufer mit außergewöhnlichen Immobilien in Siebenbürgen und darüber hinaus.",
+      "title": "Luxusimmobilien-Marketing in Rumänien Neu Definiert",
+      "description": "Wir sind Rumäniens führende Marketingagentur für Luxusimmobilien und schaffen überzeugende Narrative und Markenstrategien, die außergewöhnliche Immobilien in Siebenbürgen und darüber hinaus auf ein neues Niveau heben.",
       "cta": "Unsere Geschichte"
     },
     "testimonials": {
@@ -99,9 +99,9 @@
       }
     },
     "cta": {
-      "title": "Bereit, Ihre Traumimmobilie zu Finden?",
-      "subtitle": "Lassen Sie sich von unserem Expertenteam durch Rumäniens feinste Luxusresidenzen führen.",
-      "button": "Private Besichtigung Vereinbaren"
+      "title": "Bereit, Ihr Nächstes Projekt zu Elevieren?",
+      "subtitle": "Lassen Sie unser Kreativteam eine Markenstrategie entwickeln, die Ihre Immobilie unter Rumäniens feinsten positioniert.",
+      "button": "Gespräch Beginnen"
     }
   },
   "DeveloperDetail": {
@@ -140,7 +140,7 @@
     "awardsWon": "Gewonnene Auszeichnungen",
     "viewAll": "Alle Immobilien Ansehen",
     "interested": "Interessiert an den Projekten dieses Bauträgers?",
-    "interestedSubtitle": "Kontaktieren Sie uns für exklusiven Zugang zu kommenden Entwicklungen.",
+    "interestedSubtitle": "Erfahren Sie, wie wir diese Entwicklungen auf den Markt bringen.",
     "getInTouch": "Kontakt Aufnehmen",
     "milestonesData": {
       "maurer-imobiliare": [
@@ -190,7 +190,7 @@
   },
   "PropertiesPage": {
     "hero": {
-      "title": "Unser Exklusives Portfolio",
+      "title": "Unsere Vitrine",
       "subtitle": "Entdecken Sie Rumäniens Feinste Luxusimmobilien"
     },
     "contextual": {
@@ -228,9 +228,9 @@
       "description": "Versuchen Sie, Ihre Filter anzupassen, um das Gewünschte zu finden."
     },
     "cta": {
-      "title": "Nicht Gefunden, Was Sie Suchen?",
-      "subtitle": "Unser Team hat Zugang zu exklusiven Off-Market-Immobilien.",
-      "button": "Unser Team Kontaktieren"
+      "title": "Haben Sie eine Immobilie, die ins Rampenlicht Gehört?",
+      "subtitle": "Wir arbeiten mit visionären Bauträgern zusammen, um ihre besten Projekte durch strategisches Marketing zum Leben zu erwecken.",
+      "button": "Kontakt Aufnehmen"
     }
   },
   "PropertyDetail": {
@@ -249,7 +249,7 @@
     },
     "description": "Beschreibung",
     "requestInfo": "Informationen Anfordern",
-    "scheduleViewing": "Besichtigung Vereinbaren",
+    "scheduleViewing": "Details Anfordern",
     "shareProperty": "Immobilie Teilen",
     "similarProperties": {
       "subtitle": "Das Könnte Ihnen Auch Gefallen",
@@ -263,7 +263,7 @@
     },
     "cta": {
       "title": "Interessiert an dieser Immobilie?",
-      "subtitle": "Kontaktieren Sie uns für eine private Besichtigung oder weitere Informationen."
+      "subtitle": "Kontaktieren Sie uns, um mehr über dieses Projekt zu erfahren."
     }
   },
   "AboutPage": {
@@ -274,15 +274,15 @@
     "story": {
       "founding": {
         "title": "Gegründet aus Leidenschaft",
-        "description": "Transylvania Grand Estate entstand aus der Vision, Rumäniens Luxusimmobilienmarkt zu transformieren. Unsere Gründer erkannten das ungenutzte Potenzial des architektonischen Erbes Siebenbürgens und machten sich daran, eine Beratung zu schaffen, die erstklassige Immobilien mit anspruchsvollen Käufern zusammenbringt."
+        "description": "Transylvania Grand Estate entstand aus der Vision, die Art und Weise zu transformieren, wie Luxusimmobilien in Rumänien präsentiert werden. Unsere Gründer erkannten das ungenutzte Potenzial des architektonischen Erbes Siebenbürgens und machten sich daran, eine Marketingagentur zu schaffen, die die Geschichten der außergewöhnlichsten Immobilien der Welt erzählt."
       },
       "mission": {
         "title": "Unsere Mission",
-        "description": "Anspruchsvolle Menschen mit außergewöhnlichen Immobilien zu verbinden, die ihre Ambitionen und ihren Lebensstil widerspiegeln. Wir glauben, dass ein Zuhause mehr ist als Wände und ein Dach — es ist ein Ausdruck dessen, wer Sie sind und wie Sie leben möchten."
+        "description": "Luxusimmobilien durch fesselndes Marken-Storytelling, strategische Positionierung und Lifestyle-Marketing auf ein neues Niveau zu heben. Wir glauben, dass eine Immobilie mehr ist als Wände und ein Dach — sie ist ein Narrativ, das darauf wartet, erzählt zu werden, eine Marke, die darauf wartet, aufgebaut zu werden."
       },
       "approach": {
         "title": "Unser Ansatz",
-        "description": "Jede Kundenbeziehung beginnt mit Verständnis. Wir hören zu, wir lernen und wir übertreffen Erwartungen. Unsere intime Kenntnis des rumänischen Luxusmarktes, kombiniert mit einer globalen Perspektive, ermöglicht es uns, bei jedem Schritt eine unvergleichliche Beratung zu bieten."
+        "description": "Jedes Projekt beginnt mit Verständnis. Wir tauchen ein in die Geschichte der Immobilie, die Vision des Entwicklers und das Verlangen des Marktes. Unsere intime Kenntnis der rumänischen Luxuslandschaft, kombiniert mit einer globalen Perspektive, ermöglicht es uns, Kampagnen zu schaffen, die auf jeder Ebene resonieren."
       }
     },
     "values": {
@@ -294,7 +294,7 @@
       },
       "discretion": {
         "title": "Diskretion",
-        "description": "Wir verstehen, dass Luxustransaktionen höchste Vertraulichkeit erfordern. Ihre Privatsphäre hat bei jedem Schritt des Prozesses oberste Priorität."
+        "description": "Wir verstehen, dass Luxuspartnerschaften und Pre-Launch-Kampagnen höchste Vertraulichkeit erfordern. Ihre Privatsphäre hat bei jedem Schritt des Prozesses oberste Priorität."
       },
       "heritage": {
         "title": "Erbe",
@@ -307,7 +307,7 @@
     },
     "cta": {
       "title": "Arbeiten Sie Mit Uns",
-      "subtitle": "Werden Sie Teil des führenden Luxusimmobilienteams in Rumänien.",
+      "subtitle": "Werden Sie Partner des führenden Luxusimmobilien-Marketing-Teams in Rumänien.",
       "button": "Kontakt Aufnehmen"
     }
   },
@@ -326,7 +326,7 @@
       "budget": "Budgetrahmen",
       "selectBudget": "Budgetrahmen auswählen...",
       "message": "Ihre Nachricht",
-      "messagePlaceholder": "Erzählen Sie uns von Ihrer idealen Immobilie...",
+      "messagePlaceholder": "Erzählen Sie uns von Ihrem Projekt...",
       "submit": "Anfrage Senden",
       "success": {
         "title": "Vielen Dank!",
@@ -433,9 +433,9 @@
       "noResults": "Keine Immobilien entsprechen den gewählten Filtern."
     },
     "cta": {
-      "title": "Finden Sie Ihr Zuhause in {city}",
-      "subtitle": "Vereinbaren Sie eine private Besichtigung mit unseren lokalen Experten.",
-      "button": "Besichtigung Vereinbaren"
+      "title": "Entdecken Sie Luxus in {city}",
+      "subtitle": "Entdecken Sie, wie wir die feinsten Immobilien in {city} in Szene setzen.",
+      "button": "Kontakt Aufnehmen"
     },
     "meta": {
       "title": "{city} — Luxusimmobilien",
@@ -473,7 +473,7 @@
       }
     },
     "stats": {
-      "propertiesSold": "Verkaufte Immobilien",
+      "propertiesSold": "Vermarktete Immobilien",
       "yearsExperience": "Jahre der Exzellenz",
       "citiesServed": "Betreute Städte",
       "portfolioValue": "Portfoliowert (Mio.\u00a0EUR)"
@@ -499,7 +499,7 @@
     "brand": {
       "label": "Unser Ethos",
       "title": "Was Luxus Bedeutet, Neu Definiert",
-      "description": "Wir verkaufen nicht nur Immobilien. Wir kuratieren Vermächtnisse \u2014 und verbinden visionäre Persönlichkeiten mit Anwesen, die ihre Familien über Generationen definieren werden. In Siebenbürgen haben wir ein Land gefunden, wo das Außergewöhnliche noch möglich ist.",
+      "description": "Wir präsentieren nicht nur Immobilien. Wir kuratieren Vermächtnisse \u2014 und verbinden visionäre Persönlichkeiten mit Anwesen, die ihre Familien über Generationen definieren werden. In Siebenbürgen haben wir ein Land gefunden, wo das Außergewöhnliche noch möglich ist.",
       "cta": "Unsere Geschichte Entdecken"
     },
     "landmarks": {
@@ -562,12 +562,12 @@
     },
     "closing": {
       "headline": "Ihr Vermächtnis Erwartet Sie",
-      "subline": "Vereinbaren Sie eine private Beratung mit unserem Team.",
-      "cta": "Private Besichtigung Anfragen"
+      "subline": "Vereinbaren Sie eine kreative Beratung mit unserem Team.",
+      "cta": "Gespräch Beginnen"
     }
   },
   "Footer": {
-    "tagline": "Rumäniens Führende Beratung für Luxusimmobilien",
+    "tagline": "Rumäniens Führende Marketingagentur für Luxusimmobilien",
     "quickLinks": "Schnelllinks",
     "contact": "Kontaktieren Sie Uns",
     "followUs": "Folgen Sie Uns",
@@ -577,7 +577,7 @@
   },
   "NotFoundPage": {
     "title": "Seite Nicht Gefunden",
-    "description": "Die gesuchte Immobilie wurde möglicherweise verschoben oder existiert nicht mehr. Lassen Sie uns Ihnen helfen, Ihr Traumzuhause zu finden.",
+    "description": "Die gesuchte Seite wurde möglicherweise verschoben oder existiert nicht mehr. Lassen Sie uns Ihnen helfen, das Gewünschte zu finden.",
     "goHome": "Startseite",
     "browseProperties": "Immobilien Durchsuchen"
   }
