@@ -53,6 +53,9 @@ export default async function HomePage() {
         subtitle={t("hero.subtitle")}
         ctaText={t("hero.cta")}
         ctaHref="/properties"
+        enableSound
+        fullHeight
+        showScrollIndicator
       />
       <FeaturedProperties properties={featuredProperties} centerHeadingInViewport />
       <ZigZagShowcase
