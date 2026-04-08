@@ -1,7 +1,7 @@
 import { NextIntlClientProvider, hasLocale } from "next-intl";
 import { getMessages } from "next-intl/server";
 import { notFound } from "next/navigation";
-import { Playfair_Display, Inter } from "next/font/google";
+import { Playfair_Display, Inter, Montserrat } from "next/font/google";
 import { routing } from "@tge/i18n/routing";
 import { fetchApi } from "@/lib/api";
 import { Header } from "@/components/layout/header";
@@ -20,6 +20,13 @@ const inter = Inter({
   subsets: ["latin"],
   variable: "--font-inter",
   display: "swap",
+});
+
+const montserrat = Montserrat({
+  subsets: ["latin"],
+  variable: "--font-montserrat",
+  display: "swap",
+  weight: ["300", "400", "500", "600"],
 });
 
 export function generateStaticParams() {
@@ -49,7 +56,7 @@ export default async function LocaleLayout({
   }
 
   return (
-    <html lang={locale} className={`${playfair.variable} ${inter.variable}`} suppressHydrationWarning>
+    <html lang={locale} className={`${playfair.variable} ${inter.variable} ${montserrat.variable}`} suppressHydrationWarning>
       <body className="font-sans antialiased bg-background text-foreground" suppressHydrationWarning>
         <NextIntlClientProvider messages={messages}>
           <InquiryProvider>
