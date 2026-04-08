@@ -192,6 +192,7 @@ export function FloatingDiamond() {
       className="floating-diamond fixed z-[51] pointer-events-none hidden xl:block"
       style={{
         opacity: mounted ? (reducedMotion ? 0.7 : 0.5) : 0,
+        transform: "scale(0.64)",
         transition: "opacity 1s var(--ease-luxury)",
         willChange: "transform, opacity",
       }}

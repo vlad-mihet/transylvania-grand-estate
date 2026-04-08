@@ -578,6 +578,10 @@
     "privacy": "Politique de Confidentialité",
     "terms": "Conditions d'Utilisation"
   },
+  "SplashOverlay": {
+    "tagline": "Découvrez des Propriétés Exceptionnelles en Transylvanie",
+    "enter": "Entrer"
+  },
   "NotFoundPage": {
     "title": "Page Non Trouvée",
     "description": "La page que vous recherchez a peut-être été déplacée ou n'existe plus. Laissez-nous vous aider à trouver ce que vous cherchez.",

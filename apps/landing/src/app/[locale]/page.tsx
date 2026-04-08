@@ -2,7 +2,7 @@ import { getTranslations } from "next-intl/server";
 import { fetchApi } from "@/lib/api";
 import { mapApiProperties } from "@/lib/mappers";
 import type { City, Developer, Testimonial } from "@tge/types";
-import { VideoHeroSection } from "@/components/sections/video-hero-section";
+import { HomeHeroWithSplash } from "@/components/sections/home-hero-with-splash";
 import { FeaturedProperties } from "@/components/sections/featured-properties";
 import { ZigZagShowcase } from "@/components/sections/zigzag-showcase";
 // import { StatsSection } from "@/components/sections/stats-section";
@@ -47,16 +47,13 @@ export default async function HomePage() {
   return (
     <>
       <FloatingDiamond />
-      <VideoHeroSection
+      <HomeHeroWithSplash
         videoSrc="/videos/hero.mp4"
         posterImage="/images/interiors/mansion-exterior.jpg"
         title={t("hero.title")}
         subtitle={t("hero.subtitle")}
         ctaText={t("hero.cta")}
         ctaHref="/properties"
-        enableSound
-        fullHeight
-        showScrollIndicator
       />
       <PartnerLogoTicker developers={developers} />
       <FeaturedProperties properties={featuredProperties} centerHeadingInViewport />

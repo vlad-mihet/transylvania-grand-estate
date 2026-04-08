@@ -578,6 +578,10 @@
     "privacy": "Datenschutzrichtlinie",
     "terms": "Nutzungsbedingungen"
   },
+  "SplashOverlay": {
+    "tagline": "Entdecken Sie Außergewöhnliche Immobilien in Siebenbürgen",
+    "enter": "Eintreten"
+  },
   "NotFoundPage": {
     "title": "Seite Nicht Gefunden",
     "description": "Die gesuchte Seite wurde möglicherweise verschoben oder existiert nicht mehr. Lassen Sie uns Ihnen helfen, das Gewünschte zu finden.",

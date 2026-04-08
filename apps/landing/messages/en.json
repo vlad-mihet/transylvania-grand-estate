@@ -578,6 +578,10 @@
       "cta": "Start a Conversation"
     }
   },
+  "SplashOverlay": {
+    "tagline": "Discover Exceptional Properties Across Transylvania",
+    "enter": "Enter"
+  },
   "NotFoundPage": {
     "title": "Page Not Found",
     "description": "The page you're looking for may have been moved or no longer exists. Let us help you find what you're looking for.",

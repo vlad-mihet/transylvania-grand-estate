@@ -578,6 +578,10 @@
     "privacy": "Politica de Confidențialitate",
     "terms": "Termeni și Condiții"
   },
+  "SplashOverlay": {
+    "tagline": "Descoperă Proprietăți Excepționale în Transilvania",
+    "enter": "Intră"
+  },
   "NotFoundPage": {
     "title": "Pagină Negăsită",
     "description": "Pagina pe care o cauți poate fi mutată sau nu mai există. Lasă-ne să te ajutăm să găsești ceea ce cauți.",
