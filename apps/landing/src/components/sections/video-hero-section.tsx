@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef, useCallback } from "react";
+import { useState, useRef, useCallback, useEffect } from "react";
 import Image from "next/image";
 import { Volume2, VolumeX, ChevronDown } from "lucide-react";
 import { AccentButton } from "@tge/ui";
@@ -39,6 +39,32 @@ export function VideoHeroSection({
     }
   }, []);
 
+  useEffect(() => {
+    const video = videoRef.current;
+    if (!video) return;
+
+    const attemptPlayback = async () => {
+      if (enableSound) {
+        // Try unmuted playback first
+        video.muted = false;
+        try {
+          await video.play();
+          setIsMuted(false);
+          return;
+        } catch {
+          // Browser blocked unmuted — fall back to muted
+        }
+      }
+
+      // Muted playback (always works)
+      video.muted = true;
+      setIsMuted(true);
+      video.play().catch(() => {});
+    };
+
+    attemptPlayback();
+  }, [enableSound]);
+
   const scrollToContent = useCallback(() => {
     window.scrollTo({ top: window.innerHeight, behavior: "smooth" });
   }, []);
@@ -63,8 +89,6 @@ export function VideoHeroSection({
       {!videoFailed && (
         <video
           ref={videoRef}
-          autoPlay
-          muted
           loop
           playsInline
           preload="auto"
