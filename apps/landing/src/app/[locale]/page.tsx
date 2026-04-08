@@ -12,6 +12,7 @@ import { AboutPreview } from "@/components/sections/about-preview";
 import { TestimonialsSection } from "@/components/sections/testimonials-section";
 import { DeveloperShowcase } from "@/components/sections/developer-showcase";
 import { CTABanner } from "@/components/sections/cta-banner";
+import { PartnerLogoTicker } from "@/components/sections/partner-logo-ticker";
 import { FloatingDiamond } from "@/components/layout/floating-diamond";
 
 export default async function HomePage() {
@@ -57,6 +58,7 @@ export default async function HomePage() {
         fullHeight
         showScrollIndicator
       />
+      <PartnerLogoTicker developers={developers} />
       <FeaturedProperties properties={featuredProperties} centerHeadingInViewport />
       <ZigZagShowcase
         title={t("showcase.title")}
