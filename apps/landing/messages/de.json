@@ -74,6 +74,9 @@
       "title": "Vertrauenswürdige Bauträgerpartner",
       "viewAll": "Alle Bauträger Ansehen"
     },
+    "partnerTicker": {
+      "label": "Vertrauenswürdige Partner"
+    },
     "investTransylvania": {
       "subtitle": "Investitionsmöglichkeit",
       "title": "Investieren in Siebenbürgen",

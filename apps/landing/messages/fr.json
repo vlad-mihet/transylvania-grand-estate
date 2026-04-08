@@ -74,6 +74,9 @@
       "title": "Promoteurs Partenaires de Confiance",
       "viewAll": "Voir Tous les Promoteurs"
     },
+    "partnerTicker": {
+      "label": "Partenaires de Confiance"
+    },
     "investTransylvania": {
       "subtitle": "Opportunité d'Investissement",
       "title": "Investir en Transylvanie",
