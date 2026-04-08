@@ -18,7 +18,7 @@ export default async function AboutPage() {
 
   const storyItems = [
     {
-      image: "/images/interiors/villa-pool.jpg",
+      image: "/images/interiors/estate-heritage.jpg",
       title: t("story.founding.title"),
       description: t("story.founding.description"),
     },

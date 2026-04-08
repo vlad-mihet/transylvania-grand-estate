@@ -29,7 +29,7 @@ const slides = [
   {
     key: "lifestyle",
     image:
-      "/images/interiors/villa-pool.jpg",
+      "/images/interiors/carpathian-sunset.jpg",
   },
 ];
 

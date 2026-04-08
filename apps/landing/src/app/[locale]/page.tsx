@@ -28,7 +28,7 @@ export default async function HomePage() {
 
   const showcaseItems = [
     {
-      image: "/images/interiors/villa-pool.jpg",
+      image: "/images/interiors/heritage-hall.jpg",
       title: t("showcase.heritage.title"),
       description: t("showcase.heritage.description"),
     },
