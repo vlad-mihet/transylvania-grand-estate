@@ -115,7 +115,7 @@ export default async function TransylvaniaPage() {
       body: t("story.chapters.market.body"),
     },
     {
-      image: "/images/interiors/modern-villa.jpg",
+      image: "/images/interiors/golden-vineyard.jpg",
       title: t("story.chapters.lifestyle.title"),
       body: t("story.chapters.lifestyle.body"),
     },
