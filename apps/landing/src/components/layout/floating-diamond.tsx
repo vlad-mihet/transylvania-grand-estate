@@ -1,8 +1,9 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { usePathname } from "@tge/i18n/navigation";
 
-function DiamondSvg({ className }: { className?: string }) {
+export function DiamondSvg({ className }: { className?: string }) {
   return (
     <svg
       viewBox="0 0 24 24"
@@ -79,35 +80,39 @@ export function FloatingDiamond() {
   const initialLeftRef = useRef(0);
   const [mounted, setMounted] = useState(false);
   const [reducedMotion, setReducedMotion] = useState(false);
+  const pathname = usePathname();
+  const isHomepage = pathname === "/";
 
   useEffect(() => {
     const prefersReduced =
       window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     setReducedMotion(prefersReduced);
 
-    // Read left position after paint to ensure CSS class is applied
-    requestAnimationFrame(() => {
-      if (elementRef.current) {
-        initialLeftRef.current = elementRef.current.getBoundingClientRect().left;
-      }
-    });
-
-    const handleResize = () => {
-      if (elementRef.current) {
+    const syncPosition = () => {
+      const headerDiamond = document.getElementById("header-diamond");
+      if (headerDiamond && elementRef.current) {
+        const rect = headerDiamond.getBoundingClientRect();
+        elementRef.current.style.left = `${rect.left}px`;
+        elementRef.current.style.top = `${rect.top}px`;
+        initialLeftRef.current = rect.left;
+      } else if (elementRef.current) {
         initialLeftRef.current = elementRef.current.getBoundingClientRect().left;
       }
     };
 
-    window.addEventListener("resize", handleResize);
+    // Sync after paint
+    requestAnimationFrame(syncPosition);
+
+    window.addEventListener("resize", syncPosition);
     const timer = setTimeout(() => setMounted(true), 300);
     return () => {
       clearTimeout(timer);
-      window.removeEventListener("resize", handleResize);
+      window.removeEventListener("resize", syncPosition);
     };
   }, []);
 
   useEffect(() => {
-    if (reducedMotion) return;
+    if (reducedMotion || !isHomepage) return;
 
     let ticking = false;
     let firstScroll = true;
@@ -184,12 +189,14 @@ export function FloatingDiamond() {
       window.removeEventListener("scroll", handleScroll);
       cancelAnimationFrame(rafRef.current);
     };
-  }, [reducedMotion]);
+  }, [reducedMotion, isHomepage]);
+
+  if (!isHomepage) return null;
 
   return (
     <div
       ref={elementRef}
-      className="floating-diamond fixed z-40 pointer-events-none hidden xl:block"
+      className="floating-diamond fixed z-50 pointer-events-none hidden xl:block"
       style={{
         opacity: mounted ? (reducedMotion ? 0.7 : 0.5) : 0,
         transform: "scale(0.64)",

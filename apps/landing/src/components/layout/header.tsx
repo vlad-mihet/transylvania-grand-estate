@@ -12,6 +12,7 @@ import { AccentButton } from "@tge/ui";
 import { InquiryTrigger } from "@/components/inquiry";
 import { cn } from "@tge/utils";
 import { ChevronDown, Phone, Mail } from "lucide-react";
+import { DiamondSvg } from "./floating-diamond";
 
 const propertyTypes = [
   { key: "apartment", slug: "apartment" },
@@ -122,14 +123,20 @@ export function Header({ developers }: HeaderProps) {
         {/* Desktop nav — logo left, nav center, CTA right */}
         <div className="hidden xl:grid grid-cols-[1fr_auto_1fr] items-center h-20">
           {/* Left: logo */}
-          <Link href="/" className="flex items-center gap-4 group">
-            <span className="font-serif xl:text-[22px] 2xl:text-[26px] font-medium text-cream tracking-[0.03em] leading-none whitespace-nowrap transition-colors duration-300">
-              Transylvania
-              <span className="text-copper logo-glow group-hover:text-copper-light">
-                {" "}Grand Estate
+          <div className="flex items-center gap-3">
+            <div id="header-diamond" className={cn("relative", isHomepage ? "opacity-0" : "opacity-70")}>
+              <div className="absolute inset-0 -m-2 rounded-full animate-diamond-glow bg-amethyst/20 blur-md" />
+              <DiamondSvg className="relative w-8 h-8" />
+            </div>
+            <Link href="/" className="flex items-center gap-4 group">
+              <span className="font-serif xl:text-[22px] 2xl:text-[26px] font-medium text-cream tracking-[0.03em] leading-none whitespace-nowrap transition-colors duration-300">
+                Transylvania
+                <span className="text-copper logo-glow group-hover:text-copper-light">
+                  {" "}Grand Estate
+                </span>
               </span>
-            </span>
-          </Link>
+            </Link>
+          </div>
 
           {/* Center: navigation */}
           <div className="flex items-center justify-center xl:gap-3 2xl:gap-8">

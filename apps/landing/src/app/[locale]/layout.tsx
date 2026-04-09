@@ -5,6 +5,7 @@ import { Playfair_Display, Inter, Montserrat } from "next/font/google";
 import { routing } from "@tge/i18n/routing";
 import { fetchApi } from "@/lib/api";
 import { Header } from "@/components/layout/header";
+import { FloatingDiamond } from "@/components/layout/floating-diamond";
 import { Footer } from "@/components/layout/footer";
 import { InquiryProvider, InquiryModal } from "@/components/inquiry";
 import "../globals.css";
@@ -61,6 +62,7 @@ export default async function LocaleLayout({
         <NextIntlClientProvider messages={messages}>
           <InquiryProvider>
             <Header developers={developers} />
+            <FloatingDiamond />
             <main className="min-h-screen">{children}</main>
             <Footer />
             <InquiryModal />
