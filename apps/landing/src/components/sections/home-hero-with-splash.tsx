@@ -21,8 +21,9 @@ export function HomeHeroWithSplash({
   ctaText,
   ctaHref,
 }: HomeHeroWithSplashProps) {
-  const [splashVisible, setSplashVisible] = useState(true);
-  const [heroRevealed, setHeroRevealed] = useState(false);
+  const splashSeen = typeof window !== "undefined" && sessionStorage.getItem("splash-seen") === "1";
+  const [splashVisible, setSplashVisible] = useState(!splashSeen);
+  const [heroRevealed, setHeroRevealed] = useState(splashSeen);
   const videoUnmuteRef = useRef<(() => void) | null>(null);
 
   // Called immediately on click (within user gesture) — unmute video
@@ -32,6 +33,7 @@ export function HomeHeroWithSplash({
 
   // Called after splash fade-out completes — reveal hero content
   const handleFadeComplete = useCallback(() => {
+    sessionStorage.setItem("splash-seen", "1");
     setSplashVisible(false);
     setTimeout(() => setHeroRevealed(true), 100);
   }, []);
