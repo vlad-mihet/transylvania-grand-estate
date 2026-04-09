@@ -60,7 +60,7 @@ export const properties: Property[] = [
     featured: true,
     new: true,
     developerId: "dev-001",
-    developerName: "Studium Green",
+    developerName: "Verdalis Residence",
     createdAt: "2025-11-15",
   },
   {
@@ -120,7 +120,7 @@ export const properties: Property[] = [
     ],
     featured: true,
     developerId: "dev-004",
-    developerName: "Impact Developer & Contractor",
+    developerName: "Dacia Construct & Dezvoltare",
     createdAt: "2025-09-20",
   },
   {
@@ -179,7 +179,7 @@ export const properties: Property[] = [
     featured: true,
     new: true,
     developerId: "dev-003",
-    developerName: "West Residential",
+    developerName: "Atrium Boutique",
     createdAt: "2025-12-01",
   },
   {
@@ -240,7 +240,7 @@ export const properties: Property[] = [
     ],
     featured: true,
     developerId: "dev-002",
-    developerName: "Maurer Imobiliare",
+    developerName: "Carpathia Imobiliare",
     createdAt: "2025-08-10",
   },
   {
@@ -300,7 +300,7 @@ export const properties: Property[] = [
     ],
     featured: true,
     developerId: "dev-004",
-    developerName: "Impact Developer & Contractor",
+    developerName: "Dacia Construct & Dezvoltare",
     createdAt: "2025-10-05",
   },
   {
@@ -361,7 +361,7 @@ export const properties: Property[] = [
     ],
     featured: false,
     developerId: "dev-001",
-    developerName: "Studium Green",
+    developerName: "Verdalis Residence",
     createdAt: "2025-07-22",
   },
   {
@@ -421,7 +421,7 @@ export const properties: Property[] = [
     ],
     featured: false,
     developerId: "dev-004",
-    developerName: "Impact Developer & Contractor",
+    developerName: "Dacia Construct & Dezvoltare",
     createdAt: "2025-06-15",
   },
   {
@@ -482,7 +482,7 @@ export const properties: Property[] = [
     ],
     featured: true,
     developerId: "dev-003",
-    developerName: "West Residential",
+    developerName: "Atrium Boutique",
     createdAt: "2025-05-01",
   },
   {
@@ -544,7 +544,7 @@ export const properties: Property[] = [
     featured: false,
     new: true,
     developerId: "dev-002",
-    developerName: "Maurer Imobiliare",
+    developerName: "Carpathia Imobiliare",
     createdAt: "2025-12-10",
   },
   {
@@ -605,7 +605,7 @@ export const properties: Property[] = [
     ],
     featured: false,
     developerId: "dev-004",
-    developerName: "Impact Developer & Contractor",
+    developerName: "Dacia Construct & Dezvoltare",
     createdAt: "2025-04-18",
   },
   {
@@ -652,7 +652,7 @@ export const properties: Property[] = [
     featured: false,
     new: true,
     developerId: "dev-001",
-    developerName: "Studium Green",
+    developerName: "Verdalis Residence",
     createdAt: "2026-01-10",
   },
   {
@@ -697,7 +697,7 @@ export const properties: Property[] = [
     featured: false,
     new: true,
     developerId: "dev-003",
-    developerName: "West Residential",
+    developerName: "Atrium Boutique",
     createdAt: "2026-01-05",
   },
   {
@@ -743,7 +743,7 @@ export const properties: Property[] = [
     ],
     featured: false,
     developerId: "dev-002",
-    developerName: "Maurer Imobiliare",
+    developerName: "Carpathia Imobiliare",
     createdAt: "2025-11-20",
   },
   {
@@ -786,7 +786,7 @@ export const properties: Property[] = [
     ],
     featured: false,
     developerId: "dev-001",
-    developerName: "Studium Green",
+    developerName: "Verdalis Residence",
     createdAt: "2025-10-15",
   },
   {
@@ -829,10 +829,10 @@ export const properties: Property[] = [
     ],
     featured: false,
     developerId: "dev-003",
-    developerName: "West Residential",
+    developerName: "Atrium Boutique",
     createdAt: "2025-09-01",
   },
-  // ── New properties for Studium Green (dev-001) ──
+  // ── New properties for Verdalis Residence (dev-001) ──
   {
     id: "prop-016",
     slug: "green-terraces-zorilor",
@@ -841,8 +841,8 @@ export const properties: Property[] = [
       ro: "Rezidenta Green Terraces",
     },
     description: {
-      en: "A forward-thinking apartment in Cluj-Napoca's leafy Zorilor district, developed by Studium Green with their signature emphasis on sustainability. The 145 sqm residence features triple-glazed floor-to-ceiling windows, a geothermal heating system, and a generous south-facing terrace wrapped in living greenery.\n\nThe open-plan living area flows into a Bulthaup kitchen with integrated herb garden. Building amenities include EV charging stations, rainwater harvesting, and a shared rooftop urban garden with panoramic hill views.",
-      ro: "Un apartament vizionar in verdele cartier Zorilor din Cluj-Napoca, dezvoltat de Studium Green cu accentul lor caracteristic pe sustenabilitate. Rezidenta de 145 mp dispune de ferestre triple de la podea la tavan, sistem de incalzire geotermala si o terasa generoasa orientata sud, invaluita in verdeata.\n\nZona de living open-plan curge intr-o bucatarie Bulthaup cu gradina de ierburi integrata. Facilitatile cladirii includ statii de incarcare EV, colectare apa pluviala si o gradina urbana comuna pe acoperis cu vedere panoramica.",
+      en: "A forward-thinking apartment in Cluj-Napoca's leafy Zorilor district, developed by Verdalis Residence with their signature emphasis on sustainability. The 145 sqm residence features triple-glazed floor-to-ceiling windows, a geothermal heating system, and a generous south-facing terrace wrapped in living greenery.\n\nThe open-plan living area flows into a Bulthaup kitchen with integrated herb garden. Building amenities include EV charging stations, rainwater harvesting, and a shared rooftop urban garden with panoramic hill views.",
+      ro: "Un apartament vizionar in verdele cartier Zorilor din Cluj-Napoca, dezvoltat de Verdalis Residence cu accentul lor caracteristic pe sustenabilitate. Rezidenta de 145 mp dispune de ferestre triple de la podea la tavan, sistem de incalzire geotermala si o terasa generoasa orientata sud, invaluita in verdeata.\n\nZona de living open-plan curge intr-o bucatarie Bulthaup cu gradina de ierburi integrata. Facilitatile cladirii includ statii de incarcare EV, colectare apa pluviala si o gradina urbana comuna pe acoperis cu vedere panoramica.",
     },
     shortDescription: {
       en: "Sustainable 3-bedroom apartment with geothermal heating, living terrace, and rooftop garden in Cluj's Zorilor district.",
@@ -877,7 +877,7 @@ export const properties: Property[] = [
     featured: false,
     new: true,
     developerId: "dev-001",
-    developerName: "Studium Green",
+    developerName: "Verdalis Residence",
     createdAt: "2026-01-20",
   },
   {
@@ -888,12 +888,12 @@ export const properties: Property[] = [
       ro: "Eco Vila Europa",
     },
     description: {
-      en: "Studium Green's flagship villa project in Cluj-Napoca's Europa district — a net-zero energy residence that proves sustainability and luxury are not mutually exclusive. The 320 sqm home is built with cross-laminated timber, features a green roof, and generates more energy than it consumes through an integrated solar array and battery storage.\n\nFive bedrooms, three bathrooms, a double-height living room with walnut accents, and a landscaped garden designed by a Chelsea Flower Show medalist. The heated natural swimming pool uses biological filtration instead of chemicals.",
-      ro: "Proiectul-vila emblematic al Studium Green in cartierul Europa din Cluj — o rezidenta cu energie neta zero care dovedeste ca sustenabilitatea si luxul nu se exclud reciproc. Casa de 320 mp este construita din lemn laminat incrucisat, are un acoperis verde si genereaza mai multa energie decat consuma prin panouri solare si stocare pe baterie.\n\nCinci dormitoare, trei bai, un living cu inaltime dubla cu accente de nuc si o gradina amenajata peisagistic de un medaliat Chelsea Flower Show. Piscina naturala incalzita foloseste filtrare biologica in loc de chimicale.",
+      en: "Verdalis Residence's flagship villa project in Cluj-Napoca's Europa district — a net-zero energy residence that proves sustainability and luxury are not mutually exclusive. The 320 sqm home is built with cross-laminated timber, features a green roof, and generates more energy than it consumes through an integrated solar array and battery storage.\n\nFive bedrooms, three bathrooms, a double-height living room with walnut accents, and a landscaped garden designed by a Chelsea Flower Show medalist. The heated natural swimming pool uses biological filtration instead of chemicals.",
+      ro: "Proiectul-vila emblematic al Verdalis Residence in cartierul Europa din Cluj — o rezidenta cu energie neta zero care dovedeste ca sustenabilitatea si luxul nu se exclud reciproc. Casa de 320 mp este construita din lemn laminat incrucisat, are un acoperis verde si genereaza mai multa energie decat consuma prin panouri solare si stocare pe baterie.\n\nCinci dormitoare, trei bai, un living cu inaltime dubla cu accente de nuc si o gradina amenajata peisagistic de un medaliat Chelsea Flower Show. Piscina naturala incalzita foloseste filtrare biologica in loc de chimicale.",
     },
     shortDescription: {
-      en: "Net-zero energy villa with green roof, natural pool, and solar array in Cluj's Europa district by Studium Green.",
-      ro: "Vila cu energie neta zero, acoperis verde, piscina naturala si panouri solare in Europa, Cluj, de Studium Green.",
+      en: "Net-zero energy villa with green roof, natural pool, and solar array in Cluj's Europa district by Verdalis Residence.",
+      ro: "Vila cu energie neta zero, acoperis verde, piscina naturala si panouri solare in Europa, Cluj, de Verdalis Residence.",
     },
     price: 1450000,
     currency: "EUR",
@@ -924,10 +924,10 @@ export const properties: Property[] = [
     featured: true,
     new: true,
     developerId: "dev-001",
-    developerName: "Studium Green",
+    developerName: "Verdalis Residence",
     createdAt: "2026-02-01",
   },
-  // ── New properties for Maurer Imobiliare (dev-002) ──
+  // ── New properties for Carpathia Imobiliare (dev-002) ──
   {
     id: "prop-018",
     slug: "panorama-residence-brasov",
@@ -936,12 +936,12 @@ export const properties: Property[] = [
       ro: "Apartament Panorama Residence",
     },
     description: {
-      en: "A premium 3-bedroom apartment in Maurer's acclaimed Panorama Residence complex in Brasov's Centrul Civic. The 130 sqm unit occupies a corner position on the 7th floor, offering dual-aspect views toward Tampa Mountain and the old town's medieval skyline.\n\nFinished to turnkey standard with oak herringbone floors, Villeroy & Boch bathrooms, and a Siemens-equipped kitchen. The complex features a landscaped courtyard, children's playground, underground parking, and 24-hour security.",
-      ro: "Un apartament premium cu 3 dormitoare in aclamatul complex Panorama Residence al Maurer din Centrul Civic al Brasovului. Unitatea de 130 mp ocupa o pozitie de colt la etajul 7, oferind vedere dubla spre Muntele Tampa si silueta medievala a orasului vechi.\n\nFinisat la cheie cu parchet din stejar tip herringbone, bai Villeroy & Boch si bucatarie echipata Siemens. Complexul dispune de curte interioara amenajata, loc de joaca, parcare subterana si securitate 24/7.",
+      en: "A premium 3-bedroom apartment in Carpathia's acclaimed Panorama Residence complex in Brasov's Centrul Civic. The 130 sqm unit occupies a corner position on the 7th floor, offering dual-aspect views toward Tampa Mountain and the old town's medieval skyline.\n\nFinished to turnkey standard with oak herringbone floors, Villeroy & Boch bathrooms, and a Siemens-equipped kitchen. The complex features a landscaped courtyard, children's playground, underground parking, and 24-hour security.",
+      ro: "Un apartament premium cu 3 dormitoare in aclamatul complex Panorama Residence al Carpathia din Centrul Civic al Brasovului. Unitatea de 130 mp ocupa o pozitie de colt la etajul 7, oferind vedere dubla spre Muntele Tampa si silueta medievala a orasului vechi.\n\nFinisat la cheie cu parchet din stejar tip herringbone, bai Villeroy & Boch si bucatarie echipata Siemens. Complexul dispune de curte interioara amenajata, loc de joaca, parcare subterana si securitate 24/7.",
     },
     shortDescription: {
-      en: "Corner apartment with Tampa Mountain views, premium finishes, and concierge in Maurer's Panorama Residence, Brasov.",
-      ro: "Apartament de colt cu vedere la Tampa, finisaje premium si concierge in Panorama Residence Maurer, Brasov.",
+      en: "Corner apartment with Tampa Mountain views, premium finishes, and concierge in Carpathia's Panorama Residence, Brasov.",
+      ro: "Apartament de colt cu vedere la Tampa, finisaje premium si concierge in Panorama Residence Carpathia, Brasov.",
     },
     price: 520000,
     currency: "EUR",
@@ -972,23 +972,23 @@ export const properties: Property[] = [
     featured: false,
     new: true,
     developerId: "dev-002",
-    developerName: "Maurer Imobiliare",
+    developerName: "Carpathia Imobiliare",
     createdAt: "2026-01-15",
   },
   {
     id: "prop-019",
-    slug: "maurer-villa-sacele",
+    slug: "carpathia-villa-sacele",
     title: {
-      en: "Maurer Villa Sacele",
-      ro: "Vila Maurer Sacele",
+      en: "Carpathia Villa Sacele",
+      ro: "Vila Carpathia Sacele",
     },
     description: {
-      en: "A spacious family villa in the quiet town of Sacele, just 10 minutes from Brasov's city center. Built by Maurer Imobiliare with their trademark attention to structural quality, this 280 sqm home sits on a generous 600 sqm plot backing onto protected forest land.\n\nFour bedrooms, three bathrooms, a double garage, and an open-plan ground floor with underfloor heating throughout. The mature garden features a covered outdoor dining area, fire pit, and direct trail access to the surrounding woods.",
-      ro: "O vila familiala spatioasa in linistitul oras Sacele, la doar 10 minute de centrul Brasovului. Construita de Maurer Imobiliare cu atentia lor caracteristica la calitatea structurala, aceasta casa de 280 mp este situata pe un teren generos de 600 mp cu vedere la padurea protejata.\n\nPatru dormitoare, trei bai, garaj dublu si parter open-plan cu incalzire in pardoseala. Gradina matura dispune de zona de dining exterior acoperita, vatra de foc si acces direct pe potecile padurii.",
+      en: "A spacious family villa in the quiet town of Sacele, just 10 minutes from Brasov's city center. Built by Carpathia Imobiliare with their trademark attention to structural quality, this 280 sqm home sits on a generous 600 sqm plot backing onto protected forest land.\n\nFour bedrooms, three bathrooms, a double garage, and an open-plan ground floor with underfloor heating throughout. The mature garden features a covered outdoor dining area, fire pit, and direct trail access to the surrounding woods.",
+      ro: "O vila familiala spatioasa in linistitul oras Sacele, la doar 10 minute de centrul Brasovului. Construita de Carpathia Imobiliare cu atentia lor caracteristica la calitatea structurala, aceasta casa de 280 mp este situata pe un teren generos de 600 mp cu vedere la padurea protejata.\n\nPatru dormitoare, trei bai, garaj dublu si parter open-plan cu incalzire in pardoseala. Gradina matura dispune de zona de dining exterior acoperita, vatra de foc si acces direct pe potecile padurii.",
     },
     shortDescription: {
-      en: "Family villa with forest views, 600 sqm plot, and trail access in Sacele near Brasov, by Maurer Imobiliare.",
-      ro: "Vila familiala cu vedere la padure, teren 600 mp si acces la poteci in Sacele langa Brasov, de Maurer Imobiliare.",
+      en: "Family villa with forest views, 600 sqm plot, and trail access in Sacele near Brasov, by Carpathia Imobiliare.",
+      ro: "Vila familiala cu vedere la padure, teren 600 mp si acces la poteci in Sacele langa Brasov, de Carpathia Imobiliare.",
     },
     price: 890000,
     currency: "EUR",
@@ -1018,7 +1018,7 @@ export const properties: Property[] = [
     ],
     featured: false,
     developerId: "dev-002",
-    developerName: "Maurer Imobiliare",
+    developerName: "Carpathia Imobiliare",
     createdAt: "2025-11-01",
   },
   {
@@ -1029,8 +1029,8 @@ export const properties: Property[] = [
       ro: "Penthouse Republicii",
     },
     description: {
-      en: "A show-stopping penthouse crowning Maurer's latest project on Strada Republicii, Brasov's premier pedestrian boulevard. The 210 sqm duplex occupies the top two floors with a private rooftop terrace offering 360-degree views of Tampa Mountain, the Black Church, and the Council Square.\n\nFour bedrooms, three bathrooms, a double-height living room with exposed steel beams, and a chef's kitchen with Gaggenau appliances. Floor-to-ceiling glass on three sides floods the interior with light. A private elevator opens directly into the apartment foyer.",
-      ro: "Un penthouse spectaculos care incoroneaza cel mai recent proiect Maurer pe Strada Republicii, bulevardul pietonal principal al Brasovului. Duplexul de 210 mp ocupa ultimele doua etaje cu o terasa privata pe acoperis cu vedere 360 de grade la Tampa, Biserica Neagra si Piata Sfatului.\n\nPatru dormitoare, trei bai, living cu inaltime dubla cu grinzi de otel expuse si bucatarie de chef cu electrocasnice Gaggenau. Sticla de la podea la tavan pe trei laturi inunda interiorul cu lumina. Un lift privat se deschide direct in foierul apartamentului.",
+      en: "A show-stopping penthouse crowning Carpathia's latest project on Strada Republicii, Brasov's premier pedestrian boulevard. The 210 sqm duplex occupies the top two floors with a private rooftop terrace offering 360-degree views of Tampa Mountain, the Black Church, and the Council Square.\n\nFour bedrooms, three bathrooms, a double-height living room with exposed steel beams, and a chef's kitchen with Gaggenau appliances. Floor-to-ceiling glass on three sides floods the interior with light. A private elevator opens directly into the apartment foyer.",
+      ro: "Un penthouse spectaculos care incoroneaza cel mai recent proiect Carpathia pe Strada Republicii, bulevardul pietonal principal al Brasovului. Duplexul de 210 mp ocupa ultimele doua etaje cu o terasa privata pe acoperis cu vedere 360 de grade la Tampa, Biserica Neagra si Piata Sfatului.\n\nPatru dormitoare, trei bai, living cu inaltime dubla cu grinzi de otel expuse si bucatarie de chef cu electrocasnice Gaggenau. Sticla de la podea la tavan pe trei laturi inunda interiorul cu lumina. Un lift privat se deschide direct in foierul apartamentului.",
     },
     shortDescription: {
       en: "Duplex penthouse with 360° views, private rooftop, and Gaggenau kitchen on Brasov's Strada Republicii.",
@@ -1065,10 +1065,10 @@ export const properties: Property[] = [
     featured: true,
     new: true,
     developerId: "dev-002",
-    developerName: "Maurer Imobiliare",
+    developerName: "Carpathia Imobiliare",
     createdAt: "2026-02-10",
   },
-  // ── New properties for West Residential (dev-003) ──
+  // ── New properties for Atrium Boutique (dev-003) ──
   {
     id: "prop-021",
     slug: "sunset-villa-giroc",
@@ -1077,8 +1077,8 @@ export const properties: Property[] = [
       ro: "Vila Sunset Giroc",
     },
     description: {
-      en: "A refined family villa in Giroc, Timisoara's most desirable suburban enclave, developed by West Residential as part of their intimate 6-home gated community. The 260 sqm residence is oriented to capture spectacular western sunsets from the main living areas and the expansive rear terrace.\n\nFour bedrooms, three bathrooms, a home office, and a seamless indoor-outdoor flow to the heated pool and landscaped garden. Premium finishes include Italian porcelain floors, custom walnut cabinetry, and a Daikin VRV climate system. The gated community features shared green spaces and a residents' putting green.",
-      ro: "O vila rafinata in Giroc, cea mai dorita enclava suburbana din Timisoara, dezvoltata de West Residential ca parte a comunitatii lor intime de 6 case. Rezidenta de 260 mp este orientata pentru a surprinde apusuri spectaculoase din zonele principale de living si terasa posterioara.\n\nPatru dormitoare, trei bai, birou de acasa si o tranzitie fluida interior-exterior catre piscina incalzita si gradina amenajata. Finisajele premium includ gresie italiana, tamplarie din nuc si sistem de climatizare Daikin VRV. Comunitatea inchisa dispune de spatii verzi comune si putting green.",
+      en: "A refined family villa in Giroc, Timisoara's most desirable suburban enclave, developed by Atrium Boutique as part of their intimate 6-home gated community. The 260 sqm residence is oriented to capture spectacular western sunsets from the main living areas and the expansive rear terrace.\n\nFour bedrooms, three bathrooms, a home office, and a seamless indoor-outdoor flow to the heated pool and landscaped garden. Premium finishes include Italian porcelain floors, custom walnut cabinetry, and a Daikin VRV climate system. The gated community features shared green spaces and a residents' putting green.",
+      ro: "O vila rafinata in Giroc, cea mai dorita enclava suburbana din Timisoara, dezvoltata de Atrium Boutique ca parte a comunitatii lor intime de 6 case. Rezidenta de 260 mp este orientata pentru a surprinde apusuri spectaculoase din zonele principale de living si terasa posterioara.\n\nPatru dormitoare, trei bai, birou de acasa si o tranzitie fluida interior-exterior catre piscina incalzita si gradina amenajata. Finisajele premium includ gresie italiana, tamplarie din nuc si sistem de climatizare Daikin VRV. Comunitatea inchisa dispune de spatii verzi comune si putting green.",
     },
     shortDescription: {
       en: "West-facing villa with heated pool, gated community, and premium finishes in Timisoara's Giroc enclave.",
@@ -1113,19 +1113,19 @@ export const properties: Property[] = [
     featured: false,
     new: true,
     developerId: "dev-003",
-    developerName: "West Residential",
+    developerName: "Atrium Boutique",
     createdAt: "2026-01-25",
   },
   {
     id: "prop-022",
-    slug: "west-loft-iosefin",
+    slug: "atrium-loft-iosefin",
     title: {
-      en: "West Loft Iosefin",
-      ro: "West Loft Iosefin",
+      en: "Atrium Loft Iosefin",
+      ro: "Atrium Loft Iosefin",
     },
     description: {
-      en: "A characterful loft-style apartment in a converted heritage building in Timisoara's vibrant Iosefin quarter. West Residential's sensitive conversion preserves exposed brick walls, original cast-iron columns, and soaring 3.8-meter ceilings while introducing contemporary luxury throughout the 110 sqm interior.\n\nTwo bedrooms, two bathrooms, an industrial-chic kitchen with Smeg appliances, and a Juliet balcony overlooking the tree-lined boulevard. The boutique complex of just 8 units includes a shared courtyard garden and secure bicycle storage.",
-      ro: "Un apartament tip loft cu caracter intr-o cladire de patrimoniu convertita in vibrantul cartier Iosefin din Timisoara. Conversia sensibila a West Residential pastreaza peretii din caramida expusa, coloanele originale din fonta si tavanele inalte de 3.8 metri, introducand lux contemporan in interiorul de 110 mp.\n\nDoua dormitoare, doua bai, o bucatarie industrial-chic cu electrocasnice Smeg si un balcon Juliet cu vedere la bulevardul cu copaci. Complexul boutique de doar 8 unitati include o gradina comuna si depozitare securizata pentru biciclete.",
+      en: "A characterful loft-style apartment in a converted heritage building in Timisoara's vibrant Iosefin quarter. Atrium Boutique's sensitive conversion preserves exposed brick walls, original cast-iron columns, and soaring 3.8-meter ceilings while introducing contemporary luxury throughout the 110 sqm interior.\n\nTwo bedrooms, two bathrooms, an industrial-chic kitchen with Smeg appliances, and a Juliet balcony overlooking the tree-lined boulevard. The boutique complex of just 8 units includes a shared courtyard garden and secure bicycle storage.",
+      ro: "Un apartament tip loft cu caracter intr-o cladire de patrimoniu convertita in vibrantul cartier Iosefin din Timisoara. Conversia sensibila a Atrium Boutique pastreaza peretii din caramida expusa, coloanele originale din fonta si tavanele inalte de 3.8 metri, introducand lux contemporan in interiorul de 110 mp.\n\nDoua dormitoare, doua bai, o bucatarie industrial-chic cu electrocasnice Smeg si un balcon Juliet cu vedere la bulevardul cu copaci. Complexul boutique de doar 8 unitati include o gradina comuna si depozitare securizata pentru biciclete.",
     },
     shortDescription: {
       en: "Loft-style apartment with exposed brick, 3.8m ceilings, and Smeg kitchen in converted heritage building, Iosefin.",
@@ -1160,10 +1160,10 @@ export const properties: Property[] = [
     featured: false,
     new: true,
     developerId: "dev-003",
-    developerName: "West Residential",
+    developerName: "Atrium Boutique",
     createdAt: "2026-02-05",
   },
-  // ── New properties for Impact Developer (dev-004) ──
+  // ── New properties for Dacia Construct (dev-004) ──
   {
     id: "prop-023",
     slug: "greenfield-residence-cluj",
@@ -1172,12 +1172,12 @@ export const properties: Property[] = [
       ro: "Apartament Greenfield Residence",
     },
     description: {
-      en: "A modern 3-bedroom apartment in Impact's Greenfield Residence, a large-scale sustainable community on the western edge of Cluj-Napoca near Floresti. The 125 sqm unit features an efficient layout with bright, airy rooms, triple-glazed windows, and an integrated balcony that extends the living space.\n\nThe Greenfield community includes a residents' park with jogging trails, a children's playground, commercial ground-floor units, and direct access to the future metro line. EPC A-rated with central heat pump and solar-assisted hot water.",
-      ro: "Un apartament modern cu 3 dormitoare in Greenfield Residence al Impact, o comunitate sustenabila de mare amploare pe marginea vestica a Clujului. Unitatea de 125 mp dispune de un layout eficient cu camere luminoase, ferestre cu triplu geam si un balcon integrat.\n\nComunitatea Greenfield include un parc rezidential cu piste de alergare, loc de joaca, unitati comerciale la parter si acces direct la viitoarea linie de metrou. Certificat energetic A cu pompa de caldura centrala si apa calda asistata solar.",
+      en: "A modern 3-bedroom apartment in Dacia Construct's Greenfield Residence, a large-scale sustainable community on the western edge of Cluj-Napoca near Floresti. The 125 sqm unit features an efficient layout with bright, airy rooms, triple-glazed windows, and an integrated balcony that extends the living space.\n\nThe Greenfield community includes a residents' park with jogging trails, a children's playground, commercial ground-floor units, and direct access to the future metro line. EPC A-rated with central heat pump and solar-assisted hot water.",
+      ro: "Un apartament modern cu 3 dormitoare in Greenfield Residence al Dacia Construct, o comunitate sustenabila de mare amploare pe marginea vestica a Clujului. Unitatea de 125 mp dispune de un layout eficient cu camere luminoase, ferestre cu triplu geam si un balcon integrat.\n\nComunitatea Greenfield include un parc rezidential cu piste de alergare, loc de joaca, unitati comerciale la parter si acces direct la viitoarea linie de metrou. Certificat energetic A cu pompa de caldura centrala si apa calda asistata solar.",
     },
     shortDescription: {
-      en: "Sustainable 3-bedroom apartment with residents' park and future metro access in Impact's Greenfield community, Cluj.",
-      ro: "Apartament sustenabil cu 3 dormitoare, parc rezidential si acces viitor la metrou in comunitatea Greenfield Impact, Cluj.",
+      en: "Sustainable 3-bedroom apartment with residents' park and future metro access in Dacia Construct's Greenfield community, Cluj.",
+      ro: "Apartament sustenabil cu 3 dormitoare, parc rezidential si acces viitor la metrou in comunitatea Greenfield Dacia Construct, Cluj.",
     },
     price: 560000,
     currency: "EUR",
@@ -1207,19 +1207,19 @@ export const properties: Property[] = [
     ],
     featured: false,
     developerId: "dev-004",
-    developerName: "Impact Developer & Contractor",
+    developerName: "Dacia Construct & Dezvoltare",
     createdAt: "2025-12-01",
   },
   {
     id: "prop-024",
-    slug: "impact-tower-penthouse-cluj",
+    slug: "dacia-tower-penthouse-cluj",
     title: {
-      en: "Impact Tower Penthouse",
-      ro: "Penthouse Impact Tower",
+      en: "Dacia Tower Penthouse",
+      ro: "Penthouse Dacia Tower",
     },
     description: {
-      en: "The crown jewel of Impact's flagship mixed-use tower in Cluj-Napoca's Marasti district — a 195 sqm penthouse on the 18th floor with unobstructed 270-degree views spanning from the Apuseni Mountains to the city center. This is the tallest residential building in Transylvania.\n\nFour bedrooms, three bathrooms, a wraparound terrace, and a private rooftop hot tub. The apartment features Poliform custom cabinetry, Dornbracht fittings, and Miele appliances throughout. Building amenities include a 25-meter lap pool, fitness center, residents' lounge, and concierge service.",
-      ro: "Bijuteria coroanei turnului mixt emblematic al Impact in cartierul Marasti din Cluj — un penthouse de 195 mp la etajul 18 cu vedere neobstructionata la 270 de grade de la Muntii Apuseni pana in centrul orasului. Aceasta este cea mai inalta cladire rezidentiala din Transilvania.\n\nPatru dormitoare, trei bai, terasa panoramica si jacuzzi privat pe acoperis. Apartamentul dispune de mobilier Poliform personalizat, armaturi Dornbracht si electrocasnice Miele. Facilitatile cladirii includ piscina de 25 metri, centru de fitness, lounge pentru rezidenti si serviciu concierge.",
+      en: "The crown jewel of Dacia Construct's flagship mixed-use tower in Cluj-Napoca's Marasti district — a 195 sqm penthouse on the 18th floor with unobstructed 270-degree views spanning from the Apuseni Mountains to the city center. This is the tallest residential building in Transylvania.\n\nFour bedrooms, three bathrooms, a wraparound terrace, and a private rooftop hot tub. The apartment features Poliform custom cabinetry, Dornbracht fittings, and Miele appliances throughout. Building amenities include a 25-meter lap pool, fitness center, residents' lounge, and concierge service.",
+      ro: "Bijuteria coroanei turnului mixt emblematic al Dacia Construct in cartierul Marasti din Cluj — un penthouse de 195 mp la etajul 18 cu vedere neobstructionata la 270 de grade de la Muntii Apuseni pana in centrul orasului. Aceasta este cea mai inalta cladire rezidentiala din Transilvania.\n\nPatru dormitoare, trei bai, terasa panoramica si jacuzzi privat pe acoperis. Apartamentul dispune de mobilier Poliform personalizat, armaturi Dornbracht si electrocasnice Miele. Facilitatile cladirii includ piscina de 25 metri, centru de fitness, lounge pentru rezidenti si serviciu concierge.",
     },
     shortDescription: {
       en: "18th-floor penthouse with 270° mountain-to-city views, rooftop hot tub, and lap pool in Cluj's tallest residential tower.",
@@ -1246,7 +1246,7 @@ export const properties: Property[] = [
       { en: "Wraparound Terrace", ro: "Terasa Panoramica" },
     ],
     images: [
-      { src: "https://images.unsplash.com/photo-1512917774080-9991f1c4c750?w=1200&q=80", alt: { en: "Impact Tower penthouse view", ro: "Vedere penthouse Impact Tower" }, isHero: true },
+      { src: "https://images.unsplash.com/photo-1512917774080-9991f1c4c750?w=1200&q=80", alt: { en: "Dacia Tower penthouse view", ro: "Vedere penthouse Dacia Tower" }, isHero: true },
       { src: "https://images.unsplash.com/photo-1600585154526-990dced4db0d?w=1200&q=80", alt: { en: "Penthouse living room", ro: "Livingul penthouse-ului" } },
       { src: "https://images.unsplash.com/photo-1600210492486-724fe5c67fb0?w=1200&q=80", alt: { en: "Wraparound terrace", ro: "Terasa panoramica" } },
       { src: "https://images.unsplash.com/photo-1600566753190-17f0baa2a6c3?w=1200&q=80", alt: { en: "Miele kitchen", ro: "Bucatarie Miele" } },
@@ -1254,7 +1254,7 @@ export const properties: Property[] = [
     featured: true,
     new: true,
     developerId: "dev-004",
-    developerName: "Impact Developer & Contractor",
+    developerName: "Dacia Construct & Dezvoltare",
     createdAt: "2026-02-15",
   },
 ];

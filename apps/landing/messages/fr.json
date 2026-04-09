@@ -61,8 +61,8 @@
     },
     "about": {
       "subtitle": "À Propos de Transylvania Grand Estate",
-      "title": "Redéfinir le Marketing Immobilier de Luxe en Roumanie",
-      "description": "Nous sommes la première agence de marketing immobilier de luxe en Roumanie, créant des récits et des stratégies de marque qui élèvent des propriétés exceptionnelles à travers la Transylvanie et au-delà.",
+      "title": "Redéfinir l'Immobilier de Luxe en Roumanie",
+      "description": "Nous sommes la première agence immobilière de luxe en Roumanie, créant des récits et des stratégies de marque qui élèvent des propriétés exceptionnelles à travers la Transylvanie et au-delà.",
       "cta": "Notre Histoire"
     },
     "testimonials": {
@@ -146,8 +146,8 @@
     "interestedSubtitle": "Découvrez comment nous portons ces développements sur le marché.",
     "getInTouch": "Nous Contacter",
     "milestonesData": {
-      "maurer-imobiliare": [
-        { "year": "2008", "title": "Fondation de l'Entreprise", "description": "Maurer Imobiliare a été fondée avec la vision de redéfinir le développement résidentiel en Transylvanie, apportant les standards de construction européens au marché roumain." },
+      "carpathia-imobiliare": [
+        { "year": "2008", "title": "Fondation de l'Entreprise", "description": "Carpathia Imobiliare a été fondée avec la vision de redéfinir le développement résidentiel en Transylvanie, apportant les standards de construction européens au marché roumain." },
         { "year": "2010", "title": "Premier Complexe Résidentiel", "description": "Lancement du projet résidentiel inaugural, un complexe de 120 logements qui a établi de nouvelles références en matière de qualité et de design dans la région." },
         { "year": "2014", "title": "Expansion dans Plusieurs Villes", "description": "Extension des opérations dans trois grandes villes de Transylvanie, établissant une réputation de livraison d'espaces de vie premium dans les délais et le budget." },
         { "year": "2018", "title": "Cap des 3 000 Logements", "description": "Célébration de la livraison de plus de 3 000 logements, consolidant la position de l'entreprise comme l'un des principaux promoteurs résidentiels de Roumanie." },
@@ -277,7 +277,7 @@
     "story": {
       "founding": {
         "title": "Fondé sur la Passion",
-        "description": "Transylvania Grand Estate est né d'une vision de transformer la manière dont l'immobilier de luxe est présenté en Roumanie. Nos fondateurs ont reconnu le potentiel inexploité du patrimoine architectural de la Transylvanie et ont entrepris de créer une agence de marketing qui raconte les histoires des propriétés les plus extraordinaires du monde."
+        "description": "Transylvania Grand Estate est né d'une vision de transformer la manière dont l'immobilier de luxe est présenté en Roumanie. Nos fondateurs ont reconnu le potentiel inexploité du patrimoine architectural de la Transylvanie et ont entrepris de créer une agence immobilière qui raconte les histoires des propriétés les plus extraordinaires du monde."
       },
       "mission": {
         "title": "Notre Mission",
@@ -310,7 +310,7 @@
     },
     "cta": {
       "title": "Travaillez Avec Nous",
-      "subtitle": "Associez-vous à l'équipe leader du marketing immobilier de luxe en Roumanie.",
+      "subtitle": "Associez-vous à l'équipe leader de l'immobilier de luxe en Roumanie.",
       "button": "Nous Contacter"
     }
   },
@@ -570,7 +570,7 @@
     }
   },
   "Footer": {
-    "tagline": "Première Agence de Marketing Immobilier de Luxe en Roumanie",
+    "tagline": "Première Agence Immobilière de Luxe en Roumanie",
     "quickLinks": "Liens Rapides",
     "contact": "Contactez-Nous",
     "followUs": "Suivez-Nous",

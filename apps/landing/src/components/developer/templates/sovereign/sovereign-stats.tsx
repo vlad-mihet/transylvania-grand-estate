@@ -20,7 +20,7 @@ interface StatItem {
 }
 
 const statsConfig: Record<string, StatItem[]> = {
-  "maurer-imobiliare": [
+  "carpathia-imobiliare": [
     { icon: Building2, end: 12, suffix: "+", labelKey: "projectsDelivered" },
     { icon: Calendar, end: 15, suffix: "+", labelKey: "yearsActive" },
     { icon: Home, end: 3000, suffix: "+", labelKey: "homesBuilt" },

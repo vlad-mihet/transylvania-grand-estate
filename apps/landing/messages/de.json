@@ -61,8 +61,8 @@
     },
     "about": {
       "subtitle": "Über Transylvania Grand Estate",
-      "title": "Luxusimmobilien-Marketing in Rumänien Neu Definiert",
-      "description": "Wir sind Rumäniens führende Marketingagentur für Luxusimmobilien und schaffen überzeugende Narrative und Markenstrategien, die außergewöhnliche Immobilien in Siebenbürgen und darüber hinaus auf ein neues Niveau heben.",
+      "title": "Luxusimmobilien in Rumänien Neu Definiert",
+      "description": "Wir sind Rumäniens führende Luxusimmobilienagentur und schaffen überzeugende Narrative und Markenstrategien, die außergewöhnliche Immobilien in Siebenbürgen und darüber hinaus auf ein neues Niveau heben.",
       "cta": "Unsere Geschichte"
     },
     "testimonials": {
@@ -146,8 +146,8 @@
     "interestedSubtitle": "Erfahren Sie, wie wir diese Entwicklungen auf den Markt bringen.",
     "getInTouch": "Kontakt Aufnehmen",
     "milestonesData": {
-      "maurer-imobiliare": [
-        { "year": "2008", "title": "Unternehmensgründung", "description": "Maurer Imobiliare wurde mit der Vision gegründet, die Wohnbauentwicklung in Siebenbürgen neu zu definieren und europäische Baustandards auf den rumänischen Markt zu bringen." },
+      "carpathia-imobiliare": [
+        { "year": "2008", "title": "Unternehmensgründung", "description": "Carpathia Imobiliare wurde mit der Vision gegründet, die Wohnbauentwicklung in Siebenbürgen neu zu definieren und europäische Baustandards auf den rumänischen Markt zu bringen." },
         { "year": "2010", "title": "Erster Wohnkomplex", "description": "Start des ersten Wohnprojekts, ein Komplex mit 120 Einheiten, der neue Maßstäbe für Qualität und Design in der Region setzte." },
         { "year": "2014", "title": "Expansion in Mehrere Städte", "description": "Ausweitung der Geschäftstätigkeit auf drei große siebenbürgische Städte, mit dem Ruf, erstklassige Wohnräume termingerecht und im Budget zu liefern." },
         { "year": "2018", "title": "Meilenstein 3.000 Wohnungen", "description": "Feier der Übergabe von über 3.000 Wohnungen, was die Position des Unternehmens als einer der führenden Wohnbauträger Rumäniens festigte." },
@@ -277,7 +277,7 @@
     "story": {
       "founding": {
         "title": "Gegründet aus Leidenschaft",
-        "description": "Transylvania Grand Estate entstand aus der Vision, die Art und Weise zu transformieren, wie Luxusimmobilien in Rumänien präsentiert werden. Unsere Gründer erkannten das ungenutzte Potenzial des architektonischen Erbes Siebenbürgens und machten sich daran, eine Marketingagentur zu schaffen, die die Geschichten der außergewöhnlichsten Immobilien der Welt erzählt."
+        "description": "Transylvania Grand Estate entstand aus der Vision, die Art und Weise zu transformieren, wie Luxusimmobilien in Rumänien präsentiert werden. Unsere Gründer erkannten das ungenutzte Potenzial des architektonischen Erbes Siebenbürgens und machten sich daran, eine Immobilienagentur zu schaffen, die die Geschichten der außergewöhnlichsten Immobilien der Welt erzählt."
       },
       "mission": {
         "title": "Unsere Mission",
@@ -310,7 +310,7 @@
     },
     "cta": {
       "title": "Arbeiten Sie Mit Uns",
-      "subtitle": "Werden Sie Partner des führenden Luxusimmobilien-Marketing-Teams in Rumänien.",
+      "subtitle": "Werden Sie Partner des führenden Luxusimmobilien-Teams in Rumänien.",
       "button": "Kontakt Aufnehmen"
     }
   },
@@ -570,7 +570,7 @@
     }
   },
   "Footer": {
-    "tagline": "Rumäniens Führende Marketingagentur für Luxusimmobilien",
+    "tagline": "Rumäniens Führende Luxusimmobilienagentur",
     "quickLinks": "Schnelllinks",
     "contact": "Kontaktieren Sie Uns",
     "followUs": "Folgen Sie Uns",

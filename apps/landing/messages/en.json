@@ -61,8 +61,8 @@
     },
     "about": {
       "subtitle": "About Transylvania Grand Estate",
-      "title": "Redefining Luxury Real Estate Marketing in Romania",
-      "description": "We are Romania's premier luxury real estate marketing agency, crafting compelling narratives and brand strategies that elevate exceptional properties across Transylvania and beyond.",
+      "title": "Redefining Luxury Real Estate in Romania",
+      "description": "We are Romania's premier luxury real estate agency, crafting compelling narratives and brand strategies that elevate exceptional properties across Transylvania and beyond.",
       "cta": "Our Story"
     },
     "testimonials": {
@@ -146,8 +146,8 @@
     "interestedSubtitle": "Discover how we bring these developments to market.",
     "getInTouch": "Get in Touch",
     "milestonesData": {
-      "maurer-imobiliare": [
-        { "year": "2008", "title": "Company Founded", "description": "Maurer Imobiliare was established with a vision to redefine residential development in Transylvania, bringing European construction standards to the Romanian market." },
+      "carpathia-imobiliare": [
+        { "year": "2008", "title": "Company Founded", "description": "Carpathia Imobiliare was established with a vision to redefine residential development in Transylvania, bringing European construction standards to the Romanian market." },
         { "year": "2010", "title": "First Residential Complex", "description": "Launched the inaugural residential project, a 120-unit complex that set new benchmarks for quality and design in the region." },
         { "year": "2014", "title": "Expansion to Multiple Cities", "description": "Expanded operations to three major Transylvanian cities, establishing a reputation for delivering premium living spaces on time and on budget." },
         { "year": "2018", "title": "3,000 Homes Milestone", "description": "Celebrated the delivery of over 3,000 homes, solidifying the company's position as one of the leading residential developers in Romania." },
@@ -277,7 +277,7 @@
     "story": {
       "founding": {
         "title": "Founded on Passion",
-        "description": "Transylvania Grand Estate was born from a vision to transform how luxury real estate is presented in Romania. Our founders recognized the untapped potential of Transylvania's architectural heritage and set out to create a marketing agency that tells the stories of the world's most extraordinary properties."
+        "description": "Transylvania Grand Estate was born from a vision to transform how luxury real estate is presented in Romania. Our founders recognized the untapped potential of Transylvania's architectural heritage and set out to create a real estate agency that tells the stories of the world's most extraordinary properties."
       },
       "mission": {
         "title": "Our Mission",
@@ -310,7 +310,7 @@
     },
     "cta": {
       "title": "Work With Us",
-      "subtitle": "Partner with Romania's leading luxury property marketing team.",
+      "subtitle": "Partner with Romania's leading luxury real estate team.",
       "button": "Get in Touch"
     }
   },
@@ -446,7 +446,7 @@
     }
   },
   "Footer": {
-    "tagline": "Romania's Premier Luxury Real Estate Marketing Agency",
+    "tagline": "Romania's Premier Luxury Real Estate Agency",
     "quickLinks": "Quick Links",
     "contact": "Contact Us",
     "followUs": "Follow Us",

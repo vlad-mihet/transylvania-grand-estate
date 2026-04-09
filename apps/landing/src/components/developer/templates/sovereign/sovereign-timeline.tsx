@@ -16,7 +16,7 @@ interface Milestone {
   description: string;
 }
 
-const knownDevelopers = ["maurer-imobiliare", "gran-via", "nova-building"];
+const knownDevelopers = ["carpathia-imobiliare", "gran-via", "nova-building"];
 
 export function SovereignTimeline({
   developer,

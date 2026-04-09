@@ -10,30 +10,30 @@ import {
 const prisma = new PrismaClient();
 
 const developerCoverImages: Record<string, string> = {
-  'studium-green':
+  'verdalis-residence':
     'https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=1920&q=80',
-  'maurer-imobiliare':
+  'carpathia-imobiliare':
     'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=1920&q=80',
-  'west-residential':
+  'atrium-boutique':
     'https://images.unsplash.com/photo-1613490493576-7fde63acd811?w=1920&q=80',
-  'impact-developer':
+  'dacia-construct':
     'https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=1920&q=80',
 };
 
 const developerTaglines: Record<string, { en: string; ro: string }> = {
-  'studium-green': {
+  'verdalis-residence': {
     en: 'Sustainable luxury, timeless design',
     ro: 'Lux sustenabil, design atemporal',
   },
-  'maurer-imobiliare': {
+  'carpathia-imobiliare': {
     en: "Building tomorrow's heritage today",
     ro: 'Construim patrimoniul de mâine, astăzi',
   },
-  'west-residential': {
+  'atrium-boutique': {
     en: 'Where architecture meets artistry',
     ro: 'Unde arhitectura întâlnește arta',
   },
-  'impact-developer': {
+  'dacia-construct': {
     en: 'Redefining urban living',
     ro: 'Redefinim viața urbană',
   },

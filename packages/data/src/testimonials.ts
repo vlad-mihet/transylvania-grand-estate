@@ -3,7 +3,7 @@ import { Testimonial } from "@tge/types";
 export const testimonials: Testimonial[] = [
   {
     id: "test-001",
-    clientName: "James & Victoria H.",
+    clientName: "Adrian & Elena T.",
     location: "Cluj-Napoca",
     propertyType: "Villa",
     quote: {
@@ -14,7 +14,7 @@ export const testimonials: Testimonial[] = [
   },
   {
     id: "test-002",
-    clientName: "Dr. Andrei M.",
+    clientName: "Dr. Cristian L.",
     location: "Brasov",
     propertyType: "Chalet",
     quote: {
@@ -25,7 +25,7 @@ export const testimonials: Testimonial[] = [
   },
   {
     id: "test-003",
-    clientName: "Maria & Stefan P.",
+    clientName: "Ioana & Radu V.",
     location: "Oradea",
     propertyType: "Mansion",
     quote: {
@@ -36,7 +36,7 @@ export const testimonials: Testimonial[] = [
   },
   {
     id: "test-004",
-    clientName: "Robert K.",
+    clientName: "Thomas B.",
     location: "Timisoara",
     propertyType: "Penthouse",
     quote: {
