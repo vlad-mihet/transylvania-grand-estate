@@ -78,6 +78,7 @@ export class PropertiesService {
         include: {
           images: { orderBy: { sortOrder: 'asc' } },
           developer: true,
+          agent: true,
         },
       }),
       this.prisma.property.count({ where }),
@@ -100,6 +101,7 @@ export class PropertiesService {
       include: {
         images: { orderBy: { sortOrder: 'asc' } },
         developer: true,
+        agent: true,
       },
     });
     if (!property) throw new NotFoundException('Property not found');
@@ -112,6 +114,7 @@ export class PropertiesService {
       include: {
         images: { orderBy: { sortOrder: 'asc' } },
         developer: true,
+        agent: true,
       },
     });
     if (!property) throw new NotFoundException('Property not found');
@@ -148,10 +151,12 @@ export class PropertiesService {
         featured: dto.featured ?? false,
         isNew: dto.isNew ?? false,
         developerId: dto.developerId,
+        agentId: dto.agentId,
       },
       include: {
         images: { orderBy: { sortOrder: 'asc' } },
         developer: true,
+        agent: true,
       },
     });
   }
@@ -199,6 +204,11 @@ export class PropertiesService {
         ? { connect: { id: dto.developerId } }
         : { disconnect: true };
     }
+    if (dto.agentId !== undefined) {
+      data.agent = dto.agentId
+        ? { connect: { id: dto.agentId } }
+        : { disconnect: true };
+    }
 
     return this.prisma.property.update({
       where: { id },
@@ -206,6 +216,7 @@ export class PropertiesService {
       include: {
         images: { orderBy: { sortOrder: 'asc' } },
         developer: true,
+        agent: true,
       },
     });
   }

@@ -66,5 +66,7 @@ export interface Property {
   new?: boolean;
   developerId?: string;
   developerName?: string;
+  agentId?: string;
+  agentName?: string;
   createdAt: string;
 }

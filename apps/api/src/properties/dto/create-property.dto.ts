@@ -120,4 +120,8 @@ export class CreatePropertyDto {
   @IsOptional()
   @IsString()
   developerId?: string;
+
+  @IsOptional()
+  @IsString()
+  agentId?: string;
 }

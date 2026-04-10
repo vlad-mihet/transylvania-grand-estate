@@ -99,6 +99,8 @@ model Property {
   // Relations
   developerId String?    @map("developer_id")
   developer   Developer? @relation(fields: [developerId], references: [id], onDelete: SetNull)
+  agentId     String?    @map("agent_id")
+  agent       Agent?     @relation(fields: [agentId], references: [id], onDelete: SetNull)
   images      PropertyImage[]
 
   createdAt DateTime @default(now()) @map("created_at")
@@ -109,6 +111,7 @@ model Property {
   @@index([status])
   @@index([price])
   @@index([featured])
+  @@index([agentId])
   @@map("properties")
 }
 
@@ -150,6 +153,27 @@ model Developer {
   updatedAt DateTime @updatedAt @map("updated_at")
 
   @@map("developers")
+}
+
+// ─── Agent ───────────────────────────────────────────────
+
+model Agent {
+  id        String  @id @default(uuid())
+  slug      String  @unique
+  firstName String  @map("first_name")
+  lastName  String  @map("last_name")
+  email     String  @unique
+  phone     String
+  photo     String?
+  bio       Json    // LocalizedString {en, ro}
+  active    Boolean @default(true)
+
+  properties Property[]
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@map("agents")
 }
 
 // ─── City ────────────────────────────────────────────────

@@ -7,6 +7,7 @@ import { PrismaModule } from './prisma/prisma.module';
 import { AuthModule } from './auth/auth.module';
 import { PropertiesModule } from './properties/properties.module';
 import { DevelopersModule } from './developers/developers.module';
+import { AgentsModule } from './agents/agents.module';
 import { CitiesModule } from './cities/cities.module';
 import { TestimonialsModule } from './testimonials/testimonials.module';
 import { SiteConfigModule } from './site-config/site-config.module';
@@ -35,6 +36,7 @@ const serveStaticModules =
     AuthModule,
     PropertiesModule,
     DevelopersModule,
+    AgentsModule,
     CitiesModule,
     TestimonialsModule,
     SiteConfigModule,

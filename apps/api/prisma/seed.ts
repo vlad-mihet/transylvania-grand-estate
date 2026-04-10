@@ -3,6 +3,7 @@ import * as bcrypt from 'bcrypt';
 import {
   properties,
   developers,
+  agents,
   cities,
   testimonials,
 } from '@tge/data';
@@ -84,6 +85,27 @@ async function main() {
   }
   console.log(`  ${developers.length} developers seeded`);
 
+  // 2b. Seed agents
+  const agentIdMap = new Map<string, string>();
+  for (const agent of agents) {
+    const created = await prisma.agent.upsert({
+      where: { slug: agent.slug },
+      update: {},
+      create: {
+        slug: agent.slug,
+        firstName: agent.firstName,
+        lastName: agent.lastName,
+        email: agent.email,
+        phone: agent.phone,
+        photo: agent.photo ?? null,
+        bio: agent.bio,
+        active: agent.active,
+      },
+    });
+    agentIdMap.set(agent.id, created.id);
+  }
+  console.log(`  ${agents.length} agents seeded`);
+
   // 3. Seed cities
   for (const city of cities) {
     await prisma.city.upsert({
@@ -102,14 +124,19 @@ async function main() {
   }
   console.log(`  ${cities.length} cities seeded`);
 
-  // 4. Seed properties with images (clear existing to ensure developer assignments)
+  // 4. Seed properties with images (clear existing to ensure developer/agent assignments)
+  const agentIds = Array.from(agentIdMap.values());
   await prisma.propertyImage.deleteMany({});
   await prisma.property.deleteMany({});
-  for (const prop of properties) {
+  for (let i = 0; i < properties.length; i++) {
+    const prop = properties[i];
     // Map static developer ID to database UUID
     const developerId = prop.developerId
       ? developerIdMap.get(prop.developerId) ?? null
       : null;
+
+    // Assign agents round-robin across properties
+    const agentId = agentIds[i % agentIds.length];
 
     await prisma.property.upsert({
       where: { slug: prop.slug },
@@ -141,6 +168,7 @@ async function main() {
         featured: prop.featured,
         isNew: prop.new ?? false,
         developerId: developerId,
+        agentId: agentId,
         images: {
           create: prop.images.map((img, index) => ({
             src: img.src,
