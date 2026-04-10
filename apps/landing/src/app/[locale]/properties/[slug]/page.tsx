@@ -180,7 +180,7 @@ export default async function PropertyDetailPage({
                       )}
                       <div>
                         <p className="text-cream font-medium text-sm">
-                          {agent.firstName} {agent.lastName}
+                          {agent.firstName}
                         </p>
                         <a
                           href={`tel:${agent.phone}`}

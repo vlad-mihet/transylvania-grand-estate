@@ -85,8 +85,9 @@ async function main() {
   }
   console.log(`  ${developers.length} developers seeded`);
 
-  // 2b. Seed agents
+  // 2b. Seed agents (grouped by city for property assignment)
   const agentIdMap = new Map<string, string>();
+  const agentIdsByCity = new Map<string, string[]>();
   for (const agent of agents) {
     const created = await prisma.agent.upsert({
       where: { slug: agent.slug },
@@ -103,6 +104,9 @@ async function main() {
       },
     });
     agentIdMap.set(agent.id, created.id);
+    const cityAgents = agentIdsByCity.get(agent.city) ?? [];
+    cityAgents.push(created.id);
+    agentIdsByCity.set(agent.city, cityAgents);
   }
   console.log(`  ${agents.length} agents seeded`);
 
@@ -125,18 +129,21 @@ async function main() {
   console.log(`  ${cities.length} cities seeded`);
 
   // 4. Seed properties with images (clear existing to ensure developer/agent assignments)
-  const agentIds = Array.from(agentIdMap.values());
+  const cityPropertyCounters = new Map<string, number>();
   await prisma.propertyImage.deleteMany({});
   await prisma.property.deleteMany({});
-  for (let i = 0; i < properties.length; i++) {
-    const prop = properties[i];
+  for (const prop of properties) {
     // Map static developer ID to database UUID
     const developerId = prop.developerId
       ? developerIdMap.get(prop.developerId) ?? null
       : null;
 
-    // Assign agents round-robin across properties
-    const agentId = agentIds[i % agentIds.length];
+    // Assign agents by city, round-robin within each city's agent pool
+    const citySlug = prop.location.citySlug;
+    const cityAgents = agentIdsByCity.get(citySlug) ?? [];
+    const counter = cityPropertyCounters.get(citySlug) ?? 0;
+    const agentId = cityAgents.length > 0 ? cityAgents[counter % cityAgents.length] : null;
+    cityPropertyCounters.set(citySlug, counter + 1);
 
     await prisma.property.upsert({
       where: { slug: prop.slug },
