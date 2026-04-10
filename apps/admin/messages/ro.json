@@ -15,6 +15,7 @@
     "dashboard": "Panou principal",
     "properties": "Proprietăți",
     "developers": "Dezvoltatori",
+    "agents": "Agenți",
     "cities": "Orașe",
     "testimonials": "Testimoniale",
     "settings": "Setări",
@@ -29,6 +30,7 @@
     "description": "Prezentare generală a platformei imobiliare",
     "properties": "Proprietăți",
     "developers": "Dezvoltatori",
+    "agents": "Agenți",
     "cities": "Orașe",
     "testimonials": "Testimoniale"
   },
@@ -72,6 +74,25 @@
     "created": "Dezvoltator creat",
     "updated": "Dezvoltator actualizat",
     "imageUploadFailed": "Salvat, dar încărcarea logo-ului a eșuat. Editează pentru a reîncerca."
+  },
+  "Agents": {
+    "title": "Agenți",
+    "count": "{count} agenți",
+    "addAgent": "Adaugă agent",
+    "newAgent": "Agent nou",
+    "editAgent": "Editează agentul",
+    "notFound": "Agentul nu a fost găsit",
+    "columnName": "Nume",
+    "columnEmail": "Email",
+    "columnPhone": "Telefon",
+    "columnActive": "Activ",
+    "deleteTitle": "Șterge agentul",
+    "deleteDescription": "Aceasta va șterge permanent agentul. Proprietățile atribuite acestui agent vor fi dezasignate.",
+    "deleted": "Agent șters",
+    "deleteFailed": "Eroare la ștergerea agentului",
+    "created": "Agent creat",
+    "updated": "Agent actualizat",
+    "imageUploadFailed": "Salvat, dar încărcarea fotografiei a eșuat. Editează pentru a reîncerca."
   },
   "Cities": {
     "title": "Orașe",
@@ -137,6 +158,8 @@
     "status": "Status",
     "developer": "Dezvoltator",
     "noDeveloper": "Fără dezvoltator",
+    "agent": "Agent",
+    "noAgent": "Fără agent",
     "none": "Niciunul",
     "price": "Preț",
     "currency": "Monedă",
@@ -190,6 +213,18 @@
     "featuredDeveloper": "Dezvoltator promovat",
     "logo": "Logo",
     "saveDeveloper": "Salvează dezvoltatorul"
+  },
+  "AgentForm": {
+    "title": "Informații agent",
+    "firstName": "Prenume",
+    "lastName": "Nume",
+    "slug": "Slug",
+    "email": "Email",
+    "phone": "Telefon",
+    "bio": "Biografie",
+    "active": "Activ",
+    "photo": "Fotografie",
+    "saveAgent": "Salvează agentul"
   },
   "CityForm": {
     "title": "Informații oraș",

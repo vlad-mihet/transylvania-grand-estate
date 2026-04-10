@@ -105,6 +105,11 @@ export function PropertyForm({
     queryFn: () => apiClient<any[]>("/developers"),
   });
 
+  const { data: agents } = useQuery({
+    queryKey: ["agents-select"],
+    queryFn: () => apiClient<any[]>("/agents?active=true"),
+  });
+
   const { data: cities } = useQuery({
     queryKey: ["cities-select"],
     queryFn: () => apiClient<any[]>("/cities"),
@@ -250,6 +255,29 @@ export function PropertyForm({
                   {(developers ?? []).map((d: any) => (
                     <SelectItem key={d.id} value={d.id}>
                       {d.name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+          </div>
+          <div className="grid gap-4 sm:grid-cols-2">
+            <div className="space-y-2">
+              <Label>{t("agent")}</Label>
+              <Select
+                value={form.watch("agentId") ?? "__none__"}
+                onValueChange={(v) =>
+                  form.setValue("agentId", v === "__none__" ? null : v)
+                }
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder={t("noAgent")} />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="__none__">{t("none")}</SelectItem>
+                  {(agents ?? []).map((a: any) => (
+                    <SelectItem key={a.id} value={a.id}>
+                      {a.firstName} {a.lastName}
                     </SelectItem>
                   ))}
                 </SelectContent>

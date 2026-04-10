@@ -15,6 +15,7 @@
     "dashboard": "Dashboard",
     "properties": "Immobilien",
     "developers": "Bauträger",
+    "agents": "Makler",
     "cities": "Städte",
     "testimonials": "Referenzen",
     "settings": "Einstellungen",
@@ -29,6 +30,7 @@
     "description": "Überblick über Ihre Immobilienplattform",
     "properties": "Immobilien",
     "developers": "Bauträger",
+    "agents": "Makler",
     "cities": "Städte",
     "testimonials": "Referenzen"
   },
@@ -72,6 +74,25 @@
     "created": "Bauträger erstellt",
     "updated": "Bauträger aktualisiert",
     "imageUploadFailed": "Gespeichert, aber Logo-Upload fehlgeschlagen. Bearbeiten Sie, um es erneut zu versuchen."
+  },
+  "Agents": {
+    "title": "Makler",
+    "count": "{count} Makler",
+    "addAgent": "Makler hinzufügen",
+    "newAgent": "Neuer Makler",
+    "editAgent": "Makler bearbeiten",
+    "notFound": "Makler nicht gefunden",
+    "columnName": "Name",
+    "columnEmail": "E-Mail",
+    "columnPhone": "Telefon",
+    "columnActive": "Aktiv",
+    "deleteTitle": "Makler löschen",
+    "deleteDescription": "Dieser Makler wird dauerhaft gelöscht. Zugewiesene Immobilien werden freigegeben.",
+    "deleted": "Makler gelöscht",
+    "deleteFailed": "Fehler beim Löschen des Maklers",
+    "created": "Makler erstellt",
+    "updated": "Makler aktualisiert",
+    "imageUploadFailed": "Gespeichert, aber Foto-Upload fehlgeschlagen. Bearbeiten Sie, um es erneut zu versuchen."
   },
   "Cities": {
     "title": "Städte",
@@ -137,6 +158,8 @@
     "status": "Status",
     "developer": "Bauträger",
     "noDeveloper": "Kein Bauträger",
+    "agent": "Makler",
+    "noAgent": "Kein Makler",
     "none": "Keiner",
     "price": "Preis",
     "currency": "Währung",
@@ -190,6 +213,18 @@
     "featuredDeveloper": "Hervorgehobener Bauträger",
     "logo": "Logo",
     "saveDeveloper": "Bauträger speichern"
+  },
+  "AgentForm": {
+    "title": "Makler-Informationen",
+    "firstName": "Vorname",
+    "lastName": "Nachname",
+    "slug": "Slug",
+    "email": "E-Mail",
+    "phone": "Telefon",
+    "bio": "Biografie",
+    "active": "Aktiv",
+    "photo": "Foto",
+    "saveAgent": "Makler speichern"
   },
   "CityForm": {
     "title": "Stadt-Informationen",

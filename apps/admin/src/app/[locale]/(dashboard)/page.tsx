@@ -6,6 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@tge/ui";
 import {
   Building2,
   HardHat,
+  UserCircle,
   MapPin,
   MessageSquareQuote,
 } from "lucide-react";
@@ -16,6 +17,7 @@ import { QueryError } from "@/components/shared/query-error";
 interface Stats {
   properties: number;
   developers: number;
+  agents: number;
   cities: number;
   testimonials: number;
 }
@@ -24,16 +26,18 @@ function useStats() {
   return useQuery({
     queryKey: ["dashboard-stats"],
     queryFn: async () => {
-      const [properties, developers, cities, testimonials] =
+      const [properties, developers, agents, cities, testimonials] =
         await Promise.all([
           apiClient<unknown[]>("/properties?limit=100"),
           apiClient<unknown[]>("/developers"),
+          apiClient<unknown[]>("/agents"),
           apiClient<unknown[]>("/cities"),
           apiClient<unknown[]>("/testimonials"),
         ]);
       return {
         properties: Array.isArray(properties) ? properties.length : 0,
         developers: Array.isArray(developers) ? developers.length : 0,
+        agents: Array.isArray(agents) ? agents.length : 0,
         cities: Array.isArray(cities) ? cities.length : 0,
         testimonials: Array.isArray(testimonials) ? testimonials.length : 0,
       } satisfies Stats;
@@ -48,6 +52,7 @@ export default function DashboardPage() {
   const statCards = [
     { key: "properties" as const, label: t("properties"), icon: Building2, href: "/properties" as const, color: "text-copper" },
     { key: "developers" as const, label: t("developers"), icon: HardHat, href: "/developers" as const, color: "text-copper" },
+    { key: "agents" as const, label: t("agents"), icon: UserCircle, href: "/agents" as const, color: "text-copper" },
     { key: "cities" as const, label: t("cities"), icon: MapPin, href: "/cities" as const, color: "text-copper" },
     { key: "testimonials" as const, label: t("testimonials"), icon: MessageSquareQuote, href: "/testimonials" as const, color: "text-copper" },
   ];

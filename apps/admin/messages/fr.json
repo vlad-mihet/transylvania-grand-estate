@@ -15,6 +15,7 @@
     "dashboard": "Tableau de bord",
     "properties": "Propriétés",
     "developers": "Promoteurs",
+    "agents": "Agents",
     "cities": "Villes",
     "testimonials": "Témoignages",
     "settings": "Paramètres",
@@ -29,6 +30,7 @@
     "description": "Aperçu de votre plateforme immobilière",
     "properties": "Propriétés",
     "developers": "Promoteurs",
+    "agents": "Agents",
     "cities": "Villes",
     "testimonials": "Témoignages"
   },
@@ -72,6 +74,25 @@
     "created": "Promoteur créé",
     "updated": "Promoteur mis à jour",
     "imageUploadFailed": "Enregistré mais le téléchargement du logo a échoué. Modifiez pour réessayer."
+  },
+  "Agents": {
+    "title": "Agents",
+    "count": "{count} agents",
+    "addAgent": "Ajouter un agent",
+    "newAgent": "Nouvel agent",
+    "editAgent": "Modifier l'agent",
+    "notFound": "Agent introuvable",
+    "columnName": "Nom",
+    "columnEmail": "E-mail",
+    "columnPhone": "Téléphone",
+    "columnActive": "Actif",
+    "deleteTitle": "Supprimer l'agent",
+    "deleteDescription": "Cela supprimera définitivement cet agent. Les propriétés attribuées à cet agent seront désattribuées.",
+    "deleted": "Agent supprimé",
+    "deleteFailed": "Échec de la suppression de l'agent",
+    "created": "Agent créé",
+    "updated": "Agent mis à jour",
+    "imageUploadFailed": "Enregistré mais le téléchargement de la photo a échoué. Modifiez pour réessayer."
   },
   "Cities": {
     "title": "Villes",
@@ -137,6 +158,8 @@
     "status": "Statut",
     "developer": "Promoteur",
     "noDeveloper": "Aucun promoteur",
+    "agent": "Agent",
+    "noAgent": "Aucun agent",
     "none": "Aucun",
     "price": "Prix",
     "currency": "Devise",
@@ -190,6 +213,18 @@
     "featuredDeveloper": "Promoteur en vedette",
     "logo": "Logo",
     "saveDeveloper": "Enregistrer le promoteur"
+  },
+  "AgentForm": {
+    "title": "Informations de l'agent",
+    "firstName": "Prénom",
+    "lastName": "Nom",
+    "slug": "Slug",
+    "email": "E-mail",
+    "phone": "Téléphone",
+    "bio": "Biographie",
+    "active": "Actif",
+    "photo": "Photo",
+    "saveAgent": "Enregistrer l'agent"
   },
   "CityForm": {
     "title": "Informations sur la ville",

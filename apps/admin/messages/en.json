@@ -15,6 +15,7 @@
     "dashboard": "Dashboard",
     "properties": "Properties",
     "developers": "Developers",
+    "agents": "Agents",
     "cities": "Cities",
     "testimonials": "Testimonials",
     "settings": "Settings",
@@ -29,6 +30,7 @@
     "description": "Overview of your real estate platform",
     "properties": "Properties",
     "developers": "Developers",
+    "agents": "Agents",
     "cities": "Cities",
     "testimonials": "Testimonials"
   },
@@ -72,6 +74,25 @@
     "created": "Developer created",
     "updated": "Developer updated",
     "imageUploadFailed": "Saved but logo upload failed. Edit to retry."
+  },
+  "Agents": {
+    "title": "Agents",
+    "count": "{count} agents",
+    "addAgent": "Add Agent",
+    "newAgent": "New Agent",
+    "editAgent": "Edit Agent",
+    "notFound": "Agent not found",
+    "columnName": "Name",
+    "columnEmail": "Email",
+    "columnPhone": "Phone",
+    "columnActive": "Active",
+    "deleteTitle": "Delete agent",
+    "deleteDescription": "This will permanently delete this agent. Properties assigned to this agent will be unassigned.",
+    "deleted": "Agent deleted",
+    "deleteFailed": "Failed to delete agent",
+    "created": "Agent created",
+    "updated": "Agent updated",
+    "imageUploadFailed": "Saved but photo upload failed. Edit to retry."
   },
   "Cities": {
     "title": "Cities",
@@ -137,6 +158,8 @@
     "status": "Status",
     "developer": "Developer",
     "noDeveloper": "No developer",
+    "agent": "Agent",
+    "noAgent": "No agent",
     "none": "None",
     "price": "Price",
     "currency": "Currency",
@@ -190,6 +213,18 @@
     "featuredDeveloper": "Featured developer",
     "logo": "Logo",
     "saveDeveloper": "Save Developer"
+  },
+  "AgentForm": {
+    "title": "Agent Information",
+    "firstName": "First Name",
+    "lastName": "Last Name",
+    "slug": "Slug",
+    "email": "Email",
+    "phone": "Phone",
+    "bio": "Bio",
+    "active": "Active",
+    "photo": "Photo",
+    "saveAgent": "Save Agent"
   },
   "CityForm": {
     "title": "City Information",

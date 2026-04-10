@@ -39,6 +39,7 @@ export const propertySchema = z.object({
   featured: z.boolean(),
   isNew: z.boolean(),
   developerId: z.string().optional().nullable(),
+  agentId: z.string().optional().nullable(),
 }).superRefine((data, ctx) => {
   if (data.type !== "terrain" && data.yearBuilt < 1800) {
     ctx.addIssue({
