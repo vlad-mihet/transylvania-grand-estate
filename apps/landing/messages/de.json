@@ -267,6 +267,11 @@
     "cta": {
       "title": "Interessiert an dieser Immobilie?",
       "subtitle": "Kontaktieren Sie uns, um mehr über dieses Projekt zu erfahren."
+    },
+    "agent": {
+      "title": "Ihr Makler",
+      "callAgent": "Makler anrufen",
+      "emailAgent": "E-Mail an Makler"
     }
   },
   "AboutPage": {

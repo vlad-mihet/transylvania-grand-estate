@@ -1,4 +1,5 @@
 import { notFound } from "next/navigation";
+import Image from "next/image";
 import { getTranslations } from "next-intl/server";
 import { getLocale } from "next-intl/server";
 import { Locale } from "@tge/types";
@@ -47,9 +48,19 @@ export default async function PropertyDetailPage({
   const { slug } = await params;
 
   let property;
+  let agent: { firstName: string; lastName: string; phone: string; email: string; photo?: string } | null = null;
   try {
     const raw = await fetchApi<any>(`/properties/${slug}`);
     property = mapApiProperty(raw);
+    if (raw.agent) {
+      agent = {
+        firstName: raw.agent.firstName,
+        lastName: raw.agent.lastName,
+        phone: raw.agent.phone,
+        email: raw.agent.email,
+        photo: raw.agent.photo,
+      };
+    }
   } catch {
     notFound();
   }
@@ -151,6 +162,38 @@ export default async function PropertyDetailPage({
 
             <div className="lg:col-span-1">
               <div className="frosted-glass p-6 sticky top-24">
+                {agent && (
+                  <>
+                    <div className="flex items-center gap-3 mb-5">
+                      {agent.photo ? (
+                        <Image
+                          src={agent.photo}
+                          alt={`${agent.firstName} ${agent.lastName}`}
+                          width={48}
+                          height={48}
+                          className="rounded-full object-cover w-12 h-12"
+                        />
+                      ) : (
+                        <div className="w-12 h-12 rounded-full bg-copper/20 flex items-center justify-center text-copper font-serif text-lg">
+                          {agent.firstName[0]}
+                        </div>
+                      )}
+                      <div>
+                        <p className="text-cream font-medium text-sm">
+                          {agent.firstName} {agent.lastName}
+                        </p>
+                        <a
+                          href={`tel:${agent.phone}`}
+                          className="text-copper text-xs hover:underline"
+                        >
+                          {agent.phone}
+                        </a>
+                      </div>
+                    </div>
+                    <Separator className="bg-copper/10 mb-5" />
+                  </>
+                )}
+
                 <p className="text-cream-muted text-sm mb-1">{t("price")}</p>
                 <p className="font-serif text-3xl text-copper mb-6">
                   {formatPrice(property.price, locale)}

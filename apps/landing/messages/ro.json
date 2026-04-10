@@ -267,6 +267,11 @@
     "cta": {
       "title": "Interesat de această proprietate?",
       "subtitle": "Contactați-ne pentru a afla mai multe despre acest proiect."
+    },
+    "agent": {
+      "title": "Agentul tău",
+      "callAgent": "Sună agentul",
+      "emailAgent": "Trimite email agentului"
     }
   },
   "AboutPage": {

@@ -267,6 +267,11 @@
     "cta": {
       "title": "Intéressé par cette propriété ?",
       "subtitle": "Contactez-nous pour en savoir plus sur ce projet."
+    },
+    "agent": {
+      "title": "Votre agent",
+      "callAgent": "Appeler l'agent",
+      "emailAgent": "Envoyer un e-mail à l'agent"
     }
   },
   "AboutPage": {

@@ -267,6 +267,11 @@
     "cta": {
       "title": "Interested in This Property?",
       "subtitle": "Get in touch to learn more about this project."
+    },
+    "agent": {
+      "title": "Your Agent",
+      "callAgent": "Call Agent",
+      "emailAgent": "Email Agent"
     }
   },
   "AboutPage": {

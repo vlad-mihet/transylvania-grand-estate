@@ -40,6 +40,8 @@ export function mapApiProperty(raw: any): Property {
     new: raw.isNew,
     developerId: raw.developerId,
     developerName: raw.developer?.name,
+    agentId: raw.agentId,
+    agentName: raw.agent ? `${raw.agent.firstName} ${raw.agent.lastName}` : undefined,
     createdAt: raw.createdAt,
   };
 }
