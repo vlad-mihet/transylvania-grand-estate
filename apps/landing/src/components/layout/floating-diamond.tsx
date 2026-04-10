@@ -109,7 +109,7 @@ export function FloatingDiamond() {
       clearTimeout(timer);
       window.removeEventListener("resize", syncPosition);
     };
-  }, []);
+  }, [pathname]);
 
   useEffect(() => {
     if (reducedMotion || !isHomepage) return;
@@ -183,6 +183,9 @@ export function FloatingDiamond() {
       ticking = true;
       rafRef.current = requestAnimationFrame(update);
     };
+
+    // Run immediately to set correct position for current scroll offset
+    update();
 
     window.addEventListener("scroll", handleScroll, { passive: true });
     return () => {

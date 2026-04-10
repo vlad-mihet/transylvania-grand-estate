@@ -112,7 +112,7 @@ export default async function CityDetailPage({ params }: CityDetailPageProps) {
 
       <CTABanner
         title={tCity("cta.title", { city: city.name })}
-        subtitle={tCity("cta.subtitle")}
+        subtitle={tCity("cta.subtitle", { city: city.name })}
         buttonText={tCity("cta.button")}
         inquiryContext={{ type: "general" }}
       />

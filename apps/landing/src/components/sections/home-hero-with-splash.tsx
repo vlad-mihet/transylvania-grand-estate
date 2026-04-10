@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef, useCallback } from "react";
+import { useState, useRef, useCallback, useEffect } from "react";
 import { SplashOverlay } from "@/components/layout/splash-overlay";
 import { VideoHeroSection } from "./video-hero-section";
 
@@ -21,10 +21,16 @@ export function HomeHeroWithSplash({
   ctaText,
   ctaHref,
 }: HomeHeroWithSplashProps) {
-  const splashSeen = typeof window !== "undefined" && sessionStorage.getItem("splash-seen") === "1";
-  const [splashVisible, setSplashVisible] = useState(!splashSeen);
-  const [heroRevealed, setHeroRevealed] = useState(splashSeen);
+  const [splashVisible, setSplashVisible] = useState(true);
+  const [heroRevealed, setHeroRevealed] = useState(false);
   const videoUnmuteRef = useRef<(() => void) | null>(null);
+
+  useEffect(() => {
+    if (sessionStorage.getItem("splash-seen") === "1") {
+      setSplashVisible(false);
+      setHeroRevealed(true);
+    }
+  }, []);
 
   // Called immediately on click (within user gesture) — unmute video
   const handleClickEnter = useCallback(() => {
