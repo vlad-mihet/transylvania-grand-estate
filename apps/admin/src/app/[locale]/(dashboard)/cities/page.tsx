@@ -99,7 +99,52 @@ export default function CitiesPage() {
       ) : isError ? (
         <QueryError onRetry={refetch} />
       ) : (
-        <DataTable columns={columns} data={cities} />
+        <DataTable
+          columns={columns}
+          data={cities}
+          mobileCard={(city) => (
+            <div className="rounded-xl border border-copper/[0.08] p-4 space-y-3">
+              <div className="flex items-center gap-3">
+                {city.image ? (
+                  <Image
+                    src={city.image}
+                    alt=""
+                    width={64}
+                    height={48}
+                    className="rounded object-cover shrink-0"
+                    style={{ width: 64, height: 48 }}
+                  />
+                ) : (
+                  <div className="h-[48px] w-[64px] rounded bg-muted shrink-0" />
+                )}
+                <div className="min-w-0 flex-1">
+                  <p className="font-medium">{city.name}</p>
+                  <p className="text-xs text-muted-foreground">{city.slug}</p>
+                </div>
+                <span className="text-sm text-muted-foreground whitespace-nowrap">
+                  {city.propertyCount} {t("columnProperties").toLowerCase()}
+                </span>
+              </div>
+              <div className="flex items-center justify-end pt-1 border-t border-copper/[0.06]">
+                <div className="flex gap-1">
+                  <Button variant="ghost" size="icon" asChild>
+                    <Link href={`/cities/${city.id}`}>
+                      <Pencil className="h-4 w-4" />
+                    </Link>
+                  </Button>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="text-destructive/60 hover:text-destructive hover:bg-destructive/10"
+                    onClick={() => setDeleteId(city.id)}
+                  >
+                    <Trash2 className="h-4 w-4" />
+                  </Button>
+                </div>
+              </div>
+            </div>
+          )}
+        />
       )}
       <DeleteDialog
         open={!!deleteId}

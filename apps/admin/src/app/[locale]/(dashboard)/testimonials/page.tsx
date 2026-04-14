@@ -104,7 +104,50 @@ export default function TestimonialsPage() {
       ) : isError ? (
         <QueryError onRetry={refetch} />
       ) : (
-        <DataTable columns={columns} data={testimonials} />
+        <DataTable
+          columns={columns}
+          data={testimonials}
+          mobileCard={(testimonial) => {
+            const quoteText = typeof testimonial.quote === "string"
+              ? testimonial.quote
+              : (testimonial.quote as any)?.[locale] ?? (testimonial.quote as any)?.en ?? "";
+            return (
+              <div className="rounded-xl border border-copper/[0.08] p-4 space-y-3">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="font-medium">{testimonial.clientName}</p>
+                    <p className="text-xs text-muted-foreground">
+                      {testimonial.location} &middot; {testimonial.propertyType}
+                    </p>
+                  </div>
+                  <div className="flex gap-0.5">
+                    {Array.from({ length: testimonial.rating }).map((_, i) => (
+                      <Star key={i} className="h-3.5 w-3.5 fill-copper text-copper" />
+                    ))}
+                  </div>
+                </div>
+                <p className="text-sm text-muted-foreground line-clamp-2">{quoteText}</p>
+                <div className="flex items-center justify-end pt-1 border-t border-copper/[0.06]">
+                  <div className="flex gap-1">
+                    <Button variant="ghost" size="icon" asChild>
+                      <Link href={`/testimonials/${testimonial.id}`}>
+                        <Pencil className="h-4 w-4" />
+                      </Link>
+                    </Button>
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      className="text-destructive/60 hover:text-destructive hover:bg-destructive/10"
+                      onClick={() => setDeleteId(testimonial.id)}
+                    >
+                      <Trash2 className="h-4 w-4" />
+                    </Button>
+                  </div>
+                </div>
+              </div>
+            );
+          }}
+        />
       )}
       <DeleteDialog
         open={!!deleteId}

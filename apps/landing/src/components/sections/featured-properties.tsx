@@ -10,6 +10,7 @@ import {
   Carousel,
   CarouselContent,
   CarouselItem,
+  CarouselDots,
   CarouselNext,
   CarouselPrevious,
 } from "@tge/ui";
@@ -63,6 +64,7 @@ export function FeaturedProperties({
               </CarouselItem>
             ))}
           </CarouselContent>
+          <CarouselDots className="mt-6 md:hidden" />
           <CarouselPrevious className="hidden md:flex -left-4 bg-background/80 backdrop-blur-sm border-copper/15 text-cream/50 hover:text-copper hover:border-copper/40" />
           <CarouselNext className="hidden md:flex -right-4 bg-background/80 backdrop-blur-sm border-copper/15 text-cream/50 hover:text-copper hover:border-copper/40" />
         </Carousel>

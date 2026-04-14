@@ -184,7 +184,69 @@ export default function PropertiesPage() {
         createHref="/properties/new"
         createLabel={t("addProperty")}
       />
-      <DataTable columns={columns} data={properties} />
+      <DataTable
+        columns={columns}
+        data={properties}
+        mobileCard={(property) => {
+          const hero = property.images?.find((i) => i.isHero) ?? property.images?.[0];
+          const title = (property.title as Record<string, string>)[locale] ?? property.title.en;
+          return (
+            <div className="rounded-xl border border-copper/[0.08] p-4 space-y-3">
+              <div className="flex gap-3">
+                {hero ? (
+                  <Image
+                    src={hero.src}
+                    alt={hero.alt}
+                    width={64}
+                    height={48}
+                    className="rounded object-cover shrink-0"
+                    style={{ width: 64, height: 48 }}
+                  />
+                ) : (
+                  <div className="h-[48px] w-[64px] rounded bg-muted shrink-0" />
+                )}
+                <div className="min-w-0 flex-1">
+                  <p className="font-medium truncate">{title}</p>
+                  <p className="text-xs text-muted-foreground truncate">{property.city}</p>
+                </div>
+                <p className="text-sm font-semibold whitespace-nowrap">{formatPrice(property.price)}</p>
+              </div>
+              <div className="flex flex-wrap items-center gap-2">
+                <span className="text-xs capitalize text-muted-foreground">
+                  {tf.has(`types.${property.type}`) ? tf(`types.${property.type}` as any) : property.type.replace(/_/g, " ")}
+                </span>
+                <StatusBadge status={property.status} />
+              </div>
+              <div className="flex items-center justify-between pt-1 border-t border-copper/[0.06]">
+                <div className="flex items-center gap-2">
+                  <span className="text-xs text-muted-foreground">{t("columnFeatured")}</span>
+                  <Switch
+                    checked={property.featured}
+                    onCheckedChange={(checked) =>
+                      toggleFeatured.mutate({ id: property.id, featured: checked })
+                    }
+                  />
+                </div>
+                <div className="flex gap-1">
+                  <Button variant="ghost" size="icon" asChild>
+                    <Link href={`/properties/${property.id}`}>
+                      <Pencil className="h-4 w-4" />
+                    </Link>
+                  </Button>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="text-destructive/60 hover:text-destructive hover:bg-destructive/10"
+                    onClick={() => setDeleteId(property.id)}
+                  >
+                    <Trash2 className="h-4 w-4" />
+                  </Button>
+                </div>
+              </div>
+            </div>
+          );
+        }}
+      />
       <DeleteDialog
         open={!!deleteId}
         onOpenChange={() => setDeleteId(null)}
