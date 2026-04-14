@@ -38,6 +38,19 @@ export default function LoginPage() {
         {/* Right: Login form */}
         <div className="flex flex-1 items-center justify-center bg-background p-8">
           <div className="w-full max-w-sm space-y-8">
+            {/* Mobile brand header */}
+            <div className="lg:hidden flex flex-col items-center">
+              <div className="flex items-center gap-3">
+                <Building2 className="h-5 w-5 text-copper" />
+                <span className="font-serif text-base font-semibold tracking-[0.03em]">
+                  Transylvania
+                  <span className="ml-1.5 text-[10px] uppercase tracking-[0.2em] text-copper/70 font-medium">
+                    Grand Estate
+                  </span>
+                </span>
+              </div>
+              <div className="mt-4 h-px w-12 bg-copper/30" />
+            </div>
             <div className="text-center lg:text-left">
               <h1 className="font-serif text-2xl font-semibold tracking-[0.01em]">
                 {t("welcome")}

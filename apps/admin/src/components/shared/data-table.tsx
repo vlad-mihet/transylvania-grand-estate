@@ -26,12 +26,14 @@ interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
   pageSize?: number;
+  mobileCard?: (row: TData) => React.ReactNode;
 }
 
 export function DataTable<TData, TValue>({
   columns,
   data,
   pageSize = 10,
+  mobileCard,
 }: DataTableProps<TData, TValue>) {
   const [sorting, setSorting] = useState<SortingState>([]);
   const t = useTranslations("Common");
@@ -47,97 +49,123 @@ export function DataTable<TData, TValue>({
     initialState: { pagination: { pageSize } },
   });
 
+  const emptyState = (
+    <div className="flex flex-col items-center gap-2 py-12">
+      <Inbox className="h-8 w-8 text-muted-foreground/40" />
+      <p className="text-sm text-muted-foreground">{t("noResults")}</p>
+    </div>
+  );
+
+  const pagination = table.getPageCount() > 1 && (
+    <div className="flex items-center justify-between">
+      <p className="text-xs text-muted-foreground tracking-wide">
+        {t("page", {
+          current: table.getState().pagination.pageIndex + 1,
+          total: table.getPageCount(),
+        })}
+      </p>
+      <div className="flex gap-2">
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={() => table.previousPage()}
+          disabled={!table.getCanPreviousPage()}
+        >
+          <ChevronLeft className="h-4 w-4" />
+        </Button>
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={() => table.nextPage()}
+          disabled={!table.getCanNextPage()}
+        >
+          <ChevronRight className="h-4 w-4" />
+        </Button>
+      </div>
+    </div>
+  );
+
   return (
     <div className="space-y-4">
-      <div className="rounded-xl border border-copper/[0.08] overflow-x-auto">
-        <Table>
-          <TableHeader>
-            {table.getHeaderGroups().map((headerGroup) => (
-              <TableRow key={headerGroup.id}>
-                {headerGroup.headers.map((header) => (
-                  <TableHead key={header.id}>
-                    {header.isPlaceholder
-                      ? null
-                      : header.column.getCanSort()
-                        ? (
-                            <button
-                              className="cursor-pointer flex items-center gap-1 hover:text-copper transition-colors duration-200"
-                              onClick={header.column.getToggleSortingHandler()}
-                            >
-                              {flexRender(
-                                header.column.columnDef.header,
-                                header.getContext(),
-                              )}
-                              <ArrowUpDown className="h-3.5 w-3.5" />
-                            </button>
-                          )
-                        : flexRender(
-                            header.column.columnDef.header,
-                            header.getContext(),
-                          )}
-                  </TableHead>
-                ))}
-              </TableRow>
-            ))}
-          </TableHeader>
-          <TableBody>
-            {table.getRowModel().rows.length ? (
-              table.getRowModel().rows.map((row) => (
-                <TableRow key={row.id}>
-                  {row.getVisibleCells().map((cell) => (
-                    <TableCell key={cell.id}>
-                      {flexRender(
-                        cell.column.columnDef.cell,
-                        cell.getContext(),
-                      )}
-                    </TableCell>
-                  ))}
-                </TableRow>
-              ))
-            ) : (
-              <TableRow>
-                <TableCell
-                  colSpan={columns.length}
-                  className="h-32 text-center"
-                >
-                  <div className="flex flex-col items-center gap-2">
-                    <Inbox className="h-8 w-8 text-muted-foreground/40" />
-                    <p className="text-sm text-muted-foreground">{t("noResults")}</p>
-                  </div>
-                </TableCell>
-              </TableRow>
-            )}
-          </TableBody>
-        </Table>
-      </div>
-      {table.getPageCount() > 1 && (
-        <div className="flex items-center justify-between">
-          <p className="text-xs text-muted-foreground tracking-wide">
-            {t("page", {
-              current: table.getState().pagination.pageIndex + 1,
-              total: table.getPageCount(),
-            })}
-          </p>
-          <div className="flex gap-2">
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => table.previousPage()}
-              disabled={!table.getCanPreviousPage()}
-            >
-              <ChevronLeft className="h-4 w-4" />
-            </Button>
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => table.nextPage()}
-              disabled={!table.getCanNextPage()}
-            >
-              <ChevronRight className="h-4 w-4" />
-            </Button>
-          </div>
+      {/* Mobile card view */}
+      {mobileCard && (
+        <div className="md:hidden">
+          {table.getRowModel().rows.length ? (
+            <div className="space-y-3">
+              {table.getRowModel().rows.map((row) => (
+                <div key={row.id}>{mobileCard(row.original)}</div>
+              ))}
+            </div>
+          ) : (
+            <div className="rounded-xl border border-copper/[0.08]">
+              {emptyState}
+            </div>
+          )}
         </div>
       )}
+
+      {/* Desktop table view */}
+      <div className={mobileCard ? "hidden md:block" : undefined}>
+        <div className="rounded-xl border border-copper/[0.08] overflow-x-auto">
+          <Table>
+            <TableHeader>
+              {table.getHeaderGroups().map((headerGroup) => (
+                <TableRow key={headerGroup.id}>
+                  {headerGroup.headers.map((header) => (
+                    <TableHead key={header.id}>
+                      {header.isPlaceholder
+                        ? null
+                        : header.column.getCanSort()
+                          ? (
+                              <button
+                                className="cursor-pointer flex items-center gap-1 hover:text-copper transition-colors duration-200"
+                                onClick={header.column.getToggleSortingHandler()}
+                              >
+                                {flexRender(
+                                  header.column.columnDef.header,
+                                  header.getContext(),
+                                )}
+                                <ArrowUpDown className="h-3.5 w-3.5" />
+                              </button>
+                            )
+                          : flexRender(
+                              header.column.columnDef.header,
+                              header.getContext(),
+                            )}
+                    </TableHead>
+                  ))}
+                </TableRow>
+              ))}
+            </TableHeader>
+            <TableBody>
+              {table.getRowModel().rows.length ? (
+                table.getRowModel().rows.map((row) => (
+                  <TableRow key={row.id}>
+                    {row.getVisibleCells().map((cell) => (
+                      <TableCell key={cell.id}>
+                        {flexRender(
+                          cell.column.columnDef.cell,
+                          cell.getContext(),
+                        )}
+                      </TableCell>
+                    ))}
+                  </TableRow>
+                ))
+              ) : (
+                <TableRow>
+                  <TableCell
+                    colSpan={columns.length}
+                    className="h-32 text-center"
+                  >
+                    {emptyState}
+                  </TableCell>
+                </TableRow>
+              )}
+            </TableBody>
+          </Table>
+        </div>
+      </div>
+      {pagination}
     </div>
   );
 }

@@ -171,6 +171,54 @@ function CarouselItem({ className, ...props }: React.ComponentProps<"div">) {
   )
 }
 
+function CarouselDots({ className, ...props }: React.ComponentProps<"div">) {
+  const { api } = useCarousel()
+  const [selectedIndex, setSelectedIndex] = React.useState(0)
+  const [scrollSnaps, setScrollSnaps] = React.useState<number[]>([])
+
+  React.useEffect(() => {
+    if (!api) return
+
+    setScrollSnaps(api.scrollSnapList())
+    setSelectedIndex(api.selectedScrollSnap())
+
+    const onSelect = () => setSelectedIndex(api.selectedScrollSnap())
+    api.on("select", onSelect)
+    api.on("reInit", () => {
+      setScrollSnaps(api.scrollSnapList())
+      onSelect()
+    })
+
+    return () => {
+      api.off("select", onSelect)
+    }
+  }, [api])
+
+  if (scrollSnaps.length <= 1) return null
+
+  return (
+    <div
+      data-slot="carousel-dots"
+      className={cn("flex justify-center gap-1.5", className)}
+      {...props}
+    >
+      {scrollSnaps.map((_, index) => (
+        <button
+          key={index}
+          onClick={() => api?.scrollTo(index)}
+          className={cn(
+            "h-2 rounded-full transition-all duration-300 cursor-pointer",
+            selectedIndex === index
+              ? "bg-copper w-5"
+              : "bg-foreground/20 w-2 hover:bg-foreground/40"
+          )}
+          aria-label={`Go to slide ${index + 1}`}
+        />
+      ))}
+    </div>
+  )
+}
+
 function CarouselPrevious({
   className,
   variant = "outline",
@@ -236,6 +284,7 @@ export {
   Carousel,
   CarouselContent,
   CarouselItem,
+  CarouselDots,
   CarouselPrevious,
   CarouselNext,
 }

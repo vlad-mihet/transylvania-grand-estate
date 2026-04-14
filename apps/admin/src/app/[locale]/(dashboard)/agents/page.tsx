@@ -122,7 +122,52 @@ export default function AgentsPage() {
       ) : isError ? (
         <QueryError onRetry={refetch} />
       ) : (
-        <DataTable columns={columns} data={agents} />
+        <DataTable
+          columns={columns}
+          data={agents}
+          mobileCard={(agent) => (
+            <div className="rounded-xl border border-copper/[0.08] p-4 space-y-3">
+              <div className="flex items-center gap-3">
+                {agent.photo ? (
+                  <Image src={agent.photo} alt="Photo" width={40} height={40} className="rounded-full object-cover shrink-0" />
+                ) : (
+                  <div className="h-[40px] w-[40px] rounded-full bg-muted shrink-0" />
+                )}
+                <div className="min-w-0 flex-1">
+                  <p className="font-medium">{agent.firstName} {agent.lastName}</p>
+                  <p className="text-xs text-muted-foreground truncate">{agent.email}</p>
+                  <p className="text-xs text-muted-foreground">{agent.phone}</p>
+                </div>
+              </div>
+              <div className="flex items-center justify-between pt-1 border-t border-copper/[0.06]">
+                <div className="flex items-center gap-2">
+                  <span className="text-xs text-muted-foreground">{t("columnActive")}</span>
+                  <Switch
+                    checked={agent.active}
+                    onCheckedChange={(checked) =>
+                      toggleActive.mutate({ id: agent.id, active: checked })
+                    }
+                  />
+                </div>
+                <div className="flex gap-1">
+                  <Button variant="ghost" size="icon" asChild>
+                    <Link href={`/agents/${agent.id}`}>
+                      <Pencil className="h-4 w-4" />
+                    </Link>
+                  </Button>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="text-destructive/60 hover:text-destructive hover:bg-destructive/10"
+                    onClick={() => setDeleteId(agent.id)}
+                  >
+                    <Trash2 className="h-4 w-4" />
+                  </Button>
+                </div>
+              </div>
+            </div>
+          )}
+        />
       )}
       <DeleteDialog
         open={!!deleteId}

@@ -31,8 +31,8 @@ export function PageHeader({
       {createHref && (
         <Button asChild>
           <Link href={createHref}>
-            <Plus className="mr-2 h-4 w-4" />
-            {createLabel ?? t("createNew")}
+            <Plus className="h-4 w-4 sm:mr-2" />
+            <span className="hidden sm:inline">{createLabel ?? t("createNew")}</span>
           </Link>
         </Button>
       )}

@@ -9,6 +9,7 @@ import {
   Carousel,
   CarouselContent,
   CarouselItem,
+  CarouselDots,
   CarouselNext,
   CarouselPrevious,
 } from "@tge/ui";
@@ -56,6 +57,7 @@ export function TestimonialsSection({ testimonials }: TestimonialsSectionProps) 
               </CarouselItem>
             ))}
           </CarouselContent>
+          <CarouselDots className="mt-8 md:hidden" />
           <CarouselPrevious className="hidden md:flex -left-12 bg-background/80 border-copper/20 text-copper hover:bg-copper/10" />
           <CarouselNext className="hidden md:flex -right-12 bg-background/80 border-copper/20 text-copper hover:bg-copper/10" />
         </Carousel>
