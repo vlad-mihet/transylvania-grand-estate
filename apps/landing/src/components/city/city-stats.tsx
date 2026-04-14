@@ -45,7 +45,7 @@ export function CityStats({
             </p>
           </div>
           <div>
-            <p className="font-serif text-3xl md:text-4xl text-copper">
+            <p className="font-serif text-xl sm:text-2xl md:text-3xl lg:text-4xl text-copper break-words">
               {priceLabel}
             </p>
             <p className="text-cream-muted text-sm mt-2 uppercase tracking-wider">

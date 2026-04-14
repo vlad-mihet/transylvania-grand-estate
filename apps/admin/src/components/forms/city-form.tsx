@@ -85,7 +85,7 @@ export function CityForm({ defaultValues, imageUrl, onSubmit, loading }: CityFor
           />
           <div className="space-y-2">
             <Label>{t("propertyCount")}</Label>
-            <Input type="number" {...form.register("propertyCount")} className="max-w-[200px]" />
+            <Input type="number" {...form.register("propertyCount")} className="max-w-[200px] w-full" />
           </div>
           <ImageUpload label={t("cityImage")} value={imageUrl} onChange={setImageFile} />
         </CardContent>

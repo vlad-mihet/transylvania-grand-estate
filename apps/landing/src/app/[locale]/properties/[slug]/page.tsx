@@ -95,7 +95,7 @@ export default async function PropertyDetailPage({
 
       <section className="pb-16 bg-background">
         <Container>
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-12 mt-8">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-12 mt-8">
             <div className="lg:col-span-2 order-2 lg:order-1">
               <div className="flex flex-wrap items-center gap-3 mb-4">
                 <Badge className="bg-copper/90 text-background">

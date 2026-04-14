@@ -27,7 +27,7 @@ export function PrestigeHero({
     : null;
 
   return (
-    <section className="relative h-screen w-full overflow-hidden">
+    <section className="relative h-screen min-h-[600px] w-full overflow-hidden">
       {/* Background image */}
       {backgroundSrc && (
         <Image
@@ -71,7 +71,7 @@ export function PrestigeHero({
           </p>
         )}
 
-        <h1 className="font-serif text-5xl md:text-6xl lg:text-7xl xl:text-8xl text-cream leading-[1.1] mb-6 animate-slide-up">
+        <h1 className="font-serif text-4xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl text-cream leading-[1.1] mb-6 animate-slide-up">
           {developer.name}
         </h1>
 
