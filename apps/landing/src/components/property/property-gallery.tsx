@@ -121,9 +121,9 @@ export function PropertyGallery({ images }: PropertyGalleryProps) {
 
   return (
     <>
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-3 md:gap-4">
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4">
         <div
-          className="md:col-span-2 md:row-span-2 relative aspect-[4/3] md:aspect-auto md:h-full rounded-xl overflow-hidden cursor-pointer"
+          className="col-span-2 md:row-span-2 relative aspect-[4/3] md:aspect-auto md:h-full rounded-xl overflow-hidden cursor-pointer"
           onClick={() => {
             setCurrentIndex(0);
             setLightboxOpen(true);

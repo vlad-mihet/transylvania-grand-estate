@@ -34,9 +34,9 @@ export function AtelierHero({
     developer.coverImage ?? heroImage?.src ?? properties[0]?.images[0]?.src;
 
   return (
-    <section className="h-screen min-h-[700px] grid grid-cols-1 lg:grid-cols-2">
+    <section className="h-screen min-h-[600px] grid grid-cols-1 lg:grid-cols-2">
       {/* Left panel */}
-      <div className="bg-background flex flex-col justify-center px-8 md:px-12 lg:px-16 xl:px-20 pt-32 pb-16">
+      <div className="bg-background flex flex-col justify-center px-4 sm:px-8 md:px-12 lg:px-16 xl:px-20 pt-28 pb-12 sm:pt-32 sm:pb-16">
         {developer.logo && (
           <div className="relative h-10 w-32 mb-10 opacity-50">
             <Image
@@ -62,7 +62,7 @@ export function AtelierHero({
           {shortDesc}
         </p>
 
-        <div className="flex items-center gap-4 animate-fade-in">
+        <div className="flex flex-wrap items-center gap-4 animate-fade-in">
           <AccentButton accentVariant="solid" asChild>
             <a href="#projects">{t("viewProjects")}</a>
           </AccentButton>

@@ -34,7 +34,7 @@ export function CityHero({ city, locale, subtitle }: CityHeroProps) {
           {subtitle}
         </p>
 
-        <h1 className="font-serif text-5xl md:text-6xl lg:text-7xl xl:text-8xl text-cream leading-[1.1] mb-6 animate-slide-up">
+        <h1 className="font-serif text-4xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl text-cream leading-[1.1] mb-6 animate-slide-up">
           {city.name}
         </h1>
 

@@ -20,7 +20,7 @@ export { Tabs, TabsList, TabsTrigger, TabsContent, tabsListVariants } from "./co
 export { Textarea } from "./components/ui/textarea";
 export { Tooltip, TooltipTrigger, TooltipContent, TooltipProvider } from "./components/ui/tooltip";
 export { Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogOverlay, DialogPortal, DialogTitle, DialogTrigger } from "./components/ui/dialog";
-export { type CarouselApi, Carousel, CarouselContent, CarouselItem, CarouselPrevious, CarouselNext } from "./components/ui/carousel";
+export { type CarouselApi, Carousel, CarouselContent, CarouselItem, CarouselDots, CarouselPrevious, CarouselNext } from "./components/ui/carousel";
 
 // Shared Components
 export { AccentButton } from "./components/shared/accent-button";

@@ -65,7 +65,7 @@ export function InvestTransylvania() {
   return (
     <section className="relative">
       {/* Full-bleed carousel */}
-      <div className="relative h-[70vh] min-h-[500px] overflow-hidden">
+      <div className="relative h-[70vh] min-h-[420px] sm:min-h-[500px] overflow-hidden">
         <div className="absolute inset-0" ref={emblaRef}>
           <div className="flex h-full">
             {slides.map((slide) => (

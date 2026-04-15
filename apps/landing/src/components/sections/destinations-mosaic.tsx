@@ -110,7 +110,7 @@ export function DestinationsMosaic({ cities }: DestinationsMosaicProps) {
 
           {/* Row 3: Full-width strip for 5th city */}
           {cities[4] && (
-            <ScrollReveal delay={400} className="md:col-span-12 aspect-[4/1] min-h-[140px]">
+            <ScrollReveal delay={400} className="md:col-span-12 aspect-[2/1] md:aspect-[4/1] min-h-[140px]">
               <MosaicCell
                 city={cities[4]}
                 className="block h-full"

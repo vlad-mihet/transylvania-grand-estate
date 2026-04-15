@@ -117,7 +117,54 @@ export default function DevelopersPage() {
       ) : isError ? (
         <QueryError onRetry={refetch} />
       ) : (
-        <DataTable columns={columns} data={developers} />
+        <DataTable
+          columns={columns}
+          data={developers}
+          mobileCard={(developer) => (
+            <div className="rounded-xl border border-copper/[0.08] p-4 space-y-3">
+              <div className="flex items-center gap-3">
+                {developer.logo ? (
+                  <Image src={developer.logo} alt="Logo" width={40} height={40} className="rounded shrink-0" />
+                ) : (
+                  <div className="h-[40px] w-[40px] rounded bg-muted shrink-0" />
+                )}
+                <div className="min-w-0 flex-1">
+                  <p className="font-medium">{developer.name}</p>
+                  <p className="text-xs text-muted-foreground">{developer.city}</p>
+                </div>
+                <span className="text-sm text-muted-foreground whitespace-nowrap">
+                  {developer.projectCount} {t("columnProjects").toLowerCase()}
+                </span>
+              </div>
+              <div className="flex items-center justify-between pt-1 border-t border-copper/[0.06]">
+                <div className="flex items-center gap-2">
+                  <span className="text-xs text-muted-foreground">{t("columnFeatured")}</span>
+                  <Switch
+                    checked={developer.featured}
+                    onCheckedChange={(checked) =>
+                      toggleFeatured.mutate({ id: developer.id, featured: checked })
+                    }
+                  />
+                </div>
+                <div className="flex gap-1">
+                  <Button variant="ghost" size="icon" asChild>
+                    <Link href={`/developers/${developer.id}`}>
+                      <Pencil className="h-4 w-4" />
+                    </Link>
+                  </Button>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="text-destructive/60 hover:text-destructive hover:bg-destructive/10"
+                    onClick={() => setDeleteId(developer.id)}
+                  >
+                    <Trash2 className="h-4 w-4" />
+                  </Button>
+                </div>
+              </div>
+            </div>
+          )}
+        />
       )}
       <DeleteDialog
         open={!!deleteId}

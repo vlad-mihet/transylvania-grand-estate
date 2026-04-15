@@ -110,7 +110,7 @@ export function CityProperties({
             value={sortBy}
             onValueChange={(v) => setSortBy(v as SortKey)}
           >
-            <SelectTrigger className="w-[200px] bg-white/[0.05] border-copper/10 text-cream text-sm">
+            <SelectTrigger className="w-full sm:w-[200px] bg-white/[0.05] border-copper/10 text-cream text-sm">
               <SelectValue />
             </SelectTrigger>
             <SelectContent>

@@ -169,12 +169,12 @@ export default function SettingsPage() {
           </CardHeader>
           <CardContent className="space-y-3">
             {socialFields.fields.map((field, index) => (
-              <div key={field.id} className="flex gap-3 items-end">
-                <div className="flex-1 space-y-2">
+              <div key={field.id} className="flex flex-col gap-3 sm:flex-row sm:items-end">
+                <div className="sm:flex-1 space-y-2">
                   <Label>{t("platform")}</Label>
                   <Input {...form.register(`socialLinks.${index}.platform`)} />
                 </div>
-                <div className="flex-[2] space-y-2">
+                <div className="sm:flex-[2] space-y-2">
                   <Label>{t("url")}</Label>
                   <Input {...form.register(`socialLinks.${index}.url`)} />
                 </div>
@@ -182,7 +182,7 @@ export default function SettingsPage() {
                   type="button"
                   variant="ghost"
                   size="icon"
-                  className="text-destructive/60 hover:text-destructive hover:bg-destructive/10"
+                  className="text-destructive/60 hover:text-destructive hover:bg-destructive/10 self-end"
                   onClick={() => socialFields.remove(index)}
                 >
                   <X className="h-4 w-4" />
