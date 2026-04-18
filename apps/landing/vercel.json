@@ -1,0 +1,6 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "installCommand": "cd ../.. && pnpm install --frozen-lockfile && pnpm --filter @tge/api exec prisma generate --schema apps/api/prisma/schema.prisma",
+  "buildCommand": "cd ../.. && pnpm --filter @tge/landing build",
+  "outputDirectory": ".next"
+}
