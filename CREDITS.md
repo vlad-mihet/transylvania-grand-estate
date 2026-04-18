@@ -36,6 +36,7 @@ Attribution tracking for bundled image assets under `apps/landing/public/images/
 | `cities/oradea.jpg`       | 800×600 | TBD | TBD | TBD |
 | `cities/sibiu.jpg`        | 800×600 | TBD | TBD | TBD |
 | `cities/targu-mures.jpg`  | 800×600 | [Palatul Culturii din Târgu Mureș 01.jpg](https://commons.wikimedia.org/wiki/File:Palatul_Culturii_din_T%C3%A2rgu_Mure%C8%99_01.jpg) (Wikimedia Commons) | Radueduard | [CC BY-SA 3.0 RO](https://creativecommons.org/licenses/by-sa/3.0/ro/deed.en) — cropped and downscaled from the original |
+| `cities/sighisoara.jpg`   | 800×600 | [Panoramic Schäßburg Medieval Citadel (20903916345).jpg](https://commons.wikimedia.org/wiki/File:Panoramic_Sch%C3%A4%C3%9Fburg_Medieval_Citadel_(20903916345).jpg) (Wikimedia Commons) | Andrei-Daniel Nicolae | [CC BY 2.0](https://creativecommons.org/licenses/by/2.0/) — cropped and downscaled from the original |
 | `cities/timisoara.jpg`    | 800×600 | TBD | TBD | TBD |
 
 ### Hero
@@ -88,15 +89,16 @@ These files are byte-identical copies of the matching `apps/landing/public/image
 | `cities/cluj-napoca.jpg`  | `apps/landing/public/images/cities/cluj-napoca.jpg` |
 | `cities/oradea.jpg`       | `apps/landing/public/images/cities/oradea.jpg` |
 | `cities/sibiu.jpg`        | `apps/landing/public/images/cities/sibiu.jpg` |
+| `cities/sighisoara.jpg`   | `apps/landing/public/images/cities/sighisoara.jpg` |
 | `cities/targu-mures.jpg`  | `apps/landing/public/images/cities/targu-mures.jpg` |
 | `cities/timisoara.jpg`    | `apps/landing/public/images/cities/timisoara.jpg` |
 
 ## Counts
 
-- Landing: 31 images (5 castles · 6 cities · 1 hero · 10 interiors · 5 nature · 4 towns)
-- Reveria: 6 images (city heroes, mirroring landing)
-- **Total: 37**
-- Attributed: 2 (targu-mures × both brands)
+- Landing: 32 images (5 castles · 7 cities · 1 hero · 10 interiors · 5 nature · 4 towns)
+- Reveria: 7 images (city heroes, mirroring landing)
+- **Total: 39**
+- Attributed: 4 (targu-mures × both brands, sighisoara × both brands)
 - TBD: 35
 
 ## License quick reference
