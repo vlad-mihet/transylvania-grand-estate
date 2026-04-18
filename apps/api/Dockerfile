@@ -21,6 +21,11 @@ RUN cd apps/api && npx prisma generate
 # resolves to at runtime via the package's exports map. Build it before the
 # API so node_modules/@tge/types/dist is populated.
 RUN pnpm --filter @tge/types build
+# Same reason as @tge/types: the seed consumes @tge/data via plain
+# `require(...)` at runtime, so the package has to ship compiled JS in
+# dist/. Without this step, `npx prisma db seed` in the running
+# container crashes with ERR_MODULE_NOT_FOUND on extensionless imports.
+RUN pnpm --filter @tge/data build
 RUN pnpm --filter @tge/api build
 
 # --- Production ---

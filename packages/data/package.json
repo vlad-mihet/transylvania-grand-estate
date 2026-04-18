@@ -2,11 +2,22 @@
   "name": "@tge/data",
   "version": "0.0.0",
   "private": true,
-  "main": "./src/index.ts",
-  "types": "./src/index.ts",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
   "exports": {
-    ".": "./src/index.ts",
-    "./*": "./src/*.ts"
+    ".": {
+      "types": "./dist/index.d.ts",
+      "node": "./dist/index.js",
+      "default": "./src/index.ts"
+    },
+    "./*": {
+      "types": "./dist/*.d.ts",
+      "node": "./dist/*.js",
+      "default": "./src/*.ts"
+    }
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.json"
   },
   "peerDependencies": {
     "@tge/types": "workspace:*"
