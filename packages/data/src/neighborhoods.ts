@@ -110,4 +110,14 @@ export const neighborhoods: NeighborhoodSeed[] = [
   { name: "Livezeni", slug: "livezeni", citySlug: "targu-mures" },
   { name: "Budiului", slug: "budiului", citySlug: "targu-mures" },
   { name: "Remetea", slug: "remetea", citySlug: "targu-mures" },
+
+  // ─── Sighișoara ─────────────────────────────────────────
+  { name: "Cetate", slug: "cetate-sighisoara", citySlug: "sighisoara" },
+  { name: "Centru", slug: "centru-sighisoara", citySlug: "sighisoara" },
+  { name: "Târnava", slug: "tarnava", citySlug: "sighisoara" },
+  { name: "Corneșți", slug: "cornesti", citySlug: "sighisoara" },
+  { name: "Bărăgan", slug: "baragan", citySlug: "sighisoara" },
+  { name: "Viilor", slug: "viilor", citySlug: "sighisoara" },
+  { name: "Aurel Vlaicu", slug: "aurel-vlaicu", citySlug: "sighisoara" },
+  { name: "Mihai Viteazu", slug: "mihai-viteazu-sighisoara", citySlug: "sighisoara" },
 ];

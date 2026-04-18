@@ -79,4 +79,17 @@ export const cities: City[] = [
     longitude: 24.5625,
     countySlug: "mures",
   },
+  {
+    name: "Sighișoara",
+    slug: "sighisoara",
+    description: {
+      en: "A living medieval citadel and UNESCO World Heritage Site — birthplace of Vlad the Impaler and Transylvania's most iconic fortified town, where painted Saxon houses cluster beneath the clock tower.",
+      ro: "O cetate medievală vie și sit UNESCO — locul de naștere al lui Vlad Țepeș și cel mai emblematic oraș fortificat al Transilvaniei, cu case săsești colorate adunate la poalele Turnului cu Ceas.",
+    },
+    image: "/images/cities/sighisoara.jpg",
+    propertyCount: 0,
+    latitude: 46.2182,
+    longitude: 24.7935,
+    countySlug: "mures",
+  },
 ];
