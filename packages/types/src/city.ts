@@ -6,4 +6,7 @@ export interface City {
   description: LocalizedString;
   image: string;
   propertyCount: number;
+  latitude?: number;
+  longitude?: number;
+  countySlug?: string;
 }

@@ -1,0 +1,98 @@
+/** Curated neighborhood data for Reveria's 5 key cities */
+
+export interface NeighborhoodSeed {
+  name: string;
+  slug: string;
+  citySlug: string;
+}
+
+export const neighborhoods: NeighborhoodSeed[] = [
+  // ─── Cluj-Napoca ────────────────────────────────────────
+  { name: "Centru", slug: "centru", citySlug: "cluj-napoca" },
+  { name: "Mărăști", slug: "marasti", citySlug: "cluj-napoca" },
+  { name: "Mănăștur", slug: "manastur", citySlug: "cluj-napoca" },
+  { name: "Gheorgheni", slug: "gheorgheni", citySlug: "cluj-napoca" },
+  { name: "Zorilor", slug: "zorilor", citySlug: "cluj-napoca" },
+  { name: "Grigorescu", slug: "grigorescu", citySlug: "cluj-napoca" },
+  { name: "Bună Ziua", slug: "buna-ziua", citySlug: "cluj-napoca" },
+  { name: "Andrei Mureșanu", slug: "andrei-muresanu", citySlug: "cluj-napoca" },
+  { name: "Plopilor", slug: "plopilor", citySlug: "cluj-napoca" },
+  { name: "Europa", slug: "europa", citySlug: "cluj-napoca" },
+  { name: "Iris", slug: "iris", citySlug: "cluj-napoca" },
+  { name: "Someșeni", slug: "someseni", citySlug: "cluj-napoca" },
+  { name: "Între Lacuri", slug: "intre-lacuri", citySlug: "cluj-napoca" },
+  { name: "Dâmbul Rotund", slug: "dambul-rotund", citySlug: "cluj-napoca" },
+  { name: "Bulgaria", slug: "bulgaria", citySlug: "cluj-napoca" },
+  { name: "Gruia", slug: "gruia", citySlug: "cluj-napoca" },
+  { name: "Sopor", slug: "sopor", citySlug: "cluj-napoca" },
+  { name: "Borhanci", slug: "borhanci", citySlug: "cluj-napoca" },
+  { name: "Becaș", slug: "becas", citySlug: "cluj-napoca" },
+  { name: "Făget", slug: "faget", citySlug: "cluj-napoca" },
+
+  // ─── Timișoara ──────────────────────────────────────────
+  { name: "Cetate", slug: "cetate", citySlug: "timisoara" },
+  { name: "Iosefin", slug: "iosefin", citySlug: "timisoara" },
+  { name: "Fabric", slug: "fabric", citySlug: "timisoara" },
+  { name: "Elisabetin", slug: "elisabetin", citySlug: "timisoara" },
+  { name: "Mehala", slug: "mehala", citySlug: "timisoara" },
+  { name: "Lipovei", slug: "lipovei", citySlug: "timisoara" },
+  { name: "Aradului", slug: "aradului", citySlug: "timisoara" },
+  { name: "Torontalului", slug: "torontalului", citySlug: "timisoara" },
+  { name: "Circumvalațiunii", slug: "circumvalatiunii", citySlug: "timisoara" },
+  { name: "Girocului", slug: "girocului", citySlug: "timisoara" },
+  { name: "Plopi", slug: "plopi", citySlug: "timisoara" },
+  { name: "Freidorf", slug: "freidorf", citySlug: "timisoara" },
+  { name: "Dâmbovița", slug: "dambovita", citySlug: "timisoara" },
+  { name: "Buziaș", slug: "buzias-tm", citySlug: "timisoara" },
+  { name: "Ronaț", slug: "ronat", citySlug: "timisoara" },
+  { name: "Blașcovici", slug: "blascovici", citySlug: "timisoara" },
+  { name: "Ghiroda", slug: "ghiroda", citySlug: "timisoara" },
+  { name: "Dumbravița", slug: "dumbravita", citySlug: "timisoara" },
+  { name: "Telegrafului", slug: "telegrafului", citySlug: "timisoara" },
+  { name: "Calea Șagului", slug: "calea-sagului", citySlug: "timisoara" },
+
+  // ─── Brașov ─────────────────────────────────────────────
+  { name: "Centrul Vechi", slug: "centrul-vechi", citySlug: "brasov" },
+  { name: "Schei", slug: "schei", citySlug: "brasov" },
+  { name: "Blumăna", slug: "blumana", citySlug: "brasov" },
+  { name: "Astra", slug: "astra", citySlug: "brasov" },
+  { name: "Tractoru", slug: "tractoru", citySlug: "brasov" },
+  { name: "Bartolomeu", slug: "bartolomeu", citySlug: "brasov" },
+  { name: "Noua", slug: "noua", citySlug: "brasov" },
+  { name: "Răcădău", slug: "racadau", citySlug: "brasov" },
+  { name: "Scriitorilor", slug: "scriitorilor", citySlug: "brasov" },
+  { name: "Triaj", slug: "triaj", citySlug: "brasov" },
+  { name: "Valea Cetății", slug: "valea-cetatii", citySlug: "brasov" },
+  { name: "Centrul Civic", slug: "centrul-civic", citySlug: "brasov" },
+  { name: "Craiter", slug: "craiter", citySlug: "brasov" },
+  { name: "Florilor", slug: "florilor", citySlug: "brasov" },
+  { name: "Poiana Brașov", slug: "poiana-brasov", citySlug: "brasov" },
+
+  // ─── Oradea ─────────────────────────────────────────────
+  { name: "Centru", slug: "centru", citySlug: "oradea" },
+  { name: "Rogerius", slug: "rogerius", citySlug: "oradea" },
+  { name: "Ioșia", slug: "iosia", citySlug: "oradea" },
+  { name: "Nufărul", slug: "nufarul", citySlug: "oradea" },
+  { name: "Decebal", slug: "decebal", citySlug: "oradea" },
+  { name: "Cantemir", slug: "cantemir", citySlug: "oradea" },
+  { name: "Velența", slug: "velenta", citySlug: "oradea" },
+  { name: "Olosig", slug: "olosig", citySlug: "oradea" },
+  { name: "Europa", slug: "europa", citySlug: "oradea" },
+  { name: "Oncea", slug: "oncea", citySlug: "oradea" },
+  { name: "Episcopia Bihor", slug: "episcopia-bihor", citySlug: "oradea" },
+  { name: "Calea Aradului", slug: "calea-aradului", citySlug: "oradea" },
+
+  // ─── Sibiu ──────────────────────────────────────────────
+  { name: "Centru Istoric", slug: "centru-istoric", citySlug: "sibiu" },
+  { name: "Ștrand", slug: "strand", citySlug: "sibiu" },
+  { name: "Hipodrom", slug: "hipodrom", citySlug: "sibiu" },
+  { name: "Turnișor", slug: "turnisor", citySlug: "sibiu" },
+  { name: "Vasile Aaron", slug: "vasile-aaron", citySlug: "sibiu" },
+  { name: "Tilișca", slug: "tilisca", citySlug: "sibiu" },
+  { name: "Lazaret", slug: "lazaret", citySlug: "sibiu" },
+  { name: "Gușterița", slug: "gusterita", citySlug: "sibiu" },
+  { name: "Țiglari", slug: "tiglari", citySlug: "sibiu" },
+  { name: "Piața Cluj", slug: "piata-cluj", citySlug: "sibiu" },
+  { name: "Sub Arini", slug: "sub-arini", citySlug: "sibiu" },
+  { name: "Trei Stejari", slug: "trei-stejari", citySlug: "sibiu" },
+];

@@ -16,11 +16,14 @@
     "embla-carousel-react": "^8.6.0"
   },
   "peerDependencies": {
+    "@tge/api-client": "workspace:*",
     "@tge/utils": "workspace:*",
     "@tge/hooks": "workspace:*",
+    "@tge/types": "workspace:*",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "lucide-react": "^0.575.0",
+    "next-intl": "^4.0.0",
     "react-hook-form": "^7.54.0",
     "@hookform/resolvers": "^5.0.0",
     "zod": "^3.24.0"

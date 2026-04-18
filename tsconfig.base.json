@@ -18,6 +18,10 @@
     "sourceMap": true,
     "baseUrl": ".",
     "paths": {
+      "@tge/api-client": ["packages/api-client/src/index.ts"],
+      "@tge/api-client/*": ["packages/api-client/src/*"],
+      "@tge/branding": ["packages/branding/src/index.ts"],
+      "@tge/branding/*": ["packages/branding/src/*"],
       "@tge/types": ["packages/types/src/index.ts"],
       "@tge/types/*": ["packages/types/src/*"],
       "@tge/utils": ["packages/utils/src/index.ts"],
