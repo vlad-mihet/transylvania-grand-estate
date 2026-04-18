@@ -2,8 +2,8 @@
 
 import { useState } from "react";
 import { useTranslations } from "next-intl";
-import { useRouter } from "@tge/i18n/navigation";
-import { Button, Input } from "@tge/ui";
+import { useRouter } from "@/i18n/navigation";
+import { Button, Input, Label } from "@tge/ui";
 import {
   Select,
   SelectContent,
@@ -77,8 +77,10 @@ export function HeroSection({ counties = [] }: HeroSectionProps) {
       }
     }
 
-    const query = params.toString();
-    router.push(`/properties${query ? `?${query}` : ""}`);
+    router.push({
+      pathname: "/properties",
+      query: Object.fromEntries(params),
+    });
   };
 
   const handleSearchOnMap = () => {
@@ -91,8 +93,10 @@ export function HeroSection({ counties = [] }: HeroSectionProps) {
         params.set(sel.param, sel.slug);
       }
     }
-    const query = params.toString();
-    router.push(`/properties${query ? `?${query}` : ""}`);
+    router.push({
+      pathname: "/properties",
+      query: Object.fromEntries(params),
+    });
   };
 
   return (
@@ -119,8 +123,17 @@ export function HeroSection({ counties = [] }: HeroSectionProps) {
 
           <div>
             {/* Transaction tabs */}
-            <div className="flex gap-0 mb-0">
+            <div
+              role="tablist"
+              aria-label={t("searchForm.modeSr")}
+              className="flex gap-0 mb-0"
+            >
               <button
+                type="button"
+                role="tab"
+                id="hero-tab-buy"
+                aria-selected={tab === "buy"}
+                aria-controls="hero-search-panel"
                 onClick={() => handleTabChange("buy")}
                 className={`px-6 py-2.5 text-sm font-semibold rounded-t-xl transition-colors cursor-pointer ${
                   tab === "buy"
@@ -131,6 +144,11 @@ export function HeroSection({ counties = [] }: HeroSectionProps) {
                 {t("searchForm.tabBuy")}
               </button>
               <button
+                type="button"
+                role="tab"
+                id="hero-tab-rent"
+                aria-selected={tab === "rent"}
+                aria-controls="hero-search-panel"
                 onClick={() => handleTabChange("rent")}
                 className={`px-6 py-2.5 text-sm font-semibold rounded-t-xl transition-colors cursor-pointer ${
                   tab === "rent"
@@ -143,12 +161,17 @@ export function HeroSection({ counties = [] }: HeroSectionProps) {
             </div>
 
             {/* Search form */}
-            <div className="bg-white rounded-b-2xl rounded-tr-2xl shadow-2xl p-4 md:p-5">
+            <div
+              id="hero-search-panel"
+              role="tabpanel"
+              aria-labelledby={tab === "buy" ? "hero-tab-buy" : "hero-tab-rent"}
+              className="bg-white rounded-b-2xl rounded-tr-2xl shadow-2xl p-4 md:p-5"
+            >
               <div className="grid grid-cols-2 sm:grid-cols-5 gap-x-2.5 gap-y-3">
 
                 {/* Row 1 */}
                 <Select value={type} onValueChange={setType}>
-                  <SelectTrigger className="!h-11 border-gray-200 text-sm">
+                  <SelectTrigger aria-label={t("searchForm.typeSr")} className="!h-11 border-gray-200 text-sm">
                     <SelectValue placeholder={t("searchForm.typePlaceholder")} />
                   </SelectTrigger>
                   <SelectContent>
@@ -165,7 +188,7 @@ export function HeroSection({ counties = [] }: HeroSectionProps) {
                   setTransaction(v);
                   setTab(v === "sale" ? "buy" : "rent");
                 }}>
-                  <SelectTrigger className="!h-11 border-gray-200 text-sm">
+                  <SelectTrigger aria-label={t("searchForm.transactionSr")} className="!h-11 border-gray-200 text-sm">
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
@@ -187,7 +210,7 @@ export function HeroSection({ counties = [] }: HeroSectionProps) {
 
                 <div className="col-span-2 sm:col-span-1">
                   <Select value={radius} onValueChange={setRadius}>
-                    <SelectTrigger className="!h-11 border-gray-200 text-sm w-full">
+                    <SelectTrigger aria-label={t("searchForm.radiusSr")} className="!h-11 border-gray-200 text-sm w-full">
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
@@ -202,10 +225,14 @@ export function HeroSection({ counties = [] }: HeroSectionProps) {
 
                 {/* Row 2 */}
                 <div>
-                  <p className="text-[11px] text-muted-foreground uppercase tracking-wider font-medium mb-1.5 pl-0.5">
+                  <Label
+                    htmlFor="hero-min-price"
+                    className="block text-[11px] text-muted-foreground uppercase tracking-wider font-medium mb-1.5 pl-0.5"
+                  >
                     {t("searchForm.priceLabel")}
-                  </p>
+                  </Label>
                   <Input
+                    id="hero-min-price"
                     type="number"
                     placeholder={`${t("searchForm.from")}  €`}
                     value={minPrice}
@@ -215,8 +242,12 @@ export function HeroSection({ counties = [] }: HeroSectionProps) {
                 </div>
 
                 <div>
-                  <p className="text-[11px] text-muted-foreground invisible mb-1.5">&nbsp;</p>
+                  <Label htmlFor="hero-max-price" className="sr-only">
+                    {t("searchForm.maxPriceSr")}
+                  </Label>
+                  <span aria-hidden="true" className="block text-[11px] invisible mb-1.5">&nbsp;</span>
                   <Input
+                    id="hero-max-price"
                     type="number"
                     placeholder={`${t("searchForm.to")}  €`}
                     value={maxPrice}
@@ -226,10 +257,14 @@ export function HeroSection({ counties = [] }: HeroSectionProps) {
                 </div>
 
                 <div>
-                  <p className="text-[11px] text-muted-foreground uppercase tracking-wider font-medium mb-1.5 pl-0.5">
+                  <Label
+                    htmlFor="hero-min-area"
+                    className="block text-[11px] text-muted-foreground uppercase tracking-wider font-medium mb-1.5 pl-0.5"
+                  >
                     {t("searchForm.areaLabel")}
-                  </p>
+                  </Label>
                   <Input
+                    id="hero-min-area"
                     type="number"
                     placeholder={`${t("searchForm.from")}  m²`}
                     value={minArea}
@@ -239,8 +274,12 @@ export function HeroSection({ counties = [] }: HeroSectionProps) {
                 </div>
 
                 <div>
-                  <p className="text-[11px] text-muted-foreground invisible mb-1.5">&nbsp;</p>
+                  <Label htmlFor="hero-max-area" className="sr-only">
+                    {t("searchForm.maxAreaSr")}
+                  </Label>
+                  <span aria-hidden="true" className="block text-[11px] invisible mb-1.5">&nbsp;</span>
                   <Input
+                    id="hero-max-area"
                     type="number"
                     placeholder={`${t("searchForm.to")}  m²`}
                     value={maxArea}

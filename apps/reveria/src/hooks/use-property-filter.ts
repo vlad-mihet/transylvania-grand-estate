@@ -2,7 +2,7 @@
 
 import { useCallback, useMemo } from "react";
 import { useSearchParams, type ReadonlyURLSearchParams } from "next/navigation";
-import { useRouter, usePathname } from "@tge/i18n/navigation";
+import { useRouter } from "@/i18n/navigation";
 import { useTranslations } from "next-intl";
 import type { Property } from "@tge/types";
 import { CITY_LABELS as cityLabels } from "@/components/property/property-filter-constants";
@@ -159,7 +159,6 @@ export function paramsFromSearch(
 export function usePropertyFilter(properties: Property[]) {
   const searchParams = useSearchParams();
   const router = useRouter();
-  const pathname = usePathname();
   const tTypes = useTranslations("Common.propertyTypes");
 
   const filtered = useMemo(() => {
@@ -177,10 +176,12 @@ export function usePropertyFilter(properties: Property[]) {
         params.delete(key);
       }
       if (key === "city") params.delete("from");
-      const query = params.toString();
-      router.replace(`${pathname}${query ? `?${query}` : ""}`);
+      router.replace({
+        pathname: "/properties",
+        query: Object.fromEntries(params),
+      });
     },
-    [searchParams, router, pathname],
+    [searchParams, router],
   );
 
   const removeFilter = useCallback(
@@ -199,18 +200,22 @@ export function usePropertyFilter(properties: Property[]) {
         params.delete(key);
       }
       if (key === "city") params.delete("from");
-      const query = params.toString();
-      router.replace(`${pathname}${query ? `?${query}` : ""}`);
+      router.replace({
+        pathname: "/properties",
+        query: Object.fromEntries(params),
+      });
     },
-    [searchParams, router, pathname],
+    [searchParams, router],
   );
 
   const switchToList = useCallback(() => {
     const params = new URLSearchParams(searchParams.toString());
     params.delete("view");
-    const query = params.toString();
-    router.replace(`${pathname}${query ? `?${query}` : ""}`);
-  }, [searchParams, router, pathname]);
+    router.replace({
+      pathname: "/properties",
+      query: Object.fromEntries(params),
+    });
+  }, [searchParams, router]);
 
   const activeFilters = useMemo<ActiveFilter[]>(() => {
     const chips: ActiveFilter[] = [];

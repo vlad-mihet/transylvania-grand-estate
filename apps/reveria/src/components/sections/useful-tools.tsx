@@ -1,7 +1,7 @@
 "use client";
 
 import { useTranslations } from "next-intl";
-import { Link } from "@tge/i18n/navigation";
+import { Link } from "@/i18n/navigation";
 import { Container } from "@/components/layout/container";
 import {
   Calculator,
@@ -14,25 +14,25 @@ import {
 const tools = [
   {
     key: "mortgage" as const,
-    href: "/instrumente/calculator-ipotecar",
+    href: "/instrumente/calculator-ipotecar" as const,
     icon: Calculator,
     color: "bg-primary/10 text-primary",
   },
   {
     key: "purchaseCost" as const,
-    href: "/instrumente/costuri-achizitie",
+    href: "/instrumente/costuri-achizitie" as const,
     icon: Receipt,
     color: "bg-emerald-500/10 text-emerald-600",
   },
   {
     key: "rentalYield" as const,
-    href: "/instrumente/randament-inchiriere",
+    href: "/instrumente/randament-inchiriere" as const,
     icon: TrendingUp,
     color: "bg-amber-500/10 text-amber-600",
   },
   {
     key: "borrowingCapacity" as const,
-    href: "/instrumente/capacitate-imprumut",
+    href: "/instrumente/capacitate-imprumut" as const,
     icon: Wallet,
     color: "bg-blue-500/10 text-blue-600",
   },

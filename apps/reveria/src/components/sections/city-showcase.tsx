@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import { useTranslations } from "next-intl";
-import { Link } from "@tge/i18n/navigation";
+import { Link } from "@/i18n/navigation";
 import { City } from "@tge/types";
 import { Container } from "@/components/layout/container";
 
@@ -23,7 +23,7 @@ export function CityShowcase({ cities }: CityShowcaseProps) {
           {cities.map((city) => (
             <Link
               key={city.slug}
-              href={`/properties?city=${city.slug}`}
+              href={{ pathname: "/properties", query: { city: city.slug } }}
               className="group"
             >
               <div className="relative aspect-[4/3] rounded-xl overflow-hidden">

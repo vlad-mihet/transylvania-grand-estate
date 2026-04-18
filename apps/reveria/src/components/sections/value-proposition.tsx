@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import { useTranslations } from "next-intl";
-import { Link } from "@tge/i18n/navigation";
+import { Link } from "@/i18n/navigation";
 import { Container } from "@/components/layout/container";
 import { ArrowRight } from "lucide-react";
 
@@ -15,7 +15,7 @@ const features = [
   },
   {
     key: "curated" as const,
-    href: "/properties?featured=true" as const,
+    href: { pathname: "/properties" as const, query: { featured: "true" } },
     image:
       "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=800&q=80",
   },

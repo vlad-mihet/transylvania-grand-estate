@@ -23,11 +23,14 @@ import { PropertyLoanCard } from "@/components/property/property-loan-card";
 import { PropertyContactCard } from "@/components/property/property-contact-card";
 import { SimilarProperties } from "@/components/property/similar-properties";
 import type { Metadata } from "next";
+import { createMetadata } from "@/lib/seo";
+import { JsonLd } from "@/components/seo/json-ld";
+import { realEstateListingSchema } from "@/lib/jsonld";
 
 export async function generateMetadata({
   params,
 }: {
-  params: Promise<{ slug: string; locale: string }>;
+  params: Promise<{ slug: string; locale: Locale }>;
 }): Promise<Metadata> {
   const { slug, locale } = await params;
   try {
@@ -36,11 +39,14 @@ export async function generateMetadata({
       return {};
     }
     const property = mapApiProperty(raw);
-    const loc = locale as Locale;
-    return {
-      title: localize(property.title, loc),
-      description: localize(property.shortDescription, loc),
-    };
+    const heroImage = property.images.find((img) => img.isHero) ?? property.images[0];
+    return createMetadata({
+      title: localize(property.title, locale),
+      description: localize(property.shortDescription, locale),
+      path: `/properties/${slug}`,
+      locale,
+      image: heroImage?.src ?? null,
+    });
   } catch {
     return {};
   }
@@ -107,6 +113,7 @@ export default async function PropertyDetailPage({
 
   return (
     <>
+      <JsonLd schema={realEstateListingSchema(property, locale)} />
       <section className="pt-8 md:pt-10 pb-6 bg-background">
         <Container>
           <Breadcrumb
@@ -115,6 +122,7 @@ export default async function PropertyDetailPage({
               { label: tBreadcrumb("properties"), href: "/properties" },
               { label: title },
             ]}
+            locale={locale}
           />
           <div className="mt-6">
             <PropertyHeader title={title} slug={slug} />
@@ -183,14 +191,21 @@ export default async function PropertyDetailPage({
             variant="footer"
             items={[
               { label: tBreadcrumb("properties"), href: "/properties" },
-              { label: tCommon(property.type), href: `/properties?type=${property.type}` },
+              {
+                label: tCommon(property.type),
+                href: { pathname: "/properties", query: { type: property.type } },
+              },
               {
                 label: property.location.city,
-                href: `/cities/${property.location.citySlug}`,
+                href: {
+                  pathname: "/cities/[slug]",
+                  params: { slug: property.location.citySlug },
+                },
               },
               { label: property.location.neighborhood },
               { label: title },
             ]}
+            locale={locale}
           />
         </Container>
       </section>

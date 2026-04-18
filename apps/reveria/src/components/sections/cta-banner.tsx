@@ -1,12 +1,15 @@
+import type { ComponentProps } from "react";
 import { Container } from "@/components/layout/container";
 import { Button } from "@tge/ui";
-import { Link } from "@tge/i18n/navigation";
+import { Link } from "@/i18n/navigation";
+
+type LinkHref = ComponentProps<typeof Link>["href"];
 
 interface CTABannerProps {
   title: string;
   subtitle: string;
   buttonText: string;
-  buttonHref?: string;
+  buttonHref?: LinkHref;
 }
 
 export function CTABanner({

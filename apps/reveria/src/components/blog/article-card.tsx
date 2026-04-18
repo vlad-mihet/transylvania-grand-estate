@@ -3,7 +3,7 @@
 import Image from "next/image";
 import { useTranslations } from "next-intl";
 import { useLocale } from "next-intl";
-import { Link } from "@tge/i18n/navigation";
+import { Link } from "@/i18n/navigation";
 import type { Article, Locale } from "@tge/types";
 import { localize } from "@tge/utils";
 import { Badge } from "@tge/ui";
@@ -26,7 +26,10 @@ export function ArticleCard({ article }: ArticleCardProps) {
     : null;
 
   return (
-    <Link href={`/blog/${article.slug}`} className="group block h-full">
+    <Link
+      href={{ pathname: "/blog/[slug]", params: { slug: article.slug } }}
+      className="group block h-full"
+    >
       <div className="bg-card rounded-xl border border-border overflow-hidden hover:shadow-md transition-shadow h-full flex flex-col">
         <div className="relative aspect-[16/10] overflow-hidden bg-muted">
           {article.coverImage ? (

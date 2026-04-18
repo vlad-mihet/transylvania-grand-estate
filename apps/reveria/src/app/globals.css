@@ -33,7 +33,8 @@
   --secondary: #F3F4F6;
   --secondary-foreground: #111827;
   --muted: #F9FAFB;
-  --muted-foreground: #6B7280;
+  /* Darkened from #6B7280 to clear WCAG AA 4.5:1 on bg-muted (#F9FAFB). */
+  --muted-foreground: #4B5563;
   --accent: #EDE9FE;
   --accent-foreground: #7C3AED;
   --destructive: #EF4444;
@@ -65,6 +66,20 @@
   }
   h1, h2, h3, h4, h5, h6 {
     @apply font-sans;
+  }
+}
+
+/* Collapse motion for users who ask for it (OS-level preference). Radix
+   animations and Tailwind transitions all flatten to ~0ms so triggering a
+   dialog, sheet, or route change doesn't produce movement. */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
   }
 }
 

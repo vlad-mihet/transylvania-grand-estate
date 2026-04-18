@@ -1,7 +1,7 @@
 "use client";
 
 import { useTranslations } from "next-intl";
-import { Link } from "@tge/i18n/navigation";
+import { Link } from "@/i18n/navigation";
 import {
   Accordion,
   AccordionContent,

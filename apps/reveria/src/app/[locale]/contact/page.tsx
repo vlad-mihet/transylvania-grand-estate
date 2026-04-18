@@ -1,15 +1,28 @@
 import { getTranslations } from "next-intl/server";
+import type { Locale } from "@tge/types";
 import { Container } from "@/components/layout/container";
 import { PageHeader } from "@/components/layout/page-header";
 import { ContactForm } from "@/components/contact/contact-form";
 import { MapPin, Phone, Mail } from "lucide-react";
+import { createMetadata } from "@/lib/seo";
 
-export async function generateMetadata() {
-  const t = await getTranslations("ContactPage");
-  return { title: t("hero.title"), description: t("hero.subtitle") };
+export async function generateMetadata({ params }: { params: Promise<{ locale: Locale }> }) {
+  const { locale } = await params;
+  const t = await getTranslations({ locale, namespace: "ContactPage" });
+  return createMetadata({
+    title: t("hero.title"),
+    description: t("hero.subtitle"),
+    path: "/contact",
+    locale,
+  });
 }
 
-export default async function ContactPage() {
+export default async function ContactPage({
+  params,
+}: {
+  params: Promise<{ locale: Locale }>;
+}) {
+  const { locale } = await params;
   const t = await getTranslations("ContactPage");
   const tBreadcrumb = await getTranslations("Breadcrumb");
 
@@ -22,6 +35,7 @@ export default async function ContactPage() {
           { label: tBreadcrumb("home"), href: "/" },
           { label: tBreadcrumb("contact") },
         ]}
+        locale={locale}
       />
 
       <section className="pb-16 md:pb-24 bg-background">

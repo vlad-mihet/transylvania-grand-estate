@@ -9,7 +9,11 @@
     "about": "About",
     "contact": "Contact",
     "scheduleViewing": "Get Started",
-    "tools": "Outils"
+    "tools": "Outils",
+    "menuTitle": "Menu",
+    "menuDescription": "Navigation du site et sélection de la langue",
+    "closeMenu": "Fermer le menu",
+    "skipToMain": "Aller au contenu principal"
   },
   "HomePage": {
     "hero": {
@@ -29,7 +33,15 @@
         "areaLabel": "Area",
         "from": "from",
         "to": "to",
-        "searchButton": "Search"
+        "searchButton": "Search",
+        "minPriceSr": "Prix minimum",
+        "maxPriceSr": "Prix maximum",
+        "minAreaSr": "Surface minimale",
+        "maxAreaSr": "Surface maximale",
+        "typeSr": "Type de propriété",
+        "transactionSr": "Type de transaction",
+        "radiusSr": "Rayon de recherche",
+        "modeSr": "Mode de listing"
       }
     },
     "valueProposition": {
@@ -754,6 +766,13 @@
     },
     "contact": "Contact",
     "followUs": "Follow Us",
+    "social": {
+      "navLabel": "Suivez-nous sur les réseaux sociaux",
+      "instagram": "Reveria sur Instagram",
+      "facebook": "Reveria sur Facebook",
+      "linkedin": "Reveria sur LinkedIn",
+      "youtube": "Reveria sur YouTube"
+    },
     "copyright": "© {year} Reveria. All rights reserved.",
     "privacy": "Privacy Policy",
     "terms": "Terms of Service",

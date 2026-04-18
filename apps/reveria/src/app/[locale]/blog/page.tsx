@@ -1,4 +1,4 @@
-import { getLocale, getTranslations } from "next-intl/server";
+import { getTranslations } from "next-intl/server";
 import type { ApiArticle, Locale } from "@tge/types";
 import { fetchApiSafe, mapApiArticles } from "@tge/api-client";
 import { Container } from "@/components/layout/container";
@@ -10,24 +10,29 @@ import {
   type BlogCategory,
 } from "@/components/blog/blog-category";
 import { FileText } from "lucide-react";
+import { createMetadata } from "@/lib/seo";
 
-export async function generateMetadata() {
-  const t = await getTranslations("BlogPage");
-  return { title: t("hero.title"), description: t("hero.subtitle") };
+export async function generateMetadata({ params }: { params: Promise<{ locale: Locale }> }) {
+  const { locale } = await params;
+  const t = await getTranslations({ locale, namespace: "BlogPage" });
+  return createMetadata({
+    title: t("hero.title"),
+    description: t("hero.subtitle"),
+    path: "/blog",
+    locale,
+  });
 }
 
 interface BlogPageProps {
+  params: Promise<{ locale: Locale }>;
   searchParams: Promise<{ category?: string | string[] }>;
 }
 
-export default async function BlogPage({ searchParams }: BlogPageProps) {
+export default async function BlogPage({ params: paramsPromise, searchParams }: BlogPageProps) {
+  const { locale } = await paramsPromise;
   const params = await searchParams;
   const t = await getTranslations("BlogPage");
   const tBreadcrumb = await getTranslations("Breadcrumb");
-  // Locale is only used for typing the articles post-mapping. Reading it here
-  // keeps the SSR path consistent with the rest of the app even if a future
-  // ArticleCard variant wants it.
-  void ((await getLocale()) as Locale);
 
   const rawCategory = Array.isArray(params.category)
     ? params.category[0]
@@ -52,6 +57,7 @@ export default async function BlogPage({ searchParams }: BlogPageProps) {
           { label: tBreadcrumb("home"), href: "/" },
           { label: tBreadcrumb("blog") },
         ]}
+        locale={locale}
       />
 
       <section className="pb-16 md:pb-24 bg-background">

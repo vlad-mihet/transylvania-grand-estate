@@ -1,4 +1,4 @@
-import { Link } from "@tge/i18n/navigation";
+import { Link } from "@/i18n/navigation";
 import type { City, Developer, Locale } from "@tge/types";
 import { localize } from "@tge/utils";
 import { Container } from "@/components/layout/container";
@@ -38,13 +38,16 @@ export function ContextualHeader({
             items={[
               { label: t.breadcrumbHome, href: "/" },
               { label: t.breadcrumbCities, href: "/cities" },
-              { label: city.name, href: `/cities/${city.slug}` },
+              {
+                label: city.name,
+                href: { pathname: "/cities/[slug]", params: { slug: city.slug } },
+              },
               { label: t.breadcrumbProperties },
             ]}
           />
           <div className="mt-6">
             <Link
-              href={`/cities/${city.slug}`}
+              href={{ pathname: "/cities/[slug]", params: { slug: city.slug } }}
               className="inline-flex items-center gap-1.5 text-primary text-sm hover:underline mb-4"
             >
               <ArrowLeft className="h-3.5 w-3.5" />
@@ -72,14 +75,14 @@ export function ContextualHeader({
               { label: t.breadcrumbDevelopers, href: "/developers" },
               {
                 label: developer.name,
-                href: `/developers/${developer.slug}`,
+                href: { pathname: "/developers/[slug]", params: { slug: developer.slug } },
               },
               { label: t.breadcrumbProperties },
             ]}
           />
           <div className="mt-6">
             <Link
-              href={`/developers/${developer.slug}`}
+              href={{ pathname: "/developers/[slug]", params: { slug: developer.slug } }}
               className="inline-flex items-center gap-1.5 text-primary text-sm hover:underline mb-4"
             >
               <ArrowLeft className="h-3.5 w-3.5" />

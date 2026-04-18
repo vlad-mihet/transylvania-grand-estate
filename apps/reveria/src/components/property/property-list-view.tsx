@@ -1,5 +1,6 @@
 "use client";
 
+import type { ComponentProps } from "react";
 import { useTranslations } from "next-intl";
 import type { Property } from "@tge/types";
 import { PropertyGrid } from "@/components/property/property-grid";
@@ -14,10 +15,12 @@ import {
   SelectValue,
   Button,
 } from "@tge/ui";
-import { Link } from "@tge/i18n/navigation";
+import { Link } from "@/i18n/navigation";
 import { ArrowUpDown } from "lucide-react";
 import { ActiveFilterChips } from "./active-filter-chips";
 import type { ActiveFilter, SortOption } from "@/hooks/use-property-filter";
+
+type LinkHref = ComponentProps<typeof Link>["href"];
 
 interface PropertyListViewProps {
   properties: Property[];
@@ -29,7 +32,7 @@ interface PropertyListViewProps {
     title: string;
     subtitle: string;
     buttonText: string;
-    buttonHref?: string;
+    buttonHref?: LinkHref;
   };
 }
 

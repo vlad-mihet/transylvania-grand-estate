@@ -1,7 +1,7 @@
 "use client";
 
 import { useTranslations } from "next-intl";
-import { usePathname, useRouter } from "@tge/i18n/navigation";
+import { useRouter } from "@/i18n/navigation";
 import { Tabs, TabsList, TabsTrigger } from "@tge/ui";
 import { CATEGORIES, type BlogCategory } from "./blog-category";
 
@@ -12,13 +12,12 @@ interface BlogCategoryTabsProps {
 export function BlogCategoryTabs({ value }: BlogCategoryTabsProps) {
   const t = useTranslations("BlogPage");
   const router = useRouter();
-  const pathname = usePathname();
 
   const onChange = (next: string) => {
-    const params = new URLSearchParams();
-    if (next !== "all") params.set("category", next);
-    const query = params.toString();
-    router.push(query ? `${pathname}?${query}` : pathname);
+    router.push({
+      pathname: "/blog",
+      query: next === "all" ? {} : { category: next },
+    });
   };
 
   return (

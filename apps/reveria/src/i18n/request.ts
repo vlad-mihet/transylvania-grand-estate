@@ -3,9 +3,9 @@ import { hasLocale } from "next-intl";
 import {
   loadSharedMessages,
   mergeMessages,
-  routing,
   type MessageTree,
 } from "@tge/i18n";
+import { routing } from "./routing";
 
 export default getRequestConfig(async ({ requestLocale }) => {
   const requested = await requestLocale;

@@ -1,7 +1,7 @@
 "use client";
 
 import { useTranslations } from "next-intl";
-import { useRouter, usePathname } from "@tge/i18n/navigation";
+import { useRouter } from "@/i18n/navigation";
 import { useSearchParams } from "next/navigation";
 import { Input } from "@tge/ui";
 import {
@@ -49,7 +49,6 @@ export function PropertyFilterPanel({
   const tTypes = useTranslations("Common.propertyTypes");
   const searchParams = useSearchParams();
   const router = useRouter();
-  const pathname = usePathname();
 
   const urlSearch = searchParams.get("search") || "";
   const [search, setSearch] = useState(urlSearch);
@@ -96,16 +95,18 @@ export function PropertyFilterPanel({
         }
       }
       if ("city" in updates) params.delete("from");
-      const query = params.toString();
-      router.replace(`${pathname}${query ? `?${query}` : ""}`);
+      router.replace({
+        pathname: "/properties",
+        query: Object.fromEntries(params),
+      });
     },
-    [searchParams, router, pathname],
+    [searchParams, router],
   );
 
   const clearAllFilters = useCallback(() => {
-    router.replace(pathname);
+    router.replace("/properties");
     setSearch("");
-  }, [router, pathname]);
+  }, [router]);
 
   const handleSearch = () => {
     updateFilters({ search });
@@ -116,9 +117,11 @@ export function PropertyFilterPanel({
     applyLocationToParams(params, locationSelections);
     if (search) params.set("search", search);
     else params.delete("search");
-    const query = params.toString();
-    router.replace(`${pathname}${query ? `?${query}` : ""}`);
-  }, [searchParams, locationSelections, search, router, pathname]);
+    router.replace({
+      pathname: "/properties",
+      query: Object.fromEntries(params),
+    });
+  }, [searchParams, locationSelections, search, router]);
 
   const applyWithMapView = useCallback(() => {
     const params = new URLSearchParams(searchParams.toString());
@@ -129,8 +132,11 @@ export function PropertyFilterPanel({
       const sel = locationSelections[0];
       if (sel.param && sel.slug) params.set(sel.param, sel.slug);
     }
-    router.replace(`${pathname}?${params.toString()}`);
-  }, [searchParams, locationSelections, router, pathname]);
+    router.replace({
+      pathname: "/properties",
+      query: Object.fromEntries(params),
+    });
+  }, [searchParams, locationSelections, router]);
 
   return (
     <div className="space-y-6">

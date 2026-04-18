@@ -1,38 +1,51 @@
 import { getTranslations } from "next-intl/server";
-import { Link } from "@tge/i18n/navigation";
+import { Link } from "@/i18n/navigation";
+import type { Locale } from "@tge/types";
 import { Container } from "@/components/layout/container";
 import { Breadcrumb } from "@/components/layout/breadcrumb";
 import { BorrowingCapacityCalculator } from "@/components/calculators/borrowing-capacity-calculator";
 import { Calculator, Receipt, TrendingUp, ChevronRight } from "lucide-react";
 import { fetchCalculatorConfig } from "@/lib/financial-data";
+import { createMetadata } from "@/lib/seo";
 
-export async function generateMetadata() {
-  const t = await getTranslations("ToolsPage.borrowingCapacity");
-  return { title: t("meta.title"), description: t("meta.description") };
+export async function generateMetadata({ params }: { params: Promise<{ locale: Locale }> }) {
+  const { locale } = await params;
+  const t = await getTranslations({ locale, namespace: "ToolsPage.borrowingCapacity" });
+  return createMetadata({
+    title: t("meta.title"),
+    description: t("meta.description"),
+    path: "/instrumente/capacitate-imprumut",
+    locale,
+  });
 }
 
 const otherTools = [
   {
     key: "mortgage" as const,
-    href: "/instrumente/calculator-ipotecar",
+    href: "/instrumente/calculator-ipotecar" as const,
     icon: Calculator,
     color: "bg-primary/10 text-primary",
   },
   {
     key: "purchaseCost" as const,
-    href: "/instrumente/costuri-achizitie",
+    href: "/instrumente/costuri-achizitie" as const,
     icon: Receipt,
     color: "bg-emerald-500/10 text-emerald-600",
   },
   {
     key: "rentalYield" as const,
-    href: "/instrumente/randament-inchiriere",
+    href: "/instrumente/randament-inchiriere" as const,
     icon: TrendingUp,
     color: "bg-amber-500/10 text-amber-600",
   },
 ];
 
-export default async function BorrowingCapacityPage() {
+export default async function BorrowingCapacityPage({
+  params,
+}: {
+  params: Promise<{ locale: Locale }>;
+}) {
+  const { locale } = await params;
   const [t, tTools, tBreadcrumb, config] = await Promise.all([
     getTranslations("ToolsPage.borrowingCapacity"),
     getTranslations("ToolsPage"),
@@ -50,6 +63,7 @@ export default async function BorrowingCapacityPage() {
               { label: tBreadcrumb("tools"), href: "/instrumente" },
               { label: tBreadcrumb("borrowingCapacity") },
             ]}
+            locale={locale}
           />
           <div className="mt-6 max-w-3xl">
             <h1 className="text-3xl sm:text-4xl font-bold text-foreground">

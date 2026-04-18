@@ -1,7 +1,7 @@
 "use client";
 
 import { useTranslations } from "next-intl";
-import { Link } from "@tge/i18n/navigation";
+import { Link } from "@/i18n/navigation";
 import { Container } from "./container";
 import { Instagram, Facebook, Linkedin, Youtube, Phone, Mail } from "lucide-react";
 
@@ -127,19 +127,20 @@ export function Footer() {
             <h3 className="text-sm font-semibold text-foreground uppercase tracking-wide mb-3">
               {t("followUs")}
             </h3>
-            <div className="flex gap-3">
+            <nav aria-label={t("social.navLabel")} className="flex gap-3">
               {socialLinks.map((social) => (
                 <a
                   key={social.platform}
                   href={social.url}
                   target="_blank"
                   rel="noopener noreferrer"
+                  aria-label={t(`social.${social.platform}`)}
                   className="w-9 h-9 flex items-center justify-center rounded-full border border-border text-muted-foreground hover:text-primary hover:border-primary/30 transition-colors"
                 >
-                  <social.icon className="h-4 w-4" />
+                  <social.icon className="h-4 w-4" aria-hidden="true" />
                 </a>
               ))}
-            </div>
+            </nav>
           </div>
         </div>
       </Container>

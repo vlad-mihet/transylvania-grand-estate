@@ -4,7 +4,7 @@ import { useState, useCallback, useRef } from "react";
 import Image from "next/image";
 import { useLocale } from "next-intl";
 import { PropertyImage, Locale } from "@tge/types";
-import { Dialog, DialogContent, DialogClose, DialogTitle } from "@tge/ui";
+import { Dialog, DialogContent, DialogClose, DialogDescription, DialogTitle } from "@tge/ui";
 import { ChevronLeft, ChevronRight, X, ZoomIn, ZoomOut, Maximize2 } from "lucide-react";
 import { cn, localize } from "@tge/utils";
 
@@ -137,9 +137,10 @@ export function PropertyGallery({ images }: PropertyGalleryProps) {
   return (
     <>
       {thumbCount === 0 ? (
-        <div
-          className="relative aspect-[16/9] rounded-xl overflow-hidden cursor-pointer"
+        <button
+          type="button"
           onClick={() => openLightboxAt(0)}
+          className="relative block w-full aspect-[16/9] rounded-xl overflow-hidden cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
         >
           <Image
             src={heroImage.src}
@@ -149,15 +150,16 @@ export function PropertyGallery({ images }: PropertyGalleryProps) {
             priority
             sizes="100vw"
           />
-        </div>
+        </button>
       ) : (
         <div className={cn("grid gap-2", gridColsClass)}>
-          <div
+          <button
+            type="button"
+            onClick={() => openLightboxAt(0)}
             className={cn(
-              "relative rounded-xl overflow-hidden cursor-pointer aspect-[4/3]",
+              "relative rounded-xl overflow-hidden cursor-pointer aspect-[4/3] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2",
               thumbCount === 1 ? "md:col-span-2" : "col-span-2 md:row-span-2",
             )}
-            onClick={() => openLightboxAt(0)}
           >
             <Image
               src={heroImage.src}
@@ -167,15 +169,16 @@ export function PropertyGallery({ images }: PropertyGalleryProps) {
               priority
               sizes="(max-width: 768px) 100vw, 66vw"
             />
-          </div>
+          </button>
           {thumbnails.map((img, index) => (
-            <div
+            <button
               key={index}
+              type="button"
+              onClick={() => openLightboxAt(index + 1)}
               className={cn(
-                "relative rounded-xl overflow-hidden cursor-pointer",
+                "relative rounded-xl overflow-hidden cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2",
                 thumbSingleClass,
               )}
-              onClick={() => openLightboxAt(index + 1)}
             >
               <Image
                 src={img.src}
@@ -184,7 +187,7 @@ export function PropertyGallery({ images }: PropertyGalleryProps) {
                 className="object-cover"
                 sizes="(max-width: 768px) 50vw, 25vw"
               />
-            </div>
+            </button>
           ))}
         </div>
       )}
@@ -199,6 +202,9 @@ export function PropertyGallery({ images }: PropertyGalleryProps) {
           <DialogTitle className="sr-only">
             {localize(images[currentIndex].alt, locale)}
           </DialogTitle>
+          <DialogDescription className="sr-only">
+            {`Image ${currentIndex + 1} of ${images.length}`}
+          </DialogDescription>
 
           <DialogClose className="absolute top-4 right-4 z-10 w-11 h-11 flex items-center justify-center rounded-full bg-background/60 backdrop-blur-sm border border-border text-foreground hover:bg-background/80 hover:text-primary transition-all duration-300 cursor-pointer">
             <X className="h-5 w-5" />

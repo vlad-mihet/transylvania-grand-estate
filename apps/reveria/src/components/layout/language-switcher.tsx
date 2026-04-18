@@ -2,7 +2,8 @@
 
 import { Fragment } from "react";
 import { useLocale } from "next-intl";
-import { usePathname, useRouter } from "@tge/i18n/navigation";
+import { useParams } from "next/navigation";
+import { usePathname, useRouter } from "@/i18n/navigation";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -28,9 +29,21 @@ export function LanguageSwitcher({ variant = "dropdown" }: LanguageSwitcherProps
   const locale = useLocale();
   const router = useRouter();
   const pathname = usePathname();
+  const params = useParams();
 
   const handleLocaleChange = (newLocale: string) => {
-    router.replace(pathname, { locale: newLocale });
+    // usePathname returns the pathname template (e.g. "/properties/[slug]" on
+    // a dynamic route). Passing the current route params alongside lets
+    // next-intl resolve the template into the correct localized URL for the
+    // target locale — otherwise the router would navigate to the literal
+    // "[slug]" path and 404.
+    router.replace(
+      // @ts-expect-error — next-intl's strict pathnames typing doesn't allow
+      // a dynamically-typed pathname + params pair; at runtime it correctly
+      // re-resolves whichever template the current page matches.
+      { pathname, params },
+      { locale: newLocale },
+    );
   };
 
   if (variant === "inline") {
@@ -40,7 +53,9 @@ export function LanguageSwitcher({ variant = "dropdown" }: LanguageSwitcherProps
           <Fragment key={l.code}>
             {i > 0 && <span className="text-primary/25 mx-0.5">|</span>}
             <button
+              type="button"
               onClick={() => handleLocaleChange(l.code)}
+              aria-current={locale === l.code ? "true" : undefined}
               className={cn(
                 "px-1 py-0.5 transition-colors duration-300 cursor-pointer",
                 locale === l.code
@@ -76,6 +91,7 @@ export function LanguageSwitcher({ variant = "dropdown" }: LanguageSwitcherProps
           <DropdownMenuItem
             key={l.code}
             onClick={() => handleLocaleChange(l.code)}
+            aria-current={locale === l.code ? "true" : undefined}
             className={locale === l.code ? "text-primary" : "text-foreground/80"}
           >
             {l.label}

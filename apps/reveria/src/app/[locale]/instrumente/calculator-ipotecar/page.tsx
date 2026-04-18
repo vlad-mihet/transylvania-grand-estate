@@ -1,38 +1,51 @@
 import { getTranslations } from "next-intl/server";
-import { Link } from "@tge/i18n/navigation";
+import { Link } from "@/i18n/navigation";
+import type { Locale } from "@tge/types";
 import { Container } from "@/components/layout/container";
 import { Breadcrumb } from "@/components/layout/breadcrumb";
 import { MortgageCalculator } from "@/components/calculators/mortgage-calculator";
 import { Receipt, TrendingUp, Wallet, ChevronRight } from "lucide-react";
 import { fetchCalculatorConfig } from "@/lib/financial-data";
+import { createMetadata } from "@/lib/seo";
 
-export async function generateMetadata() {
-  const t = await getTranslations("ToolsPage.mortgage");
-  return { title: t("meta.title"), description: t("meta.description") };
+export async function generateMetadata({ params }: { params: Promise<{ locale: Locale }> }) {
+  const { locale } = await params;
+  const t = await getTranslations({ locale, namespace: "ToolsPage.mortgage" });
+  return createMetadata({
+    title: t("meta.title"),
+    description: t("meta.description"),
+    path: "/instrumente/calculator-ipotecar",
+    locale,
+  });
 }
 
 const otherTools = [
   {
     key: "purchaseCost" as const,
-    href: "/instrumente/costuri-achizitie",
+    href: "/instrumente/costuri-achizitie" as const,
     icon: Receipt,
     color: "bg-emerald-500/10 text-emerald-600",
   },
   {
     key: "rentalYield" as const,
-    href: "/instrumente/randament-inchiriere",
+    href: "/instrumente/randament-inchiriere" as const,
     icon: TrendingUp,
     color: "bg-amber-500/10 text-amber-600",
   },
   {
     key: "borrowingCapacity" as const,
-    href: "/instrumente/capacitate-imprumut",
+    href: "/instrumente/capacitate-imprumut" as const,
     icon: Wallet,
     color: "bg-blue-500/10 text-blue-600",
   },
 ];
 
-export default async function MortgageCalculatorPage() {
+export default async function MortgageCalculatorPage({
+  params,
+}: {
+  params: Promise<{ locale: Locale }>;
+}) {
+  const { locale } = await params;
   const [t, tTools, tBreadcrumb, config] = await Promise.all([
     getTranslations("ToolsPage.mortgage"),
     getTranslations("ToolsPage"),
@@ -50,6 +63,7 @@ export default async function MortgageCalculatorPage() {
               { label: tBreadcrumb("tools"), href: "/instrumente" },
               { label: tBreadcrumb("mortgageCalculator") },
             ]}
+            locale={locale}
           />
           <div className="mt-6 max-w-3xl">
             <h1 className="text-3xl sm:text-4xl font-bold text-foreground">

@@ -1,7 +1,7 @@
 import { useTranslations } from "next-intl";
 import { MapPin } from "lucide-react";
 import { Locale } from "@tge/types";
-import { Link } from "@tge/i18n/navigation";
+import { Link } from "@/i18n/navigation";
 import { Card, CardContent, Separator } from "@tge/ui";
 
 interface PropertyPriceBlockProps {
@@ -69,7 +69,7 @@ export function PropertyPriceBlock({
           <span>
             {neighborhood},{" "}
             <Link
-              href={`/cities/${citySlug}`}
+              href={{ pathname: "/cities/[slug]", params: { slug: citySlug } }}
               className="text-primary hover:underline underline-offset-2"
             >
               {city}

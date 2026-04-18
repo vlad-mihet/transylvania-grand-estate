@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import { useLocale, useTranslations } from "next-intl";
-import { Link } from "@tge/i18n/navigation";
+import { Link } from "@/i18n/navigation";
 import { Property, Locale } from "@tge/types";
 import { formatPrice, localize } from "@tge/utils";
 import { Card, PropertySpecs } from "@tge/ui";
@@ -22,7 +22,7 @@ export function PropertyCard({ property }: PropertyCardProps) {
   const heroImage = property.images.find((img) => img.isHero) || property.images[0];
 
   return (
-    <Link href={`/properties/${property.slug}`}>
+    <Link href={{ pathname: "/properties/[slug]", params: { slug: property.slug } }}>
       <Card className="overflow-hidden group cursor-pointer border border-border hover:shadow-md transition-shadow duration-300 p-0 gap-0 bg-card rounded-xl">
         <div className="relative aspect-[16/10] overflow-hidden">
           {heroImage && (

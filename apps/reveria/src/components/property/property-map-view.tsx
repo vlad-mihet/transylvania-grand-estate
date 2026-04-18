@@ -111,6 +111,12 @@ export function PropertyMapView({
 
   return (
     <div className="flex flex-col md:flex-row h-[calc(100vh-160px)] md:h-[calc(100vh-220px)] min-h-[500px] gap-0">
+      {/* sr-only live region so pan/filter result-count changes are announced
+          to screen readers at every viewport (the visible counters below are
+          viewport-specific and so would only announce on one break-point). */}
+      <p role="status" aria-live="polite" className="sr-only">
+        {t("filter.results", { count: sidebarProperties.length.toString() })}
+      </p>
       <div className="md:hidden flex items-center justify-between px-4 py-3 border-b border-border bg-background">
         <p className="text-xs text-muted-foreground tracking-wide">
           {t("filter.results", { count: sidebarProperties.length.toString() })}

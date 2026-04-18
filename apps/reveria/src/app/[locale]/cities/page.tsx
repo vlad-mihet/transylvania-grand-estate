@@ -1,18 +1,30 @@
 import Image from "next/image";
 import { getTranslations } from "next-intl/server";
-import { Link } from "@tge/i18n/navigation";
+import { Link } from "@/i18n/navigation";
 import { fetchApi } from "@tge/api-client";
-import type { City } from "@tge/types";
+import type { City, Locale } from "@tge/types";
 import { Container } from "@/components/layout/container";
 import { PageHeader } from "@/components/layout/page-header";
 import { ChevronRight } from "lucide-react";
+import { createMetadata } from "@/lib/seo";
 
-export async function generateMetadata() {
-  const t = await getTranslations("CitiesPage");
-  return { title: t("hero.title"), description: t("hero.subtitle") };
+export async function generateMetadata({ params }: { params: Promise<{ locale: Locale }> }) {
+  const { locale } = await params;
+  const t = await getTranslations({ locale, namespace: "CitiesPage" });
+  return createMetadata({
+    title: t("hero.title"),
+    description: t("hero.subtitle"),
+    path: "/cities",
+    locale,
+  });
 }
 
-export default async function CitiesPage() {
+export default async function CitiesPage({
+  params,
+}: {
+  params: Promise<{ locale: Locale }>;
+}) {
+  const { locale } = await params;
   const t = await getTranslations("CitiesPage");
   const tBreadcrumb = await getTranslations("Breadcrumb");
   const cities = await fetchApi<City[]>("/cities");
@@ -26,6 +38,7 @@ export default async function CitiesPage() {
           { label: tBreadcrumb("home"), href: "/" },
           { label: tBreadcrumb("cities") },
         ]}
+        locale={locale}
       />
 
       <section className="pb-16 md:pb-24 bg-background">
@@ -34,7 +47,7 @@ export default async function CitiesPage() {
             {cities.map((city) => (
               <Link
                 key={city.slug}
-                href={`/cities/${city.slug}`}
+                href={{ pathname: "/cities/[slug]", params: { slug: city.slug } }}
                 className="group"
               >
                 <div className="bg-card rounded-xl border border-border overflow-hidden hover:shadow-lg transition-shadow">

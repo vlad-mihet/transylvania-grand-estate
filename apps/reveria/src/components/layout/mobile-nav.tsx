@@ -2,8 +2,8 @@
 
 import { useState } from "react";
 import { useTranslations } from "next-intl";
-import { Link, usePathname } from "@tge/i18n/navigation";
-import { Sheet, SheetContent, SheetTrigger } from "@tge/ui";
+import { Link, usePathname } from "@/i18n/navigation";
+import { Sheet, SheetContent, SheetDescription, SheetTitle, SheetTrigger } from "@tge/ui";
 import { Button } from "@tge/ui";
 import { InquiryTrigger } from "@tge/ui";
 import { LanguageSwitcher } from "./language-switcher";
@@ -34,13 +34,17 @@ export function MobileNav() {
         </Button>
       </SheetTrigger>
       <SheetContent side="left" className="bg-background border-r border-border w-full sm:w-80 p-0">
+        <SheetTitle className="sr-only">{t("menuTitle")}</SheetTitle>
+        <SheetDescription className="sr-only">{t("menuDescription")}</SheetDescription>
         <div className="flex flex-col h-full">
           <div className="flex items-center justify-between px-6 py-5 border-b border-border">
             <span className="text-xl font-bold tracking-tight">
               Rever<span className="text-primary">ia</span>
             </span>
             <button
+              type="button"
               onClick={() => setOpen(false)}
+              aria-label={t("closeMenu")}
               className="text-muted-foreground hover:text-foreground transition-colors p-1 cursor-pointer"
             >
               <X className="h-5 w-5" />
@@ -56,6 +60,7 @@ export function MobileNav() {
                     key={key}
                     href={href}
                     onClick={() => setOpen(false)}
+                    aria-current={isActive ? "page" : undefined}
                     className={cn(
                       "px-3 py-3 text-base font-medium rounded-lg transition-colors",
                       isActive

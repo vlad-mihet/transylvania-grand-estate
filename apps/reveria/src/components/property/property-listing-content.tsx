@@ -1,10 +1,14 @@
 "use client";
 
+import type { ComponentProps } from "react";
 import dynamic from "next/dynamic";
 import { useSearchParams } from "next/navigation";
 import type { MapPin, Property } from "@tge/types";
+import { Link } from "@/i18n/navigation";
 import { usePropertyFilter } from "@/hooks/use-property-filter";
 import { PropertyListView } from "./property-list-view";
+
+type LinkHref = ComponentProps<typeof Link>["href"];
 
 // Map view is hefty (Leaflet + cluster plugin). Only loaded when the user
 // toggles into map mode so the default list route keeps its bundle lean.
@@ -20,7 +24,7 @@ interface PropertyListingContentProps {
     title: string;
     subtitle: string;
     buttonText: string;
-    buttonHref?: string;
+    buttonHref?: LinkHref;
   };
 }
 

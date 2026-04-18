@@ -1,7 +1,7 @@
 "use client";
 
 import { useTranslations } from "next-intl";
-import { Link, usePathname } from "@tge/i18n/navigation";
+import { Link, usePathname } from "@/i18n/navigation";
 import { Container } from "./container";
 import { LanguageSwitcher } from "./language-switcher";
 import { MobileNav } from "./mobile-nav";
@@ -34,13 +34,14 @@ export function Header() {
             </span>
           </Link>
 
-          <nav className="flex items-center gap-1">
+          <nav aria-label={t("menuTitle")} className="flex items-center gap-1">
             {navLinks.map(({ key, href }) => {
               const isActive = pathname === href || pathname.startsWith(`${href}/`);
               return (
                 <Link
                   key={key}
                   href={href}
+                  aria-current={isActive ? "page" : undefined}
                   className={cn(
                     "px-3 py-2 text-sm font-medium rounded-md transition-colors",
                     isActive

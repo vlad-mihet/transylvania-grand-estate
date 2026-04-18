@@ -2,7 +2,7 @@
 
 import { useRef, useState, useEffect } from "react";
 import { useTranslations } from "next-intl";
-import { Link } from "@tge/i18n/navigation";
+import { Link } from "@/i18n/navigation";
 import type { Article } from "@tge/types";
 import { ArticleCard } from "@/components/blog/article-card";
 import { Container } from "@/components/layout/container";

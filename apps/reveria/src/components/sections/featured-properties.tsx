@@ -2,7 +2,7 @@
 
 import { useRef, useState, useEffect } from "react";
 import { useTranslations } from "next-intl";
-import { Link } from "@tge/i18n/navigation";
+import { Link } from "@/i18n/navigation";
 import { Property } from "@tge/types";
 import { PropertyCard } from "@/components/property/property-card";
 import { Container } from "@/components/layout/container";

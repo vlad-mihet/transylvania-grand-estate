@@ -1,7 +1,7 @@
 "use client";
 
 import { useSearchParams } from "next/navigation";
-import { useRouter, usePathname } from "@tge/i18n/navigation";
+import { useRouter } from "@/i18n/navigation";
 import { useTranslations } from "next-intl";
 import { useCallback } from "react";
 import { LayoutGrid, Map } from "lucide-react";
@@ -9,7 +9,6 @@ import { LayoutGrid, Map } from "lucide-react";
 export function MapListToggle() {
   const searchParams = useSearchParams();
   const router = useRouter();
-  const pathname = usePathname();
   const t = useTranslations("MapView");
 
   const currentView = searchParams.get("view") || "list";
@@ -22,10 +21,12 @@ export function MapListToggle() {
       } else {
         params.set("view", view);
       }
-      const query = params.toString();
-      router.replace(`${pathname}${query ? `?${query}` : ""}`);
+      router.replace({
+        pathname: "/properties",
+        query: Object.fromEntries(params),
+      });
     },
-    [searchParams, router, pathname]
+    [searchParams, router]
   );
 
   return (

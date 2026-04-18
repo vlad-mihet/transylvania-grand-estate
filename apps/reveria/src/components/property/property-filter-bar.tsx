@@ -1,7 +1,7 @@
 "use client";
 
 import { useTranslations } from "next-intl";
-import { useRouter, usePathname } from "@tge/i18n/navigation";
+import { useRouter } from "@/i18n/navigation";
 import { useSearchParams } from "next/navigation";
 import { Input } from "@tge/ui";
 import {
@@ -51,7 +51,6 @@ export function PropertyFilterBar({
   const tTypes = useTranslations("Common.propertyTypes");
   const searchParams = useSearchParams();
   const router = useRouter();
-  const pathname = usePathname();
 
   const [isPending, startTransition] = useTransition();
   const [moreOpen, setMoreOpen] = useState(false);
@@ -161,19 +160,19 @@ export function PropertyFilterBar({
 
   const handleSearch = useCallback(() => {
     const params = buildFilterParams();
-    const query = params.toString();
     startTransition(() => {
-      router.replace(`${pathname}${query ? `?${query}` : ""}`, {
-        scroll: false,
-      });
+      router.replace(
+        { pathname: "/properties", query: Object.fromEntries(params) },
+        { scroll: false },
+      );
     });
-  }, [buildFilterParams, router, pathname]);
+  }, [buildFilterParams, router]);
 
   const clearAll = useCallback(() => {
     setLocationSelections([]);
     setFilters({ ...defaultFilters });
-    router.replace(pathname);
-  }, [router, pathname]);
+    router.replace("/properties");
+  }, [router]);
 
   const hasAnyFilter = searchParams.toString().length > 0;
 
@@ -289,7 +288,10 @@ export function PropertyFilterBar({
               onSearchOnMap={() => {
                 const params = buildFilterParams();
                 params.set("view", "map");
-                router.replace(`${pathname}?${params.toString()}`);
+                router.replace({
+                  pathname: "/properties",
+                  query: Object.fromEntries(params),
+                });
               }}
             />
           </div>
@@ -404,6 +406,11 @@ export function PropertyFilterBar({
               count: countLoading ? "..." : resultCount.toLocaleString(),
             })}
           </Button>
+          <span role="status" aria-live="polite" className="sr-only">
+            {countLoading
+              ? ""
+              : t("resultsCount", { count: resultCount.toLocaleString() })}
+          </span>
         </div>
 
         {moreOpen && (

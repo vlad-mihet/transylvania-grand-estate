@@ -118,16 +118,19 @@ export function InquiryModal({ tone = "light" }: InquiryModalProps) {
         overlayClassName="bg-black/70 backdrop-blur-sm"
       >
         {status === "success" ? (
-          <div className="text-center py-4">
+          <div role="status" aria-live="polite" className="text-center py-4">
             <CheckCircle
+              aria-hidden="true"
               className={cn("h-12 w-12 mx-auto mb-4", palette.successIcon)}
             />
             <DialogTitle className={cn("text-xl mb-2", palette.title)}>
               {t("success.title")}
             </DialogTitle>
-            <p className={cn("text-sm", palette.successText)}>
+            <DialogDescription
+              className={cn("text-sm", palette.successText)}
+            >
               {t("success.message")}
-            </p>
+            </DialogDescription>
           </div>
         ) : (
           <>
@@ -149,7 +152,11 @@ export function InquiryModal({ tone = "light" }: InquiryModalProps) {
               </div>
             )}
 
-            <form onSubmit={handleSubmit} className="space-y-4">
+            <form
+              onSubmit={handleSubmit}
+              aria-busy={status === "loading"}
+              className="space-y-4"
+            >
               <div className="space-y-2">
                 <Label
                   htmlFor="inquiry-name"
@@ -200,8 +207,11 @@ export function InquiryModal({ tone = "light" }: InquiryModalProps) {
               </div>
 
               {status === "error" && (
-                <div className="flex items-center gap-2 text-sm text-destructive">
-                  <AlertCircle className="h-4 w-4 shrink-0" />
+                <div
+                  role="alert"
+                  className="flex items-center gap-2 text-sm text-destructive"
+                >
+                  <AlertCircle className="h-4 w-4 shrink-0" aria-hidden="true" />
                   {errorMessage || t("error")}
                 </div>
               )}

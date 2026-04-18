@@ -1,14 +1,22 @@
 import { getTranslations } from "next-intl/server";
 import Image from "next/image";
-import { Link } from "@tge/i18n/navigation";
+import { Link } from "@/i18n/navigation";
+import type { Locale } from "@tge/types";
 import { Container } from "@/components/layout/container";
 import { CTABanner } from "@/components/sections/cta-banner";
 import { Badge } from "@tge/ui";
 import { Eye, Heart, Users, Headphones, ChevronRight } from "lucide-react";
+import { createMetadata } from "@/lib/seo";
 
-export async function generateMetadata() {
-  const t = await getTranslations("AboutPage");
-  return { title: t("hero.title"), description: t("hero.description") };
+export async function generateMetadata({ params }: { params: Promise<{ locale: Locale }> }) {
+  const { locale } = await params;
+  const t = await getTranslations({ locale, namespace: "AboutPage" });
+  return createMetadata({
+    title: t("hero.title"),
+    description: t("hero.description"),
+    path: "/about",
+    locale,
+  });
 }
 
 const values = [
@@ -233,7 +241,7 @@ export default async function AboutPage() {
             {cities.map((city) => (
               <Link
                 key={city.key}
-                href={`/properties?city=${city.slug}`}
+                href={{ pathname: "/properties", query: { city: city.slug } }}
                 className="group relative block aspect-[3/4] rounded-2xl overflow-hidden last:col-span-2 md:last:col-span-1"
               >
                 <Image

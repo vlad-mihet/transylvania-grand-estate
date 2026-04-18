@@ -10,10 +10,17 @@ import type { ApiCity, ApiCounty, Locale } from "@tge/types";
 import { PropertyFilterBar } from "@/components/property/property-filter-bar";
 import { PropertyListingContent } from "@/components/property/property-listing-content";
 import { ContextualHeader } from "@/components/property/contextual-header";
+import { createMetadata } from "@/lib/seo";
 
-export async function generateMetadata() {
-  const t = await getTranslations("PropertiesPage");
-  return { title: t("hero.title"), description: t("hero.subtitle") };
+export async function generateMetadata({ params }: { params: Promise<{ locale: Locale }> }) {
+  const { locale } = await params;
+  const t = await getTranslations({ locale, namespace: "PropertiesPage" });
+  return createMetadata({
+    title: t("hero.title"),
+    description: t("hero.subtitle"),
+    path: "/properties",
+    locale,
+  });
 }
 
 interface PropertiesPageProps {

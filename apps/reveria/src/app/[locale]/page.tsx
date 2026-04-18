@@ -6,6 +6,7 @@ import type {
   ApiArticle,
   ApiCounty,
   City,
+  Locale,
 } from "@tge/types";
 import { HeroSection } from "@/components/sections/hero-section";
 import { ValueProposition } from "@/components/sections/value-proposition";
@@ -15,6 +16,20 @@ import { CityShowcase } from "@/components/sections/city-showcase";
 import { RecentArticles } from "@/components/sections/recent-articles";
 import { FAQSection } from "@/components/sections/faq-section";
 import { CTABanner } from "@/components/sections/cta-banner";
+import { createMetadata } from "@/lib/seo";
+
+interface PageParams { locale: Locale }
+
+export async function generateMetadata({ params }: { params: Promise<PageParams> }) {
+  const { locale } = await params;
+  const t = await getTranslations({ locale, namespace: "HomePage.hero" });
+  return createMetadata({
+    title: t("title"),
+    description: t("subtitle"),
+    path: "/",
+    locale,
+  });
+}
 
 export default async function HomePage() {
   const t = await getTranslations("HomePage");

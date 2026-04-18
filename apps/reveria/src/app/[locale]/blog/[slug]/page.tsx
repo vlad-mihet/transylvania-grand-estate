@@ -1,7 +1,7 @@
 import Image from "next/image";
 import { notFound } from "next/navigation";
 import { getTranslations, getLocale } from "next-intl/server";
-import { Link } from "@tge/i18n/navigation";
+import { Link } from "@/i18n/navigation";
 import { fetchApi, fetchApiSafe } from "@tge/api-client";
 import { mapApiArticle, mapApiArticles } from "@tge/api-client";
 import type { ApiArticle, Article, Locale } from "@tge/types";
@@ -11,8 +11,12 @@ import { Container } from "@/components/layout/container";
 import { Breadcrumb } from "@/components/layout/breadcrumb";
 import { ArticleCard } from "@/components/blog/article-card";
 import { ArrowLeft, Calendar, Clock, User } from "lucide-react";
+import { createMetadata } from "@/lib/seo";
+import { JsonLd } from "@/components/seo/json-ld";
+import { articleSchema } from "@/lib/jsonld";
 
 interface Params {
+  locale: Locale;
   slug: string;
 }
 
@@ -23,15 +27,20 @@ const categoryColors: Record<string, string> = {
 };
 
 export async function generateMetadata({ params }: { params: Promise<Params> }) {
-  const { slug } = await params;
-  const locale = await getLocale() as Locale;
+  const { locale, slug } = await params;
   try {
     const raw = await fetchApi<ApiArticle>(`/articles/${slug}`);
     const article = mapApiArticle(raw);
-    return {
+    return createMetadata({
       title: localize(article.title, locale),
       description: localize(article.excerpt, locale),
-    };
+      path: `/blog/${slug}`,
+      locale,
+      image: article.coverImage ?? null,
+      type: "article",
+      publishedTime: article.publishedAt,
+      authors: [article.authorName],
+    });
   } catch {
     return {};
   }
@@ -73,6 +82,7 @@ export default async function ArticleDetailPage({ params }: { params: Promise<Pa
 
   return (
     <>
+      <JsonLd schema={articleSchema(article, locale)} />
       {/* Hero with cover image */}
       {article.coverImage && (
         <section className="relative h-[280px] sm:h-[360px] md:h-[420px] overflow-hidden">
@@ -128,6 +138,7 @@ export default async function ArticleDetailPage({ params }: { params: Promise<Pa
               { label: tBreadcrumb("blog"), href: "/blog" },
               { label: localize(article.title, locale) },
             ]}
+            locale={locale}
           />
         </Container>
       </section>

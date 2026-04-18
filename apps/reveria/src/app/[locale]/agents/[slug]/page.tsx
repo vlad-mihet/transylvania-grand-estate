@@ -12,17 +12,28 @@ import { Breadcrumb } from "@/components/layout/breadcrumb";
 import { PropertyGrid } from "@/components/property/property-grid";
 import { CTABanner } from "@/components/sections/cta-banner";
 import { Phone, Mail } from "lucide-react";
+import { createMetadata } from "@/lib/seo";
+import { JsonLd } from "@/components/seo/json-ld";
+import { personSchema } from "@/lib/jsonld";
 
 interface Params {
+  locale: Locale;
   slug: string;
 }
 
 export async function generateMetadata({ params }: { params: Promise<Params> }) {
-  const { slug } = await params;
+  const { locale, slug } = await params;
   try {
     const agent = await fetchApi<Agent>(`/agents/${slug}`);
     const name = `${agent.firstName} ${agent.lastName}`;
-    return { title: name, description: localize(agent.bio, "en") };
+    return createMetadata({
+      title: name,
+      description: localize(agent.bio, locale),
+      path: `/agents/${slug}`,
+      locale,
+      image: agent.photo ?? null,
+      type: "profile",
+    });
   } catch {
     return {};
   }
@@ -47,6 +58,7 @@ export default async function AgentDetailPage({ params }: { params: Promise<Para
 
   return (
     <>
+      <JsonLd schema={personSchema(agent, locale)} />
       <section className="pt-10 md:pt-14 pb-10 md:pb-14 bg-background">
         <Container>
           <Breadcrumb
@@ -55,6 +67,7 @@ export default async function AgentDetailPage({ params }: { params: Promise<Para
               { label: tBreadcrumb("agents"), href: "/agents" },
               { label: name },
             ]}
+            locale={locale}
           />
           <div className="mt-6 flex flex-col md:flex-row md:items-start gap-8">
             <div className="relative w-32 h-32 md:w-40 md:h-40 rounded-xl overflow-hidden bg-muted shrink-0">

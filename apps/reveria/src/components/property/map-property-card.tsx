@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import { useLocale, useTranslations } from "next-intl";
-import { Link } from "@tge/i18n/navigation";
+import { Link } from "@/i18n/navigation";
 import { Property, Locale } from "@tge/types";
 import { formatPrice, formatArea, localize } from "@tge/utils";
 import { MapPin, Bed, Bath, Maximize } from "lucide-react";
@@ -20,7 +20,7 @@ export function MapPropertyCard({ property, isActive, onHover }: MapPropertyCard
 
   return (
     <Link
-      href={`/properties/${property.slug}`}
+      href={{ pathname: "/properties/[slug]", params: { slug: property.slug } }}
       onMouseEnter={() => onHover?.(property.slug)}
       onMouseLeave={() => onHover?.(null)}
     >

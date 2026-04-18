@@ -9,7 +9,11 @@
     "about": "Despre",
     "contact": "Contact",
     "scheduleViewing": "Începe",
-    "tools": "Instrumente"
+    "tools": "Instrumente",
+    "menuTitle": "Meniu",
+    "menuDescription": "Navigare pe site și selecția limbii",
+    "closeMenu": "Închide meniul",
+    "skipToMain": "Sari la conținutul principal"
   },
   "HomePage": {
     "hero": {
@@ -29,7 +33,15 @@
         "areaLabel": "Suprafață",
         "from": "de la",
         "to": "la",
-        "searchButton": "Caută"
+        "searchButton": "Caută",
+        "minPriceSr": "Preț minim",
+        "maxPriceSr": "Preț maxim",
+        "minAreaSr": "Suprafață minimă",
+        "maxAreaSr": "Suprafață maximă",
+        "typeSr": "Tip proprietate",
+        "transactionSr": "Tip tranzacție",
+        "radiusSr": "Rază de căutare",
+        "modeSr": "Mod de listare"
       }
     },
     "valueProposition": {
@@ -754,6 +766,13 @@
     },
     "contact": "Contact",
     "followUs": "Urmărește-ne",
+    "social": {
+      "navLabel": "Urmărește-ne pe rețelele sociale",
+      "instagram": "Reveria pe Instagram",
+      "facebook": "Reveria pe Facebook",
+      "linkedin": "Reveria pe LinkedIn",
+      "youtube": "Reveria pe YouTube"
+    },
     "copyright": "© {year} Reveria. Toate drepturile rezervate.",
     "privacy": "Politica de Confidențialitate",
     "terms": "Termeni și Condiții",

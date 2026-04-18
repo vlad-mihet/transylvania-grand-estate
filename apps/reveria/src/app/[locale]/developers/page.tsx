@@ -1,6 +1,6 @@
 import Image from "next/image";
 import { getTranslations, getLocale } from "next-intl/server";
-import { Link } from "@tge/i18n/navigation";
+import { Link } from "@/i18n/navigation";
 import { fetchApi } from "@tge/api-client";
 import { mapApiDeveloper } from "@tge/api-client";
 import type { ApiDeveloper, Locale } from "@tge/types";
@@ -8,10 +8,17 @@ import { localize } from "@tge/utils";
 import { Container } from "@/components/layout/container";
 import { PageHeader } from "@/components/layout/page-header";
 import { ChevronRight, MapPin } from "lucide-react";
+import { createMetadata } from "@/lib/seo";
 
-export async function generateMetadata() {
-  const t = await getTranslations("DevelopersPage");
-  return { title: t("hero.title"), description: t("hero.subtitle") };
+export async function generateMetadata({ params }: { params: Promise<{ locale: Locale }> }) {
+  const { locale } = await params;
+  const t = await getTranslations({ locale, namespace: "DevelopersPage" });
+  return createMetadata({
+    title: t("hero.title"),
+    description: t("hero.subtitle"),
+    path: "/developers",
+    locale,
+  });
 }
 
 export default async function DevelopersPage() {
@@ -30,6 +37,7 @@ export default async function DevelopersPage() {
           { label: tBreadcrumb("home"), href: "/" },
           { label: tBreadcrumb("developers") },
         ]}
+        locale={locale}
       />
 
       <section className="pb-16 md:pb-24 bg-background">
@@ -38,7 +46,7 @@ export default async function DevelopersPage() {
             {developers.map((dev) => (
               <Link
                 key={dev.slug}
-                href={`/developers/${dev.slug}`}
+                href={{ pathname: "/developers/[slug]", params: { slug: dev.slug } }}
                 className="group"
               >
                 <div className="bg-card rounded-xl border border-border p-6 h-full hover:shadow-lg hover:border-primary/20 transition-all">

@@ -4,7 +4,7 @@ import { useMemo, useState } from "react";
 import { useTranslations } from "next-intl";
 import { Calculator } from "lucide-react";
 import { Slider, Button, Card, CardContent } from "@tge/ui";
-import { Link } from "@tge/i18n/navigation";
+import { Link } from "@/i18n/navigation";
 import {
   calculateMortgage,
   formatEur,
@@ -37,7 +37,15 @@ export function PropertyLoanCard({ price }: PropertyLoanCardProps) {
 
   const downPaymentAmount = price * (downPct / 100);
 
-  const offerHref = `/instrumente/calculator-ipotecar?price=${Math.round(price)}&down=${downPct}&years=${termYears}&rate=${rate}`;
+  const offerHref = {
+    pathname: "/instrumente/calculator-ipotecar" as const,
+    query: {
+      price: String(Math.round(price)),
+      down: String(downPct),
+      years: String(termYears),
+      rate: String(rate),
+    },
+  };
 
   return (
     <section>

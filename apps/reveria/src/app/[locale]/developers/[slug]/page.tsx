@@ -12,17 +12,27 @@ import { Breadcrumb } from "@/components/layout/breadcrumb";
 import { PropertyGrid } from "@/components/property/property-grid";
 import { CTABanner } from "@/components/sections/cta-banner";
 import { ExternalLink, MapPin } from "lucide-react";
+import { createMetadata } from "@/lib/seo";
+import { JsonLd } from "@/components/seo/json-ld";
+import { localBusinessSchema } from "@/lib/jsonld";
 
 interface Params {
+  locale: Locale;
   slug: string;
 }
 
 export async function generateMetadata({ params }: { params: Promise<Params> }) {
-  const { slug } = await params;
+  const { locale, slug } = await params;
   try {
     const raw = await fetchApi<ApiDeveloper>(`/developers/${slug}`);
     const dev = mapApiDeveloper(raw);
-    return { title: dev.name, description: localize(dev.shortDescription, "en") };
+    return createMetadata({
+      title: dev.name,
+      description: localize(dev.shortDescription, locale),
+      path: `/developers/${slug}`,
+      locale,
+      image: dev.coverImage ?? dev.logo ?? null,
+    });
   } catch {
     return {};
   }
@@ -46,6 +56,7 @@ export default async function DeveloperDetailPage({ params }: { params: Promise<
 
   return (
     <>
+      <JsonLd schema={localBusinessSchema(dev, locale)} />
       <section className="pt-10 md:pt-14 pb-10 md:pb-14 bg-background">
         <Container>
           <Breadcrumb
@@ -54,6 +65,7 @@ export default async function DeveloperDetailPage({ params }: { params: Promise<
               { label: tBreadcrumb("developers"), href: "/developers" },
               { label: dev.name },
             ]}
+            locale={locale}
           />
           <div className="mt-6 flex flex-col md:flex-row md:items-start gap-6">
             {dev.logo && (

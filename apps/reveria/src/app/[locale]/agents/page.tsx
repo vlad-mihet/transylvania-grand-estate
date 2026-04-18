@@ -1,18 +1,30 @@
 import Image from "next/image";
 import { getTranslations } from "next-intl/server";
-import { Link } from "@tge/i18n/navigation";
+import { Link } from "@/i18n/navigation";
 import { fetchApi } from "@tge/api-client";
-import type { Agent } from "@tge/types";
+import type { Agent, Locale } from "@tge/types";
 import { Container } from "@/components/layout/container";
 import { PageHeader } from "@/components/layout/page-header";
 import { ChevronRight, Phone, Mail } from "lucide-react";
+import { createMetadata } from "@/lib/seo";
 
-export async function generateMetadata() {
-  const t = await getTranslations("AgentsPage");
-  return { title: t("hero.title"), description: t("hero.subtitle") };
+export async function generateMetadata({ params }: { params: Promise<{ locale: Locale }> }) {
+  const { locale } = await params;
+  const t = await getTranslations({ locale, namespace: "AgentsPage" });
+  return createMetadata({
+    title: t("hero.title"),
+    description: t("hero.subtitle"),
+    path: "/agents",
+    locale,
+  });
 }
 
-export default async function AgentsPage() {
+export default async function AgentsPage({
+  params,
+}: {
+  params: Promise<{ locale: Locale }>;
+}) {
+  const { locale } = await params;
   const t = await getTranslations("AgentsPage");
   const tBreadcrumb = await getTranslations("Breadcrumb");
   const agents = await fetchApi<Agent[]>("/agents?active=true");
@@ -26,6 +38,7 @@ export default async function AgentsPage() {
           { label: tBreadcrumb("home"), href: "/" },
           { label: tBreadcrumb("agents") },
         ]}
+        locale={locale}
       />
 
       <section className="pb-16 md:pb-24 bg-background">
@@ -34,7 +47,7 @@ export default async function AgentsPage() {
             {agents.map((agent) => (
               <Link
                 key={agent.slug}
-                href={`/agents/${agent.slug}`}
+                href={{ pathname: "/agents/[slug]", params: { slug: agent.slug } }}
                 className="group"
               >
                 <div className="bg-card rounded-xl border border-border overflow-hidden hover:shadow-lg hover:border-primary/20 transition-all">

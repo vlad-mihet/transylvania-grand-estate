@@ -1,19 +1,30 @@
-import { Link } from "@tge/i18n/navigation";
+import type { ComponentProps } from "react";
+import { Link } from "@/i18n/navigation";
 import { ChevronRight } from "lucide-react";
+import type { Locale } from "@tge/types";
+import { JsonLd } from "@/components/seo/json-ld";
+import { breadcrumbListSchema } from "@/lib/jsonld";
+
+type LinkHref = ComponentProps<typeof Link>["href"];
 
 interface BreadcrumbItem {
   label: string;
-  href?: string;
+  href?: LinkHref;
 }
 
 interface BreadcrumbProps {
   items: BreadcrumbItem[];
   variant?: "default" | "footer";
+  locale?: Locale;
 }
 
-export function Breadcrumb({ items, variant = "default" }: BreadcrumbProps) {
+export function Breadcrumb({ items, variant = "default", locale }: BreadcrumbProps) {
   const isFooter = variant === "footer";
   return (
+    <>
+      {locale && items.length > 1 && (
+        <JsonLd schema={breadcrumbListSchema(items, locale)} />
+      )}
     <nav
       aria-label="Breadcrumb"
       className={
@@ -61,5 +72,6 @@ export function Breadcrumb({ items, variant = "default" }: BreadcrumbProps) {
         );
       })}
     </nav>
+    </>
   );
 }

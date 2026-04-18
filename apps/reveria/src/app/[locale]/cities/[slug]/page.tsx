@@ -9,16 +9,26 @@ import { Container } from "@/components/layout/container";
 import { Breadcrumb } from "@/components/layout/breadcrumb";
 import { PropertyGrid } from "@/components/property/property-grid";
 import { CTABanner } from "@/components/sections/cta-banner";
+import { createMetadata } from "@/lib/seo";
+import { JsonLd } from "@/components/seo/json-ld";
+import { placeSchema } from "@/lib/jsonld";
 
 interface Params {
+  locale: Locale;
   slug: string;
 }
 
 export async function generateMetadata({ params }: { params: Promise<Params> }) {
-  const { slug } = await params;
+  const { locale, slug } = await params;
   try {
     const city = await fetchApi<City>(`/cities/${slug}`);
-    return { title: city.name, description: localize(city.description, "en") };
+    return createMetadata({
+      title: city.name,
+      description: localize(city.description, locale),
+      path: `/cities/${slug}`,
+      locale,
+      image: city.image ?? null,
+    });
   } catch {
     return {};
   }
@@ -45,6 +55,7 @@ export default async function CityDetailPage({ params }: { params: Promise<Param
 
   return (
     <>
+      <JsonLd schema={placeSchema(city, locale)} />
       <section className="pt-10 md:pt-14 pb-10 md:pb-14 bg-background">
         <Container>
           <Breadcrumb
@@ -53,6 +64,7 @@ export default async function CityDetailPage({ params }: { params: Promise<Param
               { label: tBreadcrumb("cities"), href: "/cities" },
               { label: city.name },
             ]}
+            locale={locale}
           />
           <div className="mt-6 max-w-3xl">
             <h1 className="text-3xl sm:text-4xl font-bold text-foreground mb-3">
