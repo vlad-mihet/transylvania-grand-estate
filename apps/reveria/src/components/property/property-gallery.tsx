@@ -119,15 +119,27 @@ export function PropertyGallery({ images }: PropertyGalleryProps) {
     }
   }, [zoom, resetZoom]);
 
+  const openLightboxAt = (index: number) => {
+    setCurrentIndex(index);
+    setLightboxOpen(true);
+  };
+
+  const thumbCount = thumbnails.length;
+  const gridColsClass =
+    thumbCount === 1 ? "grid-cols-1 md:grid-cols-3"
+    : thumbCount === 2 ? "grid-cols-2 md:grid-cols-3"
+    : "grid-cols-2 md:grid-cols-4";
+  const thumbSingleClass =
+    thumbCount === 1
+      ? "aspect-[4/3] md:aspect-auto md:h-full"
+      : "aspect-[4/3]";
+
   return (
     <>
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
+      {thumbCount === 0 ? (
         <div
-          className="col-span-2 md:row-span-2 relative aspect-[4/3] md:aspect-auto md:h-full rounded-xl overflow-hidden cursor-pointer"
-          onClick={() => {
-            setCurrentIndex(0);
-            setLightboxOpen(true);
-          }}
+          className="relative aspect-[16/9] rounded-xl overflow-hidden cursor-pointer"
+          onClick={() => openLightboxAt(0)}
         >
           <Image
             src={heroImage.src}
@@ -135,28 +147,47 @@ export function PropertyGallery({ images }: PropertyGalleryProps) {
             fill
             className="object-cover"
             priority
-            sizes="(max-width: 768px) 100vw, 50vw"
+            sizes="100vw"
           />
         </div>
-        {thumbnails.map((img, index) => (
+      ) : (
+        <div className={cn("grid gap-2", gridColsClass)}>
           <div
-            key={index}
-            className="relative aspect-[4/3] rounded-xl overflow-hidden cursor-pointer"
-            onClick={() => {
-              setCurrentIndex(index + 1);
-              setLightboxOpen(true);
-            }}
+            className={cn(
+              "relative rounded-xl overflow-hidden cursor-pointer aspect-[4/3]",
+              thumbCount === 1 ? "md:col-span-2" : "col-span-2 md:row-span-2",
+            )}
+            onClick={() => openLightboxAt(0)}
           >
             <Image
-              src={img.src}
-              alt={localize(img.alt, locale)}
+              src={heroImage.src}
+              alt={localize(heroImage.alt, locale)}
               fill
               className="object-cover"
-              sizes="(max-width: 768px) 50vw, 25vw"
+              priority
+              sizes="(max-width: 768px) 100vw, 66vw"
             />
           </div>
-        ))}
-      </div>
+          {thumbnails.map((img, index) => (
+            <div
+              key={index}
+              className={cn(
+                "relative rounded-xl overflow-hidden cursor-pointer",
+                thumbSingleClass,
+              )}
+              onClick={() => openLightboxAt(index + 1)}
+            >
+              <Image
+                src={img.src}
+                alt={localize(img.alt, locale)}
+                fill
+                className="object-cover"
+                sizes="(max-width: 768px) 50vw, 25vw"
+              />
+            </div>
+          ))}
+        </div>
+      )}
 
       <Dialog open={lightboxOpen} onOpenChange={setLightboxOpen}>
         <DialogContent
