@@ -8,11 +8,11 @@
 -- Ensure the 5 canonical counties exist (idempotent on slug).
 INSERT INTO "counties" ("id", "name", "slug", "code", "latitude", "longitude", "property_count", "created_at", "updated_at")
 VALUES
-  (encode(gen_random_bytes(16), 'hex'), 'Cluj',   'cluj',   'CJ', 46.77, 23.60, 0, NOW(), NOW()),
-  (encode(gen_random_bytes(16), 'hex'), 'Bihor',  'bihor',  'BH', 47.05, 21.92, 0, NOW(), NOW()),
-  (encode(gen_random_bytes(16), 'hex'), 'Timiș',  'timis',  'TM', 45.75, 21.23, 0, NOW(), NOW()),
-  (encode(gen_random_bytes(16), 'hex'), 'Brașov', 'brasov', 'BV', 45.65, 25.61, 0, NOW(), NOW()),
-  (encode(gen_random_bytes(16), 'hex'), 'Sibiu',  'sibiu',  'SB', 45.80, 24.15, 0, NOW(), NOW())
+  (gen_random_uuid()::text, 'Cluj',   'cluj',   'CJ', 46.77, 23.60, 0, NOW(), NOW()),
+  (gen_random_uuid()::text, 'Bihor',  'bihor',  'BH', 47.05, 21.92, 0, NOW(), NOW()),
+  (gen_random_uuid()::text, 'Timiș',  'timis',  'TM', 45.75, 21.23, 0, NOW(), NOW()),
+  (gen_random_uuid()::text, 'Brașov', 'brasov', 'BV', 45.65, 25.61, 0, NOW(), NOW()),
+  (gen_random_uuid()::text, 'Sibiu',  'sibiu',  'SB', 45.80, 24.15, 0, NOW(), NOW())
 ON CONFLICT ("slug") DO NOTHING;
 
 -- Backfill cities.county_id for the canonical 5 seed cities via slug mapping.
