@@ -120,4 +120,21 @@ export const neighborhoods: NeighborhoodSeed[] = [
   { name: "Viilor", slug: "viilor", citySlug: "sighisoara" },
   { name: "Aurel Vlaicu", slug: "aurel-vlaicu", citySlug: "sighisoara" },
   { name: "Mihai Viteazu", slug: "mihai-viteazu-sighisoara", citySlug: "sighisoara" },
+
+  // ─── Reghin ─────────────────────────────────────────────
+  { name: "Centru", slug: "centru-reghin", citySlug: "reghin" },
+  { name: "Apalina", slug: "apalina", citySlug: "reghin" },
+  { name: "Iernuțeni", slug: "iernuteni", citySlug: "reghin" },
+  { name: "Gărăgău", slug: "garagau", citySlug: "reghin" },
+  { name: "Libertății", slug: "libertatii", citySlug: "reghin" },
+  { name: "Făgărașului", slug: "fagarasului", citySlug: "reghin" },
+  { name: "Pădurii", slug: "padurii", citySlug: "reghin" },
+
+  // ─── Târnăveni ──────────────────────────────────────────
+  { name: "Centru", slug: "centru-tarnaveni", citySlug: "tarnaveni" },
+  { name: "Botorca", slug: "botorca", citySlug: "tarnaveni" },
+  { name: "Bobohalma", slug: "bobohalma", citySlug: "tarnaveni" },
+  { name: "Cuștelnic", slug: "custelnic", citySlug: "tarnaveni" },
+  { name: "1 Decembrie", slug: "1-decembrie", citySlug: "tarnaveni" },
+  { name: "Prelungirea 1848", slug: "prelungirea-1848", citySlug: "tarnaveni" },
 ];

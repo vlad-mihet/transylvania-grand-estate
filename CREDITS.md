@@ -34,9 +34,11 @@ Attribution tracking for bundled image assets under `apps/landing/public/images/
 | `cities/brasov.jpg`       | 800×600 | TBD | TBD | TBD |
 | `cities/cluj-napoca.jpg`  | 800×600 | TBD | TBD | TBD |
 | `cities/oradea.jpg`       | 800×600 | TBD | TBD | TBD |
+| `cities/reghin.jpg`       | 800×600 | [Reghin001.jpg](https://commons.wikimedia.org/wiki/File:Reghin001.jpg) (Wikimedia Commons) | Flavinhu | Public Domain — cropped (top two-thirds) and downscaled from the original |
 | `cities/sibiu.jpg`        | 800×600 | TBD | TBD | TBD |
 | `cities/targu-mures.jpg`  | 800×600 | [Palatul Culturii din Târgu Mureș 01.jpg](https://commons.wikimedia.org/wiki/File:Palatul_Culturii_din_T%C3%A2rgu_Mure%C8%99_01.jpg) (Wikimedia Commons) | Radueduard | [CC BY-SA 3.0 RO](https://creativecommons.org/licenses/by-sa/3.0/ro/deed.en) — cropped and downscaled from the original |
 | `cities/sighisoara.jpg`   | 800×600 | [Panoramic Schäßburg Medieval Citadel (20903916345).jpg](https://commons.wikimedia.org/wiki/File:Panoramic_Sch%C3%A4%C3%9Fburg_Medieval_Citadel_(20903916345).jpg) (Wikimedia Commons) | Andrei-Daniel Nicolae | [CC BY 2.0](https://creativecommons.org/licenses/by/2.0/) — cropped and downscaled from the original |
+| `cities/tarnaveni.jpg`    | 800×600 | [Tarnaveni-PanoramicView.jpg](https://commons.wikimedia.org/wiki/File:Tarnaveni-PanoramicView.jpg) (Wikimedia Commons) | Olario | [CC BY-SA 3.0](https://creativecommons.org/licenses/by-sa/3.0/) — cropped and downscaled from the original |
 | `cities/timisoara.jpg`    | 800×600 | TBD | TBD | TBD |
 
 ### Hero
@@ -88,17 +90,19 @@ These files are byte-identical copies of the matching `apps/landing/public/image
 | `cities/brasov.jpg`       | `apps/landing/public/images/cities/brasov.jpg` |
 | `cities/cluj-napoca.jpg`  | `apps/landing/public/images/cities/cluj-napoca.jpg` |
 | `cities/oradea.jpg`       | `apps/landing/public/images/cities/oradea.jpg` |
+| `cities/reghin.jpg`       | `apps/landing/public/images/cities/reghin.jpg` |
 | `cities/sibiu.jpg`        | `apps/landing/public/images/cities/sibiu.jpg` |
 | `cities/sighisoara.jpg`   | `apps/landing/public/images/cities/sighisoara.jpg` |
+| `cities/tarnaveni.jpg`    | `apps/landing/public/images/cities/tarnaveni.jpg` |
 | `cities/targu-mures.jpg`  | `apps/landing/public/images/cities/targu-mures.jpg` |
 | `cities/timisoara.jpg`    | `apps/landing/public/images/cities/timisoara.jpg` |
 
 ## Counts
 
-- Landing: 32 images (5 castles · 7 cities · 1 hero · 10 interiors · 5 nature · 4 towns)
-- Reveria: 7 images (city heroes, mirroring landing)
-- **Total: 39**
-- Attributed: 4 (targu-mures × both brands, sighisoara × both brands)
+- Landing: 34 images (5 castles · 9 cities · 1 hero · 10 interiors · 5 nature · 4 towns)
+- Reveria: 9 images (city heroes, mirroring landing)
+- **Total: 43**
+- Attributed: 8 (targu-mures, sighisoara, reghin, tarnaveni — each × both brands)
 - TBD: 35
 
 ## License quick reference

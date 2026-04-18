@@ -92,4 +92,30 @@ export const cities: City[] = [
     longitude: 24.7935,
     countySlug: "mures",
   },
+  {
+    name: "Reghin",
+    slug: "reghin",
+    description: {
+      en: "Transylvania's violin-making capital, home to the Gliga workshops that ship instruments worldwide — a compact Mureș-county town set between Saxon heritage churches and the forested foothills of the Călimani.",
+      ro: "Capitala lutieriei transilvane, unde atelierele Gliga livrează viori în toată lumea — un oraș compact din județul Mureș, așezat între bisericile săsești istorice și pădurile Călimanilor.",
+    },
+    image: "/images/cities/reghin.jpg",
+    propertyCount: 0,
+    latitude: 46.7765,
+    longitude: 24.7069,
+    countySlug: "mures",
+  },
+  {
+    name: "Târnăveni",
+    slug: "tarnaveni",
+    description: {
+      en: "An industrial-era Mureș-county town on the banks of the Târnava Mică — a working-class market anchored by chemistry plants, a grand Art Deco town hall, and access to the Târnave wine region.",
+      ro: "Un oraș mureșean cu tradiție industrială, pe malurile Târnavei Mici — o piață muncitorească cu fabrici de chimie, o primărie impunătoare în stil Art Deco și acces către podgoria Târnavelor.",
+    },
+    image: "/images/cities/tarnaveni.jpg",
+    propertyCount: 0,
+    latitude: 46.3327,
+    longitude: 24.2868,
+    countySlug: "mures",
+  },
 ];
