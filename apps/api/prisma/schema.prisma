@@ -45,6 +45,71 @@ enum InquiryStatus {
   archived
 }
 
+enum Furnishing {
+  unfurnished
+  semi_furnished
+  furnished
+  luxury
+}
+
+enum ConstructionMaterial {
+  brick
+  concrete
+  bca
+  wood
+  stone
+  mixed
+}
+
+enum PropertyCondition {
+  new_build
+  renovated
+  good
+  needs_renovation
+  under_construction
+}
+
+enum SellerType {
+  private_seller
+  agency
+  developer
+}
+
+enum RateType {
+  fixed
+  variable
+  govt_program
+}
+
+enum HeatingType {
+  central_gas
+  centralized
+  block_central
+  electric
+  heat_pump
+  solid_fuel
+  none
+}
+
+enum OwnershipType {
+  personal
+  company
+  mixed
+}
+
+enum WindowType {
+  pvc_double
+  pvc_triple
+  wood
+  aluminum
+  mixed
+}
+
+enum PropertyTier {
+  luxury
+  affordable
+}
+
 // ─── Admin ───────────────────────────────────────────────
 
 model AdminUser {
@@ -71,12 +136,18 @@ model Property {
   currency         String         @default("EUR")
   type             PropertyType
   status           PropertyStatus @default(available)
+  tier             PropertyTier   @default(luxury)
 
-  // Location (flattened)
+  // Location (flattened).
+  /// @deprecated Read via `cityRef.name` — remove 2026-Q3 once no callers.
   city         String
-  citySlug     String @map("city_slug")
+  /// @deprecated Read via `cityRef.slug` — remove 2026-Q3 once no callers.
+  citySlug     String  @map("city_slug")
+  /// @deprecated Filter via `cityRef.county.slug`; column stays for now.
+  countySlug   String? @map("county_slug")
+  /// @deprecated Read via `neighborhoodRef.name` — remove 2026-Q3 once no callers.
   neighborhood String
-  address      Json   // LocalizedString
+  address      Json    // LocalizedString
   latitude     Float
   longitude    Float
 
@@ -86,9 +157,48 @@ model Property {
   area      Float
   landArea  Float?   @map("land_area")
   floors    Int
+  floor     Int?                       // Which floor the unit is on (apartments)
   yearBuilt Int      @map("year_built")
   garage    Int?
   pool      Boolean? @default(false)
+
+  // Advanced classification
+  furnishing Furnishing?
+  material   ConstructionMaterial?
+  condition  PropertyCondition?
+  sellerType SellerType?               @map("seller_type")
+
+  // Storia-style classification
+  heating          HeatingType?
+  ownership        OwnershipType?
+  windowType       WindowType?   @map("window_type")
+  availabilityDate DateTime?     @map("availability_date")
+
+  // Amenity flags
+  hasBalcony           Boolean @default(false) @map("has_balcony")
+  hasTerrace           Boolean @default(false) @map("has_terrace")
+  hasParking           Boolean @default(false) @map("has_parking")
+  hasGarage            Boolean @default(false) @map("has_garage")
+  hasSeparateKitchen   Boolean @default(false) @map("has_separate_kitchen")
+  hasStorage           Boolean @default(false) @map("has_storage")
+  hasElevator          Boolean @default(false) @map("has_elevator")
+  hasInteriorStaircase Boolean @default(false) @map("has_interior_staircase")
+
+  // Appliances (Facilități)
+  hasWashingMachine Boolean @default(false) @map("has_washing_machine")
+  hasFridge         Boolean @default(false) @map("has_fridge")
+  hasStove          Boolean @default(false) @map("has_stove")
+  hasOven           Boolean @default(false) @map("has_oven")
+  hasAC             Boolean @default(false) @map("has_ac")
+
+  // Security (Siguranță)
+  hasBlinds       Boolean @default(false) @map("has_blinds")
+  hasArmoredDoors Boolean @default(false) @map("has_armored_doors")
+  hasIntercom     Boolean @default(false) @map("has_intercom")
+
+  // Media
+  hasInternet Boolean @default(false) @map("has_internet")
+  hasCableTV  Boolean @default(false) @map("has_cable_tv")
 
   // Features as JSON array of LocalizedString[]
   features Json @default("[]")
@@ -101,17 +211,47 @@ model Property {
   developer   Developer? @relation(fields: [developerId], references: [id], onDelete: SetNull)
   agentId     String?    @map("agent_id")
   agent       Agent?     @relation(fields: [agentId], references: [id], onDelete: SetNull)
+
+  // Location FKs. Nullable during transition — denormalized city/citySlug/
+  // neighborhood strings above remain the source of truth for reads until the
+  // consumer code is migrated to use cityRef/neighborhoodRef.
+  cityId           String?       @map("city_id")
+  cityRef          City?         @relation(fields: [cityId], references: [id], onDelete: SetNull)
+  neighborhoodId   String?       @map("neighborhood_id")
+  neighborhoodRef  Neighborhood? @relation(fields: [neighborhoodId], references: [id], onDelete: SetNull)
+
   images      PropertyImage[]
 
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
 
   @@index([citySlug])
+  @@index([countySlug])
   @@index([type])
   @@index([status])
   @@index([price])
   @@index([featured])
   @@index([agentId])
+  @@index([furnishing])
+  @@index([material])
+  @@index([condition])
+  @@index([sellerType])
+  @@index([floor])
+  @@index([heating])
+  @@index([ownership])
+  @@index([availabilityDate])
+  @@index([latitude, longitude])
+  @@index([cityId])
+  @@index([neighborhoodId])
+  @@index([tier])
+  @@index([developerId])
+  @@index([tier, featured, createdAt(sort: Desc)])
+  // Hot listing path: every query now starts with a server-enforced tier
+  // filter (see SiteMiddleware). These composites cover the two dominant
+  // filter shapes from properties.service: price-range-by-city and the
+  // bedrooms/bathrooms/area sliders on the search page.
+  @@index([tier, citySlug, price])
+  @@index([tier, bedrooms, bathrooms, area])
   @@map("properties")
 }
 
@@ -176,20 +316,75 @@ model Agent {
   @@map("agents")
 }
 
-// ─── City ────────────────────────────────────────────────
+// ─── County ──────────────────────────────────────────────
 
-model City {
+model County {
   id            String @id @default(uuid())
   name          String @unique
   slug          String @unique
-  description   Json   // LocalizedString
-  image         String
+  code          String @unique // ISO 3166-2:RO code, e.g. "CJ", "B", "TM"
+  latitude      Float
+  longitude     Float
   propertyCount Int    @default(0) @map("property_count")
+
+  cities City[]
 
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
 
+  @@map("counties")
+}
+
+// ─── City ────────────────────────────────────────────────
+
+model City {
+  id            String @id @default(uuid())
+  // Slug stays globally unique — frontend routes `/cities/[slug]` assume
+  // one slug == one city. Names, however, are only unique within a county
+  // (Romanian counties can share city names, e.g. "Albești" in multiple
+  // județe).
+  name          String
+  slug          String @unique
+  description   Json   // LocalizedString
+  image         String
+  propertyCount Int    @default(0) @map("property_count")
+  latitude      Float?
+  longitude     Float?
+
+  // countyId is required — seed + admin UI both enforce it, and a city
+  // without a county is meaningless for search / SEO / breadcrumbs.
+  // Restrict on delete: can't remove a county while cities still point at it.
+  countyId String @map("county_id")
+  county   County @relation(fields: [countyId], references: [id], onDelete: Restrict)
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  neighborhoods Neighborhood[]
+  properties    Property[]
+
+  @@unique([name, countyId])
+
+  @@index([countyId])
   @@map("cities")
+}
+
+// ─── Neighborhood ────────────────────────────────────────
+
+model Neighborhood {
+  id       String @id @default(uuid())
+  name     String
+  slug     String
+  cityId   String @map("city_id")
+  city     City   @relation(fields: [cityId], references: [id], onDelete: Cascade)
+
+  properties Property[]
+
+  createdAt DateTime @default(now()) @map("created_at")
+
+  @@unique([slug, cityId])
+  @@index([cityId])
+  @@map("neighborhoods")
 }
 
 // ─── Testimonial ─────────────────────────────────────────
@@ -226,13 +421,92 @@ model Inquiry {
   budget       String?
   propertySlug String?       @map("property_slug")
 
+  // Brand + surface that originated the inquiry. `source` is the brand-derived
+  // tag (e.g. "reveria-contact", "tge-property-detail") stamped by the shared
+  // `useInquirySubmission` hook; `sourceUrl` is the full URL of the submitting
+  // page so admins can jump back to context. Both nullable for pre-existing
+  // rows. See Article.source/sourceUrl for the pattern precedent.
+  source       String?       @db.VarChar(120)
+  sourceUrl    String?       @map("source_url") @db.VarChar(500)
+
   createdAt    DateTime      @default(now()) @map("created_at")
   updatedAt    DateTime      @updatedAt @map("updated_at")
 
   @@index([type])
   @@index([status])
   @@index([createdAt])
+  @@index([source])
   @@map("inquiries")
+}
+
+// ─── Article ─────────────────────────────────────────────
+
+enum ArticleStatus {
+  draft
+  published
+}
+
+model Article {
+  id              String        @id @default(uuid())
+  slug            String        @unique
+  title           Json          // LocalizedString
+  excerpt         Json          // LocalizedString
+  content         Json          // LocalizedString (markdown)
+  coverImage      String        @map("cover_image")
+  category        String        // guide, news, market-report
+  tags            Json          @default("[]") // string[]
+  status          ArticleStatus @default(draft)
+  publishedAt     DateTime?     @map("published_at")
+  authorName      String        @map("author_name")
+  authorAvatar    String?       @map("author_avatar")
+  readTimeMinutes Int           @default(5) @map("read_time_minutes")
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@index([status])
+  @@index([category])
+  @@index([publishedAt])
+  @@map("articles")
+}
+
+// ─── Bank Rate ───────────────────────────────────────────
+
+model BankRate {
+  id            String   @id @default(uuid())
+  bankName      String   @map("bank_name")
+  rate          Float
+  rateType      RateType @map("rate_type")
+  maxLtv        Float?   @map("max_ltv")
+  maxTermYears  Int?     @map("max_term_years")
+  processingFee Float?   @map("processing_fee")
+  insuranceRate Float?   @map("insurance_rate")
+  notes         String?
+  active        Boolean  @default(true)
+  sortOrder     Int      @default(0) @map("sort_order")
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@index([active])
+  @@index([rateType])
+  @@map("bank_rates")
+}
+
+// ─── Financial Indicator ─────────────────────────────────
+
+model FinancialIndicator {
+  id        String   @id @default(uuid())
+  key       String   @unique
+  value     Float
+  source    String
+  sourceUrl String?  @map("source_url")
+  fetchedAt DateTime @map("fetched_at")
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@map("financial_indicators")
 }
 
 // ─── Site Config (singleton) ─────────────────────────────
