@@ -1,0 +1,45 @@
+{
+  "name": "@tge/reveria",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev --port 3002",
+    "build": "next build",
+    "start": "next start",
+    "lint": "eslint"
+  },
+  "dependencies": {
+    "@tge/api-client": "workspace:*",
+    "@tge/branding": "workspace:*",
+    "@tge/hooks": "workspace:*",
+    "@tge/i18n": "workspace:*",
+    "@tge/tailwind-config": "workspace:*",
+    "@tge/types": "workspace:*",
+    "@tge/ui": "workspace:*",
+    "@tge/utils": "workspace:*",
+    "leaflet": "^1.9.4",
+    "leaflet.markercluster": "^1.5.3",
+    "lucide-react": "^0.575.0",
+    "next": "16.1.6",
+    "next-intl": "^4.8.3",
+    "radix-ui": "^1.4.3",
+    "react": "19.2.3",
+    "react-dom": "19.2.3",
+    "react-leaflet": "^5.0.0"
+  },
+  "devDependencies": {
+    "@tailwindcss/postcss": "^4",
+    "@tailwindcss/typography": "^0.5.19",
+    "@types/leaflet": "^1.9.21",
+    "@types/leaflet.markercluster": "^1.5.6",
+    "@types/node": "^20",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "eslint": "^9",
+    "eslint-config-next": "16.1.6",
+    "shadcn": "^3.8.5",
+    "tailwindcss": "^4",
+    "tw-animate-css": "^1.4.0",
+    "typescript": "^5"
+  }
+}
