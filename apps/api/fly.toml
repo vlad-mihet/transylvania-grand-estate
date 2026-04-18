@@ -5,7 +5,7 @@ primary_region = 'ams'
   dockerfile = 'Dockerfile'
 
 [deploy]
-  release_command = "sh -c 'npx prisma migrate resolve --rolled-back 20260417000000_make_city_county_required 2>/dev/null || true; npx prisma migrate deploy'"
+  release_command = "npx prisma migrate deploy"
 
 [env]
   PORT = '3333'
