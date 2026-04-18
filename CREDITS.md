@@ -1,6 +1,8 @@
 # Image credits
 
-Third-party images bundled in this repository, along with their licenses and attribution requirements.
+Attribution for third-party images that carry share-alike or attribution-required licenses.
+
+**Scope:** This file covers only images whose license requires attribution. Images added before this file was introduced (city heroes for Brașov, Cluj-Napoca, Oradea, Sibiu, Timișoara; castle / interior / nature / hero assets under `apps/landing/public/images/` added in commit `680a387`) are not documented here — their provenance predates this file and should be audited separately. Original/owned assets do not need entries.
 
 ## City hero images
 
