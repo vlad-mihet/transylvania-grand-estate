@@ -16,19 +16,7 @@ import { useState } from "react";
 import { toast } from "sonner";
 import { formatPrice } from "@tge/utils";
 import { useTranslations, useLocale } from "next-intl";
-
-interface Property {
-  id: string;
-  slug: string;
-  title: { en: string; ro: string };
-  city: string;
-  type: string;
-  status: string;
-  price: number;
-  currency: string;
-  featured: boolean;
-  images: { src: string; alt: string; isHero: boolean }[];
-}
+import type { ApiProperty as Property } from "@tge/types";
 
 export default function PropertiesPage() {
   const queryClient = useQueryClient();
@@ -68,7 +56,7 @@ export default function PropertiesPage() {
     },
   });
 
-  const columns: ColumnDef<Property, any>[] = [
+  const columns: ColumnDef<Property, unknown>[] = [
     {
       accessorKey: "images",
       header: "",
@@ -78,7 +66,7 @@ export default function PropertiesPage() {
         return hero ? (
           <Image
             src={hero.src}
-            alt={hero.alt}
+            alt={(hero.alt as Record<string, string>)[locale] ?? hero.alt.en ?? ""}
             width={80}
             height={60}
             className="rounded object-cover"
@@ -109,7 +97,7 @@ export default function PropertiesPage() {
       header: t("columnType"),
       cell: ({ getValue }) => {
         const type = getValue() as string;
-        return <span className="text-sm capitalize">{tf.has(`types.${type}`) ? tf(`types.${type}` as any) : type.replace(/_/g, " ")}</span>;
+        return <span className="text-sm capitalize">{tf.has(`types.${type}`) ? tf(`types.${type}` as Parameters<typeof tf>[0]) : type.replace(/_/g, " ")}</span>;
       },
     },
     {
@@ -196,7 +184,7 @@ export default function PropertiesPage() {
                 {hero ? (
                   <Image
                     src={hero.src}
-                    alt={hero.alt}
+                    alt={(hero.alt as Record<string, string>)[locale] ?? hero.alt.en ?? ""}
                     width={64}
                     height={48}
                     className="rounded object-cover shrink-0"
@@ -213,7 +201,7 @@ export default function PropertiesPage() {
               </div>
               <div className="flex flex-wrap items-center gap-2">
                 <span className="text-xs capitalize text-muted-foreground">
-                  {tf.has(`types.${property.type}`) ? tf(`types.${property.type}` as any) : property.type.replace(/_/g, " ")}
+                  {tf.has(`types.${property.type}`) ? tf(`types.${property.type}` as Parameters<typeof tf>[0]) : property.type.replace(/_/g, " ")}
                 </span>
                 <StatusBadge status={property.status} />
               </div>

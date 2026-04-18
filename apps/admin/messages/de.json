@@ -18,6 +18,7 @@
     "agents": "Makler",
     "cities": "Städte",
     "testimonials": "Referenzen",
+    "bankRates": "Bankzinsen",
     "settings": "Einstellungen",
     "navigation": "Navigation",
     "version": "Admin-Panel v0.1"
@@ -129,6 +130,48 @@
     "created": "Referenz erstellt",
     "updated": "Referenz aktualisiert"
   },
+  "BankRates": {
+    "title": "Bankzinsen",
+    "count": "{count} Zinssätze",
+    "addBankRate": "Zinssatz hinzufügen",
+    "newBankRate": "Neuer Zinssatz",
+    "editBankRate": "Zinssatz bearbeiten",
+    "notFound": "Zinssatz nicht gefunden",
+    "columnBank": "Bank",
+    "columnRate": "Zinssatz (%)",
+    "columnType": "Typ",
+    "columnActive": "Aktiv",
+    "columnOrder": "Reihenfolge",
+    "deleteTitle": "Zinssatz löschen",
+    "deleted": "Zinssatz gelöscht",
+    "deleteFailed": "Fehler beim Löschen des Zinssatzes",
+    "created": "Zinssatz erstellt",
+    "updated": "Zinssatz aktualisiert"
+  },
+  "BankRateForm": {
+    "title": "Informationen zum Bankzinssatz",
+    "bankName": "Bankname",
+    "rate": "Zinssatz (%)",
+    "rateType": "Zinstyp",
+    "types": {
+      "fixed": "Fest (5 Jahre)",
+      "variable": "Variabel",
+      "govtProgram": "Staatliches Programm"
+    },
+    "sortOrder": "Sortierreihenfolge",
+    "loanDetails": "Kreditdetails",
+    "maxLtv": "Max. Beleihungsauslauf",
+    "maxLtvHint": "Maximales Darlehen-zu-Wert-Verhältnis (z. B. 0,85 für 85%)",
+    "maxTermYears": "Max. Laufzeit (Jahre)",
+    "processingFee": "Bearbeitungsgebühr (%)",
+    "processingFeeHint": "Prozentsatz des Darlehensbetrags",
+    "insuranceRate": "Versicherungssatz (%)",
+    "insuranceRateHint": "Monatliche Risikolebensversicherung in % der Restschuld",
+    "notes": "Anmerkungen",
+    "notesPlaceholder": "z. B. Noua Casă — max. 70.000 EUR",
+    "active": "Aktiv (in Rechnern sichtbar)",
+    "saveBankRate": "Zinssatz speichern"
+  },
   "Settings": {
     "title": "Einstellungen",
     "description": "Website-Konfiguration verwalten",
@@ -144,7 +187,17 @@
     "url": "URL",
     "noSocialLinks": "Keine sozialen Links hinzugefügt",
     "saved": "Einstellungen gespeichert",
-    "saveSettings": "Einstellungen speichern"
+    "saveSettings": "Einstellungen speichern",
+    "financialData": "Finanzdaten",
+    "eurRon": "Wechselkurs EUR/RON",
+    "ircc": "IRCC-Referenzzinssatz",
+    "source": "Quelle",
+    "syncBnr": "Von BNR synchronisieren",
+    "bnrSynced": "EUR/RON synchronisiert: {value}",
+    "bnrSyncFailed": "BNR-Synchronisierung fehlgeschlagen: {error}",
+    "updateIrcc": "Aktualisieren",
+    "irccUpdated": "IRCC aktualisiert",
+    "irccHint": "IRCC ändert sich vierteljährlich (Jan., Apr., Juli, Okt.). Manuelles Update."
   },
   "PropertyForm": {
     "basicInfo": "Grundinformationen",

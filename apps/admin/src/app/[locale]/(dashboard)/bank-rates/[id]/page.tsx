@@ -5,42 +5,41 @@ import { useRouter } from "@/i18n/navigation";
 import { useParams } from "next/navigation";
 import { toast } from "sonner";
 import { apiClient } from "@/lib/api-client";
-import { TestimonialForm } from "@/components/forms/testimonial-form";
+import { BankRateForm } from "@/components/forms/bank-rate-form";
 import { PageHeader } from "@/components/shared/page-header";
-import { TestimonialFormValues } from "@/lib/validations/testimonial";
-import type { ApiTestimonial } from "@tge/types";
+import { BankRateFormValues } from "@/lib/validations/bank-rate";
 import { useTranslations } from "next-intl";
 
-export default function EditTestimonialPage() {
+export default function EditBankRatePage() {
   const { id } = useParams<{ id: string }>();
   const router = useRouter();
   const queryClient = useQueryClient();
-  const t = useTranslations("Testimonials");
+  const t = useTranslations("BankRates");
 
-  const { data: testimonial, isLoading } = useQuery({
-    queryKey: ["testimonial", id],
-    queryFn: () => apiClient<ApiTestimonial>(`/testimonials/${id}`),
+  const { data: bankRate, isLoading } = useQuery({
+    queryKey: ["bank-rate", id],
+    queryFn: () => apiClient<BankRateFormValues & { id: string }>(`/financial-data/bank-rates/${id}`),
     enabled: !!id,
   });
 
   const updateMutation = useMutation({
-    mutationFn: (data: TestimonialFormValues) =>
-      apiClient(`/testimonials/${id}`, { method: "PATCH", body: data }),
+    mutationFn: (data: BankRateFormValues) =>
+      apiClient(`/financial-data/bank-rates/${id}`, { method: "PATCH", body: data }),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["testimonial", id] });
+      queryClient.invalidateQueries({ queryKey: ["bank-rate", id] });
       toast.success(t("updated"));
-      router.push("/testimonials");
+      router.push("/bank-rates");
     },
   });
 
   if (isLoading) return <div className="h-64 animate-pulse rounded-lg bg-muted" />;
-  if (!testimonial) return <p>{t("notFound")}</p>;
+  if (!bankRate) return <p>{t("notFound")}</p>;
 
   return (
     <div className="space-y-6">
-      <PageHeader title={t("editTestimonial")} />
-      <TestimonialForm
-        defaultValues={testimonial}
+      <PageHeader title={t("editBankRate")} />
+      <BankRateForm
+        defaultValues={bankRate}
         onSubmit={(data) => updateMutation.mutate(data)}
         loading={updateMutation.isPending}
         submissionError={updateMutation.error}

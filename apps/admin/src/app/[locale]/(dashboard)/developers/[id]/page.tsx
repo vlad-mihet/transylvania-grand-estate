@@ -8,6 +8,7 @@ import { apiClient } from "@/lib/api-client";
 import { DeveloperForm } from "@/components/forms/developer-form";
 import { PageHeader } from "@/components/shared/page-header";
 import { DeveloperFormValues } from "@/lib/validations/developer";
+import type { ApiDeveloper } from "@tge/types";
 import { useTranslations } from "next-intl";
 
 export default function EditDeveloperPage() {
@@ -18,7 +19,7 @@ export default function EditDeveloperPage() {
 
   const { data: developer, isLoading } = useQuery({
     queryKey: ["developer", id],
-    queryFn: () => apiClient<any>(`/developers/id/${id}`),
+    queryFn: () => apiClient<ApiDeveloper>(`/developers/id/${id}`),
     enabled: !!id,
   });
 
@@ -40,7 +41,6 @@ export default function EditDeveloperPage() {
       toast.success(t("updated"));
       router.push("/developers");
     },
-    onError: (err) => toast.error(err.message),
   });
 
   if (isLoading) return <div className="h-64 animate-pulse rounded-lg bg-muted" />;
@@ -50,10 +50,11 @@ export default function EditDeveloperPage() {
     <div className="space-y-6">
       <PageHeader title={t("editDeveloper")} />
       <DeveloperForm
-        defaultValues={developer}
+        defaultValues={developer as Partial<DeveloperFormValues>}
         logoUrl={developer.logo}
         onSubmit={(data, logo) => updateMutation.mutate({ data, logo })}
         loading={updateMutation.isPending}
+        submissionError={updateMutation.error}
       />
     </div>
   );

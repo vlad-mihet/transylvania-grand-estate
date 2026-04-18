@@ -8,6 +8,7 @@ import { apiClient } from "@/lib/api-client";
 import { AgentForm } from "@/components/forms/agent-form";
 import { PageHeader } from "@/components/shared/page-header";
 import { AgentFormValues } from "@/lib/validations/agent";
+import type { ApiAgent } from "@tge/types";
 import { useTranslations } from "next-intl";
 
 export default function EditAgentPage() {
@@ -18,7 +19,7 @@ export default function EditAgentPage() {
 
   const { data: agent, isLoading } = useQuery({
     queryKey: ["agent", id],
-    queryFn: () => apiClient<any>(`/agents/id/${id}`),
+    queryFn: () => apiClient<ApiAgent>(`/agents/id/${id}`),
     enabled: !!id,
   });
 
@@ -40,7 +41,6 @@ export default function EditAgentPage() {
       toast.success(t("updated"));
       router.push("/agents");
     },
-    onError: (err) => toast.error(err.message),
   });
 
   if (isLoading) return <div className="h-64 animate-pulse rounded-lg bg-muted" />;
@@ -50,10 +50,11 @@ export default function EditAgentPage() {
     <div className="space-y-6">
       <PageHeader title={t("editAgent")} />
       <AgentForm
-        defaultValues={agent}
+        defaultValues={{ ...agent, photo: agent.photo ?? undefined }}
         photoUrl={agent.photo}
         onSubmit={(data, photo) => updateMutation.mutate({ data, photo })}
         loading={updateMutation.isPending}
+        submissionError={updateMutation.error}
       />
     </div>
   );

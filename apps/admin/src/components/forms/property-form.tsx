@@ -6,6 +6,8 @@ import {
   propertySchema,
   PropertyFormValues,
 } from "@/lib/validations/property";
+import { useApiFormErrors } from "@/lib/form-error";
+import { toast } from "sonner";
 import { BilingualInput } from "@/components/shared/bilingual-input";
 import { BilingualTextarea } from "@/components/shared/bilingual-textarea";
 import {
@@ -26,12 +28,12 @@ import {
   CardContent,
   CardHeader,
   CardTitle,
-  Separator,
 } from "@tge/ui";
 import { Loader2 } from "lucide-react";
 import { useState, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { apiClient } from "@/lib/api-client";
+import type { ApiAgent, ApiCity, ApiDeveloper } from "@tge/types";
 import { useTranslations } from "next-intl";
 
 const PROPERTY_TYPE_VALUES = [
@@ -47,6 +49,7 @@ interface PropertyFormProps {
   images?: GalleryImage[];
   onSubmit: (data: PropertyFormValues, images: GalleryImage[]) => void;
   loading?: boolean;
+  submissionError?: unknown;
 }
 
 export function PropertyForm({
@@ -54,6 +57,7 @@ export function PropertyForm({
   images: initialImages = [],
   onSubmit,
   loading,
+  submissionError,
 }: PropertyFormProps) {
   const [galleryImages, setGalleryImages] =
     useState<GalleryImage[]>(initialImages);
@@ -87,6 +91,10 @@ export function PropertyForm({
     },
   });
 
+  useApiFormErrors(form, submissionError, (err) => {
+    toast.error(err instanceof Error ? err.message : "Failed to save");
+  });
+
   const watchedType = form.watch("type");
   const isTerrain = watchedType === "terrain";
 
@@ -102,21 +110,21 @@ export function PropertyForm({
 
   const { data: developers } = useQuery({
     queryKey: ["developers-select"],
-    queryFn: () => apiClient<any[]>("/developers"),
+    queryFn: () => apiClient<ApiDeveloper[]>("/developers"),
   });
 
   const { data: agents } = useQuery({
     queryKey: ["agents-select"],
-    queryFn: () => apiClient<any[]>("/agents?active=true"),
+    queryFn: () => apiClient<ApiAgent[]>("/agents?active=true"),
   });
 
   const { data: cities } = useQuery({
     queryKey: ["cities-select"],
-    queryFn: () => apiClient<any[]>("/cities"),
+    queryFn: () => apiClient<ApiCity[]>("/cities"),
   });
 
   const handleCityChange = (slug: string) => {
-    const city = (cities ?? []).find((c: any) => c.slug === slug);
+    const city = (cities ?? []).find((c) => c.slug === slug);
     if (city) {
       form.setValue("city", city.name);
       form.setValue("citySlug", city.slug);
@@ -252,7 +260,7 @@ export function PropertyForm({
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="__none__">{t("none")}</SelectItem>
-                  {(developers ?? []).map((d: any) => (
+                  {(developers ?? []).map((d) => (
                     <SelectItem key={d.id} value={d.id}>
                       {d.name}
                     </SelectItem>
@@ -275,7 +283,7 @@ export function PropertyForm({
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="__none__">{t("none")}</SelectItem>
-                  {(agents ?? []).map((a: any) => (
+                  {(agents ?? []).map((a) => (
                     <SelectItem key={a.id} value={a.id}>
                       {a.firstName} {a.lastName}
                     </SelectItem>
@@ -342,7 +350,7 @@ export function PropertyForm({
                   <SelectValue placeholder={t("selectCity")} />
                 </SelectTrigger>
                 <SelectContent>
-                  {(cities ?? []).map((c: any) => (
+                  {(cities ?? []).map((c) => (
                     <SelectItem key={c.slug} value={c.slug}>
                       {c.name}
                     </SelectItem>

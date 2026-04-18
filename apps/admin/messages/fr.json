@@ -18,6 +18,7 @@
     "agents": "Agents",
     "cities": "Villes",
     "testimonials": "Témoignages",
+    "bankRates": "Taux bancaires",
     "settings": "Paramètres",
     "navigation": "Navigation",
     "version": "Panneau admin v0.1"
@@ -129,6 +130,48 @@
     "created": "Témoignage créé",
     "updated": "Témoignage mis à jour"
   },
+  "BankRates": {
+    "title": "Taux bancaires",
+    "count": "{count} taux",
+    "addBankRate": "Ajouter un taux",
+    "newBankRate": "Nouveau taux",
+    "editBankRate": "Modifier le taux",
+    "notFound": "Taux introuvable",
+    "columnBank": "Banque",
+    "columnRate": "Taux (%)",
+    "columnType": "Type",
+    "columnActive": "Actif",
+    "columnOrder": "Ordre",
+    "deleteTitle": "Supprimer le taux",
+    "deleted": "Taux supprimé",
+    "deleteFailed": "Échec de la suppression du taux",
+    "created": "Taux créé",
+    "updated": "Taux mis à jour"
+  },
+  "BankRateForm": {
+    "title": "Informations sur le taux bancaire",
+    "bankName": "Nom de la banque",
+    "rate": "Taux d'intérêt (%)",
+    "rateType": "Type de taux",
+    "types": {
+      "fixed": "Fixe (5 ans)",
+      "variable": "Variable",
+      "govtProgram": "Programme gouvernemental"
+    },
+    "sortOrder": "Ordre d'affichage",
+    "loanDetails": "Détails du prêt",
+    "maxLtv": "LTV maximum",
+    "maxLtvHint": "Ratio prêt/valeur maximum (ex. 0,85 pour 85%)",
+    "maxTermYears": "Durée maximale (années)",
+    "processingFee": "Frais de dossier (%)",
+    "processingFeeHint": "Pourcentage du montant du prêt",
+    "insuranceRate": "Taux d'assurance (%)",
+    "insuranceRateHint": "Assurance-vie mensuelle en % du solde restant",
+    "notes": "Notes",
+    "notesPlaceholder": "ex. Noua Casă — max 70 000 EUR",
+    "active": "Actif (visible dans les calculateurs)",
+    "saveBankRate": "Enregistrer le taux"
+  },
   "Settings": {
     "title": "Paramètres",
     "description": "Gérer la configuration du site",
@@ -144,7 +187,17 @@
     "url": "URL",
     "noSocialLinks": "Aucun lien social ajouté",
     "saved": "Paramètres enregistrés",
-    "saveSettings": "Enregistrer les paramètres"
+    "saveSettings": "Enregistrer les paramètres",
+    "financialData": "Données financières",
+    "eurRon": "Taux de change EUR/RON",
+    "ircc": "Taux de référence IRCC",
+    "source": "Source",
+    "syncBnr": "Synchroniser depuis la BNR",
+    "bnrSynced": "EUR/RON synchronisé : {value}",
+    "bnrSyncFailed": "Échec de la synchronisation BNR : {error}",
+    "updateIrcc": "Mettre à jour",
+    "irccUpdated": "IRCC mis à jour",
+    "irccHint": "L'IRCC change chaque trimestre (janv., avr., juil., oct.). Mise à jour manuelle."
   },
   "PropertyForm": {
     "basicInfo": "Informations de base",

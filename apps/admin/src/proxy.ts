@@ -6,7 +6,7 @@ const intlMiddleware = createIntlMiddleware(routing);
 
 const publicPages = ["/login"];
 
-export function middleware(req: NextRequest) {
+export function proxy(req: NextRequest) {
   const { pathname } = req.nextUrl;
 
   // Skip API routes entirely

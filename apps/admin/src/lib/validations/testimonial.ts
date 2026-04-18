@@ -1,18 +1,12 @@
 import { z } from "zod";
+import { createTestimonialSchema } from "@tge/types/schemas/testimonial";
 
-const localizedString = z.object({
-  en: z.string().min(1, "English value is required"),
-  ro: z.string().min(1, "Romanian value is required"),
-  fr: z.string().optional(),
-  de: z.string().optional(),
-});
-
-export const testimonialSchema = z.object({
-  clientName: z.string().min(1, "Client name is required"),
-  location: z.string().min(1, "Location is required"),
-  propertyType: z.string().min(1, "Property type is required"),
-  quote: localizedString,
-  rating: z.coerce.number().int().min(1).max(5),
+// Override `rating` with plain `z.number()` so the form's input type aligns
+// with its output type (zod v4's `z.coerce.number()` types input as
+// `unknown`, which clashes with react-hook-form's `useForm<T>` generic).
+// The shared schema keeps `z.coerce.number()` for the API boundary.
+export const testimonialSchema = createTestimonialSchema.extend({
+  rating: z.number().int().min(1).max(5),
 });
 
 export type TestimonialFormValues = z.infer<typeof testimonialSchema>;

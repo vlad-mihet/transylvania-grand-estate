@@ -3,6 +3,8 @@
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { agentSchema, AgentFormValues } from "@/lib/validations/agent";
+import { useApiFormErrors } from "@/lib/form-error";
+import { toast } from "sonner";
 import { BilingualTextarea } from "@/components/shared/bilingual-textarea";
 import { ImageUpload } from "@/components/shared/image-upload";
 import {
@@ -24,6 +26,7 @@ interface AgentFormProps {
   photoUrl?: string | null;
   onSubmit: (data: AgentFormValues, photoFile: File | null) => void;
   loading?: boolean;
+  submissionError?: unknown;
 }
 
 export function AgentForm({
@@ -31,6 +34,7 @@ export function AgentForm({
   photoUrl,
   onSubmit,
   loading,
+  submissionError,
 }: AgentFormProps) {
   const [photoFile, setPhotoFile] = useState<File | null>(null);
   const t = useTranslations("AgentForm");
@@ -48,6 +52,10 @@ export function AgentForm({
       active: true,
       ...defaultValues,
     },
+  });
+
+  useApiFormErrors(form, submissionError, (err) => {
+    toast.error(err instanceof Error ? err.message : "Failed to save");
   });
 
   const generateSlug = () => {

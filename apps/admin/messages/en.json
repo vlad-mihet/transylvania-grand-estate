@@ -18,6 +18,7 @@
     "agents": "Agents",
     "cities": "Cities",
     "testimonials": "Testimonials",
+    "bankRates": "Bank Rates",
     "settings": "Settings",
     "navigation": "Navigation",
     "version": "Admin Panel v0.1"
@@ -129,6 +130,48 @@
     "created": "Testimonial created",
     "updated": "Testimonial updated"
   },
+  "BankRates": {
+    "title": "Bank Rates",
+    "count": "{count} rates",
+    "addBankRate": "Add Bank Rate",
+    "newBankRate": "New Bank Rate",
+    "editBankRate": "Edit Bank Rate",
+    "notFound": "Bank rate not found",
+    "columnBank": "Bank",
+    "columnRate": "Rate (%)",
+    "columnType": "Type",
+    "columnActive": "Active",
+    "columnOrder": "Order",
+    "deleteTitle": "Delete bank rate",
+    "deleted": "Bank rate deleted",
+    "deleteFailed": "Failed to delete bank rate",
+    "created": "Bank rate created",
+    "updated": "Bank rate updated"
+  },
+  "BankRateForm": {
+    "title": "Bank Rate Information",
+    "bankName": "Bank Name",
+    "rate": "Interest Rate (%)",
+    "rateType": "Rate Type",
+    "types": {
+      "fixed": "Fixed (5yr)",
+      "variable": "Variable",
+      "govtProgram": "Government Program"
+    },
+    "sortOrder": "Sort Order",
+    "loanDetails": "Loan Details",
+    "maxLtv": "Max LTV",
+    "maxLtvHint": "Maximum loan-to-value ratio (e.g. 0.85 for 85%)",
+    "maxTermYears": "Max Term (years)",
+    "processingFee": "Processing Fee (%)",
+    "processingFeeHint": "Percentage of loan amount",
+    "insuranceRate": "Insurance Rate (%)",
+    "insuranceRateHint": "Monthly life insurance as % of outstanding balance",
+    "notes": "Notes",
+    "notesPlaceholder": "e.g. Noua Casa — max 70.000 EUR",
+    "active": "Active (visible in calculators)",
+    "saveBankRate": "Save Bank Rate"
+  },
   "Settings": {
     "title": "Settings",
     "description": "Manage site configuration",
@@ -144,7 +187,17 @@
     "url": "URL",
     "noSocialLinks": "No social links added",
     "saved": "Settings saved",
-    "saveSettings": "Save Settings"
+    "saveSettings": "Save Settings",
+    "financialData": "Financial Data",
+    "eurRon": "EUR/RON Exchange Rate",
+    "ircc": "IRCC Reference Rate",
+    "source": "Source",
+    "syncBnr": "Sync from BNR",
+    "bnrSynced": "EUR/RON synced: {value}",
+    "bnrSyncFailed": "BNR sync failed: {error}",
+    "updateIrcc": "Update",
+    "irccUpdated": "IRCC updated",
+    "irccHint": "IRCC changes quarterly (Jan, Apr, Jul, Oct). Update manually."
   },
   "PropertyForm": {
     "basicInfo": "Basic Information",
