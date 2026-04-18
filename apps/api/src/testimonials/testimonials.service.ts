@@ -1,25 +1,61 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { Prisma } from '@prisma/client';
 import { PrismaService } from '../prisma/prisma.service';
 import { CreateTestimonialDto } from './dto/create-testimonial.dto';
 import { UpdateTestimonialDto } from './dto/update-testimonial.dto';
+import { ensureFound } from '../common/utils/ensure-found.util';
+import { paginate } from '../common/utils/pagination.util';
+import { toJson } from '../common/utils/prisma-json';
+
+// Cap on the legacy unpaginated path so a bloated testimonials table can't
+// ever return unbounded rows. Intentionally generous since callers have no
+// way to page — if we ever exceed this, callers should opt in to pagination
+// via `?page=` / `?limit=` and switch to the `{ data, meta }` shape.
+const UNPAGINATED_CAP = 100;
 
 @Injectable()
 export class TestimonialsService {
+  private readonly logger = new Logger(TestimonialsService.name);
+
   constructor(private prisma: PrismaService) {}
 
-  async findAll() {
-    return this.prisma.testimonial.findMany({
-      orderBy: { createdAt: 'desc' },
+  async findAll(query: { page?: number; limit?: number } = {}) {
+    const orderBy: Prisma.TestimonialOrderByWithRelationInput = {
+      createdAt: 'desc',
+    };
+
+    // Opt-in pagination: when either `page` or `limit` is provided, return
+    // the shared `{ data, meta }` envelope. Legacy callers (no params) keep
+    // getting a raw array, now bounded by `UNPAGINATED_CAP`.
+    if (query.page !== undefined || query.limit !== undefined) {
+      const page = query.page ?? 1;
+      const limit = Math.min(query.limit ?? 50, UNPAGINATED_CAP);
+      return paginate(
+        (skip, take) =>
+          this.prisma.testimonial.findMany({ orderBy, skip, take }),
+        () => this.prisma.testimonial.count(),
+        page,
+        limit,
+      );
+    }
+
+    const rows = await this.prisma.testimonial.findMany({
+      orderBy,
+      take: UNPAGINATED_CAP,
     });
+    if (rows.length === UNPAGINATED_CAP) {
+      this.logger.warn(
+        `Testimonials unpaginated cap hit (${UNPAGINATED_CAP}) — switch the caller to pagination.`,
+      );
+    }
+    return rows;
   }
 
   async findById(id: string) {
-    const testimonial = await this.prisma.testimonial.findUnique({
-      where: { id },
-    });
-    if (!testimonial) throw new NotFoundException('Testimonial not found');
-    return testimonial;
+    return ensureFound(
+      this.prisma.testimonial.findUnique({ where: { id } }),
+      'Testimonial',
+    );
   }
 
   async create(dto: CreateTestimonialDto) {
@@ -28,7 +64,7 @@ export class TestimonialsService {
         clientName: dto.clientName,
         location: dto.location,
         propertyType: dto.propertyType,
-        quote: dto.quote as unknown as Prisma.InputJsonValue,
+        quote: toJson(dto.quote),
         rating: dto.rating,
       },
     });
@@ -42,7 +78,7 @@ export class TestimonialsService {
     if (dto.location !== undefined) data.location = dto.location;
     if (dto.propertyType !== undefined) data.propertyType = dto.propertyType;
     if (dto.quote !== undefined)
-      data.quote = dto.quote as unknown as Prisma.InputJsonValue;
+      data.quote = toJson(dto.quote);
     if (dto.rating !== undefined) data.rating = dto.rating;
 
     return this.prisma.testimonial.update({ where: { id }, data });
@@ -53,11 +89,10 @@ export class TestimonialsService {
     return this.prisma.testimonial.delete({ where: { id } });
   }
 
-  private async ensureExists(id: string) {
-    const testimonial = await this.prisma.testimonial.findUnique({
-      where: { id },
-    });
-    if (!testimonial) throw new NotFoundException('Testimonial not found');
-    return testimonial;
+  private ensureExists(id: string) {
+    return ensureFound(
+      this.prisma.testimonial.findUnique({ where: { id } }),
+      'Testimonial',
+    );
   }
 }

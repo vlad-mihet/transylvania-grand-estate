@@ -1,4 +1,4 @@
-import { PartialType } from '@nestjs/swagger';
-import { CreateDeveloperDto } from './create-developer.dto';
+import { createZodDto } from 'nestjs-zod';
+import { updateDeveloperSchema } from '@tge/types/schemas/developer';
 
-export class UpdateDeveloperDto extends PartialType(CreateDeveloperDto) {}
+export class UpdateDeveloperDto extends createZodDto(updateDeveloperSchema) {}

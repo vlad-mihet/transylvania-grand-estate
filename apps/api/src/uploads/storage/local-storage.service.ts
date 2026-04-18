@@ -1,16 +1,19 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import * as fs from 'fs/promises';
 import * as path from 'path';
 import { v4 as uuid } from 'uuid';
+import { resolveUploadsDir } from '../../common/config/uploads-path';
 import { StorageService, UploadResult } from './storage.interface';
 
 @Injectable()
 export class LocalStorageService implements StorageService {
+  private readonly logger = new Logger(LocalStorageService.name);
   private uploadDir: string;
 
   constructor(private configService: ConfigService) {
-    this.uploadDir = configService.get('UPLOAD_DIR', './uploads');
+    this.uploadDir = resolveUploadsDir(configService);
+    this.logger.log(`Writing uploads to ${this.uploadDir}`);
   }
 
   async upload(
@@ -21,11 +24,14 @@ export class LocalStorageService implements StorageService {
     const filename = `${uuid()}${ext}`;
     const dirPath = path.join(this.uploadDir, directory);
     await fs.mkdir(dirPath, { recursive: true });
-    const filePath = path.join(directory, filename);
-    await fs.writeFile(path.join(this.uploadDir, filePath), file.buffer);
+    // URLs must use forward slashes regardless of OS; filesystem writes use
+    // the platform-native separator. Keep the two strictly distinct.
+    const urlPath = path.posix.join(directory, filename);
+    const fsPath = path.join(directory, filename);
+    await fs.writeFile(path.join(this.uploadDir, fsPath), file.buffer);
     return {
-      filePath,
-      publicUrl: this.getPublicUrl(filePath),
+      filePath: urlPath,
+      publicUrl: this.getPublicUrl(urlPath),
       originalName: file.originalname,
       mimeType: file.mimetype,
       size: file.size,
@@ -33,8 +39,11 @@ export class LocalStorageService implements StorageService {
   }
 
   async delete(filePath: string): Promise<void> {
+    // filePath arrives as a posix URL path; normalize to OS separators before
+    // touching fs.
+    const fsPath = filePath.split('/').join(path.sep);
     await fs
-      .unlink(path.join(this.uploadDir, filePath))
+      .unlink(path.join(this.uploadDir, fsPath))
       .catch(() => {});
   }
 

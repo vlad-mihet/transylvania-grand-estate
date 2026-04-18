@@ -4,19 +4,25 @@ import {
   Delete,
   Get,
   Param,
+  ParseUUIDPipe,
   Patch,
   Post,
   Query,
   UploadedFile,
   UseInterceptors,
-  BadRequestException,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
+import { ApiTags } from '@nestjs/swagger';
+import { AdminRole } from '@prisma/client';
+import { IMAGE_UPLOAD_SINGLE } from '../common/config/upload.config';
+import { ValidateUploadInterceptor } from '../common/interceptors/validate-upload.interceptor';
 import { DevelopersService } from './developers.service';
 import { CreateDeveloperDto } from './dto/create-developer.dto';
 import { UpdateDeveloperDto } from './dto/update-developer.dto';
 import { Public } from '../common/decorators/public.decorator';
+import { Roles } from '../common/decorators/roles.decorator';
 
+@ApiTags('Developers')
 @Controller('developers')
 export class DevelopersController {
   constructor(private developersService: DevelopersService) {}
@@ -26,13 +32,15 @@ export class DevelopersController {
   async findAll(
     @Query('featured') featured?: boolean,
     @Query('city') city?: string,
+    @Query('page') page?: number,
+    @Query('limit') limit?: number,
   ) {
-    return this.developersService.findAll({ featured, city });
+    return this.developersService.findAll({ featured, city, page, limit });
   }
 
   @Public()
   @Get('id/:id')
-  async findById(@Param('id') id: string) {
+  async findById(@Param('id', ParseUUIDPipe) id: string) {
     return this.developersService.findById(id);
   }
 
@@ -42,35 +50,32 @@ export class DevelopersController {
     return this.developersService.findBySlug(slug);
   }
 
+  @Roles(AdminRole.ADMIN, AdminRole.SUPER_ADMIN)
   @Post()
   async create(@Body() dto: CreateDeveloperDto) {
     return this.developersService.create(dto);
   }
 
+  @Roles(AdminRole.ADMIN, AdminRole.SUPER_ADMIN)
   @Patch(':id')
-  async update(@Param('id') id: string, @Body() dto: UpdateDeveloperDto) {
+  async update(@Param('id', ParseUUIDPipe) id: string, @Body() dto: UpdateDeveloperDto) {
     return this.developersService.update(id, dto);
   }
 
+  @Roles(AdminRole.ADMIN, AdminRole.SUPER_ADMIN)
   @Delete(':id')
-  async remove(@Param('id') id: string) {
+  async remove(@Param('id', ParseUUIDPipe) id: string) {
     return this.developersService.remove(id);
   }
 
+  @Roles(AdminRole.ADMIN, AdminRole.SUPER_ADMIN)
   @Post(':id/logo')
   @UseInterceptors(
-    FileInterceptor('logo', {
-      limits: { fileSize: 5 * 1024 * 1024 },
-      fileFilter: (_req, file, cb) => {
-        if (!file.mimetype.match(/\/(jpg|jpeg|png|webp|svg\+xml)$/)) {
-          return cb(new BadRequestException('Only image files are allowed'), false);
-        }
-        cb(null, true);
-      },
-    }),
+    FileInterceptor('logo', IMAGE_UPLOAD_SINGLE),
+    ValidateUploadInterceptor,
   )
   async uploadLogo(
-    @Param('id') id: string,
+    @Param('id', ParseUUIDPipe) id: string,
     @UploadedFile() file: Express.Multer.File,
   ) {
     return this.developersService.uploadLogo(id, file);

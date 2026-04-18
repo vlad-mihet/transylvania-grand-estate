@@ -1,7 +1,6 @@
-import { IsEnum } from 'class-validator';
-import { InquiryStatus } from '@prisma/client';
+import { createZodDto } from 'nestjs-zod';
+import { updateInquiryStatusSchema } from '@tge/types/schemas/inquiry';
 
-export class UpdateInquiryStatusDto {
-  @IsEnum(InquiryStatus)
-  status: InquiryStatus;
-}
+export class UpdateInquiryStatusDto extends createZodDto(
+  updateInquiryStatusSchema,
+) {}

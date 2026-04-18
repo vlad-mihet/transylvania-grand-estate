@@ -1,15 +1,25 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { Prisma } from '@prisma/client';
 import { PrismaService } from '../prisma/prisma.service';
 import { CreateInquiryDto } from './dto/create-inquiry.dto';
 import { QueryInquiryDto } from './dto/query-inquiry.dto';
 import { UpdateInquiryStatusDto } from './dto/update-inquiry-status.dto';
+import { paginate } from '../common/utils/pagination.util';
+import { ensureFound } from '../common/utils/ensure-found.util';
+import { ensureRef } from '../common/utils/ensure-ref.util';
 
 @Injectable()
 export class InquiriesService {
   constructor(private prisma: PrismaService) {}
 
   async create(dto: CreateInquiryDto) {
+    await ensureRef(dto.propertySlug, 'propertySlug', (slug) =>
+      this.prisma.property.findUnique({
+        where: { slug },
+        select: { id: true },
+      }),
+    );
+
     return this.prisma.inquiry.create({
       data: {
         type: dto.type ?? 'general',
@@ -21,6 +31,8 @@ export class InquiriesService {
         entitySlug: dto.entitySlug,
         budget: dto.budget,
         propertySlug: dto.propertySlug,
+        source: dto.source,
+        sourceUrl: dto.sourceUrl,
       },
     });
   }
@@ -31,26 +43,25 @@ export class InquiriesService {
     if (type) where.type = type;
     if (status) where.status = status;
 
-    const [data, total] = await Promise.all([
-      this.prisma.inquiry.findMany({
-        where,
-        orderBy: { createdAt: 'desc' },
-        skip: (page - 1) * limit,
-        take: limit,
-      }),
-      this.prisma.inquiry.count({ where }),
-    ]);
-
-    return {
-      data,
-      meta: { total, page, limit, totalPages: Math.ceil(total / limit) },
-    };
+    return paginate(
+      (skip, take) =>
+        this.prisma.inquiry.findMany({
+          where,
+          orderBy: { createdAt: 'desc' },
+          skip,
+          take,
+        }),
+      () => this.prisma.inquiry.count({ where }),
+      page,
+      limit,
+    );
   }
 
   async findById(id: string) {
-    const inquiry = await this.prisma.inquiry.findUnique({ where: { id } });
-    if (!inquiry) throw new NotFoundException('Inquiry not found');
-    return inquiry;
+    return ensureFound(
+      this.prisma.inquiry.findUnique({ where: { id } }),
+      'Inquiry',
+    );
   }
 
   async updateStatus(id: string, dto: UpdateInquiryStatusDto) {
@@ -66,9 +77,10 @@ export class InquiriesService {
     return this.prisma.inquiry.delete({ where: { id } });
   }
 
-  private async ensureExists(id: string) {
-    const inquiry = await this.prisma.inquiry.findUnique({ where: { id } });
-    if (!inquiry) throw new NotFoundException('Inquiry not found');
-    return inquiry;
+  private ensureExists(id: string) {
+    return ensureFound(
+      this.prisma.inquiry.findUnique({ where: { id } }),
+      'Inquiry',
+    );
   }
 }

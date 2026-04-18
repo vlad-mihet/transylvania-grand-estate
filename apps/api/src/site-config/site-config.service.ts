@@ -2,6 +2,7 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { Prisma } from '@prisma/client';
 import { PrismaService } from '../prisma/prisma.service';
 import { UpdateSiteConfigDto } from './dto/update-site-config.dto';
+import { toJson } from '../common/utils/prisma-json';
 
 @Injectable()
 export class SiteConfigService {
@@ -20,13 +21,13 @@ export class SiteConfigService {
 
     if (dto.name !== undefined) data.name = dto.name;
     if (dto.tagline !== undefined)
-      data.tagline = dto.tagline as unknown as Prisma.InputJsonValue;
+      data.tagline = toJson(dto.tagline);
     if (dto.description !== undefined)
-      data.description = dto.description as unknown as Prisma.InputJsonValue;
+      data.description = toJson(dto.description);
     if (dto.contact !== undefined)
-      data.contact = dto.contact as unknown as Prisma.InputJsonValue;
+      data.contact = toJson(dto.contact);
     if (dto.socialLinks !== undefined)
-      data.socialLinks = dto.socialLinks as unknown as Prisma.InputJsonValue;
+      data.socialLinks = toJson(dto.socialLinks);
 
     return this.prisma.siteConfig.update({
       where: { id: 'singleton' },

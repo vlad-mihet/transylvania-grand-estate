@@ -1,18 +1,6 @@
-import { IsOptional, IsBoolean, IsInt, ValidateNested } from 'class-validator';
-import { Type } from 'class-transformer';
-import { LocalizedStringDto } from '../../common/dto/localized-string.dto';
+import { createZodDto } from 'nestjs-zod';
+import { updatePropertyImageSchema } from '@tge/types/schemas/property';
 
-export class UpdatePropertyImageDto {
-  @IsOptional()
-  @ValidateNested()
-  @Type(() => LocalizedStringDto)
-  alt?: LocalizedStringDto;
-
-  @IsOptional()
-  @IsBoolean()
-  isHero?: boolean;
-
-  @IsOptional()
-  @IsInt()
-  sortOrder?: number;
-}
+export class UpdatePropertyImageDto extends createZodDto(
+  updatePropertyImageSchema,
+) {}
