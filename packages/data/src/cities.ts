@@ -66,4 +66,17 @@ export const cities: City[] = [
     longitude: 24.1256,
     countySlug: "sibiu",
   },
+  {
+    name: "Târgu Mureș",
+    slug: "targu-mures",
+    description: {
+      en: "A multicultural Transylvanian city famed for its Secession-era Palace of Culture and the rose-lined central square — an emerging residential market anchored by medical, tech, and manufacturing employers.",
+      ro: "Un oraș transilvănean multicultural, renumit pentru Palatul Culturii în stil Secession și Piața Trandafirilor — o piață rezidențială în creștere, susținută de angajatori din medicină, tehnologie și industrie.",
+    },
+    image: "/images/cities/targu-mures.jpg",
+    propertyCount: 0,
+    latitude: 46.5455,
+    longitude: 24.5625,
+    countySlug: "mures",
+  },
 ];
