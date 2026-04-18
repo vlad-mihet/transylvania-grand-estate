@@ -31,6 +31,16 @@ import {
  */
 const SEED_RESET = process.env.SEED_RESET === 'true';
 
+/*
+ * Prod workflow: when you change data in packages/data/**, after the
+ * deploy goes green run
+ *   fly ssh console -a tge-api -C 'cd /app && npx prisma db seed'
+ * to upsert the new rows into prod Neon. This step is manual on
+ * purpose — it keeps deploys fast and keeps seed failures out of the
+ * release rollback path. fly.toml's release_command only runs
+ * `prisma migrate deploy`; seed never runs automatically.
+ */
+
 const prisma = new PrismaClient();
 
 function hashSlug(slug: string): number {

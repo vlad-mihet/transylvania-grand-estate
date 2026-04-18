@@ -1,7 +1,28 @@
 {
   "extends": "../../tsconfig.base.json",
   "compilerOptions": {
-    "outDir": "./dist"
+    "outDir": "./dist",
+    "rootDir": "./src",
+    "noEmit": false,
+    "declaration": true,
+    "declarationMap": false,
+    "sourceMap": false,
+    // Override the workspace default (`module: esnext`). apps/api loads
+    // this package via plain `require(...)` at seed time; without this
+    // override, tsc emits extensionless ESM imports that Node then
+    // refuses to resolve inside the Fly container, crashing the seed
+    // with ERR_MODULE_NOT_FOUND. Mirrors packages/types/tsconfig.json.
+    "module": "commonjs",
+    "moduleResolution": "node",
+    // Clear the base's path aliases. Those aliases point @tge/types to
+    // `packages/types/src/index.ts` (handy for bundler-consumers), but
+    // tsc would then pull that file into our rootDir='./src' program
+    // and error TS6059 ("not under rootDir"). With an empty paths map,
+    // `import ... from "@tge/types"` resolves via node_modules →
+    // packages/types/dist/index.d.ts (which must be built first), and
+    // the whole chain stays inside packages/data/src.
+    "paths": {}
   },
-  "include": ["src/**/*.ts"]
+  "include": ["src/**/*.ts"],
+  "exclude": ["node_modules", "dist"]
 }
