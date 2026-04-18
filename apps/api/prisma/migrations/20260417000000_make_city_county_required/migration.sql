@@ -2,18 +2,40 @@
 --
 -- Prereq: Every row in `cities` must have a non-null `county_id`. The seed
 -- in `prisma/seed.ts` (Phase 2) populates it from the source data's
--- `countySlug`. If a production DB has cities with null county_id, run
--- `UPDATE cities SET county_id = <id> WHERE ...` first, or re-seed, before
--- applying this migration.
+-- `countySlug`. This migration self-heals for the 5 canonical seed cities
+-- if their counties are missing or the join wasn't performed yet.
 
--- Safety check: abort migration if any city is missing a county.
+-- Ensure the 5 canonical counties exist (idempotent on slug).
+INSERT INTO "counties" ("id", "name", "slug", "code", "latitude", "longitude", "property_count", "created_at", "updated_at")
+VALUES
+  (encode(gen_random_bytes(16), 'hex'), 'Cluj',   'cluj',   'CJ', 46.77, 23.60, 0, NOW(), NOW()),
+  (encode(gen_random_bytes(16), 'hex'), 'Bihor',  'bihor',  'BH', 47.05, 21.92, 0, NOW(), NOW()),
+  (encode(gen_random_bytes(16), 'hex'), 'Timiș',  'timis',  'TM', 45.75, 21.23, 0, NOW(), NOW()),
+  (encode(gen_random_bytes(16), 'hex'), 'Brașov', 'brasov', 'BV', 45.65, 25.61, 0, NOW(), NOW()),
+  (encode(gen_random_bytes(16), 'hex'), 'Sibiu',  'sibiu',  'SB', 45.80, 24.15, 0, NOW(), NOW())
+ON CONFLICT ("slug") DO NOTHING;
+
+-- Backfill cities.county_id for the canonical 5 seed cities via slug mapping.
+UPDATE "cities" c
+SET "county_id" = co."id"
+FROM "counties" co
+WHERE c."county_id" IS NULL AND (
+    (c."slug" = 'cluj-napoca' AND co."slug" = 'cluj')   OR
+    (c."slug" = 'oradea'      AND co."slug" = 'bihor')  OR
+    (c."slug" = 'timisoara'   AND co."slug" = 'timis')  OR
+    (c."slug" = 'brasov'      AND co."slug" = 'brasov') OR
+    (c."slug" = 'sibiu'       AND co."slug" = 'sibiu')
+);
+
+-- Safety check: any city still orphaned after the backfill requires
+-- manual intervention. Aborts the transaction (rolled back atomically).
 DO $$
 DECLARE
   orphaned INTEGER;
 BEGIN
   SELECT COUNT(*) INTO orphaned FROM "cities" WHERE "county_id" IS NULL;
   IF orphaned > 0 THEN
-    RAISE EXCEPTION 'Cannot apply migration: % cities have NULL county_id. Backfill them first (run the updated seed or manually UPDATE) before re-applying.', orphaned;
+    RAISE EXCEPTION 'Cannot apply migration: % cities have NULL county_id after backfill. Manual intervention required.', orphaned;
   END IF;
 END $$;
 
