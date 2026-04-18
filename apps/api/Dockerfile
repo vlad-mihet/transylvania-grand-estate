@@ -17,6 +17,10 @@ WORKDIR /app
 COPY --from=deps /app ./
 COPY . .
 RUN cd apps/api && npx prisma generate
+# @tge/types ships a compiled dist that apps/api's `require("@tge/types/*")`
+# resolves to at runtime via the package's exports map. Build it before the
+# API so node_modules/@tge/types/dist is populated.
+RUN pnpm --filter @tge/types build
 RUN pnpm --filter @tge/api build
 
 # --- Production ---
@@ -30,8 +34,11 @@ COPY --from=builder /app/apps/api/dist ./dist
 COPY --from=builder /app/apps/api/prisma ./prisma
 COPY --from=builder /app/apps/api/package.json ./package.json
 COPY --from=builder /app/node_modules ./node_modules
+# Preserve the pnpm symlink targets for @tge/* workspace packages. Without
+# these, node_modules/@tge/types → ../packages/types is a dangling symlink.
+COPY --from=builder /app/packages ./packages
 
 RUN mkdir -p /app/uploads
 
 EXPOSE 3333
-CMD ["node", "dist/src/main.js"]
+CMD ["node", "dist/apps/api/src/main.js"]
