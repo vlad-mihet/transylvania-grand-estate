@@ -37,6 +37,12 @@ ENV NODE_ENV=production
 
 COPY --from=builder /app/apps/api/dist ./dist
 COPY --from=builder /app/apps/api/prisma ./prisma
+# Prisma 7 config file — lives at apps/api/prisma.config.ts (sibling of
+# prisma/, not inside it). Without this copy, `npx prisma db seed` in
+# the running container finds no seed command (the old
+# package.json#prisma block was removed in PR #10) and silently
+# no-ops.
+COPY --from=builder /app/apps/api/prisma.config.ts ./prisma.config.ts
 COPY --from=builder /app/apps/api/package.json ./package.json
 COPY --from=builder /app/node_modules ./node_modules
 # Preserve the pnpm symlink targets for @tge/* workspace packages. Without
