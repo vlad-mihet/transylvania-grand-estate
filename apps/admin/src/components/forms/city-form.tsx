@@ -2,8 +2,10 @@
 
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useQuery } from "@tanstack/react-query";
 import { citySchema, CityFormValues } from "@/lib/validations/city";
 import { useApiFormErrors } from "@/lib/form-error";
+import { apiClient } from "@/lib/api-client";
 import { toast } from "sonner";
 import { BilingualTextarea } from "@/components/shared/bilingual-textarea";
 import { ImageUpload } from "@/components/shared/image-upload";
@@ -15,7 +17,13 @@ import {
   CardContent,
   CardHeader,
   CardTitle,
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
 } from "@tge/ui";
+import type { ApiCounty } from "@tge/types";
 import { Loader2 } from "lucide-react";
 import { useState } from "react";
 import { useTranslations } from "next-intl";
@@ -49,6 +57,15 @@ export function CityForm({ defaultValues, imageUrl, onSubmit, loading, submissio
     toast.error(err instanceof Error ? err.message : "Failed to save");
   });
 
+  // Counties feed the select below. React Query caches the result per
+  // session so opening /cities/new repeatedly doesn't refetch, and all
+  // 42 Romanian județe comfortably fit in one page — no pagination
+  // needed.
+  const { data: counties, isLoading: countiesLoading } = useQuery({
+    queryKey: ["counties-select"],
+    queryFn: () => apiClient<ApiCounty[]>("/counties"),
+  });
+
   const generateSlug = () => {
     const name = form.getValues("name");
     form.setValue(
@@ -78,6 +95,28 @@ export function CityForm({ defaultValues, imageUrl, onSubmit, loading, submissio
                 {tc("generate")}
               </Button>
             </div>
+          </div>
+          <div className="space-y-2">
+            <Label>{t("county")}</Label>
+            <Select
+              value={form.watch("countySlug") || undefined}
+              onValueChange={(v) => form.setValue("countySlug", v, { shouldValidate: true })}
+              disabled={countiesLoading}
+            >
+              <SelectTrigger aria-invalid={!!form.formState.errors.countySlug}>
+                <SelectValue placeholder={countiesLoading ? tc("loading") : t("selectCounty")} />
+              </SelectTrigger>
+              <SelectContent>
+                {(counties ?? []).map((c) => (
+                  <SelectItem key={c.slug} value={c.slug}>
+                    {c.name} ({c.code})
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+            {form.formState.errors.countySlug && (
+              <p className="text-destructive text-sm">{form.formState.errors.countySlug.message}</p>
+            )}
           </div>
           <BilingualTextarea
             label={t("description")}
