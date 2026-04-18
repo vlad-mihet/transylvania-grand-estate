@@ -2,7 +2,6 @@
 
 import { useRef, useEffect, useState } from "react";
 import Image from "next/image";
-import { cn } from "@tge/utils";
 import { ScrollReveal } from "@tge/ui";
 
 interface StoryChapter {

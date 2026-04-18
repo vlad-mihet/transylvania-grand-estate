@@ -9,7 +9,7 @@ import { LanguageSwitcher } from "./language-switcher";
 import { MobileNav } from "./mobile-nav";
 import { MegaMenu, MegaMenuColumn, MegaMenuLink } from "./mega-menu";
 import { AccentButton } from "@tge/ui";
-import { InquiryTrigger } from "@/components/inquiry";
+import { InquiryTrigger } from "@tge/ui";
 import { cn } from "@tge/utils";
 import { ChevronDown, Phone, Mail } from "lucide-react";
 import { DiamondSvg } from "./floating-diamond";

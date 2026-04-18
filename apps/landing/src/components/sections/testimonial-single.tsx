@@ -46,11 +46,11 @@ export function TestimonialSingle({ testimonials }: TestimonialSingleProps) {
             </p>
 
             {/* Testimonial crossfade */}
-            <div className="relative w-full min-h-[200px]">
+            <div className="grid w-full">
               {testimonials.map((testimonial, index) => (
                 <div
                   key={testimonial.id}
-                  className="absolute inset-0 flex flex-col items-center justify-center transition-all duration-700 ease-out"
+                  className="col-start-1 row-start-1 flex flex-col items-center justify-center text-center transition-all duration-700 ease-out"
                   style={{
                     opacity: activeIndex === index ? 1 : 0,
                     transform:

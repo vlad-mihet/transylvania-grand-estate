@@ -4,7 +4,7 @@ import { useTranslations } from "next-intl";
 import Image from "next/image";
 import { AccentButton } from "@tge/ui";
 import { ScrollReveal } from "@tge/ui";
-import { InquiryTrigger } from "@/components/inquiry";
+import { InquiryTrigger } from "@tge/ui";
 
 export function ClosingInvitation() {
   const t = useTranslations("TransylvaniaPage.closing");

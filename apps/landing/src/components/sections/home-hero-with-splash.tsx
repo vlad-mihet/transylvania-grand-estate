@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef, useCallback, useEffect } from "react";
+import { useState, useRef, useCallback } from "react";
 import { SplashOverlay } from "@/components/layout/splash-overlay";
 import { VideoHeroSection } from "./video-hero-section";
 
@@ -13,6 +13,13 @@ interface HomeHeroWithSplashProps {
   ctaHref: string;
 }
 
+// Read once at module eval (still client-only) so we can seed state
+// synchronously without an effect. `typeof window` guards SSR, where the
+// component renders its initial state before hydration takes over.
+const splashAlreadySeen = () =>
+  typeof window !== "undefined" &&
+  window.sessionStorage.getItem("splash-seen") === "1";
+
 export function HomeHeroWithSplash({
   videoSrc,
   posterImage,
@@ -21,16 +28,9 @@ export function HomeHeroWithSplash({
   ctaText,
   ctaHref,
 }: HomeHeroWithSplashProps) {
-  const [splashVisible, setSplashVisible] = useState(true);
-  const [heroRevealed, setHeroRevealed] = useState(false);
+  const [splashVisible, setSplashVisible] = useState(() => !splashAlreadySeen());
+  const [heroRevealed, setHeroRevealed] = useState(() => splashAlreadySeen());
   const videoUnmuteRef = useRef<(() => void) | null>(null);
-
-  useEffect(() => {
-    if (sessionStorage.getItem("splash-seen") === "1") {
-      setSplashVisible(false);
-      setHeroRevealed(true);
-    }
-  }, []);
 
   // Called immediately on click (within user gesture) — unmute video
   const handleClickEnter = useCallback(() => {

@@ -13,7 +13,7 @@ interface AtelierListingProps {
   locale: Locale;
 }
 
-export function AtelierListing({ properties, locale }: AtelierListingProps) {
+export function AtelierListing({ properties }: AtelierListingProps) {
   const t = useTranslations("DeveloperShowcase");
   const tTypes = useTranslations("Common.propertyTypes");
 

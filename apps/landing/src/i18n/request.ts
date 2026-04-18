@@ -1,6 +1,11 @@
 import { getRequestConfig } from "next-intl/server";
 import { hasLocale } from "next-intl";
-import { routing } from "@tge/i18n/routing";
+import {
+  loadSharedMessages,
+  mergeMessages,
+  routing,
+  type MessageTree,
+} from "@tge/i18n";
 
 export default getRequestConfig(async ({ requestLocale }) => {
   const requested = await requestLocale;
@@ -8,8 +13,15 @@ export default getRequestConfig(async ({ requestLocale }) => {
     ? requested
     : routing.defaultLocale;
 
+  const [shared, app] = await Promise.all([
+    loadSharedMessages(locale),
+    import(`../../messages/${locale}.json`).then(
+      (m) => m.default as MessageTree,
+    ),
+  ]);
+
   return {
     locale,
-    messages: (await import(`../../messages/${locale}.json`)).default,
+    messages: mergeMessages(shared, app),
   };
 });

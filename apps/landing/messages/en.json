@@ -52,7 +52,7 @@
       "propertiesSold": "Properties Marketed",
       "yearsExperience": "Years of Experience",
       "citiesServed": "Cities Served",
-      "portfolioValue": "Portfolio Value (M\u00a0EUR)"
+      "portfolioValue": "Portfolio Value (M EUR)"
     },
     "cities": {
       "subtitle": "Explore By Region",
@@ -147,30 +147,102 @@
     "getInTouch": "Get in Touch",
     "milestonesData": {
       "carpathia-imobiliare": [
-        { "year": "2008", "title": "Company Founded", "description": "Carpathia Imobiliare was established with a vision to redefine residential development in Transylvania, bringing European construction standards to the Romanian market." },
-        { "year": "2010", "title": "First Residential Complex", "description": "Launched the inaugural residential project, a 120-unit complex that set new benchmarks for quality and design in the region." },
-        { "year": "2014", "title": "Expansion to Multiple Cities", "description": "Expanded operations to three major Transylvanian cities, establishing a reputation for delivering premium living spaces on time and on budget." },
-        { "year": "2018", "title": "3,000 Homes Milestone", "description": "Celebrated the delivery of over 3,000 homes, solidifying the company's position as one of the leading residential developers in Romania." },
-        { "year": "2022", "title": "Sustainability Commitment", "description": "Adopted green building practices and energy-efficient design principles across all new developments, earning environmental certifications." },
-        { "year": "2024", "title": "Luxury Portfolio Launch", "description": "Introduced a premium luxury line of residences, combining heritage architecture with contemporary comforts for the discerning buyer." }
+        {
+          "year": "2008",
+          "title": "Company Founded",
+          "description": "Carpathia Imobiliare was established with a vision to redefine residential development in Transylvania, bringing European construction standards to the Romanian market."
+        },
+        {
+          "year": "2010",
+          "title": "First Residential Complex",
+          "description": "Launched the inaugural residential project, a 120-unit complex that set new benchmarks for quality and design in the region."
+        },
+        {
+          "year": "2014",
+          "title": "Expansion to Multiple Cities",
+          "description": "Expanded operations to three major Transylvanian cities, establishing a reputation for delivering premium living spaces on time and on budget."
+        },
+        {
+          "year": "2018",
+          "title": "3,000 Homes Milestone",
+          "description": "Celebrated the delivery of over 3,000 homes, solidifying the company's position as one of the leading residential developers in Romania."
+        },
+        {
+          "year": "2022",
+          "title": "Sustainability Commitment",
+          "description": "Adopted green building practices and energy-efficient design principles across all new developments, earning environmental certifications."
+        },
+        {
+          "year": "2024",
+          "title": "Luxury Portfolio Launch",
+          "description": "Introduced a premium luxury line of residences, combining heritage architecture with contemporary comforts for the discerning buyer."
+        }
       ],
       "gran-via": [
-        { "year": "2012", "title": "Company Founded", "description": "Gran Via was established with a focus on crafting distinctive residential developments that blend modern aesthetics with functional elegance." },
-        { "year": "2015", "title": "First Award-Winning Project", "description": "Received recognition for outstanding architectural design, marking the company as an innovator in the Romanian real estate landscape." },
-        { "year": "2019", "title": "Premium Segment Entry", "description": "Expanded into the premium residential market, introducing high-end finishes and bespoke design options for select developments." },
-        { "year": "2023", "title": "Community-Centered Developments", "description": "Launched integrated living concepts featuring shared green spaces, wellness facilities, and community hubs." }
+        {
+          "year": "2012",
+          "title": "Company Founded",
+          "description": "Gran Via was established with a focus on crafting distinctive residential developments that blend modern aesthetics with functional elegance."
+        },
+        {
+          "year": "2015",
+          "title": "First Award-Winning Project",
+          "description": "Received recognition for outstanding architectural design, marking the company as an innovator in the Romanian real estate landscape."
+        },
+        {
+          "year": "2019",
+          "title": "Premium Segment Entry",
+          "description": "Expanded into the premium residential market, introducing high-end finishes and bespoke design options for select developments."
+        },
+        {
+          "year": "2023",
+          "title": "Community-Centered Developments",
+          "description": "Launched integrated living concepts featuring shared green spaces, wellness facilities, and community hubs."
+        }
       ],
       "nova-building": [
-        { "year": "2014", "title": "Company Founded", "description": "Nova Building began with a commitment to innovative construction techniques and client-centered design philosophy." },
-        { "year": "2017", "title": "Technology Integration", "description": "Pioneered smart home integration across all new developments, offering residents cutting-edge living experiences." },
-        { "year": "2020", "title": "Rapid Growth Phase", "description": "Doubled the project portfolio and expanded the team, delivering multiple simultaneous developments across the region." },
-        { "year": "2024", "title": "Flagship Luxury Project", "description": "Unveiled an exclusive luxury residential complex, positioning the company at the forefront of premium real estate." }
+        {
+          "year": "2014",
+          "title": "Company Founded",
+          "description": "Nova Building began with a commitment to innovative construction techniques and client-centered design philosophy."
+        },
+        {
+          "year": "2017",
+          "title": "Technology Integration",
+          "description": "Pioneered smart home integration across all new developments, offering residents cutting-edge living experiences."
+        },
+        {
+          "year": "2020",
+          "title": "Rapid Growth Phase",
+          "description": "Doubled the project portfolio and expanded the team, delivering multiple simultaneous developments across the region."
+        },
+        {
+          "year": "2024",
+          "title": "Flagship Luxury Project",
+          "description": "Unveiled an exclusive luxury residential complex, positioning the company at the forefront of premium real estate."
+        }
       ],
       "default": [
-        { "year": "2015", "title": "Company Founded", "description": "{name} was established with a mission to create exceptional living spaces in {city}, combining quality craftsmanship with thoughtful design." },
-        { "year": "2018", "title": "First Major Development", "description": "Successfully delivered the first large-scale residential project, earning the trust of homebuyers and establishing a strong market presence." },
-        { "year": "2021", "title": "Portfolio Expansion", "description": "Expanded the development portfolio with diverse property types, from modern apartments to premium villas, catering to a wider range of discerning buyers." },
-        { "year": "2024", "title": "Excellence Recognized", "description": "Achieved a milestone in delivered homes and gained recognition for commitment to quality, sustainability, and client satisfaction." }
+        {
+          "year": "2015",
+          "title": "Company Founded",
+          "description": "{name} was established with a mission to create exceptional living spaces in {city}, combining quality craftsmanship with thoughtful design."
+        },
+        {
+          "year": "2018",
+          "title": "First Major Development",
+          "description": "Successfully delivered the first large-scale residential project, earning the trust of homebuyers and establishing a strong market presence."
+        },
+        {
+          "year": "2021",
+          "title": "Portfolio Expansion",
+          "description": "Expanded the development portfolio with diverse property types, from modern apartments to premium villas, catering to a wider range of discerning buyers."
+        },
+        {
+          "year": "2024",
+          "title": "Excellence Recognized",
+          "description": "Achieved a milestone in delivered homes and gained recognition for commitment to quality, sustainability, and client satisfaction."
+        }
       ]
     }
   },
@@ -219,12 +291,12 @@
       "clearAll": "Clear All",
       "activeFilters": "Active Filters",
       "filterBy": "Filter By",
-      "priceUnder500k": "Under \u20ac500K",
-      "price500kTo1m": "\u20ac500K - \u20ac1M",
-      "price1to15": "\u20ac1M - \u20ac1.5M",
-      "price15to2": "\u20ac1.5M - \u20ac2M",
-      "price2to3": "\u20ac2M - \u20ac3M",
-      "price3plus": "\u20ac3M+"
+      "priceUnder500k": "Under €500K",
+      "price500kTo1m": "€500K - €1M",
+      "price1to15": "€1M - €1.5M",
+      "price15to2": "€1.5M - €2M",
+      "price2to3": "€2M - €3M",
+      "price3plus": "€3M+"
     },
     "noResults": {
       "title": "No Properties Found",
@@ -341,10 +413,10 @@
         "message": "We've received your inquiry and will respond within 24 hours."
       },
       "budgetOptions": {
-        "1to15": "\u20ac1M - \u20ac1.5M",
-        "15to2": "\u20ac1.5M - \u20ac2M",
-        "2to3": "\u20ac2M - \u20ac3M",
-        "3plus": "\u20ac3M+"
+        "1to15": "€1M - €1.5M",
+        "15to2": "€1.5M - €2M",
+        "2to3": "€2M - €3M",
+        "3plus": "€3M+"
       }
     },
     "offices": {
@@ -369,29 +441,6 @@
       "message": "We've received your inquiry and will respond within 24 hours."
     },
     "error": "Something went wrong. Please try again."
-  },
-  "Common": {
-    "currency": "EUR",
-    "sqm": "m\u00b2",
-    "viewProperty": "View Property",
-    "learnMore": "Learn More",
-    "readMore": "Read More",
-    "available": "Available",
-    "sold": "Sold",
-    "reserved": "Reserved",
-    "new": "New",
-    "featured": "Featured",
-    "propertyTypes": {
-      "apartment": "Apartment",
-      "house": "House",
-      "villa": "Villa",
-      "terrain": "Terrain",
-      "penthouse": "Penthouse",
-      "estate": "Estate",
-      "chalet": "Chalet",
-      "mansion": "Mansion",
-      "palace": "Palace"
-    }
   },
   "Breadcrumb": {
     "home": "Home",
@@ -455,7 +504,7 @@
     "quickLinks": "Quick Links",
     "contact": "Contact Us",
     "followUs": "Follow Us",
-    "copyright": "\u00a9 {year} Transylvania Grand Estate. All rights reserved.",
+    "copyright": "© {year} Transylvania Grand Estate. All rights reserved.",
     "privacy": "Privacy Policy",
     "terms": "Terms of Service"
   },
@@ -466,7 +515,7 @@
     },
     "narrative": {
       "label": "An Invitation",
-      "manifesto": "For centuries, Transylvania has guarded its treasures behind ancient forests and mountain passes. We open the gates to a select few \u2014 those who understand that true luxury is not merely owned, but inherited from the land itself.",
+      "manifesto": "For centuries, Transylvania has guarded its treasures behind ancient forests and mountain passes. We open the gates to a select few — those who understand that true luxury is not merely owned, but inherited from the land itself.",
       "teaser": "Discover what lies beyond."
     },
     "story": {
@@ -477,7 +526,7 @@
         },
         "heritage": {
           "title": "Castles & Citadels",
-          "body": "Seven centuries of fortified churches, medieval citadels, and noble estates. History here is not preserved behind glass \u2014 it is lived in."
+          "body": "Seven centuries of fortified churches, medieval citadels, and noble estates. History here is not preserved behind glass — it is lived in."
         },
         "market": {
           "title": "An Emerging Frontier",
@@ -485,7 +534,7 @@
         },
         "lifestyle": {
           "title": "A Life Refined",
-          "body": "Michelin-caliber gastronomy, world-class wine regions, and cultural seasons rivaling any European capital. This is not a retreat \u2014 it is an arrival."
+          "body": "Michelin-caliber gastronomy, world-class wine regions, and cultural seasons rivaling any European capital. This is not a retreat — it is an arrival."
         }
       }
     },
@@ -493,7 +542,7 @@
       "propertiesSold": "Properties Marketed",
       "yearsExperience": "Years of Excellence",
       "citiesServed": "Cities Served",
-      "portfolioValue": "Portfolio Value (M\u00a0EUR)"
+      "portfolioValue": "Portfolio Value (M EUR)"
     },
     "collection": {
       "subtitle": "The Collection",
@@ -516,7 +565,7 @@
     "brand": {
       "label": "Our Ethos",
       "title": "Redefining What Luxury Means",
-      "description": "We do not merely present properties. We curate legacies \u2014 connecting visionary individuals with estates that will define their families for generations. In Transylvania, we have found a land where the extraordinary is still possible.",
+      "description": "We do not merely present properties. We curate legacies — connecting visionary individuals with estates that will define their families for generations. In Transylvania, we have found a land where the extraordinary is still possible.",
       "cta": "Discover Our Story"
     },
     "landmarks": {

@@ -1,7 +1,7 @@
 import { getTranslations } from "next-intl/server";
-import { fetchApi } from "@/lib/api";
-import type { City, Developer } from "@tge/types";
-import { mapApiCity } from "@/lib/mappers";
+import { fetchApi } from "@tge/api-client";
+import type { Developer, ApiCity } from "@tge/types";
+import { mapApiCity } from "@tge/api-client";
 import { HeroSection } from "@/components/sections/hero-section";
 import { Container } from "@/components/layout/container";
 import { Breadcrumb } from "@/components/layout/breadcrumb";
@@ -23,7 +23,7 @@ export default async function CitiesPage() {
   const tBreadcrumb = await getTranslations("Breadcrumb");
 
   const [citiesRaw, developers] = await Promise.all([
-    fetchApi<any[]>("/cities"),
+    fetchApi<ApiCity[]>("/cities"),
     fetchApi<Developer[]>("/developers"),
   ]);
   const cities = citiesRaw.map(mapApiCity);

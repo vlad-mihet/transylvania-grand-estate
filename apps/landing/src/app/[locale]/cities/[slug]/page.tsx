@@ -1,8 +1,8 @@
 import { getLocale, getTranslations } from "next-intl/server";
 import { notFound } from "next/navigation";
-import { fetchApi } from "@/lib/api";
-import { mapApiCity, mapApiProperties } from "@/lib/mappers";
-import type { Developer, Locale } from "@tge/types";
+import { fetchApi, fetchApiSafe } from "@tge/api-client";
+import { mapApiCity, mapApiProperties } from "@tge/api-client";
+import type { Developer, Locale, ApiCity, ApiProperty } from "@tge/types";
 import { localize } from "@tge/utils";
 import { Breadcrumb } from "@/components/layout/breadcrumb";
 import { CityHero } from "@/components/city/city-hero";
@@ -23,7 +23,7 @@ export async function generateMetadata({
   const locale = (await getLocale()) as Locale;
   const t = await getTranslations("CityDetail");
   try {
-    const raw = await fetchApi<any>(`/cities/${slug}`);
+    const raw = await fetchApi<ApiCity>(`/cities/${slug}`);
     const city = mapApiCity(raw);
     return {
       title: t("meta.title", { city: city.name }),
@@ -41,20 +41,25 @@ export default async function CityDetailPage({ params }: CityDetailPageProps) {
   const tCity = await getTranslations("CityDetail");
   const tCities = await getTranslations("HomePage.cities");
 
-  let cityRaw, developersRaw, propertiesRaw;
+  // The city fetch is required — no city, no page. Developer and property
+  // lookups are supporting data; degrade to empty lists rather than 404 so
+  // the page still renders the city itself if one sidebar call fails.
+  let cityRaw: ApiCity;
   try {
-    [cityRaw, developersRaw, propertiesRaw] = await Promise.all([
-      fetchApi<any>(`/cities/${slug}`),
-      fetchApi<Developer[]>(`/developers?city=${slug}`),
-      fetchApi<any[]>(`/properties?city=${slug}&limit=100`),
-    ]);
+    cityRaw = await fetchApi<ApiCity>(`/cities/${slug}`);
   } catch {
     notFound();
   }
+  const [developersResult, propertiesResult] = await Promise.all([
+    fetchApiSafe<Developer[]>(`/developers?city=${slug}`),
+    fetchApiSafe<ApiProperty[]>(`/properties?city=${slug}&limit=100`),
+  ]);
 
   const city = mapApiCity(cityRaw);
-  const developers = developersRaw;
-  const properties = mapApiProperties(propertiesRaw);
+  const developers = developersResult.ok ? developersResult.data : [];
+  const properties = mapApiProperties(
+    propertiesResult.ok ? propertiesResult.data : [],
+  );
 
   // Compute aggregates
   const priceRange =

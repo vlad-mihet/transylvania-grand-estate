@@ -52,7 +52,7 @@
       "propertiesSold": "Proprietăți Promovate",
       "yearsExperience": "Ani de Experiență",
       "citiesServed": "Orașe Deservite",
-      "portfolioValue": "Valoare Portofoliu (M\u00a0EUR)"
+      "portfolioValue": "Valoare Portofoliu (M EUR)"
     },
     "cities": {
       "subtitle": "Explorează După Regiune",
@@ -147,30 +147,102 @@
     "getInTouch": "Contactați-ne",
     "milestonesData": {
       "carpathia-imobiliare": [
-        { "year": "2008", "title": "Fondarea Companiei", "description": "Carpathia Imobiliare a fost înființată cu viziunea de a redefini dezvoltarea rezidențială în Transilvania, aducând standarde europene de construcție pe piața românească." },
-        { "year": "2010", "title": "Primul Complex Rezidențial", "description": "A lansat proiectul rezidențial inaugural, un complex de 120 de unități care a stabilit noi standarde de calitate și design în regiune." },
-        { "year": "2014", "title": "Expansiune în Mai Multe Orașe", "description": "A extins operațiunile în trei orașe importante din Transilvania, câștigând o reputație pentru livrarea de spații de locuit premium la timp și în buget." },
-        { "year": "2018", "title": "Reper de 3.000 de Locuințe", "description": "A sărbătorit livrarea a peste 3.000 de locuințe, consolidând poziția companiei ca unul dintre principalii dezvoltatori rezidențiali din România." },
-        { "year": "2022", "title": "Angajament pentru Sustenabilitate", "description": "A adoptat practici de construcție ecologică și principii de design eficient energetic în toate dezvoltările noi, obținând certificări de mediu." },
-        { "year": "2024", "title": "Lansarea Portofoliului de Lux", "description": "A introdus o linie premium de reședințe de lux, combinând arhitectura tradițională cu confortul contemporan pentru cumpărătorul exigent." }
+        {
+          "year": "2008",
+          "title": "Fondarea Companiei",
+          "description": "Carpathia Imobiliare a fost înființată cu viziunea de a redefini dezvoltarea rezidențială în Transilvania, aducând standarde europene de construcție pe piața românească."
+        },
+        {
+          "year": "2010",
+          "title": "Primul Complex Rezidențial",
+          "description": "A lansat proiectul rezidențial inaugural, un complex de 120 de unități care a stabilit noi standarde de calitate și design în regiune."
+        },
+        {
+          "year": "2014",
+          "title": "Expansiune în Mai Multe Orașe",
+          "description": "A extins operațiunile în trei orașe importante din Transilvania, câștigând o reputație pentru livrarea de spații de locuit premium la timp și în buget."
+        },
+        {
+          "year": "2018",
+          "title": "Reper de 3.000 de Locuințe",
+          "description": "A sărbătorit livrarea a peste 3.000 de locuințe, consolidând poziția companiei ca unul dintre principalii dezvoltatori rezidențiali din România."
+        },
+        {
+          "year": "2022",
+          "title": "Angajament pentru Sustenabilitate",
+          "description": "A adoptat practici de construcție ecologică și principii de design eficient energetic în toate dezvoltările noi, obținând certificări de mediu."
+        },
+        {
+          "year": "2024",
+          "title": "Lansarea Portofoliului de Lux",
+          "description": "A introdus o linie premium de reședințe de lux, combinând arhitectura tradițională cu confortul contemporan pentru cumpărătorul exigent."
+        }
       ],
       "gran-via": [
-        { "year": "2012", "title": "Fondarea Companiei", "description": "Gran Via a fost înființată cu accent pe crearea de dezvoltări rezidențiale distinctive care îmbină estetica modernă cu eleganța funcțională." },
-        { "year": "2015", "title": "Primul Proiect Premiat", "description": "A primit recunoaștere pentru designul arhitectural remarcabil, marcând compania ca inovator în peisajul imobiliar românesc." },
-        { "year": "2019", "title": "Intrarea în Segmentul Premium", "description": "S-a extins pe piața rezidențială premium, introducând finisaje de înaltă clasă și opțiuni de design personalizat pentru dezvoltări selecte." },
-        { "year": "2023", "title": "Dezvoltări Centrate pe Comunitate", "description": "A lansat concepte de locuire integrată cu spații verzi comune, facilități de wellness și centre comunitare." }
+        {
+          "year": "2012",
+          "title": "Fondarea Companiei",
+          "description": "Gran Via a fost înființată cu accent pe crearea de dezvoltări rezidențiale distinctive care îmbină estetica modernă cu eleganța funcțională."
+        },
+        {
+          "year": "2015",
+          "title": "Primul Proiect Premiat",
+          "description": "A primit recunoaștere pentru designul arhitectural remarcabil, marcând compania ca inovator în peisajul imobiliar românesc."
+        },
+        {
+          "year": "2019",
+          "title": "Intrarea în Segmentul Premium",
+          "description": "S-a extins pe piața rezidențială premium, introducând finisaje de înaltă clasă și opțiuni de design personalizat pentru dezvoltări selecte."
+        },
+        {
+          "year": "2023",
+          "title": "Dezvoltări Centrate pe Comunitate",
+          "description": "A lansat concepte de locuire integrată cu spații verzi comune, facilități de wellness și centre comunitare."
+        }
       ],
       "nova-building": [
-        { "year": "2014", "title": "Fondarea Companiei", "description": "Nova Building a început cu un angajament față de tehnicile inovatoare de construcție și o filozofie de design centrată pe client." },
-        { "year": "2017", "title": "Integrarea Tehnologiei", "description": "A fost pionier în integrarea caselor inteligente în toate dezvoltările noi, oferind rezidenților experiențe de locuire de ultimă generație." },
-        { "year": "2020", "title": "Faza de Creștere Rapidă", "description": "A dublat portofoliul de proiecte și a extins echipa, livrând simultan mai multe dezvoltări în întreaga regiune." },
-        { "year": "2024", "title": "Proiectul de Lux Principal", "description": "A dezvăluit un complex rezidențial exclusiv de lux, poziționând compania în fruntea imobiliarelor premium." }
+        {
+          "year": "2014",
+          "title": "Fondarea Companiei",
+          "description": "Nova Building a început cu un angajament față de tehnicile inovatoare de construcție și o filozofie de design centrată pe client."
+        },
+        {
+          "year": "2017",
+          "title": "Integrarea Tehnologiei",
+          "description": "A fost pionier în integrarea caselor inteligente în toate dezvoltările noi, oferind rezidenților experiențe de locuire de ultimă generație."
+        },
+        {
+          "year": "2020",
+          "title": "Faza de Creștere Rapidă",
+          "description": "A dublat portofoliul de proiecte și a extins echipa, livrând simultan mai multe dezvoltări în întreaga regiune."
+        },
+        {
+          "year": "2024",
+          "title": "Proiectul de Lux Principal",
+          "description": "A dezvăluit un complex rezidențial exclusiv de lux, poziționând compania în fruntea imobiliarelor premium."
+        }
       ],
       "default": [
-        { "year": "2015", "title": "Fondarea Companiei", "description": "{name} a fost înființată cu misiunea de a crea spații de locuit excepționale în {city}, combinând meșteșugul de calitate cu designul atent." },
-        { "year": "2018", "title": "Prima Dezvoltare Majoră", "description": "A livrat cu succes primul proiect rezidențial la scară largă, câștigând încrederea cumpărătorilor și stabilind o prezență puternică pe piață." },
-        { "year": "2021", "title": "Extinderea Portofoliului", "description": "A extins portofoliul de dezvoltare cu tipuri diverse de proprietăți, de la apartamente moderne la vile premium, răspunzând unei game mai largi de cumpărători exigenți." },
-        { "year": "2024", "title": "Excelență Recunoscută", "description": "A atins un reper în locuințele livrate și a câștigat recunoaștere pentru angajamentul față de calitate, sustenabilitate și satisfacția clienților." }
+        {
+          "year": "2015",
+          "title": "Fondarea Companiei",
+          "description": "{name} a fost înființată cu misiunea de a crea spații de locuit excepționale în {city}, combinând meșteșugul de calitate cu designul atent."
+        },
+        {
+          "year": "2018",
+          "title": "Prima Dezvoltare Majoră",
+          "description": "A livrat cu succes primul proiect rezidențial la scară largă, câștigând încrederea cumpărătorilor și stabilind o prezență puternică pe piață."
+        },
+        {
+          "year": "2021",
+          "title": "Extinderea Portofoliului",
+          "description": "A extins portofoliul de dezvoltare cu tipuri diverse de proprietăți, de la apartamente moderne la vile premium, răspunzând unei game mai largi de cumpărători exigenți."
+        },
+        {
+          "year": "2024",
+          "title": "Excelență Recunoscută",
+          "description": "A atins un reper în locuințele livrate și a câștigat recunoaștere pentru angajamentul față de calitate, sustenabilitate și satisfacția clienților."
+        }
       ]
     }
   },
@@ -370,29 +442,6 @@
     },
     "error": "Ceva nu a funcționat. Vă rugăm încercați din nou."
   },
-  "Common": {
-    "currency": "EUR",
-    "sqm": "m²",
-    "viewProperty": "Vezi Proprietatea",
-    "learnMore": "Află Mai Multe",
-    "readMore": "Citește Mai Mult",
-    "available": "Disponibil",
-    "sold": "Vândut",
-    "reserved": "Rezervat",
-    "new": "Nou",
-    "featured": "Recomandat",
-    "propertyTypes": {
-      "apartment": "Apartament",
-      "house": "Casă",
-      "villa": "Vilă",
-      "terrain": "Teren",
-      "penthouse": "Penthouse",
-      "estate": "Domeniu",
-      "chalet": "Chalet",
-      "mansion": "Conac",
-      "palace": "Palat"
-    }
-  },
   "Breadcrumb": {
     "home": "Acasă",
     "properties": "Proprietăți",
@@ -457,7 +506,7 @@
     },
     "narrative": {
       "label": "O Invitație",
-      "manifesto": "De secole, Transilvania și-a păzit comorile în spatele pădurilor străvechi și al trecătorilor montane. Deschidem porțile pentru câțiva aleși \u2014 cei care înțeleg că adevăratul lux nu se cumpără, ci se moștenește de la pământul însuși.",
+      "manifesto": "De secole, Transilvania și-a păzit comorile în spatele pădurilor străvechi și al trecătorilor montane. Deschidem porțile pentru câțiva aleși — cei care înțeleg că adevăratul lux nu se cumpără, ci se moștenește de la pământul însuși.",
       "teaser": "Descoperă ce se ascunde dincolo."
     },
     "story": {
@@ -468,7 +517,7 @@
         },
         "heritage": {
           "title": "Castele & Cetăți",
-          "body": "Șapte secole de biserici fortificate, cetăți medievale și moșii nobiliare. Istoria aici nu este conservată sub sticlă \u2014 este trăită."
+          "body": "Șapte secole de biserici fortificate, cetăți medievale și moșii nobiliare. Istoria aici nu este conservată sub sticlă — este trăită."
         },
         "market": {
           "title": "O Frontieră Emergentă",
@@ -476,7 +525,7 @@
         },
         "lifestyle": {
           "title": "O Viață Rafinată",
-          "body": "Gastronomie de calibru Michelin, regiuni viticole de clasă mondială și sezoane culturale rivalizând orice capitală europeană. Aceasta nu este o retragere \u2014 este o sosire."
+          "body": "Gastronomie de calibru Michelin, regiuni viticole de clasă mondială și sezoane culturale rivalizând orice capitală europeană. Aceasta nu este o retragere — este o sosire."
         }
       }
     },
@@ -484,7 +533,7 @@
       "propertiesSold": "Proprietăți Promovate",
       "yearsExperience": "Ani de Excelență",
       "citiesServed": "Orașe Deservite",
-      "portfolioValue": "Valoare Portofoliu (M\u00a0EUR)"
+      "portfolioValue": "Valoare Portofoliu (M EUR)"
     },
     "collection": {
       "subtitle": "Colecția",
@@ -507,7 +556,7 @@
     "brand": {
       "label": "Etosul Nostru",
       "title": "Redefinim Ce Înseamnă Luxul",
-      "description": "Nu prezentăm doar proprietăți. Curăm moșteniri \u2014 conectând indivizi vizionari cu domenii care vor defini familiile lor pentru generații. În Transilvania, am găsit un tărâm unde extraordinarul este încă posibil.",
+      "description": "Nu prezentăm doar proprietăți. Curăm moșteniri — conectând indivizi vizionari cu domenii care vor defini familiile lor pentru generații. În Transilvania, am găsit un tărâm unde extraordinarul este încă posibil.",
       "cta": "Descoperă Povestea Noastră"
     },
     "landmarks": {

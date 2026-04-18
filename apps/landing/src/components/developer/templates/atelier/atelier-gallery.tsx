@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useCallback, useEffect } from "react";
+import { useState, useEffect } from "react";
 import type { Property, Locale } from "@tge/types";
 import {
   SectionHeading,
@@ -26,23 +26,26 @@ export function AtelierGallery({ properties, locale }: AtelierGalleryProps) {
   const [current, setCurrent] = useState(0);
   const [total, setTotal] = useState(0);
 
-  const onSelect = useCallback(() => {
-    if (!api) return;
-    setCurrent(api.selectedScrollSnap() + 1);
-    setTotal(api.scrollSnapList().length);
-  }, [api]);
-
   useEffect(() => {
     if (!api) return;
-    onSelect();
-    api.on("select", onSelect);
-    api.on("reInit", onSelect);
+    const snap = () => {
+      setCurrent(api.selectedScrollSnap() + 1);
+      setTotal(api.scrollSnapList().length);
+    };
+    api.on("init", snap);
+    api.on("select", snap);
+    api.on("reInit", snap);
+    // Deferred initial sync — avoids calling setState synchronously inside
+    // the effect body (React 19 lint rule); microtask still flushes before
+    // paint so the first visible state is correct.
+    queueMicrotask(snap);
 
     return () => {
-      api.off("select", onSelect);
-      api.off("reInit", onSelect);
+      api.off("init", snap);
+      api.off("select", snap);
+      api.off("reInit", snap);
     };
-  }, [api, onSelect]);
+  }, [api]);
 
   if (properties.length === 0) return null;
 

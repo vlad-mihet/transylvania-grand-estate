@@ -2,6 +2,9 @@ import type { NextConfig } from "next";
 import createNextIntlPlugin from "next-intl/plugin";
 
 const nextConfig: NextConfig = {
+  env: {
+    NEXT_PUBLIC_SITE_ID: "TGE_LUXURY",
+  },
   images: {
     formats: ["image/avif", "image/webp"],
     unoptimized: true,
@@ -26,6 +29,8 @@ const nextConfig: NextConfig = {
     "@tge/hooks",
     "@tge/types",
     "@tge/i18n",
+    "@tge/branding",
+    "@tge/api-client",
   ],
 };
 

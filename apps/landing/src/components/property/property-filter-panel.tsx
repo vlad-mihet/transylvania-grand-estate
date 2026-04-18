@@ -14,7 +14,7 @@ import {
 import { Button } from "@tge/ui";
 import { Label } from "@tge/ui";
 import { Search, X, SlidersHorizontal } from "lucide-react";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useState } from "react";
 
 export const cities = [
   "cluj-napoca",
@@ -60,11 +60,16 @@ export function PropertyFilterPanel() {
   const router = useRouter();
   const pathname = usePathname();
 
-  const [search, setSearch] = useState(searchParams.get("search") || "");
+  const urlSearch = searchParams.get("search") || "";
+  const [search, setSearch] = useState(urlSearch);
+  const [lastUrlSearch, setLastUrlSearch] = useState(urlSearch);
 
-  useEffect(() => {
-    setSearch(searchParams.get("search") || "");
-  }, [searchParams]);
+  // Resync when the URL changes from under us (back/forward nav) without an
+  // effect — React's "adjusting state on prop change" pattern.
+  if (urlSearch !== lastUrlSearch) {
+    setLastUrlSearch(urlSearch);
+    setSearch(urlSearch);
+  }
 
   const cityValue = searchParams.get("city") || "all";
   const typeValue = searchParams.get("type") || "all";

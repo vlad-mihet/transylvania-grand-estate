@@ -9,17 +9,20 @@
     "lint": "eslint"
   },
   "dependencies": {
-    "@tge/types": "workspace:*",
-    "@tge/utils": "workspace:*",
+    "@tanstack/react-query": "^5.90.21",
+    "@tge/api-client": "workspace:*",
+    "@tge/branding": "workspace:*",
     "@tge/hooks": "workspace:*",
-    "@tge/ui": "workspace:*",
     "@tge/i18n": "workspace:*",
     "@tge/tailwind-config": "workspace:*",
+    "@tge/types": "workspace:*",
+    "@tge/ui": "workspace:*",
+    "@tge/utils": "workspace:*",
+    "lucide-react": "^0.575.0",
     "next": "16.1.6",
     "next-intl": "^4.8.3",
     "react": "19.2.3",
-    "react-dom": "19.2.3",
-    "lucide-react": "^0.575.0"
+    "react-dom": "19.2.3"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",

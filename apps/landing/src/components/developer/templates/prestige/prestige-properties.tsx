@@ -15,7 +15,6 @@ interface PrestigePropertiesProps {
 }
 
 export function PrestigeProperties({
-  developer,
   properties,
   locale,
 }: PrestigePropertiesProps) {

@@ -1,9 +1,12 @@
 import type { Metadata } from "next";
+import { getBrand } from "@tge/branding";
+
+const brand = getBrand();
 
 export const metadata: Metadata = {
   title: {
-    template: "%s | Transylvania Grand Estate",
-    default: "Transylvania Grand Estate | Luxury Real Estate in Romania",
+    template: `%s | ${brand.name}`,
+    default: `${brand.name} | Luxury Real Estate in Romania`,
   },
   description:
     "Discover exceptional luxury properties across Romania's most prestigious addresses. Villas, mansions, and estates from €1M+ in Cluj-Napoca, Oradea, Timisoara, Brasov, and Sibiu.",

@@ -74,20 +74,23 @@ function smoothstep(t: number) {
   return t * t * (3 - 2 * t);
 }
 
+// Seed `reducedMotion` synchronously so the first paint matches the user's
+// accessibility preference — avoids flash and the set-state-in-effect anti-
+// pattern. SSR-safe: returns false on the server.
+const prefersReducedMotionInitial = () =>
+  typeof window !== "undefined" &&
+  window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
 export function FloatingDiamond() {
   const elementRef = useRef<HTMLDivElement>(null);
   const rafRef = useRef<number>(0);
   const initialLeftRef = useRef(0);
   const [mounted, setMounted] = useState(false);
-  const [reducedMotion, setReducedMotion] = useState(false);
+  const [reducedMotion] = useState(() => prefersReducedMotionInitial());
   const pathname = usePathname();
   const isHomepage = pathname === "/";
 
   useEffect(() => {
-    const prefersReduced =
-      window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    setReducedMotion(prefersReduced);
-
     const syncPosition = () => {
       const headerDiamond = document.getElementById("header-diamond");
       if (headerDiamond && elementRef.current) {

@@ -6,7 +6,7 @@ import { Link, usePathname } from "@tge/i18n/navigation";
 import { Sheet, SheetContent, SheetTrigger } from "@tge/ui";
 import { Button } from "@tge/ui";
 import { AccentButton } from "@tge/ui";
-import { InquiryTrigger } from "@/components/inquiry";
+import { InquiryTrigger } from "@tge/ui";
 import { LanguageSwitcher } from "./language-switcher";
 import { Menu, X, ChevronDown, Phone, Mail } from "lucide-react";
 import { cn } from "@tge/utils";

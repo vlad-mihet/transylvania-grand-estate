@@ -11,24 +11,25 @@ interface CinematicHeroProps {
   brandLine: string;
 }
 
+// Seed initial `stage` synchronously so users with reduced-motion skip the
+// animation sequence without a flash. SSR-safe: falls back to 0 on the server.
+const prefersReducedMotionInitial = () =>
+  typeof window !== "undefined" &&
+  window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
 export function CinematicHero({
   videoSrc,
   posterImage,
   headline,
   brandLine,
 }: CinematicHeroProps) {
-  const [stage, setStage] = useState(0);
+  const [stage, setStage] = useState(() =>
+    prefersReducedMotionInitial() ? 4 : 0,
+  );
   const [videoFailed, setVideoFailed] = useState(false);
 
   useEffect(() => {
-    const prefersReducedMotion = window.matchMedia(
-      "(prefers-reduced-motion: reduce)"
-    ).matches;
-
-    if (prefersReducedMotion) {
-      setStage(4);
-      return;
-    }
+    if (prefersReducedMotionInitial()) return;
 
     const timers = [
       setTimeout(() => setStage(1), 800),

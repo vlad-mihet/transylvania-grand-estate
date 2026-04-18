@@ -1,7 +1,12 @@
 import { getLocale, getTranslations } from "next-intl/server";
-import { fetchApi } from "@/lib/api";
-import { mapApiCity, mapApiDeveloper, mapApiProperties } from "@/lib/mappers";
-import type { Locale } from "@tge/types";
+import {
+  HydrationBoundary,
+  QueryClient,
+  dehydrate,
+} from "@tanstack/react-query";
+import { fetchApi, fetchApiSafe } from "@tge/api-client";
+import { mapApiCity, mapApiDeveloper, mapApiProperties } from "@tge/api-client";
+import type { Locale, ApiCity, ApiDeveloper, ApiProperty } from "@tge/types";
 import { Container } from "@/components/layout/container";
 import { PropertyFilter } from "@/components/property/property-filter";
 import { PropertyListingContent } from "./listing-content";
@@ -28,15 +33,23 @@ export default async function PropertiesPage({
   const fromContext =
     typeof params.from === "string" ? params.from : undefined;
 
-  const [raw, contextCityRaw, contextDeveloperRaw] = await Promise.all([
-    fetchApi<any[]>("/properties?limit=100"),
+  // Fetch the properties list eagerly; context lookups are optional breadcrumb
+  // breadcrumb hints — a missing city or developer shouldn't crash the page,
+  // so fetchApiSafe swallows per-request errors while we still surface the
+  // primary listing failure if `/properties` is down.
+  const [raw, contextCityResult, contextDeveloperResult] = await Promise.all([
+    fetchApi<ApiProperty[]>("/properties?limit=100"),
     fromContext === "city" && citySlug
-      ? fetchApi<any>(`/cities/${citySlug}`).catch(() => null)
-      : Promise.resolve(null),
+      ? fetchApiSafe<ApiCity>(`/cities/${citySlug}`)
+      : Promise.resolve({ ok: false as const, error: null }),
     fromContext === "developer" && developerSlug
-      ? fetchApi<any>(`/developers/${developerSlug}`).catch(() => null)
-      : Promise.resolve(null),
+      ? fetchApiSafe<ApiDeveloper>(`/developers/${developerSlug}`)
+      : Promise.resolve({ ok: false as const, error: null }),
   ]);
+  const contextCityRaw = contextCityResult.ok ? contextCityResult.data : null;
+  const contextDeveloperRaw = contextDeveloperResult.ok
+    ? contextDeveloperResult.data
+    : null;
 
   const properties = mapApiProperties(raw);
   const contextCity = contextCityRaw ? mapApiCity(contextCityRaw) : null;
@@ -44,7 +57,14 @@ export default async function PropertiesPage({
     ? mapApiDeveloper(contextDeveloperRaw)
     : null;
 
+  // Prime the React Query cache so client components that later call
+  // `useProperties({ limit: 100 })` hit the SSR payload instead of refetching.
+  // The queryKey matches `packages/hooks/src/queries/use-properties.ts`.
+  const queryClient = new QueryClient();
+  queryClient.setQueryData(["properties", { limit: 100 }], raw);
+
   return (
+    <HydrationBoundary state={dehydrate(queryClient)}>
     <>
       <ContextualHeader
         city={contextCity}
@@ -93,5 +113,6 @@ export default async function PropertiesPage({
         inquiryContext={{ type: "general" }}
       />
     </>
+    </HydrationBoundary>
   );
 }

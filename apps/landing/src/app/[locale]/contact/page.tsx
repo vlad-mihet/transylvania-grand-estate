@@ -1,8 +1,8 @@
 import { getTranslations, getLocale } from "next-intl/server";
-import { Locale } from "@tge/types";
+import { Locale, type ApiProperty } from "@tge/types";
 import { localize } from "@tge/utils";
-import { fetchApi } from "@/lib/api";
-import { mapApiProperties } from "@/lib/mappers";
+import { fetchApi } from "@tge/api-client";
+import { mapApiProperties } from "@tge/api-client";
 import { HeroSection } from "@/components/sections/hero-section";
 import { Container } from "@/components/layout/container";
 import { ContactForm } from "@/components/contact/contact-form";
@@ -19,7 +19,7 @@ export async function generateMetadata(): Promise<Metadata> {
 export default async function ContactPage() {
   const t = await getTranslations("ContactPage");
   const locale = (await getLocale()) as Locale;
-  const raw = await fetchApi<any[]>("/properties?limit=100");
+  const raw = await fetchApi<ApiProperty[]>("/properties?limit=100");
   const properties = mapApiProperties(raw);
 
   return (

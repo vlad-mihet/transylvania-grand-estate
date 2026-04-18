@@ -52,7 +52,7 @@
       "propertiesSold": "Propriétés Promues",
       "yearsExperience": "Années d'Expérience",
       "citiesServed": "Villes Desservies",
-      "portfolioValue": "Valeur du Portfolio (M\u00a0EUR)"
+      "portfolioValue": "Valeur du Portfolio (M EUR)"
     },
     "cities": {
       "subtitle": "Explorer par Région",
@@ -147,30 +147,102 @@
     "getInTouch": "Nous Contacter",
     "milestonesData": {
       "carpathia-imobiliare": [
-        { "year": "2008", "title": "Fondation de l'Entreprise", "description": "Carpathia Imobiliare a été fondée avec la vision de redéfinir le développement résidentiel en Transylvanie, apportant les standards de construction européens au marché roumain." },
-        { "year": "2010", "title": "Premier Complexe Résidentiel", "description": "Lancement du projet résidentiel inaugural, un complexe de 120 logements qui a établi de nouvelles références en matière de qualité et de design dans la région." },
-        { "year": "2014", "title": "Expansion dans Plusieurs Villes", "description": "Extension des opérations dans trois grandes villes de Transylvanie, établissant une réputation de livraison d'espaces de vie premium dans les délais et le budget." },
-        { "year": "2018", "title": "Cap des 3 000 Logements", "description": "Célébration de la livraison de plus de 3 000 logements, consolidant la position de l'entreprise comme l'un des principaux promoteurs résidentiels de Roumanie." },
-        { "year": "2022", "title": "Engagement Développement Durable", "description": "Adoption de pratiques de construction écologique et de principes de conception écoénergétique dans tous les nouveaux développements, obtenant des certifications environnementales." },
-        { "year": "2024", "title": "Lancement du Portfolio Luxe", "description": "Introduction d'une ligne premium de résidences de luxe, alliant architecture patrimoniale et conforts contemporains pour l'acheteur exigeant." }
+        {
+          "year": "2008",
+          "title": "Fondation de l'Entreprise",
+          "description": "Carpathia Imobiliare a été fondée avec la vision de redéfinir le développement résidentiel en Transylvanie, apportant les standards de construction européens au marché roumain."
+        },
+        {
+          "year": "2010",
+          "title": "Premier Complexe Résidentiel",
+          "description": "Lancement du projet résidentiel inaugural, un complexe de 120 logements qui a établi de nouvelles références en matière de qualité et de design dans la région."
+        },
+        {
+          "year": "2014",
+          "title": "Expansion dans Plusieurs Villes",
+          "description": "Extension des opérations dans trois grandes villes de Transylvanie, établissant une réputation de livraison d'espaces de vie premium dans les délais et le budget."
+        },
+        {
+          "year": "2018",
+          "title": "Cap des 3 000 Logements",
+          "description": "Célébration de la livraison de plus de 3 000 logements, consolidant la position de l'entreprise comme l'un des principaux promoteurs résidentiels de Roumanie."
+        },
+        {
+          "year": "2022",
+          "title": "Engagement Développement Durable",
+          "description": "Adoption de pratiques de construction écologique et de principes de conception écoénergétique dans tous les nouveaux développements, obtenant des certifications environnementales."
+        },
+        {
+          "year": "2024",
+          "title": "Lancement du Portfolio Luxe",
+          "description": "Introduction d'une ligne premium de résidences de luxe, alliant architecture patrimoniale et conforts contemporains pour l'acheteur exigeant."
+        }
       ],
       "gran-via": [
-        { "year": "2012", "title": "Fondation de l'Entreprise", "description": "Gran Via a été fondée avec l'ambition de créer des développements résidentiels distinctifs alliant esthétique moderne et élégance fonctionnelle." },
-        { "year": "2015", "title": "Premier Projet Primé", "description": "Reconnaissance pour un design architectural exceptionnel, positionnant l'entreprise comme innovateur dans le paysage immobilier roumain." },
-        { "year": "2019", "title": "Entrée dans le Segment Premium", "description": "Expansion sur le marché résidentiel premium, avec des finitions haut de gamme et des options de design sur mesure pour des développements sélectionnés." },
-        { "year": "2023", "title": "Développements Axés Communauté", "description": "Lancement de concepts d'habitat intégré avec espaces verts partagés, installations de bien-être et centres communautaires." }
+        {
+          "year": "2012",
+          "title": "Fondation de l'Entreprise",
+          "description": "Gran Via a été fondée avec l'ambition de créer des développements résidentiels distinctifs alliant esthétique moderne et élégance fonctionnelle."
+        },
+        {
+          "year": "2015",
+          "title": "Premier Projet Primé",
+          "description": "Reconnaissance pour un design architectural exceptionnel, positionnant l'entreprise comme innovateur dans le paysage immobilier roumain."
+        },
+        {
+          "year": "2019",
+          "title": "Entrée dans le Segment Premium",
+          "description": "Expansion sur le marché résidentiel premium, avec des finitions haut de gamme et des options de design sur mesure pour des développements sélectionnés."
+        },
+        {
+          "year": "2023",
+          "title": "Développements Axés Communauté",
+          "description": "Lancement de concepts d'habitat intégré avec espaces verts partagés, installations de bien-être et centres communautaires."
+        }
       ],
       "nova-building": [
-        { "year": "2014", "title": "Fondation de l'Entreprise", "description": "Nova Building a débuté avec un engagement envers les techniques de construction innovantes et une philosophie de design centrée sur le client." },
-        { "year": "2017", "title": "Intégration Technologique", "description": "Pionnier de l'intégration de la maison intelligente dans tous les nouveaux développements, offrant aux résidents des expériences de vie à la pointe de la technologie." },
-        { "year": "2020", "title": "Phase de Croissance Rapide", "description": "Doublement du portfolio de projets et expansion de l'équipe, avec la livraison simultanée de plusieurs développements dans la région." },
-        { "year": "2024", "title": "Projet Phare de Luxe", "description": "Dévoilement d'un complexe résidentiel exclusif de luxe, positionnant l'entreprise à l'avant-garde de l'immobilier premium." }
+        {
+          "year": "2014",
+          "title": "Fondation de l'Entreprise",
+          "description": "Nova Building a débuté avec un engagement envers les techniques de construction innovantes et une philosophie de design centrée sur le client."
+        },
+        {
+          "year": "2017",
+          "title": "Intégration Technologique",
+          "description": "Pionnier de l'intégration de la maison intelligente dans tous les nouveaux développements, offrant aux résidents des expériences de vie à la pointe de la technologie."
+        },
+        {
+          "year": "2020",
+          "title": "Phase de Croissance Rapide",
+          "description": "Doublement du portfolio de projets et expansion de l'équipe, avec la livraison simultanée de plusieurs développements dans la région."
+        },
+        {
+          "year": "2024",
+          "title": "Projet Phare de Luxe",
+          "description": "Dévoilement d'un complexe résidentiel exclusif de luxe, positionnant l'entreprise à l'avant-garde de l'immobilier premium."
+        }
       ],
       "default": [
-        { "year": "2015", "title": "Fondation de l'Entreprise", "description": "{name} a été fondée avec la mission de créer des espaces de vie exceptionnels à {city}, alliant artisanat de qualité et design réfléchi." },
-        { "year": "2018", "title": "Premier Grand Développement", "description": "Livraison réussie du premier projet résidentiel à grande échelle, gagnant la confiance des acheteurs et établissant une forte présence sur le marché." },
-        { "year": "2021", "title": "Expansion du Portfolio", "description": "Expansion du portfolio avec des types de propriétés diversifiés, des appartements modernes aux villas premium, répondant à une gamme plus large d'acheteurs exigeants." },
-        { "year": "2024", "title": "Excellence Reconnue", "description": "Franchissement d'un cap en logements livrés et reconnaissance pour l'engagement envers la qualité, la durabilité et la satisfaction client." }
+        {
+          "year": "2015",
+          "title": "Fondation de l'Entreprise",
+          "description": "{name} a été fondée avec la mission de créer des espaces de vie exceptionnels à {city}, alliant artisanat de qualité et design réfléchi."
+        },
+        {
+          "year": "2018",
+          "title": "Premier Grand Développement",
+          "description": "Livraison réussie du premier projet résidentiel à grande échelle, gagnant la confiance des acheteurs et établissant une forte présence sur le marché."
+        },
+        {
+          "year": "2021",
+          "title": "Expansion du Portfolio",
+          "description": "Expansion du portfolio avec des types de propriétés diversifiés, des appartements modernes aux villas premium, répondant à une gamme plus large d'acheteurs exigeants."
+        },
+        {
+          "year": "2024",
+          "title": "Excellence Reconnue",
+          "description": "Franchissement d'un cap en logements livrés et reconnaissance pour l'engagement envers la qualité, la durabilité et la satisfaction client."
+        }
       ]
     }
   },
@@ -219,12 +291,12 @@
       "clearAll": "Tout Effacer",
       "activeFilters": "Filtres Actifs",
       "filterBy": "Filtrer Par",
-      "priceUnder500k": "Moins de 500K\u00a0€",
-      "price500kTo1m": "500K\u00a0€ - 1M\u00a0€",
-      "price1to15": "1M\u00a0€ - 1,5M\u00a0€",
-      "price15to2": "1,5M\u00a0€ - 2M\u00a0€",
-      "price2to3": "2M\u00a0€ - 3M\u00a0€",
-      "price3plus": "3M\u00a0€+"
+      "priceUnder500k": "Moins de 500K €",
+      "price500kTo1m": "500K € - 1M €",
+      "price1to15": "1M € - 1,5M €",
+      "price15to2": "1,5M € - 2M €",
+      "price2to3": "2M € - 3M €",
+      "price3plus": "3M €+"
     },
     "noResults": {
       "title": "Aucune Propriété Trouvée",
@@ -341,10 +413,10 @@
         "message": "Nous avons bien reçu votre demande et vous répondrons dans les 24 heures."
       },
       "budgetOptions": {
-        "1to15": "1M\u00a0€ - 1,5M\u00a0€",
-        "15to2": "1,5M\u00a0€ - 2M\u00a0€",
-        "2to3": "2M\u00a0€ - 3M\u00a0€",
-        "3plus": "3M\u00a0€+"
+        "1to15": "1M € - 1,5M €",
+        "15to2": "1,5M € - 2M €",
+        "2to3": "2M € - 3M €",
+        "3plus": "3M €+"
       }
     },
     "offices": {
@@ -369,29 +441,6 @@
       "message": "Nous avons reçu votre demande et vous répondrons sous 24 heures."
     },
     "error": "Une erreur est survenue. Veuillez réessayer."
-  },
-  "Common": {
-    "currency": "EUR",
-    "sqm": "m²",
-    "viewProperty": "Voir la Propriété",
-    "learnMore": "En Savoir Plus",
-    "readMore": "Lire la Suite",
-    "available": "Disponible",
-    "sold": "Vendu",
-    "reserved": "Réservé",
-    "new": "Nouveau",
-    "featured": "En Vedette",
-    "propertyTypes": {
-      "apartment": "Appartement",
-      "house": "Maison",
-      "villa": "Villa",
-      "terrain": "Terrain",
-      "penthouse": "Penthouse",
-      "estate": "Domaine",
-      "chalet": "Chalet",
-      "mansion": "Manoir",
-      "palace": "Palais"
-    }
   },
   "Breadcrumb": {
     "home": "Accueil",
@@ -457,7 +506,7 @@
     },
     "narrative": {
       "label": "Une Invitation",
-      "manifesto": "Depuis des siècles, la Transylvanie garde ses trésors derrière des forêts ancestrales et des cols montagneux. Nous ouvrons les portes à quelques élus \u2014 ceux qui comprennent que le vrai luxe ne s'achète pas, mais s'hérite de la terre elle-même.",
+      "manifesto": "Depuis des siècles, la Transylvanie garde ses trésors derrière des forêts ancestrales et des cols montagneux. Nous ouvrons les portes à quelques élus — ceux qui comprennent que le vrai luxe ne s'achète pas, mais s'hérite de la terre elle-même.",
       "teaser": "Découvrez ce qui se cache au-delà."
     },
     "story": {
@@ -468,7 +517,7 @@
         },
         "heritage": {
           "title": "Châteaux & Citadelles",
-          "body": "Sept siècles d'églises fortifiées, de citadelles médiévales et de domaines nobiliaires. Ici, l'histoire n'est pas conservée sous verre \u2014 elle se vit."
+          "body": "Sept siècles d'églises fortifiées, de citadelles médiévales et de domaines nobiliaires. Ici, l'histoire n'est pas conservée sous verre — elle se vit."
         },
         "market": {
           "title": "Une Frontière Émergente",
@@ -476,7 +525,7 @@
         },
         "lifestyle": {
           "title": "Une Vie Raffinée",
-          "body": "Gastronomie de calibre Michelin, régions viticoles de classe mondiale et saisons culturelles rivalisant avec toute capitale européenne. Ce n'est pas une retraite \u2014 c'est une arrivée."
+          "body": "Gastronomie de calibre Michelin, régions viticoles de classe mondiale et saisons culturelles rivalisant avec toute capitale européenne. Ce n'est pas une retraite — c'est une arrivée."
         }
       }
     },
@@ -484,7 +533,7 @@
       "propertiesSold": "Propriétés Promues",
       "yearsExperience": "Années d'Excellence",
       "citiesServed": "Villes Desservies",
-      "portfolioValue": "Valeur du Portfolio (M\u00a0EUR)"
+      "portfolioValue": "Valeur du Portfolio (M EUR)"
     },
     "collection": {
       "subtitle": "La Collection",
@@ -507,7 +556,7 @@
     "brand": {
       "label": "Notre Éthique",
       "title": "Redéfinir le Sens du Luxe",
-      "description": "Nous ne présentons pas simplement des propriétés. Nous curons des héritages \u2014 reliant des individus visionnaires à des domaines qui définiront leurs familles pour des générations. En Transylvanie, nous avons trouvé une terre où l'extraordinaire est encore possible.",
+      "description": "Nous ne présentons pas simplement des propriétés. Nous curons des héritages — reliant des individus visionnaires à des domaines qui définiront leurs familles pour des générations. En Transylvanie, nous avons trouvé une terre où l'extraordinaire est encore possible.",
       "cta": "Découvrir Notre Histoire"
     },
     "landmarks": {

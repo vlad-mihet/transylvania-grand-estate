@@ -1,7 +1,7 @@
 import { getTranslations } from "next-intl/server";
-import { fetchApi } from "@/lib/api";
-import { mapApiProperties } from "@/lib/mappers";
-import type { City, Developer, Testimonial } from "@tge/types";
+import { fetchApi } from "@tge/api-client";
+import { mapApiProperties } from "@tge/api-client";
+import type { City, Developer, Testimonial, ApiProperty } from "@tge/types";
 import { CinematicHero } from "@/components/sections/cinematic-hero";
 import { NarrativeIntro } from "@/components/sections/narrative-intro";
 import { TransylvaniaStory } from "@/components/sections/transylvania-story";
@@ -18,7 +18,7 @@ export default async function TransylvaniaPage() {
   const t = await getTranslations("TransylvaniaPage");
 
   const [propertiesRaw, cities, developers, testimonials] = await Promise.all([
-    fetchApi<any[]>("/properties?featured=true&limit=6"),
+    fetchApi<ApiProperty[]>("/properties?featured=true&limit=6"),
     fetchApi<City[]>("/cities"),
     fetchApi<Developer[]>("/developers?featured=true"),
     fetchApi<Testimonial[]>("/testimonials"),

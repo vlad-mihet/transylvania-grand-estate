@@ -14,7 +14,7 @@ import {
 } from "@tge/ui";
 import { AccentButton } from "@tge/ui";
 import { CheckCircle, Loader2 } from "lucide-react";
-import { mutateApi } from "@/lib/api";
+import { useInquirySubmission } from "@tge/hooks";
 
 interface ContactFormProps {
   properties: { id: string; slug: string; title: string }[];
@@ -22,37 +22,26 @@ interface ContactFormProps {
 
 export function ContactForm({ properties }: ContactFormProps) {
   const t = useTranslations("ContactPage.form");
-  const [submitted, setSubmitted] = useState(false);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
+  const {
+    submit,
+    isSubmitting: loading,
+    isSuccess: submitted,
+    error,
+  } = useInquirySubmission();
   const [budget, setBudget] = useState("");
   const [propertySlug, setPropertySlug] = useState("");
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    setLoading(true);
-    setError("");
-
     const formData = new FormData(e.currentTarget);
-
-    try {
-      await mutateApi("/inquiries", {
-        body: {
-          type: "general",
-          name: formData.get("name"),
-          email: formData.get("email"),
-          phone: formData.get("phone") || undefined,
-          message: formData.get("message"),
-          budget: budget || undefined,
-          propertySlug: propertySlug || undefined,
-        },
-      });
-      setSubmitted(true);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "Something went wrong");
-    } finally {
-      setLoading(false);
-    }
+    await submit({
+      name: String(formData.get("name") ?? ""),
+      email: String(formData.get("email") ?? ""),
+      phone: (formData.get("phone") as string | null) || undefined,
+      message: String(formData.get("message") ?? ""),
+      budget: budget || undefined,
+      propertySlug: propertySlug || undefined,
+    });
   };
 
   if (submitted) {
