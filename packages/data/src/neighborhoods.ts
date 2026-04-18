@@ -95,4 +95,19 @@ export const neighborhoods: NeighborhoodSeed[] = [
   { name: "Piața Cluj", slug: "piata-cluj", citySlug: "sibiu" },
   { name: "Sub Arini", slug: "sub-arini", citySlug: "sibiu" },
   { name: "Trei Stejari", slug: "trei-stejari", citySlug: "sibiu" },
+
+  // ─── Târgu Mureș ────────────────────────────────────────
+  { name: "Centru", slug: "centru", citySlug: "targu-mures" },
+  { name: "Tudor Vladimirescu", slug: "tudor-vladimirescu", citySlug: "targu-mures" },
+  { name: "7 Noiembrie", slug: "7-noiembrie", citySlug: "targu-mures" },
+  { name: "Dâmbu Pietros", slug: "dambu-pietros", citySlug: "targu-mures" },
+  { name: "Cornișa", slug: "cornisa", citySlug: "targu-mures" },
+  { name: "Belvedere", slug: "belvedere", citySlug: "targu-mures" },
+  { name: "Aleea Carpați", slug: "aleea-carpati", citySlug: "targu-mures" },
+  { name: "Unirii", slug: "unirii-tgm", citySlug: "targu-mures" },
+  { name: "Gării", slug: "garii", citySlug: "targu-mures" },
+  { name: "Mureșeni", slug: "mureseni", citySlug: "targu-mures" },
+  { name: "Livezeni", slug: "livezeni", citySlug: "targu-mures" },
+  { name: "Budiului", slug: "budiului", citySlug: "targu-mures" },
+  { name: "Remetea", slug: "remetea", citySlug: "targu-mures" },
 ];
