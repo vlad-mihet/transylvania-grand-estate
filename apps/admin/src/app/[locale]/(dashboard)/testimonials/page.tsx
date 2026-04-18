@@ -44,7 +44,7 @@ export default function TestimonialsPage() {
     onError: () => toast.error(t("deleteFailed")),
   });
 
-  const columns: ColumnDef<Testimonial, any>[] = [
+  const columns: ColumnDef<Testimonial, unknown>[] = [
     { accessorKey: "clientName", header: t("columnClient") },
     { accessorKey: "location", header: t("columnLocation") },
     { accessorKey: "propertyType", header: t("columnPropertyType") },
@@ -64,7 +64,7 @@ export default function TestimonialsPage() {
       header: t("columnQuote"),
       cell: ({ getValue }) => {
         const val = getValue();
-        const text = typeof val === "string" ? val : (val as any)?.[locale] ?? (val as any)?.en ?? "";
+        const text = typeof val === "string" ? val : (val as Record<string, string> | null)?.[locale] ?? (val as Record<string, string> | null)?.en ?? "";
         return (
           <p className="max-w-[300px] truncate text-sm text-muted-foreground">
             {text}
@@ -110,7 +110,7 @@ export default function TestimonialsPage() {
           mobileCard={(testimonial) => {
             const quoteText = typeof testimonial.quote === "string"
               ? testimonial.quote
-              : (testimonial.quote as any)?.[locale] ?? (testimonial.quote as any)?.en ?? "";
+              : (testimonial.quote as Record<string, string> | null)?.[locale] ?? (testimonial.quote as Record<string, string> | null)?.en ?? "";
             return (
               <div className="rounded-xl border border-copper/[0.08] p-4 space-y-3">
                 <div className="flex items-center justify-between">

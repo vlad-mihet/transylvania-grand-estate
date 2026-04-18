@@ -57,7 +57,7 @@ export default function AgentsPage() {
     },
   });
 
-  const columns: ColumnDef<Agent, any>[] = [
+  const columns: ColumnDef<Agent, unknown>[] = [
     {
       accessorKey: "photo",
       header: "",

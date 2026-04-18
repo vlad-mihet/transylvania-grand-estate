@@ -1,4 +1,4 @@
-import { PartialType } from '@nestjs/swagger';
-import { CreateCityDto } from './create-city.dto';
+import { createZodDto } from 'nestjs-zod';
+import { updateCitySchema } from '@tge/types/schemas/city';
 
-export class UpdateCityDto extends PartialType(CreateCityDto) {}
+export class UpdateCityDto extends createZodDto(updateCitySchema) {}

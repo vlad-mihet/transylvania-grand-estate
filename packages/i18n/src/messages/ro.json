@@ -1,0 +1,25 @@
+{
+  "Common": {
+    "currency": "EUR",
+    "sqm": "m²",
+    "viewProperty": "Vezi Proprietatea",
+    "learnMore": "Află Mai Multe",
+    "readMore": "Citește Mai Mult",
+    "available": "Disponibil",
+    "sold": "Vândut",
+    "reserved": "Rezervat",
+    "new": "Nou",
+    "featured": "Recomandat",
+    "propertyTypes": {
+      "apartment": "Apartament",
+      "house": "Casă",
+      "villa": "Vilă",
+      "terrain": "Teren",
+      "penthouse": "Penthouse",
+      "estate": "Domeniu",
+      "chalet": "Chalet",
+      "mansion": "Conac",
+      "palace": "Palat"
+    }
+  }
+}

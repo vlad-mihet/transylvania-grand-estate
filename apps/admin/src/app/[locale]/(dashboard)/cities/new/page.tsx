@@ -28,7 +28,6 @@ export default function NewCityPage() {
       return city;
     },
     onSuccess: () => { toast.success(t("created")); router.push("/cities"); },
-    onError: (err) => toast.error(err.message),
   });
 
   return (
@@ -37,6 +36,7 @@ export default function NewCityPage() {
       <CityForm
         onSubmit={(data, image) => createMutation.mutate({ data, image })}
         loading={createMutation.isPending}
+        submissionError={createMutation.error}
       />
     </div>
   );

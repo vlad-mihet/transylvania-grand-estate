@@ -3,6 +3,8 @@
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { developerSchema, DeveloperFormValues } from "@/lib/validations/developer";
+import { useApiFormErrors } from "@/lib/form-error";
+import { toast } from "sonner";
 import { BilingualInput } from "@/components/shared/bilingual-input";
 import { BilingualTextarea } from "@/components/shared/bilingual-textarea";
 import { ImageUpload } from "@/components/shared/image-upload";
@@ -25,6 +27,7 @@ interface DeveloperFormProps {
   logoUrl?: string | null;
   onSubmit: (data: DeveloperFormValues, logoFile: File | null) => void;
   loading?: boolean;
+  submissionError?: unknown;
 }
 
 export function DeveloperForm({
@@ -32,6 +35,7 @@ export function DeveloperForm({
   logoUrl,
   onSubmit,
   loading,
+  submissionError,
 }: DeveloperFormProps) {
   const [logoFile, setLogoFile] = useState<File | null>(null);
   const t = useTranslations("DeveloperForm");
@@ -51,6 +55,10 @@ export function DeveloperForm({
       featured: false,
       ...defaultValues,
     },
+  });
+
+  useApiFormErrors(form, submissionError, (err) => {
+    toast.error(err instanceof Error ? err.message : "Failed to save");
   });
 
   const generateSlug = () => {

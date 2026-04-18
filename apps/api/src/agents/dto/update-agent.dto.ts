@@ -1,4 +1,4 @@
-import { PartialType } from '@nestjs/swagger';
-import { CreateAgentDto } from './create-agent.dto';
+import { createZodDto } from 'nestjs-zod';
+import { updateAgentSchema } from '@tge/types/schemas/agent';
 
-export class UpdateAgentDto extends PartialType(CreateAgentDto) {}
+export class UpdateAgentDto extends createZodDto(updateAgentSchema) {}

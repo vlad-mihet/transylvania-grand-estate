@@ -5,6 +5,8 @@
     "plugins": [{ "name": "next" }],
     "paths": {
       "@/*": ["./src/*"],
+      "@tge/branding": ["../../packages/branding/src/index.ts"],
+      "@tge/branding/*": ["../../packages/branding/src/*"],
       "@tge/types": ["../../packages/types/src/index.ts"],
       "@tge/types/*": ["../../packages/types/src/*"],
       "@tge/utils": ["../../packages/utils/src/index.ts"],
@@ -15,8 +17,6 @@
       "@tge/ui/*": ["../../packages/ui/src/*"],
       "@tge/i18n": ["../../packages/i18n/src/index.ts"],
       "@tge/i18n/*": ["../../packages/i18n/src/*"],
-      "@tge/data": ["../../packages/data/src/index.ts"],
-      "@tge/data/*": ["../../packages/data/src/*"],
       "@tge/tailwind-config": ["../../packages/tailwind-config/src/index.ts"]
     }
   },

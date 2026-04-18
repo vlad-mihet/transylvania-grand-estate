@@ -3,6 +3,8 @@
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { citySchema, CityFormValues } from "@/lib/validations/city";
+import { useApiFormErrors } from "@/lib/form-error";
+import { toast } from "sonner";
 import { BilingualTextarea } from "@/components/shared/bilingual-textarea";
 import { ImageUpload } from "@/components/shared/image-upload";
 import {
@@ -23,9 +25,10 @@ interface CityFormProps {
   imageUrl?: string | null;
   onSubmit: (data: CityFormValues, imageFile: File | null) => void;
   loading?: boolean;
+  submissionError?: unknown;
 }
 
-export function CityForm({ defaultValues, imageUrl, onSubmit, loading }: CityFormProps) {
+export function CityForm({ defaultValues, imageUrl, onSubmit, loading, submissionError }: CityFormProps) {
   const [imageFile, setImageFile] = useState<File | null>(null);
   const t = useTranslations("CityForm");
   const tc = useTranslations("Common");
@@ -35,10 +38,15 @@ export function CityForm({ defaultValues, imageUrl, onSubmit, loading }: CityFor
     defaultValues: {
       name: "",
       slug: "",
+      countySlug: "",
       description: { en: "", ro: "", fr: "", de: "" },
       propertyCount: 0,
       ...defaultValues,
     },
+  });
+
+  useApiFormErrors(form, submissionError, (err) => {
+    toast.error(err instanceof Error ? err.message : "Failed to save");
   });
 
   const generateSlug = () => {

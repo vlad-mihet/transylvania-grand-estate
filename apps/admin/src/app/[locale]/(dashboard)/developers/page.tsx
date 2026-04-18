@@ -56,7 +56,7 @@ export default function DevelopersPage() {
     },
   });
 
-  const columns: ColumnDef<Developer, any>[] = [
+  const columns: ColumnDef<Developer, unknown>[] = [
     {
       accessorKey: "logo",
       header: "",

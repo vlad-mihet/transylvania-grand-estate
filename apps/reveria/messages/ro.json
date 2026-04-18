@@ -1,0 +1,933 @@
+{
+  "Navigation": {
+    "home": "Acasă",
+    "properties": "Proprietăți",
+    "cities": "Orașe",
+    "developers": "Dezvoltatori",
+    "agents": "Agenți",
+    "blog": "Blog",
+    "about": "Despre",
+    "contact": "Contact",
+    "scheduleViewing": "Începe",
+    "tools": "Instrumente"
+  },
+  "HomePage": {
+    "hero": {
+      "title": "Găsește Casa Perfectă",
+      "subtitle": "Proprietăți de calitate în toată Transilvania — de la apartamente confortabile la case de familie, toate la îndemâna ta.",
+      "cta": "Răsfoiește Proprietăți",
+      "propertyCount": "{count} proprietăți disponibile",
+      "searchForm": {
+        "tabBuy": "Cumpără",
+        "tabRent": "Închiriază",
+        "typePlaceholder": "Tip proprietate",
+        "allTypes": "Toate tipurile",
+        "forSale": "De vânzare",
+        "forRent": "De închiriat",
+        "addressPlaceholder": "Tastează adresa",
+        "priceLabel": "Preț",
+        "areaLabel": "Suprafață",
+        "from": "de la",
+        "to": "la",
+        "searchButton": "Caută"
+      }
+    },
+    "valueProposition": {
+      "title": "De Ce Reveria",
+      "subtitle": "O platformă imobiliară care funcționează altfel.",
+      "features": {
+        "approach": {
+          "title": "Mai puține anunțuri, mai bine verificate",
+          "description": "Majoritatea platformelor aruncă mii de anunțuri și te lasă să te descurci singur. Construim Reveria în jurul unei idei diferite — o selecție mai mică de proprietăți, fiecare verificată, cu cineva local care să te ajute pe tot parcursul.",
+          "cta": "Răsfoiește proprietăți"
+        },
+        "curated": {
+          "title": "Fiecare anunț e verificat",
+          "description": "Înainte să apară pe Reveria, fiecare proprietate trece prin procesul nostru de verificare. Controlăm detaliile, semnalăm ce nu se leagă și publicăm doar anunțurile pe care le-am recomanda cu încredere.",
+          "cta": "Vezi selecția noastră"
+        },
+        "guidance": {
+          "title": "Agenți care chiar cunosc orașul",
+          "description": "Agenții noștri locuiesc în orașele pe care le acoperă. Știu ce cartiere cresc, ce clădiri sunt bine construite și cum arată un preț corect pe fiecare stradă. Asta nu afli de pe o pagină de anunțuri.",
+          "cta": "Vorbește cu un agent"
+        }
+      }
+    },
+    "featured": {
+      "subtitle": "Selectate Pentru Tine",
+      "title": "Proprietăți Recomandate",
+      "viewAll": "Vezi Toate"
+    },
+    "usefulTools": {
+      "title": "Instrumente Utile",
+      "viewAll": "Vezi Toate Instrumentele",
+      "tools": {
+        "mortgage": {
+          "title": "Calculator Ipotecar",
+          "description": "Calculează ratele lunare, compară dobânzile băncilor și planifică-ți creditul ipotecar.",
+          "cta": "Calculează"
+        },
+        "purchaseCost": {
+          "title": "Costuri Achiziție",
+          "description": "Vezi costul total al achiziției — taxe notariale, comisioane, intabulare și toate taxele ascunse.",
+          "cta": "Calculează"
+        },
+        "rentalYield": {
+          "title": "Randament Închiriere",
+          "description": "Estimează randamentul investiției, venitul net și fluxul de numerar lunar din chirii.",
+          "cta": "Calculează"
+        },
+        "borrowingCapacity": {
+          "title": "Capacitate de Împrumut",
+          "description": "Află cât poți împrumuta pe baza veniturilor și datoriilor existente.",
+          "cta": "Calculează"
+        }
+      }
+    },
+    "cities": {
+      "subtitle": "Explorează După Oraș",
+      "title": "Orașe Populare",
+      "propertyCount": "{count} proprietăți",
+      "tabs": {
+        "all": "Toate proprietățile",
+        "new": "Anunțuri noi",
+        "featured": "Recomandate"
+      }
+    },
+    "faq": {
+      "title": "Întrebări Frecvente",
+      "viewAll": "Vezi toate întrebările",
+      "items": {
+        "0": {
+          "question": "Ce este Reveria și cum mă poate ajuta?",
+          "answer": "Reveria este o platformă imobiliară focalizată pe proprietăți accesibile și de calitate din Transilvania. Ajutăm cumpărătorii să găsească case atent selectate cu prețuri până la €999.999, cu anunțuri transparente și suport expert din partea agenților."
+        },
+        "1": {
+          "question": "Ce tipuri de proprietăți pot găsi pe Reveria?",
+          "answer": "Poți găsi apartamente, case, vile, terenuri, penthouse-uri și altele. Acoperim o gamă largă de tipuri de proprietăți în mai multe orașe din Transilvania, toate în segmentul de preț accesibil."
+        },
+        "2": {
+          "question": "În ce orașe sunt disponibile proprietăți?",
+          "answer": "În prezent avem proprietăți în Cluj-Napoca, Oradea, Timișoara, Brașov și Sibiu — cu mai multe orașe adăugate în mod regulat."
+        },
+        "3": {
+          "question": "Cum funcționează procesul de cumpărare prin Reveria?",
+          "answer": "Răsfoiește anunțurile, contactează agenții noștri pentru vizionări și primește suport ghidat pe tot parcursul procesului de achiziție, inclusiv documentație, negocieri și finalizare."
+        },
+        "4": {
+          "question": "Sunt anunțurile Reveria verificate?",
+          "answer": "Da. Fiecare proprietate listată pe Reveria trece printr-un proces de verificare. Verificăm proprietatea, acuratețea descrierilor și ne asigurăm că fotografiile reprezintă fidel proprietatea."
+        },
+        "5": {
+          "question": "Este gratuit să folosesc Reveria ca și cumpărător?",
+          "answer": "Absolut. Răsfoirea proprietăților, contactarea agenților și programarea vizionărilor este complet gratuită pentru cumpărători. Nu există taxe ascunse sau cerințe de înregistrare."
+        }
+      }
+    },
+    "articles": {
+      "title": "Articole Recente",
+      "viewAll": "Vezi toate articolele"
+    },
+    "cta": {
+      "title": "Pregătit să-ți găsești casa?",
+      "subtitle": "Răsfoiește colecția noastră sau ia legătura cu noi — suntem aici să te ajutăm la fiecare pas.",
+      "button": "Contactează-ne"
+    }
+  },
+  "PropertiesPage": {
+    "hero": {
+      "title": "Proprietăți",
+      "subtitle": "Descoperă Case de Calitate în Toată Transilvania"
+    },
+    "contextual": {
+      "propertiesInCity": "Proprietăți în {city}",
+      "propertiesByDeveloper": "Proprietăți de la {developer}",
+      "exploreCityDetails": "Explorează {city}",
+      "aboutDeveloper": "Despre {developer}"
+    },
+    "filter": {
+      "search": "Caută proprietăți...",
+      "city": "Oraș",
+      "location": "Locație",
+      "type": "Tip Proprietate",
+      "priceRange": "Interval Preț",
+      "sort": "Sortează După",
+      "allCities": "Toate Orașele",
+      "allTypes": "Toate Tipurile",
+      "allPrices": "Toate Prețurile",
+      "priceLowHigh": "Preț: Crescător",
+      "priceHighLow": "Preț: Descrescător",
+      "newest": "Cele Mai Noi",
+      "results": "{count} proprietăți găsite",
+      "searchButton": "Caută",
+      "clearAll": "Șterge Tot",
+      "activeFilters": "Filtre Active",
+      "filterBy": "Filtrează După",
+      "priceFrom": "de la (€)",
+      "priceTo": "până la (€)",
+      "areaRange": "Suprafață (m²)",
+      "areaFrom": "de la (m²)",
+      "areaTo": "până la (m²)",
+      "bedrooms": "Dormitoare",
+      "anyBedrooms": "Oricâte",
+      "bathrooms": "Băi",
+      "anyBathrooms": "Oricâte",
+      "moreFilters": "Mai multe filtre",
+      "lessFilters": "Mai puține filtre",
+      "clearFilters": "Șterge filtrele",
+      "radius": "Rază",
+      "forSale": "De vânzare",
+      "forRent": "De închiriat",
+      "transaction": "Tranzacție",
+      "rooms": "Numărul de camere",
+      "resultsCount": "Rezultate {count}",
+      "floor": "Etaj",
+      "floorFrom": "de la",
+      "floorTo": "la",
+      "sellerType": "Tipul proprietarului",
+      "sellerPrivate": "Particular",
+      "sellerAgency": "Agenție",
+      "sellerDeveloper": "Dezvoltator",
+      "furnishing": "Amenajare",
+      "unfurnished": "Nemobilat",
+      "semiFurnished": "Semimobilat",
+      "furnished": "Mobilat",
+      "luxuryFurnished": "Lux",
+      "yearBuilt": "An construcție",
+      "yearFrom": "de la",
+      "yearTo": "la",
+      "pricePerSqm": "Preț / m²",
+      "material": "Materialul de construcție",
+      "materialBrick": "Cărămidă",
+      "materialConcrete": "Beton",
+      "materialBca": "BCA",
+      "materialWood": "Lemn",
+      "materialStone": "Piatră",
+      "materialMixed": "Mixt",
+      "propertyCondition": "Stare imobil",
+      "conditionNewBuild": "Construcție nouă",
+      "conditionRenovated": "Renovat",
+      "conditionGood": "Stare bună",
+      "conditionNeedsRenovation": "De renovat",
+      "conditionUnderConstruction": "În construcție",
+      "postedWithin": "Publicat",
+      "anytime": "Oricând",
+      "last24h": "Ultimele 24h",
+      "last3days": "Ultimele 3 zile",
+      "last7days": "Ultimele 7 zile",
+      "amenities": "Particularități",
+      "balcony": "Balcon",
+      "terrace": "Terasă",
+      "parking": "Parcare",
+      "garage": "Garaj",
+      "separateKitchen": "Bucătărie separată",
+      "storage": "Spații depozitare",
+      "elevator": "Lift",
+      "hasImages": "Cu imagini"
+    },
+    "noResults": {
+      "title": "Nicio Proprietate Găsită",
+      "description": "Încearcă să ajustezi filtrele pentru a găsi ce cauți."
+    },
+    "cta": {
+      "title": "Nu Găsești Ce Cauți?",
+      "subtitle": "Ia legătura cu noi și te ajutăm să găsești proprietatea perfectă.",
+      "button": "Contactează-ne"
+    }
+  },
+  "PropertyDetail": {
+    "backToProperties": "Înapoi la Proprietăți",
+    "overview": "Prezentare Generală",
+    "features": "Caracteristici și Facilități",
+    "location": "Locație",
+    "specs": {
+      "bedrooms": "Dormitoare",
+      "bathrooms": "Băi",
+      "area": "Suprafață Locuibilă",
+      "landArea": "Suprafață Teren",
+      "floors": "Etaje",
+      "yearBuilt": "Anul Construcției",
+      "garage": "Locuri Garaj"
+    },
+    "description": "Descriere",
+    "requestInfo": "Solicită Informații",
+    "scheduleViewing": "Programează o Vizionare",
+    "shareProperty": "Distribuie Proprietatea",
+    "save": "Salvează",
+    "share": "Distribuie",
+    "pricePerSqm": "{value} €/m²",
+    "readMore": "Mai mult",
+    "readLess": "Mai puțin",
+    "id": "ID",
+    "reportListing": "Raportează anunțul",
+    "viewPhone": "Vezi numărul",
+    "sendMessage": "Trimite mesajul",
+    "yes": "Da",
+    "no": "Nu",
+    "similarProperties": {
+      "subtitle": "S-ar Putea Să-ți Placă",
+      "title": "Proprietăți Similare"
+    },
+    "price": "Preț",
+    "status": {
+      "available": "Disponibil",
+      "sold": "Vândut",
+      "reserved": "Rezervat"
+    },
+    "table": {
+      "title": {
+        "apartment": "Apartament de vânzare",
+        "house": "Casă de vânzare",
+        "villa": "Vilă de vânzare",
+        "terrain": "Teren de vânzare",
+        "penthouse": "Penthouse de vânzare",
+        "estate": "Domeniu de vânzare",
+        "chalet": "Cabană de vânzare",
+        "mansion": "Conac de vânzare",
+        "palace": "Palat de vânzare"
+      },
+      "usefulArea": "Suprafață utilă",
+      "rooms": "Nr. camere",
+      "type": "Tip",
+      "comfort": "Confort",
+      "floor": "Etaj",
+      "floorOf": "{floor}/{total}",
+      "condition": "Stare",
+      "propertyType": "Tip proprietate",
+      "ownership": "Forma de proprietate",
+      "heating": "Încălzire",
+      "availableFrom": "Liber de la",
+      "sellerType": "Tip vânzător",
+      "extraInfo": "Informații suplimentare"
+    },
+    "heating": {
+      "central_gas": "Centrală proprie pe gaz",
+      "centralized": "Termoficare",
+      "block_central": "Centrală de bloc",
+      "electric": "Electrică",
+      "heat_pump": "Pompă de căldură",
+      "solid_fuel": "Combustibil solid",
+      "none": "Fără"
+    },
+    "ownership": {
+      "personal": "Personală",
+      "company": "Companie",
+      "mixed": "Mixtă"
+    },
+    "windowType": {
+      "pvc_double": "Termopan PVC (dublu geam)",
+      "pvc_triple": "Termopan PVC (triplu geam)",
+      "wood": "Lemn",
+      "aluminum": "Aluminiu",
+      "mixed": "Mixt"
+    },
+    "furnishing": {
+      "unfurnished": "Nemobilat",
+      "semi_furnished": "Parțial mobilat",
+      "furnished": "Mobilat",
+      "luxury": "Mobilat de lux"
+    },
+    "condition": {
+      "new_build": "Construcție nouă",
+      "renovated": "Renovat",
+      "good": "Bună stare",
+      "needs_renovation": "Necesită renovare",
+      "under_construction": "În construcție"
+    },
+    "material": {
+      "brick": "Cărămidă",
+      "concrete": "Beton",
+      "bca": "BCA",
+      "wood": "Lemn",
+      "stone": "Piatră",
+      "mixed": "Mixt"
+    },
+    "sellerType": {
+      "private_seller": "Vânzător privat",
+      "agency": "Agenție",
+      "developer": "Dezvoltator"
+    },
+    "building": {
+      "title": "Clădire și materiale",
+      "yearBuilt": "Anul construcției",
+      "elevator": "Lift",
+      "buildingType": "Tip clădire",
+      "material": "Material",
+      "windowType": "Tip geamuri"
+    },
+    "facilities": {
+      "title": "Facilități",
+      "groupFacilities": "Facilități",
+      "groupSecurity": "Siguranță",
+      "groupMedia": "Media",
+      "balcony": "Balcon",
+      "terrace": "Terasă",
+      "parking": "Parcare",
+      "garage": "Garaj",
+      "separateKitchen": "Bucătărie separată",
+      "storage": "Debara / Boxă",
+      "washingMachine": "Mașină de spălat",
+      "fridge": "Frigider",
+      "stove": "Aragaz",
+      "oven": "Cuptor",
+      "ac": "Aer condiționat",
+      "interiorStaircase": "Scară interioară",
+      "blinds": "Jaluzele",
+      "armoredDoors": "Uși blindate",
+      "intercom": "Interfon",
+      "internet": "Internet",
+      "cableTV": "TV prin cablu"
+    },
+    "loanCalc": {
+      "title": "Calculator credit ipotecar",
+      "downPayment": "Avans",
+      "term": "Perioadă",
+      "rate": "Dobândă",
+      "monthlyPayment": "Rata lunară",
+      "totalInterest": "Total dobândă",
+      "getOffer": "Cere o ofertă",
+      "years": "ani"
+    },
+    "inlineInquiry": {
+      "name": "Nume",
+      "email": "Email",
+      "phone": "Telefon",
+      "message": "Mesaj",
+      "send": "Trimite mesajul",
+      "thanks": "Mulțumim! Te vom contacta în scurt timp.",
+      "defaultMessage": "Bună, sunt interesat(ă) de {title} și aș dori mai multe informații.",
+      "privacy": "Prin trimiterea formularului accepți Termenii și Politica de confidențialitate."
+    },
+    "map": {
+      "title": "Locație pe hartă",
+      "showOnMap": "Arată pe hartă"
+    },
+    "cta": {
+      "title": "Interesat de Această Proprietate?",
+      "subtitle": "Contactează-ne pentru mai multe informații sau programează o vizionare."
+    },
+    "agent": {
+      "title": "Agentul Tău",
+      "callAgent": "Sună Agentul",
+      "emailAgent": "Trimite Email Agentului",
+      "roleAgent": "Agent Reveria",
+      "roleTeam": "Echipa Reveria"
+    }
+  },
+  "CitiesPage": {
+    "hero": {
+      "title": "Explorează Orașele",
+      "subtitle": "Descoperă cele mai vibrante orașe din Transilvania și găsește cartierul ideal."
+    },
+    "viewProperties": "Vezi Proprietăți",
+    "propertyCount": "{count} proprietăți"
+  },
+  "CityDetailPage": {
+    "propertiesIn": "Proprietăți în {city}",
+    "browseAll": "Vezi Toate Proprietățile",
+    "propertyCount": "{count} proprietăți disponibile",
+    "cta": {
+      "title": "Interesat de {city}?",
+      "subtitle": "Contactează agenții noștri locali pentru ghidare personalizată.",
+      "button": "Contactează-ne"
+    }
+  },
+  "DevelopersPage": {
+    "hero": {
+      "title": "Dezvoltatori",
+      "subtitle": "Dezvoltatori de încredere care construiesc case de calitate în Transilvania."
+    },
+    "viewProjects": "Vezi Proiecte",
+    "projectCount": "{count} proiecte"
+  },
+  "DeveloperDetailPage": {
+    "about": "Despre {name}",
+    "projects": "Proiecte de la {name}",
+    "visitWebsite": "Vizitează Website-ul",
+    "projectCount": "{count} proiecte",
+    "cta": {
+      "title": "Interesat de Proprietățile {name}?",
+      "subtitle": "Contactează-ne pentru mai multe informații despre dezvoltările lor.",
+      "button": "Contactează-ne"
+    }
+  },
+  "AgentsPage": {
+    "hero": {
+      "title": "Agenții Noștri",
+      "subtitle": "Cunoaște experții locali care cunosc piața imobiliară din Transilvania în profunzime."
+    },
+    "viewProfile": "Vezi Profil",
+    "propertiesManaged": "{count} proprietăți"
+  },
+  "AgentDetailPage": {
+    "about": "Despre {name}",
+    "properties": "Proprietăți de la {name}",
+    "contactAgent": "Contactează Agentul",
+    "callAgent": "Sună",
+    "emailAgent": "Email",
+    "cta": {
+      "title": "Lucrează cu {name}",
+      "subtitle": "Primește recomandări personalizate de proprietăți și sfaturi experte.",
+      "button": "Trimite un Mesaj"
+    }
+  },
+  "FAQPage": {
+    "hero": {
+      "title": "Întrebări Frecvente",
+      "subtitle": "Găsește răspunsuri la întrebările frecvente despre Reveria și cum te putem ajuta."
+    },
+    "items": {
+      "0": {
+        "question": "Ce este Reveria și cum mă poate ajuta?",
+        "answer": "Reveria este o platformă imobiliară focalizată pe proprietăți accesibile și de calitate din Transilvania. Ajutăm cumpărătorii să găsească case atent selectate cu prețuri până la €999.999, cu anunțuri transparente și suport expert din partea agenților."
+      },
+      "1": {
+        "question": "Ce tipuri de proprietăți pot găsi pe Reveria?",
+        "answer": "Poți găsi apartamente, case, vile, terenuri, penthouse-uri și altele. Acoperim o gamă largă de tipuri de proprietăți în mai multe orașe din Transilvania, toate în segmentul de preț accesibil."
+      },
+      "2": {
+        "question": "În ce orașe sunt disponibile proprietăți?",
+        "answer": "În prezent avem proprietăți în Cluj-Napoca, Oradea, Timișoara, Brașov și Sibiu — cu mai multe orașe adăugate în mod regulat."
+      },
+      "3": {
+        "question": "Cum funcționează procesul de cumpărare prin Reveria?",
+        "answer": "Răsfoiește anunțurile, contactează agenții noștri pentru vizionări și primește suport ghidat pe tot parcursul procesului de achiziție, inclusiv documentație, negocieri și finalizare."
+      },
+      "4": {
+        "question": "Sunt anunțurile Reveria verificate?",
+        "answer": "Da. Fiecare proprietate listată pe Reveria trece printr-un proces de verificare. Verificăm proprietatea, acuratețea descrierilor și ne asigurăm că fotografiile reprezintă fidel proprietatea."
+      },
+      "5": {
+        "question": "Este gratuit să folosesc Reveria ca și cumpărător?",
+        "answer": "Absolut. Răsfoirea proprietăților, contactarea agenților și programarea vizionărilor este complet gratuită pentru cumpărători. Nu există taxe ascunse sau cerințe de înregistrare."
+      },
+      "6": {
+        "question": "Pot programa o vizionare online?",
+        "answer": "Da! Poți solicita o vizionare direct din pagina oricărei proprietăți. Agenții noștri vor confirma programarea și te vor ghida în timpul vizitei."
+      },
+      "7": {
+        "question": "Cum contactez un agent?",
+        "answer": "Poți contacta agenții noștri prin formularul de contact de pe pagina oricărei proprietăți, prin modalul de cerere sau vizitând pagina Agenți pentru a găsi un specialist în orașul preferat."
+      },
+      "8": {
+        "question": "Oferă Reveria proprietăți de închiriat?",
+        "answer": "În prezent, Reveria se concentrează pe proprietăți de vânzare. Luăm în considerare extinderea către chirii în viitor — rămâi la curent cu noutățile."
+      },
+      "9": {
+        "question": "Ce documente am nevoie pentru a cumpăra o proprietate?",
+        "answer": "De obicei ai nevoie de un act de identitate valid, dovada veniturilor sau finanțării și fonduri pentru avans. Agenții noștri te vor ghida prin toată documentația necesară specifică situației tale."
+      }
+    },
+    "cta": {
+      "title": "Încă Ai Întrebări?",
+      "subtitle": "Echipa noastră este bucuroasă să ajute cu orice întrebări ai avea.",
+      "button": "Contactează-ne"
+    }
+  },
+  "BlogPage": {
+    "hero": {
+      "title": "Blog",
+      "subtitle": "Informații, ghiduri și actualizări de piață pentru cumpărătorii de case din Transilvania."
+    },
+    "readMore": "Citește Mai Mult",
+    "minRead": "{count} min citire",
+    "categories": {
+      "all": "Toate",
+      "guide": "Ghiduri",
+      "news": "Știri",
+      "market-report": "Rapoarte de Piață"
+    },
+    "noArticles": {
+      "title": "Niciun Articol Încă",
+      "description": "Revino curând pentru informații, ghiduri și actualizări de piață."
+    },
+    "loadError": {
+      "title": "Articolele nu s-au putut încărca",
+      "description": "A apărut o problemă la preluarea postărilor. Încearcă din nou în câteva momente."
+    }
+  },
+  "ArticleDetailPage": {
+    "backToBlog": "Înapoi la Blog",
+    "publishedOn": "Publicat pe {date}",
+    "minRead": "{count} min citire",
+    "by": "De {author}",
+    "relatedArticles": "Articole Similare"
+  },
+  "AboutPage": {
+    "hero": {
+      "badge": "Despre Noi",
+      "title": "Construim Drumul Către Casa Ta din Transilvania",
+      "description": "Reveria te conectează cu proprietăți de calitate și accesibile din cele mai vibrante orașe ale Transilvaniei. Fără prețuri umflate, fără taxe ascunse — doar imobiliare oneste pentru oameni reali."
+    },
+    "story": {
+      "badge": "Povestea Noastră",
+      "title": "De Ce Am Creat Reveria",
+      "paragraph1": "Am văzut o problemă cu care se confruntau prea multe familii din Transilvania: o piață imobiliară plină de anunțuri supraevaluate, fotografii înșelătoare și agenți cărora le păsa mai mult de comision decât de a găsi potrivirea perfectă. Casele bune existau, dar a le găsi era ca și cum ai căuta un ac într-un car de fân.",
+      "paragraph2": "Reveria s-a născut dintr-o idee simplă — ce-ar fi dacă ar exista o platformă care listează doar proprietăți de calitate la prețuri corecte, susținută de agenți care chiar cunosc cartierele? Am început în Cluj-Napoca și am crescut pentru a acoperi Brașovul, Sibiul, Oradea și Timișoara. Fiecare proprietate de pe Reveria este verificată înainte de publicare, pentru că noi credem că meriți să ai încredere în ceea ce vezi.",
+      "imageAlt": "Un cartier fermecător din Transilvania"
+    },
+    "stats": {
+      "cities": {
+        "value": "5+",
+        "label": "Orașe Acoperite"
+      },
+      "properties": {
+        "value": "2.000+",
+        "label": "Proprietăți Listate"
+      },
+      "families": {
+        "value": "500+",
+        "label": "Familii Mulțumite"
+      },
+      "savings": {
+        "value": "15%",
+        "label": "Economii Medii vs Piață"
+      }
+    },
+    "values": {
+      "badge": "Ce Reprezentăm",
+      "title": "Valorile Noastre",
+      "subtitle": "Acestea nu sunt doar cuvinte pe o pagină. Ele modelează fiecare decizie pe care o luăm, fiecare proprietate pe care o listăm și fiecare familie pe care o ajutăm.",
+      "transparency": {
+        "title": "Transparență",
+        "description": "Prețuri clare fără costuri ascunse. Descrieri oneste care corespund realității. Fotografii reale, planuri reale și proprietate verificată. Credem că încrederea începe cu adevărul."
+      },
+      "accessibility": {
+        "title": "Accesibilitate",
+        "description": "Viața de calitate nu ar trebui să necesite un buget de lux. Ne concentrăm exclusiv pe proprietăți care oferă valoare reală — case confortabile, bine construite, în locații excelente, la prețuri care au sens."
+      },
+      "community": {
+        "title": "Comunitate",
+        "description": "O casă este mai mult decât patru pereți. Ne pasă de cartiere, de școlile din apropiere, de cafenelele și parcurile locale. Te ajutăm să găsești nu doar o proprietate, ci un loc în care familia ta se simte acasă."
+      },
+      "support": {
+        "title": "Suport",
+        "description": "De la prima căutare până în ziua în care primești cheile, agenții noștri locali sunt alături de tine. Întrebări despre finanțare, acte sau cartiere — suntem la un mesaj distanță."
+      }
+    },
+    "howItWorks": {
+      "badge": "Proces Simplu",
+      "title": "Cum Funcționează",
+      "subtitle": "Să-ți găsești casa prin Reveria este simplu. Trei pași, fără surprize.",
+      "steps": {
+        "browse": {
+          "title": "Caută și Descoperă",
+          "description": "Caută după oraș, buget sau cartier. Filtrează după ce contează pentru tine — fiecare anunț este verificat și fotografiat."
+        },
+        "connect": {
+          "title": "Conectează-te cu un Agent",
+          "description": "Agenții noștri locali cunosc fiecare stradă. Programează vizionări, pune întrebări și primește sfaturi oneste adaptate nevoilor tale."
+        },
+        "moveIn": {
+          "title": "Mută-te",
+          "description": "De la ofertă la chei, noi ne ocupăm de complexitate. Documentație, negocieri și finalizare — toate ghidate de agentul tău."
+        }
+      }
+    },
+    "cities": {
+      "badge": "Unde Activăm",
+      "title": "Prin Transilvania",
+      "subtitle": "De la centre universitare la bijuterii istorice, acoperim orașele unde viața este bună și investiția imobiliară are sens.",
+      "items": {
+        "clujNapoca": "Cluj-Napoca",
+        "brasov": "Brașov",
+        "sibiu": "Sibiu",
+        "oradea": "Oradea",
+        "timisoara": "Timișoara"
+      }
+    },
+    "cta": {
+      "title": "Gata Să-ți Găsești Casa?",
+      "subtitle": "Răsfoiește colecția noastră de proprietăți verificate sau contactează-ne — suntem aici să te ajutăm la fiecare pas.",
+      "button": "Vezi Proprietăți"
+    }
+  },
+  "ContactPage": {
+    "hero": {
+      "title": "Contactează-ne",
+      "subtitle": "Suntem Aici Să Te Ajutăm"
+    },
+    "form": {
+      "title": "Trimite-ne un Mesaj",
+      "fullName": "Nume Complet",
+      "email": "Adresă de Email",
+      "phone": "Număr de Telefon",
+      "property": "Proprietate de Interes (Opțional)",
+      "selectProperty": "Selectează o proprietate...",
+      "budget": "Interval Buget",
+      "selectBudget": "Selectează interval buget...",
+      "message": "Mesajul Tău",
+      "messagePlaceholder": "Spune-ne ce cauți...",
+      "submit": "Trimite Mesajul",
+      "success": {
+        "title": "Mulțumim!",
+        "message": "Am primit mesajul tău și revenim cu un răspuns în 24 de ore."
+      },
+      "error": {
+        "generic": "Mesajul nu a putut fi trimis. Te rugăm să încerci din nou în câteva momente."
+      },
+      "budgetOptions": {
+        "under50k": "Sub €50.000",
+        "50kTo100k": "€50.000 – €100.000",
+        "100kTo200k": "€100.000 – €200.000",
+        "200kTo500k": "€200.000 – €500.000",
+        "500kTo1m": "€500.000 – €1.000.000"
+      }
+    },
+    "offices": {
+      "subtitle": "Vizitează-ne",
+      "title": "Birourile Noastre"
+    }
+  },
+  "InquiryModal": {
+    "titleGeneral": "Contactează-ne",
+    "titleProperty": "Interesat de {name}",
+    "titleDeveloper": "Contact despre {name}",
+    "description": "Completează formularul de mai jos și îți vom răspunde în 24 de ore.",
+    "name": "Nume complet",
+    "email": "Adresă de email",
+    "message": "Mesajul tău",
+    "messagePlaceholder": "Spune-ne cum te putem ajuta...",
+    "regarding": "Referitor la:",
+    "about": "Despre:",
+    "submit": "Trimite cererea",
+    "success": {
+      "title": "Mulțumim!",
+      "message": "Am primit cererea ta și îți vom răspunde în 24 de ore."
+    },
+    "error": "Ceva nu a funcționat. Te rugăm încearcă din nou."
+  },
+  "MapView": {
+    "listView": "Listă",
+    "mapView": "Hartă",
+    "searchOnMap": "Caută pe hartă",
+    "searchByAddress": "Caută după adresă",
+    "chooseFromList": "Alege locația din listă",
+    "typeAddress": "Tastează adresa",
+    "recentSelections": "Selectate Recent",
+    "noResultsFound": "Nicio locație găsită",
+    "searching": "Se caută",
+    "back": "Înapoi",
+    "typeAtLeast2": "Tastează cel puțin 2 caractere pentru a căuta",
+    "county": "Județ",
+    "allCounties": "Toate Județele",
+    "propertiesInArea": "Proprietăți în această zonă",
+    "showAll": "Arată toate",
+    "viewDetails": "Vezi detalii →"
+  },
+  "Common": {
+    "propertyTypes": {
+      "chalet": "Cabană"
+    }
+  },
+  "Breadcrumb": {
+    "home": "Acasă",
+    "properties": "Proprietăți",
+    "cities": "Orașe",
+    "developers": "Dezvoltatori",
+    "agents": "Agenți",
+    "blog": "Blog",
+    "faq": "Întrebări Frecvente",
+    "about": "Despre",
+    "contact": "Contact",
+    "tools": "Instrumente",
+    "mortgageCalculator": "Calculator Ipotecar",
+    "purchaseCosts": "Costuri Achiziție",
+    "rentalYield": "Randament Închiriere",
+    "borrowingCapacity": "Capacitate de Împrumut"
+  },
+  "Footer": {
+    "tagline": "Case de Calitate în Toată Transilvania",
+    "quickLinks": "Linkuri Rapide",
+    "explore": "Explorează",
+    "exploreLinks": {
+      "cities": "Orașe",
+      "developers": "Dezvoltatori",
+      "agents": "Agenți",
+      "blog": "Blog"
+    },
+    "resources": "Resurse",
+    "resourceLinks": {
+      "faq": "Întrebări Frecvente",
+      "contact": "Contactează-ne",
+      "tools": "Instrumente Utile"
+    },
+    "contact": "Contact",
+    "followUs": "Urmărește-ne",
+    "copyright": "© {year} Reveria. Toate drepturile rezervate.",
+    "privacy": "Politica de Confidențialitate",
+    "terms": "Termeni și Condiții",
+    "cookies": "Politica Cookie-uri"
+  },
+  "NotFoundPage": {
+    "title": "Pagina Negăsită",
+    "description": "Pagina pe care o cauți nu există sau a fost mutată.",
+    "goHome": "Acasă",
+    "browseProperties": "Răsfoiește Proprietăți"
+  },
+  "ErrorPage": {
+    "title": "Ceva nu a funcționat",
+    "description": "Nu am putut încărca acest conținut acum. Te rugăm să încerci din nou.",
+    "retry": "Încearcă din nou",
+    "goHome": "Acasă"
+  },
+  "LoadingPage": {
+    "label": "Se încarcă…"
+  },
+  "ToolsPage": {
+    "meta": {
+      "title": "Instrumente Utile — Calculatoare Imobiliare",
+      "description": "Calculatoare gratuite pentru rate ipotecare, costuri de achiziție, randament la închiriere și capacitate de împrumut. Planifică-ți investiția imobiliară în Transilvania."
+    },
+    "hero": {
+      "title": "Instrumente Utile",
+      "subtitle": "Calculatoare gratuite și ghiduri care te ajută să iei cele mai bune decizii imobiliare."
+    },
+    "tools": {
+      "mortgage": {
+        "title": "Calculator Rate Ipotecare",
+        "description": "Calculează ratele lunare, dobânda totală și compară ofertele băncilor din România. Planifică-ți creditul cu un grafic detaliat de amortizare.",
+        "cta": "Deschide Calculatorul"
+      },
+      "purchaseCost": {
+        "title": "Calculator Costuri Achiziție",
+        "description": "Vezi costul complet al achiziției unei proprietăți în România — taxe notariale, intabulare, comision agent, timbru fiscal și taxe legale.",
+        "cta": "Deschide Calculatorul"
+      },
+      "rentalYield": {
+        "title": "Calculator Randament Închiriere",
+        "description": "Estimează randamentul brut și net, fluxul de numerar lunar și perioada de recuperare a investiției tale imobiliare.",
+        "cta": "Deschide Calculatorul"
+      },
+      "borrowingCapacity": {
+        "title": "Calculator Capacitate de Împrumut",
+        "description": "Află suma maximă pe care o poți împrumuta pe baza veniturilor, datoriilor existente și reglementărilor bancare din România.",
+        "cta": "Deschide Calculatorul"
+      }
+    },
+    "guidesSection": {
+      "title": "Ghiduri și Articole",
+      "subtitle": "Ghiduri detaliate și analize de piață care te ajută să navighezi piața imobiliară din România.",
+      "viewAll": "Vezi Toate Articolele"
+    },
+    "otherTools": "Alte Calculatoare Utile",
+    "disclaimer": "Aceste calcule sunt estimative și nu constituie consultanță financiară. Sumele reale pot varia. Consultă un specialist financiar pentru sfaturi personalizate.",
+    "eurRonDisclaimer": "Taxele notariale sunt calculate folosind un curs aproximativ de 1 EUR = 4,97 RON. Cursul real poate varia.",
+    "mortgage": {
+      "meta": {
+        "title": "Calculator Rate Ipotecare — Rate Lunare și Amortizare",
+        "description": "Calculează ratele lunare ale creditului ipotecar, dobânda totală și vezi graficul complet de amortizare. Compară dobânzile băncilor din România."
+      },
+      "title": "Calculator Rate Ipotecare",
+      "subtitle": "Calculează ratele lunare, dobânda totală și planifică-ți creditul ipotecar cu dobânzile băncilor din România.",
+      "propertyPrice": "Prețul Proprietății",
+      "downPayment": "Avans",
+      "downPaymentAmount": "Suma avansului",
+      "loanAmount": "Suma Împrumutului",
+      "loanTerm": "Durata Creditului",
+      "years": "ani",
+      "interestRate": "Rata Dobânzii",
+      "bankPresets": "Selectare Rapidă Dobândă Bancă",
+      "customRate": "Personalizat",
+      "monthlyPayment": "Rata Lunară",
+      "totalInterest": "Dobânda Totală",
+      "totalPaid": "Suma Totală Plătită",
+      "ltvRatio": "Grad de Îndatorare",
+      "amortization": "Grafic de Amortizare",
+      "showFullSchedule": "Arată Graficul Complet",
+      "hideFullSchedule": "Ascunde Graficul Complet",
+      "year": "An",
+      "principalLabel": "Principal",
+      "interestLabel": "Dobândă",
+      "balanceLabel": "Sold Rămas",
+      "principalVsInterest": "Principal vs. Dobândă"
+    },
+    "purchaseCost": {
+      "meta": {
+        "title": "Calculator Costuri Achiziție — Toate Costurile de Cumpărare",
+        "description": "Calculează costul complet al achiziției unei proprietăți în România, inclusiv taxe notariale, intabulare, comision agent și taxe legale."
+      },
+      "title": "Calculator Costuri Achiziție",
+      "subtitle": "Vezi fiecare cost implicat în achiziția unei proprietăți în România — fără surprize ascunse.",
+      "propertyPrice": "Prețul Proprietății (EUR)",
+      "agentCommission": "Comision Agent",
+      "costBreakdown": "Desfășurare Costuri",
+      "notaryFee": "Taxă Notarială",
+      "notaryFeeInfo": "Calculată conform grilei de taxe notariale din România, în RON și convertită în EUR.",
+      "landRegistryFee": "Intabulare",
+      "landRegistryInfo": "Aproximativ 0,15% din valoarea proprietății pentru înscrierea în cartea funciară.",
+      "agentCommissionLabel": "Comision Agent",
+      "agentCommissionInfo": "Comisionul standard al agentului imobiliar, de obicei 2-3% din prețul proprietății.",
+      "stampDuty": "Timbru Fiscal",
+      "stampDutyInfo": "Taxe administrative fixe pentru procesarea documentelor.",
+      "legalFees": "Taxe Legale",
+      "legalFeesInfo": "Costul estimat pentru asistență juridică pe parcursul procesului de achiziție.",
+      "totalFees": "Total Costuri Suplimentare",
+      "grandTotal": "Total General (Proprietate + Costuri)",
+      "feesPercent": "Costurile suplimentare reprezintă {percent} din prețul proprietății"
+    },
+    "rentalYield": {
+      "meta": {
+        "title": "Calculator Randament Închiriere — ROI pentru Investiții",
+        "description": "Calculează randamentul brut și net, fluxul de numerar lunar și perioada de recuperare pentru proprietăți de investiție în România."
+      },
+      "title": "Calculator Randament Închiriere",
+      "subtitle": "Estimează randamentul investiției tale în proprietăți de închiriat din Transilvania.",
+      "purchasePrice": "Prețul de Achiziție",
+      "monthlyRent": "Chiria Lunară Estimată",
+      "annualExpenses": "Cheltuieli Anuale",
+      "annualExpensesInfo": "Include întreținere, impozit pe proprietate, asigurare și taxe de administrare.",
+      "grossYield": "Randament Brut",
+      "netYield": "Randament Net",
+      "monthlyCashFlow": "Flux de Numerar Lunar",
+      "annualCashFlow": "Flux de Numerar Anual",
+      "paybackPeriod": "Perioada de Recuperare",
+      "paybackYears": "{years} ani",
+      "yieldExcellent": "Excelent",
+      "yieldGood": "Bun",
+      "yieldModerate": "Moderat",
+      "yieldLow": "Scăzut"
+    },
+    "borrowingCapacity": {
+      "meta": {
+        "title": "Calculator Capacitate de Împrumut — Cât Poți Împrumuta",
+        "description": "Calculează creditul ipotecar maxim pe care ți-l poți permite pe baza veniturilor, datoriilor și reglementărilor BNR (regula 40% DTI)."
+      },
+      "title": "Calculator Capacitate de Împrumut",
+      "subtitle": "Află cât poți împrumuta conform reglementărilor bancare din România.",
+      "monthlyIncome": "Venitul Lunar Net",
+      "existingDebts": "Datorii Lunare Existente",
+      "existingDebtsInfo": "Include rate auto, carduri de credit și alte plăți lunare de datorii.",
+      "interestRate": "Rata Dobânzii Estimată",
+      "loanTerm": "Durata Dorită a Creditului",
+      "years": "ani",
+      "downPayment": "Avans",
+      "dependents": "Număr de Persoane în Întreținere",
+      "dependentsInfo": "Soț/soție, copii sau alte persoane pe care le susții financiar.",
+      "dep0": "Fără persoane în întreținere",
+      "dep1": "1 persoană",
+      "dep2": "2 persoane",
+      "dep3": "3 persoane",
+      "dep4": "4+ persoane",
+      "nouaCasa": "Programul Noua Casă",
+      "nouaCasaInfo": "Credit ipotecar garantat de stat. Max proprietate: 70.000 €. Avans: 5% (construcție nouă) / 15% (existentă).",
+      "nouaCasaNewBuild": "Construcție nouă",
+      "nouaCasaExisting": "Proprietate existentă",
+      "nouaCasaExceeds": "Proprietatea depășește limita Noua Casă de 70.000 € — plafonată.",
+      "includeInsurance": "Include asigurarea în gradul de îndatorare",
+      "insuranceInfo": "Băncile necesită asigurare de viață (~0,05% din sold/lună). Reduce ușor capacitatea de împrumut.",
+      "ratesUpdated": "Dobânzi actualizate: {date}",
+      "ratesFallback": "Se folosesc rate estimate. Ratele live sunt momentan indisponibile.",
+      "maxMonthlyPayment": "Rata Lunară Maximă",
+      "maxLoan": "Suma Maximă a Creditului",
+      "maxProperty": "Prețul Maxim al Proprietății",
+      "maxPropertyInfo": "Presupunând un avans de {pct}%.",
+      "totalMonthlyCost": "Costul Lunar Total",
+      "totalMonthlyCostInfo": "Inclusiv rata creditului, asigurarea de viață și asigurarea proprietății.",
+      "dtiRatio": "Gradul Actual de Îndatorare",
+      "dtiExplainer": "Reglementările BNR limitează plățile lunare totale ale datoriilor la 40% din venitul net.",
+      "dtiAvailable": "Disponibil pentru credit ipotecar",
+      "dtiUsed": "Utilizat de datorii existente"
+    }
+  }
+}

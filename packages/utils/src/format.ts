@@ -7,8 +7,12 @@ const intlLocaleMap: Record<Locale, string> = {
   de: "de-DE",
 };
 
-export function localize(str: LocalizedString, locale: Locale): string {
-  return str[locale] ?? str.en;
+export function localize(
+  str: LocalizedString | null | undefined,
+  locale: Locale,
+): string {
+  if (!str) return "";
+  return str[locale] ?? str.en ?? "";
 }
 
 export function formatPrice(price: number, locale: Locale = "en"): string {

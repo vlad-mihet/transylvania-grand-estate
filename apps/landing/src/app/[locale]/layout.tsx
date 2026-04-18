@@ -3,11 +3,12 @@ import { getMessages } from "next-intl/server";
 import { notFound } from "next/navigation";
 import { Playfair_Display, Inter, Montserrat } from "next/font/google";
 import { routing } from "@tge/i18n/routing";
-import { fetchApi } from "@/lib/api";
+import { fetchApi } from "@tge/api-client";
 import { Header } from "@/components/layout/header";
 import { FloatingDiamond } from "@/components/layout/floating-diamond";
 import { Footer } from "@/components/layout/footer";
-import { InquiryProvider, InquiryModal } from "@/components/inquiry";
+import { InquiryProvider, InquiryModal } from "@tge/ui";
+import { QueryProvider } from "@/components/providers/query-provider";
 import "../globals.css";
 
 const playfair = Playfair_Display({
@@ -60,13 +61,15 @@ export default async function LocaleLayout({
     <html lang={locale} className={`${playfair.variable} ${inter.variable} ${montserrat.variable}`} suppressHydrationWarning>
       <body className="font-sans antialiased bg-background text-foreground" suppressHydrationWarning>
         <NextIntlClientProvider messages={messages}>
-          <InquiryProvider>
-            <Header developers={developers} />
-            <FloatingDiamond />
-            <main className="min-h-screen">{children}</main>
-            <Footer />
-            <InquiryModal />
-          </InquiryProvider>
+          <QueryProvider>
+            <InquiryProvider>
+              <Header developers={developers} />
+              <FloatingDiamond />
+              <main className="min-h-screen">{children}</main>
+              <Footer />
+              <InquiryModal tone="luxury" />
+            </InquiryProvider>
+          </QueryProvider>
         </NextIntlClientProvider>
       </body>
     </html>

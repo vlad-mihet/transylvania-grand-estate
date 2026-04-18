@@ -18,6 +18,7 @@
     "agents": "Agenți",
     "cities": "Orașe",
     "testimonials": "Testimoniale",
+    "bankRates": "Dobânzi Bancare",
     "settings": "Setări",
     "navigation": "Navigare",
     "version": "Panou admin v0.1"
@@ -129,6 +130,48 @@
     "created": "Testimonial creat",
     "updated": "Testimonial actualizat"
   },
+  "BankRates": {
+    "title": "Dobânzi Bancare",
+    "count": "{count} dobânzi",
+    "addBankRate": "Adaugă dobândă",
+    "newBankRate": "Dobândă nouă",
+    "editBankRate": "Editează dobânda",
+    "notFound": "Dobânda nu a fost găsită",
+    "columnBank": "Bancă",
+    "columnRate": "Dobândă (%)",
+    "columnType": "Tip",
+    "columnActive": "Activă",
+    "columnOrder": "Ordine",
+    "deleteTitle": "Șterge dobânda",
+    "deleted": "Dobândă ștearsă",
+    "deleteFailed": "Eroare la ștergerea dobânzii",
+    "created": "Dobândă creată",
+    "updated": "Dobândă actualizată"
+  },
+  "BankRateForm": {
+    "title": "Informații dobândă bancară",
+    "bankName": "Numele băncii",
+    "rate": "Rata dobânzii (%)",
+    "rateType": "Tipul dobânzii",
+    "types": {
+      "fixed": "Fixă (5 ani)",
+      "variable": "Variabilă",
+      "govtProgram": "Program guvernamental"
+    },
+    "sortOrder": "Ordine de afișare",
+    "loanDetails": "Detalii credit",
+    "maxLtv": "LTV maxim",
+    "maxLtvHint": "Raportul maxim credit/valoare (ex. 0.85 pentru 85%)",
+    "maxTermYears": "Durată maximă (ani)",
+    "processingFee": "Comision procesare (%)",
+    "processingFeeHint": "Procent din suma creditului",
+    "insuranceRate": "Rata asigurare (%)",
+    "insuranceRateHint": "Asigurare de viață lunară ca % din soldul restant",
+    "notes": "Notițe",
+    "notesPlaceholder": "ex. Noua Casă — max 70.000 EUR",
+    "active": "Activă (vizibilă în calculatoare)",
+    "saveBankRate": "Salvează dobânda"
+  },
   "Settings": {
     "title": "Setări",
     "description": "Gestionează configurația site-ului",
@@ -144,7 +187,17 @@
     "url": "URL",
     "noSocialLinks": "Niciun link social adăugat",
     "saved": "Setări salvate",
-    "saveSettings": "Salvează setările"
+    "saveSettings": "Salvează setările",
+    "financialData": "Date financiare",
+    "eurRon": "Curs EUR/RON",
+    "ircc": "Rata de referință IRCC",
+    "source": "Sursă",
+    "syncBnr": "Sincronizare BNR",
+    "bnrSynced": "EUR/RON sincronizat: {value}",
+    "bnrSyncFailed": "Sincronizare BNR eșuată: {error}",
+    "updateIrcc": "Actualizează",
+    "irccUpdated": "IRCC actualizat",
+    "irccHint": "IRCC se modifică trimestrial (ian, apr, iul, oct). Actualizare manuală."
   },
   "PropertyForm": {
     "basicInfo": "Informații de bază",

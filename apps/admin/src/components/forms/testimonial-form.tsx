@@ -3,6 +3,8 @@
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { testimonialSchema, TestimonialFormValues } from "@/lib/validations/testimonial";
+import { useApiFormErrors } from "@/lib/form-error";
+import { toast } from "sonner";
 import { BilingualTextarea } from "@/components/shared/bilingual-textarea";
 import {
   Button,
@@ -25,9 +27,10 @@ interface TestimonialFormProps {
   defaultValues?: Partial<TestimonialFormValues>;
   onSubmit: (data: TestimonialFormValues) => void;
   loading?: boolean;
+  submissionError?: unknown;
 }
 
-export function TestimonialForm({ defaultValues, onSubmit, loading }: TestimonialFormProps) {
+export function TestimonialForm({ defaultValues, onSubmit, loading, submissionError }: TestimonialFormProps) {
   const t = useTranslations("TestimonialForm");
   const tc = useTranslations("Common");
 
@@ -41,6 +44,10 @@ export function TestimonialForm({ defaultValues, onSubmit, loading }: Testimonia
       rating: 5,
       ...defaultValues,
     },
+  });
+
+  useApiFormErrors(form, submissionError, (err) => {
+    toast.error(err instanceof Error ? err.message : "Failed to save");
   });
 
   return (

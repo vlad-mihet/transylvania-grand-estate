@@ -10,6 +10,7 @@ import { PageHeader } from "@/components/shared/page-header";
 import { PropertyFormValues } from "@/lib/validations/property";
 import { toPropertyPayload } from "@/lib/transform-property";
 import { GalleryImage } from "@/components/shared/image-gallery-manager";
+import type { ApiProperty, ApiPropertyImage } from "@tge/types";
 import { useTranslations } from "next-intl";
 
 export default function EditPropertyPage() {
@@ -20,7 +21,7 @@ export default function EditPropertyPage() {
 
   const { data: property, isLoading } = useQuery({
     queryKey: ["property", id],
-    queryFn: () => apiClient<any>(`/properties/id/${id}`),
+    queryFn: () => apiClient<ApiProperty>(`/properties/id/${id}`),
     enabled: !!id,
   });
 
@@ -59,7 +60,6 @@ export default function EditPropertyPage() {
       toast.success(t("updated"));
       router.push("/properties");
     },
-    onError: (err) => toast.error(err.message || t("updateFailed")),
   });
 
   if (isLoading) {
@@ -70,7 +70,8 @@ export default function EditPropertyPage() {
     return <p>{t("notFound")}</p>;
   }
 
-  // Map API data to form values
+  // Map API data to form values. ApiProperty fields are `T | null`;
+  // PropertyFormValues uses `T | undefined` — bridge with `?? undefined`.
   const defaultValues: Partial<PropertyFormValues> = {
     title: property.title,
     description: property.description,
@@ -84,16 +85,16 @@ export default function EditPropertyPage() {
     citySlug: property.citySlug,
     neighborhood: property.neighborhood ?? "",
     address: property.address ?? { en: "", ro: "" },
-    latitude: property.latitude,
-    longitude: property.longitude,
-    bedrooms: property.bedrooms,
-    bathrooms: property.bathrooms,
-    area: property.area,
-    landArea: property.landArea,
-    floors: property.floors,
-    yearBuilt: property.yearBuilt,
-    garage: property.garage,
-    pool: property.pool,
+    latitude: property.latitude ?? undefined,
+    longitude: property.longitude ?? undefined,
+    bedrooms: property.bedrooms ?? undefined,
+    bathrooms: property.bathrooms ?? undefined,
+    area: property.area ?? undefined,
+    landArea: property.landArea ?? undefined,
+    floors: property.floors ?? undefined,
+    yearBuilt: property.yearBuilt ?? undefined,
+    garage: property.garage ?? undefined,
+    pool: property.pool ?? undefined,
     features: property.features ?? [],
     featured: property.featured,
     isNew: property.isNew,
@@ -101,11 +102,11 @@ export default function EditPropertyPage() {
   };
 
   const existingImages: GalleryImage[] = (property.images ?? []).map(
-    (img: any) => ({
+    (img: ApiPropertyImage) => ({
       id: img.id,
       src: img.src,
-      alt: img.alt ?? "",
-      isHero: img.isHero,
+      alt: typeof img.alt === "string" ? img.alt : (img.alt as Record<string, string> | null)?.en ?? "",
+      isHero: img.isHero ?? false,
     }),
   );
 
@@ -117,6 +118,7 @@ export default function EditPropertyPage() {
         images={existingImages}
         onSubmit={(data, images) => updateMutation.mutate({ data, images })}
         loading={updateMutation.isPending}
+        submissionError={updateMutation.error}
       />
     </div>
   );

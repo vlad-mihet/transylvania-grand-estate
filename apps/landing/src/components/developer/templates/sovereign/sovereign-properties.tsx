@@ -8,10 +8,10 @@ import {
   ScrollReveal,
   AccentButton,
   Badge,
+  PropertySpecs,
 } from "@tge/ui";
 import { Container } from "@/components/layout/container";
 import { PropertyGrid } from "@/components/property/property-grid";
-import { PropertySpecs } from "@/components/property/property-specs";
 import { Link } from "@tge/i18n/navigation";
 import { MapPin, ArrowRight } from "lucide-react";
 import { useTranslations } from "next-intl";
@@ -23,7 +23,6 @@ interface SovereignPropertiesProps {
 }
 
 export function SovereignProperties({
-  developer,
   properties,
   locale,
 }: SovereignPropertiesProps) {
@@ -82,6 +81,7 @@ export function SovereignProperties({
                   <PropertySpecs
                     specs={featuredProperty.specs}
                     variant="full"
+                    tone="luxury"
                     className="mb-6"
                   />
 

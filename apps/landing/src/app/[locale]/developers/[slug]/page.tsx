@@ -1,9 +1,9 @@
 import { notFound } from "next/navigation";
 import { getLocale } from "next-intl/server";
-import { Locale } from "@tge/types";
+import { Locale, type ApiDeveloper } from "@tge/types";
 import { localize } from "@tge/utils";
-import { fetchApi } from "@/lib/api";
-import { mapApiDeveloper, mapApiProperties } from "@/lib/mappers";
+import { fetchApi } from "@tge/api-client";
+import { mapApiDeveloper, mapApiProperties } from "@tge/api-client";
 import { developerTemplateMap, DEFAULT_TEMPLATE } from "./template-map";
 import { PrestigeTemplate } from "@/components/developer/templates/prestige";
 import { AtelierTemplate } from "@/components/developer/templates/atelier";
@@ -18,7 +18,7 @@ export async function generateMetadata({
   const { slug } = await params;
   const locale = (await getLocale()) as Locale;
   try {
-    const developer = await fetchApi<any>(`/developers/${slug}`);
+    const developer = await fetchApi<ApiDeveloper>(`/developers/${slug}`);
     return {
       title: developer.name,
       description: developer.shortDescription ? localize(developer.shortDescription, locale) : "",
@@ -43,7 +43,7 @@ export default async function DeveloperDetailPage({
 
   let raw;
   try {
-    raw = await fetchApi<any>(`/developers/${slug}`);
+    raw = await fetchApi<ApiDeveloper>(`/developers/${slug}`);
   } catch {
     notFound();
   }

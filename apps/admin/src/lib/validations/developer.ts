@@ -1,21 +1,16 @@
 import { z } from "zod";
+import { createDeveloperSchema } from "@tge/types/schemas/developer";
 
-const localizedString = z.object({
-  en: z.string().min(1, "English value is required"),
-  ro: z.string().min(1, "Romanian value is required"),
-  fr: z.string().optional(),
-  de: z.string().optional(),
-});
-
-export const developerSchema = z.object({
-  name: z.string().min(1, "Name is required"),
-  slug: z.string().min(1, "Slug is required"),
-  description: localizedString,
-  shortDescription: localizedString,
-  city: z.string().min(1, "City is required"),
-  citySlug: z.string().min(1),
-  website: z.string().url().optional().or(z.literal("")),
-  projectCount: z.coerce.number().int().min(0),
+// Form-specific tweaks:
+// - `website` accepts empty string (form UX) in addition to URL / absent
+// - Plain `z.number()` for `projectCount` (form collects numbers directly;
+//   the coerce in the shared schema is for the API/query boundary)
+// - `featured` required on the form
+export const developerSchema = createDeveloperSchema.extend({
+  website: z
+    .union([z.string().url().max(500), z.literal("")])
+    .optional(),
+  projectCount: z.number().int().min(0),
   featured: z.boolean(),
 });
 

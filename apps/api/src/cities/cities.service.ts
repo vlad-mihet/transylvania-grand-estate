@@ -1,9 +1,12 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { Prisma } from '@prisma/client';
 import { PrismaService } from '../prisma/prisma.service';
 import { UploadsService } from '../uploads/uploads.service';
 import { CreateCityDto } from './dto/create-city.dto';
 import { UpdateCityDto } from './dto/update-city.dto';
+import { ensureFound } from '../common/utils/ensure-found.util';
+import { ensureSlugUnique } from '../common/utils/ensure-slug-unique.util';
+import { toJson } from '../common/utils/prisma-json';
 
 @Injectable()
 export class CitiesService {
@@ -12,30 +15,65 @@ export class CitiesService {
     private uploadsService: UploadsService,
   ) {}
 
-  async findAll() {
-    return this.prisma.city.findMany({ orderBy: { name: 'asc' } });
+  async findAll(countySlug?: string) {
+    const where = countySlug ? { county: { slug: countySlug } } : {};
+    return this.prisma.city.findMany({
+      where,
+      orderBy: { name: 'asc' },
+      include: { county: true },
+    });
   }
 
   async findById(id: string) {
-    const city = await this.prisma.city.findUnique({ where: { id } });
-    if (!city) throw new NotFoundException('City not found');
-    return city;
+    return ensureFound(
+      this.prisma.city.findUnique({
+        where: { id },
+        include: { county: true },
+      }),
+      'City',
+    );
   }
 
   async findBySlug(slug: string) {
-    const city = await this.prisma.city.findUnique({ where: { slug } });
-    if (!city) throw new NotFoundException('City not found');
-    return city;
+    return ensureFound(
+      this.prisma.city.findUnique({
+        where: { slug },
+        include: { county: true },
+      }),
+      'City',
+    );
+  }
+
+  async findNeighborhoods(citySlug: string) {
+    const city = await ensureFound(
+      this.prisma.city.findUnique({ where: { slug: citySlug } }),
+      'City',
+    );
+    return this.prisma.neighborhood.findMany({
+      where: { cityId: city.id },
+      orderBy: { name: 'asc' },
+    });
   }
 
   async create(dto: CreateCityDto) {
+    await ensureSlugUnique(dto.slug, 'City', (slug) =>
+      this.prisma.city.findUnique({
+        where: { slug },
+        select: { id: true },
+      }),
+    );
+    const county = await ensureFound(
+      this.prisma.county.findUnique({ where: { slug: dto.countySlug } }),
+      'County',
+    );
     return this.prisma.city.create({
       data: {
         name: dto.name,
         slug: dto.slug,
-        description: dto.description as unknown as Prisma.InputJsonValue,
+        description: toJson(dto.description),
         image: dto.image ?? '/uploads/placeholder-city.png',
         propertyCount: dto.propertyCount ?? 0,
+        county: { connect: { id: county.id } },
       },
     });
   }
@@ -47,7 +85,7 @@ export class CitiesService {
     if (dto.name !== undefined) data.name = dto.name;
     if (dto.slug !== undefined) data.slug = dto.slug;
     if (dto.description !== undefined)
-      data.description = dto.description as unknown as Prisma.InputJsonValue;
+      data.description = toJson(dto.description);
     if (dto.image !== undefined) data.image = dto.image;
     if (dto.propertyCount !== undefined) data.propertyCount = dto.propertyCount;
 
@@ -68,9 +106,10 @@ export class CitiesService {
     });
   }
 
-  private async ensureExists(id: string) {
-    const city = await this.prisma.city.findUnique({ where: { id } });
-    if (!city) throw new NotFoundException('City not found');
-    return city;
+  private ensureExists(id: string) {
+    return ensureFound(
+      this.prisma.city.findUnique({ where: { id } }),
+      'City',
+    );
   }
 }

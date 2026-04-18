@@ -1,0 +1,73 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+@import "shadcn/tailwind.css";
+@plugin "@tailwindcss/typography";
+@import "../../../../packages/tailwind-config/src/theme.css";
+
+@custom-variant dark (&:is(.dark *));
+@source "../../../../packages/ui/src";
+
+/* ── Reveria: Override theme tokens ──
+   We drop the `copper` / `cream` color names inherited from the landing
+   palette — Reveria is purple/white, and those names were actively
+   misleading. Use `--color-primary` + the standard `--foreground` /
+   `--muted-foreground` semantic tokens set below in `:root`. The
+   `amethyst` aliases are kept for places where a named purple is wanted. */
+@theme inline {
+  --color-amethyst: #7C3AED;
+  --color-amethyst-deep: #5B21B6;
+  --color-amethyst-light: #A78BFA;
+}
+
+:root {
+  --radius: 0.5rem;
+  --background: #FFFFFF;
+  --foreground: #111827;
+  --card: #FFFFFF;
+  --card-foreground: #111827;
+  --popover: #FFFFFF;
+  --popover-foreground: #111827;
+  --primary: #7C3AED;
+  --primary-foreground: #FFFFFF;
+  --color-primary-dark: #6D28D9;
+  --secondary: #F3F4F6;
+  --secondary-foreground: #111827;
+  --muted: #F9FAFB;
+  --muted-foreground: #6B7280;
+  --accent: #EDE9FE;
+  --accent-foreground: #7C3AED;
+  --destructive: #EF4444;
+  --border: #E5E7EB;
+  --input: #E5E7EB;
+  --ring: #7C3AED;
+
+  /* Status palette used by article rich elements (success / warning /
+     destructive variants). Kept in `:root` so `article.css` can consume
+     them via `var(--color-...)`. */
+  --color-success: #10B981;
+  --color-success-dark: #059669;
+  --color-success-bg: #ECFDF5;
+  --color-success-border: #A7F3D0;
+  --color-warning: #F59E0B;
+  --color-warning-dark: #D97706;
+  --color-warning-bg: #FFFBEB;
+  --color-destructive-dark: #DC2626;
+  --color-destructive-bg: #FEF2F2;
+  --color-destructive-border: #FECACA;
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground font-sans antialiased;
+  }
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-sans;
+  }
+}
+
+@import "./styles/scrollbar.css";
+@import "./styles/leaflet.css";
+@import "./article.css";

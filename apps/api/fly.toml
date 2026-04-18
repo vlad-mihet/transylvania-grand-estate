@@ -4,6 +4,9 @@ primary_region = 'ams'
 [build]
   dockerfile = 'Dockerfile'
 
+[deploy]
+  release_command = "npx prisma migrate deploy"
+
 [env]
   PORT = '3333'
   NODE_ENV = 'production'

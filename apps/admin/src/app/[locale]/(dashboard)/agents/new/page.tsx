@@ -31,7 +31,6 @@ export default function NewAgentPage() {
       toast.success(t("created"));
       router.push("/agents");
     },
-    onError: (err) => toast.error(err.message),
   });
 
   return (
@@ -40,6 +39,7 @@ export default function NewAgentPage() {
       <AgentForm
         onSubmit={(data, photo) => createMutation.mutate({ data, photo })}
         loading={createMutation.isPending}
+        submissionError={createMutation.error}
       />
     </div>
   );

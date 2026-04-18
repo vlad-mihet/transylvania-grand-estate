@@ -1,13 +1,4 @@
-import { IsOptional, IsEnum } from 'class-validator';
-import { InquiryType, InquiryStatus } from '@prisma/client';
-import { PaginationDto } from '../../common/dto/pagination.dto';
+import { createZodDto } from 'nestjs-zod';
+import { queryInquirySchema } from '@tge/types/schemas/inquiry';
 
-export class QueryInquiryDto extends PaginationDto {
-  @IsOptional()
-  @IsEnum(InquiryType)
-  type?: InquiryType;
-
-  @IsOptional()
-  @IsEnum(InquiryStatus)
-  status?: InquiryStatus;
-}
+export class QueryInquiryDto extends createZodDto(queryInquirySchema) {}

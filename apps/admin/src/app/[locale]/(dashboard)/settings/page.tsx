@@ -10,17 +10,15 @@ import {
   Button,
   Input,
   Label,
-  Textarea,
   Card,
   CardContent,
   CardHeader,
   CardTitle,
-  Separator,
   Skeleton,
 } from "@tge/ui";
-import { Plus, X, Loader2 } from "lucide-react";
+import { Plus, X, Loader2, RefreshCw } from "lucide-react";
 import { toast } from "sonner";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useTranslations } from "next-intl";
 import { QueryError } from "@/components/shared/query-error";
 import { BilingualInput } from "@/components/shared/bilingual-input";
@@ -33,7 +31,7 @@ export default function SettingsPage() {
 
   const { data: config, isLoading, isError, refetch } = useQuery({
     queryKey: ["site-config"],
-    queryFn: () => apiClient<any>("/site-config"),
+    queryFn: () => apiClient<Partial<SiteConfigFormValues>>("/site-config"),
   });
 
   const form = useForm<SiteConfigFormValues>({
@@ -201,6 +199,139 @@ export default function SettingsPage() {
           </Button>
         </div>
       </form>
+
+      <FinancialIndicatorsSection />
     </div>
+  );
+}
+
+// ─── Financial Indicators (separate from site config form) ────────────
+
+interface FinancialIndicator {
+  id: string;
+  key: string;
+  value: number;
+  source: string;
+  sourceUrl: string | null;
+  fetchedAt: string;
+}
+
+function FinancialIndicatorsSection() {
+  const t = useTranslations("Settings");
+  const queryClient = useQueryClient();
+  const [irccValue, setIrccValue] = useState("");
+
+  const { data: indicators = [], isLoading } = useQuery({
+    queryKey: ["financial-indicators"],
+    queryFn: () => apiClient<FinancialIndicator[]>("/financial-data/indicators"),
+  });
+
+  const eurRon = indicators.find((i) => i.key === "EUR_RON");
+  const ircc = indicators.find((i) => i.key === "IRCC");
+
+  // Adjust state on prop change (React 19 pattern) instead of useEffect +
+  // setState — avoids a double-render when `ircc` first arrives from the query.
+  const [lastIrccId, setLastIrccId] = useState<string | null>(null);
+  if (ircc && ircc.id !== lastIrccId) {
+    setLastIrccId(ircc.id);
+    setIrccValue(String(ircc.value));
+  }
+
+  const syncBnrMutation = useMutation({
+    mutationFn: () => apiClient<{ success: boolean; value?: number; error?: string }>("/financial-data/sync-bnr", { method: "POST" }),
+    onSuccess: (result) => {
+      queryClient.invalidateQueries({ queryKey: ["financial-indicators"] });
+      if (result.success) {
+        toast.success(t("bnrSynced", { value: result.value ?? 0 }));
+      } else {
+        toast.error(t("bnrSyncFailed", { error: result.error ?? "Unknown" }));
+      }
+    },
+    onError: (err) => toast.error(err.message),
+  });
+
+  const updateIrccMutation = useMutation({
+    mutationFn: (value: number) =>
+      apiClient("/financial-data/indicators/IRCC", {
+        method: "PATCH",
+        body: { value, source: "Admin" },
+      }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["financial-indicators"] });
+      toast.success(t("irccUpdated"));
+    },
+    onError: (err) => toast.error(err.message),
+  });
+
+  if (isLoading) return <Skeleton className="h-48 rounded-xl max-w-5xl" />;
+
+  return (
+    <Card className="max-w-5xl">
+      <CardHeader>
+        <CardTitle className="font-serif text-lg">{t("financialData")}</CardTitle>
+      </CardHeader>
+      <CardContent className="space-y-4">
+        <div className="grid gap-4 sm:grid-cols-2">
+          {/* EUR/RON */}
+          <div className="space-y-2 rounded-lg border p-4">
+            <Label>{t("eurRon")}</Label>
+            <p className="text-2xl font-semibold">{eurRon?.value?.toFixed(4) ?? "—"}</p>
+            <p className="text-xs text-muted-foreground">
+              {t("source")}: {eurRon?.source ?? "—"}
+              {eurRon?.fetchedAt && ` · ${new Date(eurRon.fetchedAt).toLocaleDateString("ro-RO")}`}
+            </p>
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              onClick={() => syncBnrMutation.mutate()}
+              disabled={syncBnrMutation.isPending}
+            >
+              {syncBnrMutation.isPending ? (
+                <Loader2 className="h-3.5 w-3.5 animate-spin mr-1" />
+              ) : (
+                <RefreshCw className="h-3.5 w-3.5 mr-1" />
+              )}
+              {t("syncBnr")}
+            </Button>
+          </div>
+
+          {/* IRCC */}
+          <div className="space-y-2 rounded-lg border p-4">
+            <Label>{t("ircc")}</Label>
+            <div className="flex gap-2">
+              <Input
+                type="number"
+                step="0.01"
+                value={irccValue}
+                onChange={(e) => setIrccValue(e.target.value)}
+                className="max-w-32"
+              />
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                onClick={() => {
+                  const v = parseFloat(irccValue);
+                  if (!isNaN(v) && v >= 0) updateIrccMutation.mutate(v);
+                }}
+                disabled={updateIrccMutation.isPending}
+              >
+                {updateIrccMutation.isPending ? (
+                  <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                ) : (
+                  t("updateIrcc")
+                )}
+              </Button>
+            </div>
+            <p className="text-xs text-muted-foreground">
+              {t("source")}: {ircc?.source ?? "—"}
+              {ircc?.fetchedAt && ` · ${new Date(ircc.fetchedAt).toLocaleDateString("ro-RO")}`}
+            </p>
+            <p className="text-xs text-muted-foreground">{t("irccHint")}</p>
+          </div>
+        </div>
+      </CardContent>
+    </Card>
   );
 }

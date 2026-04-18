@@ -162,6 +162,13 @@ docker compose -f docker-compose.prod.yml up -d --build
 
 This builds and runs the API (port 3333) and Admin (port 3001) containers alongside PostgreSQL.
 
+### Build pipeline notes
+
+- **`@tge/types` is a built package.** `pnpm --filter @tge/types build` must run before `pnpm --filter @tge/api build`; the API Dockerfile handles this. At runtime, Node resolves `@tge/types/*` via the package's `node` conditional export (pointing at `dist/`) — Next.js apps still consume the TS source via `transpilePackages`.
+- **API dist entrypoint:** `dist/apps/api/src/main.js` (not `dist/main.js`). The API's `tsconfig.build.json` uses `rootDir: "../.."` so shared workspace packages can be compiled alongside the app sources.
+- **Brand routing:** each Next app must set `NEXT_PUBLIC_SITE_ID` (`TGE_LUXURY` / `REVERIA` / `ADMIN`) in its `next.config.ts`. The shared `@tge/api-client` stamps every request with an `X-Site` header which the API's `SiteMiddleware` uses to pin tier scope — misconfigured apps silently get zero property results.
+- **CORS required origins:** `CORS_ORIGINS` must be explicit in production (comma-separated). The boot fails fast on an empty or whitespace-only value.
+
 ## Adding shadcn/ui Components
 
 From the landing app directory:

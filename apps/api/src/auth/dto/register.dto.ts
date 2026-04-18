@@ -1,19 +1,4 @@
-import { IsEmail, IsString, MinLength, IsOptional, IsEnum } from 'class-validator';
-import { AdminRole } from '@prisma/client';
+import { createZodDto } from 'nestjs-zod';
+import { registerSchema } from '@tge/types/schemas/auth';
 
-export class RegisterDto {
-  @IsEmail()
-  email: string;
-
-  @IsString()
-  @MinLength(6)
-  password: string;
-
-  @IsString()
-  @MinLength(2)
-  name: string;
-
-  @IsOptional()
-  @IsEnum(AdminRole)
-  role?: AdminRole;
-}
+export class RegisterDto extends createZodDto(registerSchema) {}

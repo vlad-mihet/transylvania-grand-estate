@@ -1,0 +1,25 @@
+{
+  "Common": {
+    "currency": "EUR",
+    "sqm": "m²",
+    "viewProperty": "Immobilie Ansehen",
+    "learnMore": "Mehr Erfahren",
+    "readMore": "Weiterlesen",
+    "available": "Verfügbar",
+    "sold": "Verkauft",
+    "reserved": "Reserviert",
+    "new": "Neu",
+    "featured": "Empfohlen",
+    "propertyTypes": {
+      "apartment": "Wohnung",
+      "house": "Haus",
+      "villa": "Villa",
+      "terrain": "Grundstück",
+      "penthouse": "Penthouse",
+      "estate": "Anwesen",
+      "chalet": "Chalet",
+      "mansion": "Herrenhaus",
+      "palace": "Palast"
+    }
+  }
+}

@@ -49,7 +49,7 @@ function getDefaultStats(projectCount: number): StatItem[] {
   ];
 }
 
-export function SovereignStats({ developer, locale }: SovereignStatsProps) {
+export function SovereignStats({ developer }: SovereignStatsProps) {
   const t = useTranslations("DeveloperShowcase");
   const stats = statsConfig[developer.slug] ?? getDefaultStats(developer.projectCount);
 

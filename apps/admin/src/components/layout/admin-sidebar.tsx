@@ -8,6 +8,7 @@ import {
   UserCircle,
   MapPin,
   MessageSquareQuote,
+  Landmark,
   Settings,
 } from "lucide-react";
 import { Sheet, SheetContent, SheetTitle } from "@tge/ui";
@@ -26,6 +27,7 @@ function SidebarContent() {
     { href: "/agents" as const, label: t("agents"), icon: UserCircle },
     { href: "/cities" as const, label: t("cities"), icon: MapPin },
     { href: "/testimonials" as const, label: t("testimonials"), icon: MessageSquareQuote },
+    { href: "/bank-rates" as const, label: t("bankRates"), icon: Landmark },
     { href: "/settings" as const, label: t("settings"), icon: Settings },
   ];
 

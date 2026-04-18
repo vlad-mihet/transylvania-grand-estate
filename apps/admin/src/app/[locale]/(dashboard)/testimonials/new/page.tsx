@@ -17,7 +17,6 @@ export default function NewTestimonialPage() {
     mutationFn: (data: TestimonialFormValues) =>
       apiClient("/testimonials", { method: "POST", body: data }),
     onSuccess: () => { toast.success(t("created")); router.push("/testimonials"); },
-    onError: (err) => toast.error(err.message),
   });
 
   return (
@@ -26,6 +25,7 @@ export default function NewTestimonialPage() {
       <TestimonialForm
         onSubmit={(data) => createMutation.mutate(data)}
         loading={createMutation.isPending}
+        submissionError={createMutation.error}
       />
     </div>
   );

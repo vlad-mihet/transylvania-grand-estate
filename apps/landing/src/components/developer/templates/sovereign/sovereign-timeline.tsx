@@ -20,7 +20,6 @@ const knownDevelopers = ["carpathia-imobiliare", "gran-via", "nova-building"];
 
 export function SovereignTimeline({
   developer,
-  locale,
 }: SovereignTimelineProps) {
   const t = useTranslations("DeveloperShowcase");
   const milestoneKey = knownDevelopers.includes(developer.slug)

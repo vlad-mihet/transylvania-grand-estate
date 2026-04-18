@@ -1,0 +1,7 @@
+{
+  "name": "reveria",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "apps/reveria/src",
+  "projectType": "application",
+  "tags": ["scope:app", "type:next"]
+}

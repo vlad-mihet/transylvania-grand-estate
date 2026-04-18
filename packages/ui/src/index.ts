@@ -1,4 +1,5 @@
 // UI Components (shadcn)
+export { Accordion, AccordionItem, AccordionTrigger, AccordionContent } from "./components/ui/accordion";
 export { AspectRatio } from "./components/ui/aspect-ratio";
 export { Badge, badgeVariants } from "./components/ui/badge";
 export { Button, buttonVariants } from "./components/ui/button";
@@ -14,6 +15,7 @@ export { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectScro
 export { Separator } from "./components/ui/separator";
 export { Sheet, SheetTrigger, SheetClose, SheetContent, SheetHeader, SheetFooter, SheetTitle, SheetDescription } from "./components/ui/sheet";
 export { Skeleton } from "./components/ui/skeleton";
+export { Slider } from "./components/ui/slider";
 export { Switch } from "./components/ui/switch";
 export { Table, TableHeader, TableBody, TableFooter, TableHead, TableRow, TableCell, TableCaption } from "./components/ui/table";
 export { Tabs, TabsList, TabsTrigger, TabsContent, tabsListVariants } from "./components/ui/tabs";
@@ -27,3 +29,24 @@ export { AccentButton } from "./components/shared/accent-button";
 export { AnimatedCounter } from "./components/shared/animated-counter";
 export { ScrollReveal } from "./components/shared/scroll-reveal";
 export { SectionHeading } from "./components/shared/section-heading";
+
+// Property Components
+export {
+  PropertySpecs,
+  type PropertySpecsTone,
+} from "./components/property/property-specs";
+export {
+  PropertyFeatures,
+  type PropertyFeaturesTone,
+} from "./components/property/property-features";
+
+// Inquiry Modal
+export {
+  InquiryProvider,
+  useInquiryModal,
+  InquiryModal,
+  InquiryTrigger,
+  type InquiryContext,
+  type InquiryType,
+  type InquiryTone,
+} from "./components/inquiry";

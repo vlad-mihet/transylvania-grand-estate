@@ -1,7 +1,7 @@
 import { Container } from "@/components/layout/container";
 import { AccentButton } from "@tge/ui";
 import { Link } from "@tge/i18n/navigation";
-import { InquiryTrigger, type InquiryContext } from "@/components/inquiry";
+import { InquiryTrigger, type InquiryContext } from "@tge/ui";
 
 interface CTABannerProps {
   title: string;

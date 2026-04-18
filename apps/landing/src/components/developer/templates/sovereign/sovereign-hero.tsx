@@ -5,7 +5,7 @@ import type { Developer, Property, Locale } from "@tge/types";
 import { localize } from "@tge/utils";
 import { AccentButton } from "@tge/ui";
 import { Link } from "@tge/i18n/navigation";
-import { InquiryTrigger } from "@/components/inquiry";
+import { InquiryTrigger } from "@tge/ui";
 import { MapPin, Building2, ExternalLink } from "lucide-react";
 import { useTranslations } from "next-intl";
 

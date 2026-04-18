@@ -2,23 +2,25 @@ import { notFound } from "next/navigation";
 import Image from "next/image";
 import { getTranslations } from "next-intl/server";
 import { getLocale } from "next-intl/server";
-import { Locale } from "@tge/types";
+import { Locale, type ApiProperty } from "@tge/types";
 import { formatPrice, formatArea, localize } from "@tge/utils";
-import { fetchApi } from "@/lib/api";
-import { mapApiProperty, mapApiProperties } from "@/lib/mappers";
+import { fetchApi, fetchApiSafe } from "@tge/api-client";
+import { mapApiProperty, mapApiProperties } from "@tge/api-client";
 import { Container } from "@/components/layout/container";
 import { Breadcrumb } from "@/components/layout/breadcrumb";
 import { PropertyGallery } from "@/components/property/property-gallery";
-import { PropertySpecs } from "@/components/property/property-specs";
-import { PropertyFeatures } from "@/components/property/property-features";
 import { SimilarProperties } from "@/components/property/similar-properties";
 import { CTABanner } from "@/components/sections/cta-banner";
-import { AccentButton } from "@tge/ui";
+import {
+  AccentButton,
+  Badge,
+  PropertyFeatures,
+  PropertySpecs,
+  Separator,
+} from "@tge/ui";
 import { Link } from "@tge/i18n/navigation";
-import { InquiryTrigger } from "@/components/inquiry";
-import { Badge } from "@tge/ui";
-import { Separator } from "@tge/ui";
-import { ArrowLeft, MapPin } from "lucide-react";
+import { InquiryTrigger } from "@tge/ui";
+import { MapPin } from "lucide-react";
 import type { Metadata } from "next";
 
 export async function generateMetadata({
@@ -28,7 +30,7 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const { slug, locale } = await params;
   try {
-    const raw = await fetchApi<any>(`/properties/${slug}`);
+    const raw = await fetchApi<ApiProperty>(`/properties/${slug}`);
     const property = mapApiProperty(raw);
     const loc = locale as Locale;
     return {
@@ -50,15 +52,15 @@ export default async function PropertyDetailPage({
   let property;
   let agent: { firstName: string; lastName: string; phone: string; email: string; photo?: string } | null = null;
   try {
-    const raw = await fetchApi<any>(`/properties/${slug}`);
+    const raw = await fetchApi<ApiProperty>(`/properties/${slug}`);
     property = mapApiProperty(raw);
-    if (raw.agent) {
+    if (raw.agent && raw.agent.email && raw.agent.phone) {
       agent = {
         firstName: raw.agent.firstName,
         lastName: raw.agent.lastName,
         phone: raw.agent.phone,
         email: raw.agent.email,
-        photo: raw.agent.photo,
+        photo: raw.agent.photo ?? undefined,
       };
     }
   } catch {
@@ -69,10 +71,12 @@ export default async function PropertyDetailPage({
   const t = await getTranslations("PropertyDetail");
   const tBreadcrumb = await getTranslations("Breadcrumb");
 
-  const similarRaw = await fetchApi<any[]>(
-    `/properties?city=${property.location.citySlug}&limit=4`
+  // Similar-properties sidebar — degrade to an empty list on failure rather
+  // than 500ing the entire detail page.
+  const similarResult = await fetchApiSafe<ApiProperty[]>(
+    `/properties?city=${property.location.citySlug}&limit=4`,
   );
-  const similar = mapApiProperties(similarRaw)
+  const similar = mapApiProperties(similarResult.ok ? similarResult.data : [])
     .filter((p) => p.slug !== slug)
     .slice(0, 3);
 
@@ -136,6 +140,7 @@ export default async function PropertyDetailPage({
                 specs={property.specs}
                 propertyType={property.type}
                 variant="full"
+                tone="luxury"
                 className="mb-8"
               />
 
@@ -157,7 +162,7 @@ export default async function PropertyDetailPage({
               <h2 className="font-serif text-2xl text-cream mb-6">
                 {t("features")}
               </h2>
-              <PropertyFeatures features={property.features} />
+              <PropertyFeatures features={property.features} tone="luxury" />
             </div>
 
             <div className="lg:col-span-1 order-1 lg:order-2">

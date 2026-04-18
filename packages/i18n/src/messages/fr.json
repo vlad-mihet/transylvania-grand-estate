@@ -1,0 +1,25 @@
+{
+  "Common": {
+    "currency": "EUR",
+    "sqm": "m²",
+    "viewProperty": "Voir la Propriété",
+    "learnMore": "En Savoir Plus",
+    "readMore": "Lire la Suite",
+    "available": "Disponible",
+    "sold": "Vendu",
+    "reserved": "Réservé",
+    "new": "Nouveau",
+    "featured": "En Vedette",
+    "propertyTypes": {
+      "apartment": "Appartement",
+      "house": "Maison",
+      "villa": "Villa",
+      "terrain": "Terrain",
+      "penthouse": "Penthouse",
+      "estate": "Domaine",
+      "chalet": "Chalet",
+      "mansion": "Manoir",
+      "palace": "Palais"
+    }
+  }
+}

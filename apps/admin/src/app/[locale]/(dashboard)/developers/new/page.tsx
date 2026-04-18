@@ -31,7 +31,6 @@ export default function NewDeveloperPage() {
       toast.success(t("created"));
       router.push("/developers");
     },
-    onError: (err) => toast.error(err.message),
   });
 
   return (
@@ -40,6 +39,7 @@ export default function NewDeveloperPage() {
       <DeveloperForm
         onSubmit={(data, logo) => createMutation.mutate({ data, logo })}
         loading={createMutation.isPending}
+        submissionError={createMutation.error}
       />
     </div>
   );

@@ -1,0 +1,933 @@
+{
+  "Navigation": {
+    "home": "Home",
+    "properties": "Properties",
+    "cities": "Cities",
+    "developers": "Developers",
+    "agents": "Agents",
+    "blog": "Blog",
+    "about": "About",
+    "contact": "Contact",
+    "scheduleViewing": "Get Started",
+    "tools": "Outils"
+  },
+  "HomePage": {
+    "hero": {
+      "title": "Find Your Perfect Home",
+      "subtitle": "Quality properties across Transylvania — from cozy apartments to family houses, all within your reach.",
+      "cta": "Browse Properties",
+      "propertyCount": "{count} properties available",
+      "searchForm": {
+        "tabBuy": "Buy",
+        "tabRent": "Rent",
+        "typePlaceholder": "Property Type",
+        "allTypes": "All Types",
+        "forSale": "For Sale",
+        "forRent": "For Rent",
+        "addressPlaceholder": "Type address",
+        "priceLabel": "Price",
+        "areaLabel": "Area",
+        "from": "from",
+        "to": "to",
+        "searchButton": "Search"
+      }
+    },
+    "valueProposition": {
+      "title": "Why Reveria",
+      "subtitle": "A property platform that works differently.",
+      "features": {
+        "approach": {
+          "title": "Fewer listings, better vetted",
+          "description": "Most platforms dump thousands of listings and leave you to figure it out. We're building Reveria around a different idea — a smaller selection of properties, each one reviewed, with someone local to help you through the process.",
+          "cta": "Browse properties"
+        },
+        "curated": {
+          "title": "Every listing is reviewed",
+          "description": "Before a property goes live on Reveria, it goes through our review process. We check the details, flag anything that doesn't add up, and only publish listings we'd be comfortable recommending.",
+          "cta": "See our selection"
+        },
+        "guidance": {
+          "title": "Agents who actually know the city",
+          "description": "Our agents live in the cities they cover. They know which neighborhoods are growing, which buildings are well-built, and what a fair price looks like on any given street. That's not something you get from a listing page.",
+          "cta": "Talk to an agent"
+        }
+      }
+    },
+    "featured": {
+      "subtitle": "Hand-Picked For You",
+      "title": "Featured Properties",
+      "viewAll": "View All"
+    },
+    "usefulTools": {
+      "title": "Outils Utiles",
+      "viewAll": "Voir Tous les Outils",
+      "tools": {
+        "mortgage": {
+          "title": "Calculateur Hypothécaire",
+          "description": "Calculez vos mensualités, comparez les taux bancaires et planifiez votre crédit hypothécaire.",
+          "cta": "Calculer"
+        },
+        "purchaseCost": {
+          "title": "Coûts d'Acquisition",
+          "description": "Découvrez le coût total d'achat — frais de notaire, taxes, commissions et tous les frais cachés.",
+          "cta": "Calculer"
+        },
+        "rentalYield": {
+          "title": "Rendement Locatif",
+          "description": "Estimez le rendement de votre investissement, le revenu net et le flux de trésorerie mensuel.",
+          "cta": "Calculer"
+        },
+        "borrowingCapacity": {
+          "title": "Capacité d'Emprunt",
+          "description": "Découvrez combien vous pouvez emprunter en fonction de vos revenus et dettes existantes.",
+          "cta": "Calculer"
+        }
+      }
+    },
+    "cities": {
+      "subtitle": "Explore By City",
+      "title": "Popular Cities",
+      "propertyCount": "{count} properties",
+      "tabs": {
+        "all": "All Properties",
+        "new": "New Listings",
+        "featured": "Featured"
+      }
+    },
+    "faq": {
+      "title": "Frequently Asked Questions",
+      "viewAll": "View All FAQ",
+      "items": {
+        "0": {
+          "question": "What is Reveria and how can it help me?",
+          "answer": "Reveria is a real estate platform focused on affordable, quality properties across Transylvania. We help buyers find carefully curated homes priced up to €999,999, with transparent listings and expert agent support throughout the process."
+        },
+        "1": {
+          "question": "What types of properties can I find on Reveria?",
+          "answer": "You can find apartments, houses, villas, terrains, penthouses, and more. We cover a wide range of property types across multiple cities in Transylvania, all within the affordable price segment."
+        },
+        "2": {
+          "question": "In which cities are properties available?",
+          "answer": "We currently feature properties in Cluj-Napoca, Oradea, Timișoara, Brașov, and Sibiu — with more cities being added regularly."
+        },
+        "3": {
+          "question": "How does the buying process work through Reveria?",
+          "answer": "Browse our listings, contact our agents for viewings, and get guided support through the entire purchase process including documentation, negotiations, and closing. Our agents are here to make it seamless."
+        },
+        "4": {
+          "question": "Are Reveria listings verified?",
+          "answer": "Yes. Every property listed on Reveria goes through a review process. We verify ownership, accuracy of descriptions, and ensure photos accurately represent the property."
+        },
+        "5": {
+          "question": "Is it free to use Reveria as a buyer?",
+          "answer": "Absolutely. Browsing properties, contacting agents, and scheduling viewings is completely free for buyers. There are no hidden fees or registration requirements."
+        }
+      }
+    },
+    "articles": {
+      "title": "Recent Articles",
+      "viewAll": "View All Articles"
+    },
+    "cta": {
+      "title": "Ready to Find Your Home?",
+      "subtitle": "Browse our collection or get in touch — we're here to help you every step of the way.",
+      "button": "Contact Us"
+    }
+  },
+  "PropertiesPage": {
+    "hero": {
+      "title": "Properties",
+      "subtitle": "Browse Quality Homes Across Transylvania"
+    },
+    "contextual": {
+      "propertiesInCity": "Properties in {city}",
+      "propertiesByDeveloper": "Properties by {developer}",
+      "exploreCityDetails": "Explore {city}",
+      "aboutDeveloper": "About {developer}"
+    },
+    "filter": {
+      "search": "Search properties...",
+      "city": "City",
+      "location": "Emplacement",
+      "type": "Property Type",
+      "priceRange": "Price Range",
+      "sort": "Sort By",
+      "allCities": "All Cities",
+      "allTypes": "All Types",
+      "allPrices": "All Prices",
+      "priceLowHigh": "Price: Low to High",
+      "priceHighLow": "Price: High to Low",
+      "newest": "Newest First",
+      "results": "{count} properties found",
+      "searchButton": "Search",
+      "clearAll": "Clear All",
+      "activeFilters": "Active Filters",
+      "filterBy": "Filter By",
+      "priceFrom": "from (€)",
+      "priceTo": "to (€)",
+      "areaRange": "Area (m²)",
+      "areaFrom": "from (m²)",
+      "areaTo": "to (m²)",
+      "bedrooms": "Bedrooms",
+      "anyBedrooms": "Any",
+      "bathrooms": "Bathrooms",
+      "anyBathrooms": "Any",
+      "moreFilters": "Plus de filtres",
+      "lessFilters": "Moins de filtres",
+      "clearFilters": "Effacer les filtres",
+      "radius": "Rayon",
+      "forSale": "À vendre",
+      "forRent": "À louer",
+      "transaction": "Transaction",
+      "rooms": "Nombre de pièces",
+      "resultsCount": "Résultats {count}",
+      "floor": "Étage",
+      "floorFrom": "de",
+      "floorTo": "à",
+      "sellerType": "Type de vendeur",
+      "sellerPrivate": "Particulier",
+      "sellerAgency": "Agence",
+      "sellerDeveloper": "Promoteur",
+      "furnishing": "Aménagement",
+      "unfurnished": "Non meublé",
+      "semiFurnished": "Semi-meublé",
+      "furnished": "Meublé",
+      "luxuryFurnished": "Luxe",
+      "yearBuilt": "Année de construction",
+      "yearFrom": "de",
+      "yearTo": "à",
+      "pricePerSqm": "Prix / m²",
+      "material": "Matériau de construction",
+      "materialBrick": "Brique",
+      "materialConcrete": "Béton",
+      "materialBca": "BCA",
+      "materialWood": "Bois",
+      "materialStone": "Pierre",
+      "materialMixed": "Mixte",
+      "propertyCondition": "État du bien",
+      "conditionNewBuild": "Neuf",
+      "conditionRenovated": "Rénové",
+      "conditionGood": "Bon état",
+      "conditionNeedsRenovation": "À rénover",
+      "conditionUnderConstruction": "En construction",
+      "postedWithin": "Publié",
+      "anytime": "À tout moment",
+      "last24h": "Dernières 24h",
+      "last3days": "3 derniers jours",
+      "last7days": "7 derniers jours",
+      "amenities": "Équipements",
+      "balcony": "Balcon",
+      "terrace": "Terrasse",
+      "parking": "Parking",
+      "garage": "Garage",
+      "separateKitchen": "Cuisine séparée",
+      "storage": "Rangement",
+      "elevator": "Ascenseur",
+      "hasImages": "Avec images"
+    },
+    "noResults": {
+      "title": "No Properties Found",
+      "description": "Try adjusting your filters to find what you're looking for."
+    },
+    "cta": {
+      "title": "Can't Find What You're Looking For?",
+      "subtitle": "Get in touch and we'll help you find the perfect property.",
+      "button": "Contact Us"
+    }
+  },
+  "PropertyDetail": {
+    "backToProperties": "Back to Properties",
+    "overview": "Overview",
+    "features": "Features & Amenities",
+    "location": "Location",
+    "specs": {
+      "bedrooms": "Bedrooms",
+      "bathrooms": "Bathrooms",
+      "area": "Living Area",
+      "landArea": "Land Area",
+      "floors": "Floors",
+      "yearBuilt": "Year Built",
+      "garage": "Garage Spaces"
+    },
+    "description": "Description",
+    "requestInfo": "Request Information",
+    "scheduleViewing": "Schedule a Viewing",
+    "shareProperty": "Share Property",
+    "similarProperties": {
+      "subtitle": "You May Also Like",
+      "title": "Similar Properties"
+    },
+    "price": "Price",
+    "status": {
+      "available": "Available",
+      "sold": "Sold",
+      "reserved": "Reserved"
+    },
+    "cta": {
+      "title": "Interested in This Property?",
+      "subtitle": "Get in touch to learn more or schedule a viewing."
+    },
+    "agent": {
+      "title": "Your Agent",
+      "callAgent": "Call Agent",
+      "emailAgent": "Email Agent",
+      "roleAgent": "Agent Reveria",
+      "roleTeam": "Équipe Reveria"
+    },
+    "save": "Enregistrer",
+    "share": "Partager",
+    "pricePerSqm": "{value} €/m²",
+    "readMore": "Lire la suite",
+    "readLess": "Lire moins",
+    "id": "ID",
+    "reportListing": "Signaler l'annonce",
+    "viewPhone": "Afficher le numéro",
+    "sendMessage": "Envoyer un message",
+    "yes": "Oui",
+    "no": "Non",
+    "table": {
+      "title": {
+        "apartment": "Appartement à vendre",
+        "house": "Maison à vendre",
+        "villa": "Villa à vendre",
+        "terrain": "Terrain à vendre",
+        "penthouse": "Penthouse à vendre",
+        "estate": "Domaine à vendre",
+        "chalet": "Chalet à vendre",
+        "mansion": "Manoir à vendre",
+        "palace": "Palais à vendre"
+      },
+      "usefulArea": "Surface utile",
+      "rooms": "Pièces",
+      "type": "Type",
+      "comfort": "Confort",
+      "floor": "Étage",
+      "floorOf": "{floor}/{total}",
+      "condition": "État",
+      "propertyType": "Type de bien",
+      "ownership": "Propriété",
+      "heating": "Chauffage",
+      "availableFrom": "Disponible à partir du",
+      "sellerType": "Type de vendeur",
+      "extraInfo": "Informations supplémentaires"
+    },
+    "heating": {
+      "central_gas": "Chauffage central au gaz",
+      "centralized": "Chauffage urbain",
+      "block_central": "Chauffage central d'immeuble",
+      "electric": "Électrique",
+      "heat_pump": "Pompe à chaleur",
+      "solid_fuel": "Combustible solide",
+      "none": "Aucun"
+    },
+    "ownership": {
+      "personal": "Personnelle",
+      "company": "Société",
+      "mixed": "Mixte"
+    },
+    "windowType": {
+      "pvc_double": "PVC double vitrage",
+      "pvc_triple": "PVC triple vitrage",
+      "wood": "Bois",
+      "aluminum": "Aluminium",
+      "mixed": "Mixte"
+    },
+    "furnishing": {
+      "unfurnished": "Non meublé",
+      "semi_furnished": "Partiellement meublé",
+      "furnished": "Meublé",
+      "luxury": "Meublé luxe"
+    },
+    "condition": {
+      "new_build": "Neuf",
+      "renovated": "Rénové",
+      "good": "Bon état",
+      "needs_renovation": "À rénover",
+      "under_construction": "En construction"
+    },
+    "material": {
+      "brick": "Brique",
+      "concrete": "Béton",
+      "bca": "BCA",
+      "wood": "Bois",
+      "stone": "Pierre",
+      "mixed": "Mixte"
+    },
+    "sellerType": {
+      "private_seller": "Particulier",
+      "agency": "Agence",
+      "developer": "Promoteur"
+    },
+    "building": {
+      "title": "Bâtiment & matériaux",
+      "yearBuilt": "Année de construction",
+      "elevator": "Ascenseur",
+      "buildingType": "Type de bâtiment",
+      "material": "Matériau",
+      "windowType": "Type de fenêtre"
+    },
+    "facilities": {
+      "title": "Équipements",
+      "groupFacilities": "Équipements",
+      "groupSecurity": "Sécurité",
+      "groupMedia": "Média",
+      "balcony": "Balcon",
+      "terrace": "Terrasse",
+      "parking": "Parking",
+      "garage": "Garage",
+      "separateKitchen": "Cuisine séparée",
+      "storage": "Débarras",
+      "washingMachine": "Lave-linge",
+      "fridge": "Réfrigérateur",
+      "stove": "Cuisinière",
+      "oven": "Four",
+      "ac": "Climatisation",
+      "interiorStaircase": "Escalier intérieur",
+      "blinds": "Volets",
+      "armoredDoors": "Portes blindées",
+      "intercom": "Interphone",
+      "internet": "Internet",
+      "cableTV": "TV par câble"
+    },
+    "loanCalc": {
+      "title": "Calculateur hypothécaire",
+      "downPayment": "Apport personnel",
+      "term": "Durée",
+      "rate": "Taux d'intérêt",
+      "monthlyPayment": "Mensualité",
+      "totalInterest": "Intérêts totaux",
+      "getOffer": "Demander une offre",
+      "years": "ans"
+    },
+    "inlineInquiry": {
+      "name": "Nom",
+      "email": "E-mail",
+      "phone": "Téléphone",
+      "message": "Message",
+      "send": "Envoyer le message",
+      "thanks": "Merci ! Nous vous contacterons très prochainement.",
+      "defaultMessage": "Bonjour, je suis intéressé(e) par {title} et souhaiterais plus d'informations.",
+      "privacy": "En soumettant ce formulaire, vous acceptez nos Conditions d'utilisation et notre Politique de confidentialité."
+    },
+    "map": {
+      "title": "Emplacement sur la carte",
+      "showOnMap": "Afficher sur la carte"
+    }
+  },
+  "CitiesPage": {
+    "hero": {
+      "title": "Explore Cities",
+      "subtitle": "Discover Transylvania's most vibrant cities and find your ideal neighborhood."
+    },
+    "viewProperties": "View Properties",
+    "propertyCount": "{count} properties"
+  },
+  "CityDetailPage": {
+    "propertiesIn": "Properties in {city}",
+    "browseAll": "Browse All Properties",
+    "propertyCount": "{count} properties available",
+    "cta": {
+      "title": "Interested in {city}?",
+      "subtitle": "Get in touch with our local agents for personalized guidance.",
+      "button": "Contact Us"
+    }
+  },
+  "DevelopersPage": {
+    "hero": {
+      "title": "Developers",
+      "subtitle": "Trusted developers building quality homes across Transylvania."
+    },
+    "viewProjects": "View Projects",
+    "projectCount": "{count} projects"
+  },
+  "DeveloperDetailPage": {
+    "about": "About {name}",
+    "projects": "Projects by {name}",
+    "visitWebsite": "Visit Website",
+    "projectCount": "{count} projects",
+    "cta": {
+      "title": "Interested in {name} Properties?",
+      "subtitle": "Contact us for more information about their developments.",
+      "button": "Get in Touch"
+    }
+  },
+  "AgentsPage": {
+    "hero": {
+      "title": "Our Agents",
+      "subtitle": "Meet our local experts who know Transylvania's property market inside and out."
+    },
+    "viewProfile": "View Profile",
+    "propertiesManaged": "{count} properties"
+  },
+  "AgentDetailPage": {
+    "about": "About {name}",
+    "properties": "Properties by {name}",
+    "contactAgent": "Contact Agent",
+    "callAgent": "Call",
+    "emailAgent": "Email",
+    "cta": {
+      "title": "Work with {name}",
+      "subtitle": "Get personalized property recommendations and expert advice.",
+      "button": "Send a Message"
+    }
+  },
+  "FAQPage": {
+    "hero": {
+      "title": "Frequently Asked Questions",
+      "subtitle": "Find answers to common questions about Reveria and how we can help you."
+    },
+    "items": {
+      "0": {
+        "question": "What is Reveria and how can it help me?",
+        "answer": "Reveria is a real estate platform focused on affordable, quality properties across Transylvania. We help buyers find carefully curated homes priced up to €999,999, with transparent listings and expert agent support throughout the process."
+      },
+      "1": {
+        "question": "What types of properties can I find on Reveria?",
+        "answer": "You can find apartments, houses, villas, terrains, penthouses, and more. We cover a wide range of property types across multiple cities in Transylvania, all within the affordable price segment."
+      },
+      "2": {
+        "question": "In which cities are properties available?",
+        "answer": "We currently feature properties in Cluj-Napoca, Oradea, Timișoara, Brașov, and Sibiu — with more cities being added regularly."
+      },
+      "3": {
+        "question": "How does the buying process work through Reveria?",
+        "answer": "Browse our listings, contact our agents for viewings, and get guided support through the entire purchase process including documentation, negotiations, and closing. Our agents are here to make it seamless."
+      },
+      "4": {
+        "question": "Are Reveria listings verified?",
+        "answer": "Yes. Every property listed on Reveria goes through a review process. We verify ownership, accuracy of descriptions, and ensure photos accurately represent the property."
+      },
+      "5": {
+        "question": "Is it free to use Reveria as a buyer?",
+        "answer": "Absolutely. Browsing properties, contacting agents, and scheduling viewings is completely free for buyers. There are no hidden fees or registration requirements."
+      },
+      "6": {
+        "question": "Can I schedule a property viewing online?",
+        "answer": "Yes! You can request a viewing directly from any property listing page. Our agents will confirm the appointment and guide you through the visit."
+      },
+      "7": {
+        "question": "How do I contact an agent?",
+        "answer": "You can reach our agents through the contact form on any property page, via the inquiry modal, or by visiting our Agents page to find a specialist in your preferred city."
+      },
+      "8": {
+        "question": "Does Reveria offer properties for rent?",
+        "answer": "Currently, Reveria focuses on properties for sale. We are considering expanding to rentals in the future — stay tuned for updates."
+      },
+      "9": {
+        "question": "What documents do I need to buy a property?",
+        "answer": "Typically you'll need a valid ID, proof of income or financing, and funds for the down payment. Our agents will guide you through all required documentation specific to your situation."
+      }
+    },
+    "cta": {
+      "title": "Still Have Questions?",
+      "subtitle": "Our team is happy to help with any questions you may have.",
+      "button": "Contact Us"
+    }
+  },
+  "BlogPage": {
+    "hero": {
+      "title": "Blog",
+      "subtitle": "Insights, guides, and market updates for homebuyers in Transylvania."
+    },
+    "readMore": "Read More",
+    "minRead": "{count} min read",
+    "categories": {
+      "all": "All",
+      "guide": "Guides",
+      "news": "News",
+      "market-report": "Market Reports"
+    },
+    "noArticles": {
+      "title": "No Articles Yet",
+      "description": "Check back soon for insights, guides, and market updates."
+    },
+    "loadError": {
+      "title": "Impossible de charger les articles",
+      "description": "Une erreur est survenue lors de la récupération des derniers articles. Veuillez réessayer dans un instant."
+    }
+  },
+  "ArticleDetailPage": {
+    "backToBlog": "Back to Blog",
+    "publishedOn": "Published on {date}",
+    "minRead": "{count} min read",
+    "by": "By {author}",
+    "relatedArticles": "Related Articles"
+  },
+  "AboutPage": {
+    "hero": {
+      "badge": "About Us",
+      "title": "Building the Path to Your Home in Transylvania",
+      "description": "Reveria connects you with quality, affordable properties across Transylvania's most vibrant cities. No inflated prices, no hidden fees — just honest real estate for real people."
+    },
+    "story": {
+      "badge": "Our Story",
+      "title": "Why We Started Reveria",
+      "paragraph1": "We saw a problem that too many families in Transylvania were facing: a housing market full of overpriced listings, misleading photos, and agents who cared more about commission than finding the right fit. Good homes existed, but finding them felt like searching for a needle in a haystack.",
+      "paragraph2": "Reveria was born from a simple idea — what if there was a platform that only listed quality properties at fair prices, backed by agents who actually know the neighborhoods? We started in Cluj-Napoca and grew to cover Brașov, Sibiu, Oradea, and Timișoara. Every property on Reveria is reviewed before it goes live, because we believe you deserve to trust what you see.",
+      "imageAlt": "A charming neighborhood in Transylvania"
+    },
+    "stats": {
+      "cities": {
+        "value": "5+",
+        "label": "Cities Covered"
+      },
+      "properties": {
+        "value": "2,000+",
+        "label": "Properties Listed"
+      },
+      "families": {
+        "value": "500+",
+        "label": "Happy Families"
+      },
+      "savings": {
+        "value": "15%",
+        "label": "Avg. Savings vs Market"
+      }
+    },
+    "values": {
+      "badge": "What We Stand For",
+      "title": "Our Values",
+      "subtitle": "These aren't just words on a page. They shape every decision we make, every property we list, and every family we help.",
+      "transparency": {
+        "title": "Transparency",
+        "description": "Clear pricing with no hidden costs. Honest descriptions that match reality. Real photos, real floor plans, and verified ownership. We believe trust starts with telling the truth."
+      },
+      "accessibility": {
+        "title": "Accessibility",
+        "description": "Quality living shouldn't require a luxury budget. We focus exclusively on properties that offer genuine value — comfortable, well-built homes in great locations at prices that make sense."
+      },
+      "community": {
+        "title": "Community",
+        "description": "A home is more than four walls. We care about the neighborhoods, the schools nearby, the local cafes and parks. We help you find not just a property, but a place where your family belongs."
+      },
+      "support": {
+        "title": "Support",
+        "description": "From your first search to the day you get your keys, our local agents walk alongside you. Questions about financing, paperwork, or neighborhoods — we're a message away."
+      }
+    },
+    "howItWorks": {
+      "badge": "Simple Process",
+      "title": "How It Works",
+      "subtitle": "Finding your home through Reveria is straightforward. Three steps, no surprises.",
+      "steps": {
+        "browse": {
+          "title": "Browse & Discover",
+          "description": "Search by city, budget, or neighborhood. Filter by what matters to you — every listing is verified and photographed."
+        },
+        "connect": {
+          "title": "Connect with an Agent",
+          "description": "Our local agents know every street. Schedule viewings, ask questions, and get honest advice tailored to your needs."
+        },
+        "moveIn": {
+          "title": "Move In",
+          "description": "From offer to keys, we handle the complexity. Documentation, negotiations, and closing — all guided by your agent."
+        }
+      }
+    },
+    "cities": {
+      "badge": "Where We Operate",
+      "title": "Across Transylvania",
+      "subtitle": "From university hubs to historic gems, we cover the cities where life is good and property makes sense.",
+      "items": {
+        "clujNapoca": "Cluj-Napoca",
+        "brasov": "Brașov",
+        "sibiu": "Sibiu",
+        "oradea": "Oradea",
+        "timisoara": "Timișoara"
+      }
+    },
+    "cta": {
+      "title": "Ready to Find Your Home?",
+      "subtitle": "Browse our collection of verified properties or reach out — we're here to help you every step of the way.",
+      "button": "Browse Properties"
+    }
+  },
+  "ContactPage": {
+    "hero": {
+      "title": "Contact Us",
+      "subtitle": "We're Here to Help"
+    },
+    "form": {
+      "title": "Send Us a Message",
+      "fullName": "Full Name",
+      "email": "Email Address",
+      "phone": "Phone Number",
+      "property": "Interested Property (Optional)",
+      "selectProperty": "Select a property...",
+      "budget": "Budget Range",
+      "selectBudget": "Select budget range...",
+      "message": "Your Message",
+      "messagePlaceholder": "Tell us what you're looking for...",
+      "submit": "Send Message",
+      "success": {
+        "title": "Thank You!",
+        "message": "We've received your message and will get back to you within 24 hours."
+      },
+      "budgetOptions": {
+        "under50k": "Under €50,000",
+        "50kTo100k": "€50,000 – €100,000",
+        "100kTo200k": "€100,000 – €200,000",
+        "200kTo500k": "€200,000 – €500,000",
+        "500kTo1m": "€500,000 – €1,000,000"
+      },
+      "error": {
+        "generic": "Votre message n'a pas pu être envoyé. Veuillez réessayer dans un instant."
+      }
+    },
+    "offices": {
+      "subtitle": "Visit Us",
+      "title": "Our Offices"
+    }
+  },
+  "InquiryModal": {
+    "titleGeneral": "Get in Touch",
+    "titleProperty": "Inquire About {name}",
+    "titleDeveloper": "Contact About {name}",
+    "description": "Fill in the form below and we'll get back to you within 24 hours.",
+    "name": "Full Name",
+    "email": "Email Address",
+    "message": "Your Message",
+    "messagePlaceholder": "Tell us how we can help you...",
+    "regarding": "Regarding:",
+    "about": "About:",
+    "submit": "Send Inquiry",
+    "success": {
+      "title": "Thank You!",
+      "message": "We've received your inquiry and will respond within 24 hours."
+    },
+    "error": "Something went wrong. Please try again."
+  },
+  "MapView": {
+    "listView": "Liste",
+    "mapView": "Carte",
+    "searchOnMap": "Rechercher sur la carte",
+    "searchByAddress": "Rechercher par adresse",
+    "chooseFromList": "Choisir dans la liste",
+    "typeAddress": "Saisir l'adresse",
+    "recentSelections": "Sélections récentes",
+    "noResultsFound": "Aucun lieu trouvé",
+    "searching": "Recherche en cours",
+    "back": "Retour",
+    "typeAtLeast2": "Saisissez au moins 2 caractères pour rechercher",
+    "county": "Département",
+    "allCounties": "Tous les départements",
+    "propertiesInArea": "Propriétés dans cette zone",
+    "showAll": "Tout afficher",
+    "viewDetails": "Voir les détails →"
+  },
+  "Common": {
+    "propertyTypes": {
+      "chalet": "Chalet"
+    }
+  },
+  "Breadcrumb": {
+    "home": "Home",
+    "properties": "Properties",
+    "cities": "Cities",
+    "developers": "Developers",
+    "agents": "Agents",
+    "blog": "Blog",
+    "faq": "FAQ",
+    "about": "About",
+    "contact": "Contact",
+    "tools": "Outils",
+    "mortgageCalculator": "Calculateur Hypothécaire",
+    "purchaseCosts": "Coûts d'Acquisition",
+    "rentalYield": "Rendement Locatif",
+    "borrowingCapacity": "Capacité d'Emprunt"
+  },
+  "Footer": {
+    "tagline": "Quality Homes Across Transylvania",
+    "quickLinks": "Quick Links",
+    "explore": "Explore",
+    "exploreLinks": {
+      "cities": "Cities",
+      "developers": "Developers",
+      "agents": "Agents",
+      "blog": "Blog"
+    },
+    "resources": "Resources",
+    "resourceLinks": {
+      "faq": "FAQ",
+      "contact": "Contact Us",
+      "tools": "Outils Utiles"
+    },
+    "contact": "Contact",
+    "followUs": "Follow Us",
+    "copyright": "© {year} Reveria. All rights reserved.",
+    "privacy": "Privacy Policy",
+    "terms": "Terms of Service",
+    "cookies": "Cookie Policy"
+  },
+  "NotFoundPage": {
+    "title": "Page Not Found",
+    "description": "The page you're looking for doesn't exist or has been moved.",
+    "goHome": "Go Home",
+    "browseProperties": "Browse Properties"
+  },
+  "ErrorPage": {
+    "title": "Une erreur est survenue",
+    "description": "Nous n'avons pas pu charger ce contenu. Veuillez réessayer.",
+    "retry": "Réessayer",
+    "goHome": "Accueil"
+  },
+  "LoadingPage": {
+    "label": "Chargement…"
+  },
+  "ToolsPage": {
+    "meta": {
+      "title": "Outils Utiles — Calculateurs Immobiliers",
+      "description": "Calculateurs gratuits pour mensualités hypothécaires, coûts d'acquisition, rendement locatif et capacité d'emprunt. Planifiez votre investissement immobilier en Transylvanie."
+    },
+    "hero": {
+      "title": "Outils Utiles",
+      "subtitle": "Calculateurs gratuits et guides pour vous aider à prendre les meilleures décisions immobilières."
+    },
+    "tools": {
+      "mortgage": {
+        "title": "Calculateur Hypothécaire",
+        "description": "Calculez les mensualités, l'intérêt total et comparez les taux des banques roumaines. Planifiez votre crédit avec un tableau d'amortissement détaillé.",
+        "cta": "Ouvrir le Calculateur"
+      },
+      "purchaseCost": {
+        "title": "Calculateur des Coûts d'Acquisition",
+        "description": "Découvrez le coût complet d'achat d'un bien en Roumanie — frais de notaire, cadastre, commission d'agent, timbre fiscal et frais juridiques.",
+        "cta": "Ouvrir le Calculateur"
+      },
+      "rentalYield": {
+        "title": "Calculateur de Rendement Locatif",
+        "description": "Estimez le rendement brut et net, le flux de trésorerie mensuel et la période de récupération de votre investissement.",
+        "cta": "Ouvrir le Calculateur"
+      },
+      "borrowingCapacity": {
+        "title": "Calculateur de Capacité d'Emprunt",
+        "description": "Découvrez le montant maximum que vous pouvez emprunter en fonction de vos revenus, dettes et réglementations bancaires roumaines.",
+        "cta": "Ouvrir le Calculateur"
+      }
+    },
+    "guidesSection": {
+      "title": "Guides et Articles",
+      "subtitle": "Guides détaillés et analyses de marché pour naviguer le marché immobilier roumain.",
+      "viewAll": "Voir Tous les Articles"
+    },
+    "otherTools": "Autres Calculateurs Utiles",
+    "disclaimer": "Ces calculs sont des estimations et ne constituent pas un conseil financier. Les montants réels peuvent varier. Consultez un conseiller financier pour des conseils personnalisés.",
+    "eurRonDisclaimer": "Les frais de notaire sont calculés avec un taux de change approximatif de 1 EUR = 4,97 RON. Le taux réel peut varier.",
+    "mortgage": {
+      "meta": {
+        "title": "Calculateur Hypothécaire — Mensualités et Amortissement",
+        "description": "Calculez vos mensualités hypothécaires, l'intérêt total et consultez le tableau d'amortissement complet. Comparez les taux des banques roumaines."
+      },
+      "title": "Calculateur Hypothécaire",
+      "subtitle": "Calculez les mensualités, l'intérêt total et planifiez votre crédit avec les taux bancaires roumains.",
+      "propertyPrice": "Prix du Bien",
+      "downPayment": "Apport Personnel",
+      "downPaymentAmount": "Montant de l'apport",
+      "loanAmount": "Montant du Prêt",
+      "loanTerm": "Durée du Prêt",
+      "years": "ans",
+      "interestRate": "Taux d'Intérêt",
+      "bankPresets": "Sélection Rapide Taux Bancaire",
+      "customRate": "Personnalisé",
+      "monthlyPayment": "Mensualité",
+      "totalInterest": "Intérêt Total",
+      "totalPaid": "Montant Total Payé",
+      "ltvRatio": "Ratio Prêt-Valeur",
+      "amortization": "Tableau d'Amortissement",
+      "showFullSchedule": "Afficher le Tableau Complet",
+      "hideFullSchedule": "Masquer le Tableau Complet",
+      "year": "Année",
+      "principalLabel": "Capital",
+      "interestLabel": "Intérêts",
+      "balanceLabel": "Solde Restant",
+      "principalVsInterest": "Capital vs. Intérêts"
+    },
+    "purchaseCost": {
+      "meta": {
+        "title": "Calculateur des Coûts d'Acquisition — Tous les Frais d'Achat",
+        "description": "Calculez le coût complet d'achat d'un bien en Roumanie, y compris les frais de notaire, cadastre, commission d'agent et frais juridiques."
+      },
+      "title": "Calculateur des Coûts d'Acquisition",
+      "subtitle": "Découvrez chaque coût lié à l'achat d'un bien en Roumanie — sans surprises cachées.",
+      "propertyPrice": "Prix du Bien (EUR)",
+      "agentCommission": "Commission d'Agent",
+      "costBreakdown": "Détail des Coûts",
+      "notaryFee": "Frais de Notaire",
+      "notaryFeeInfo": "Calculés selon le barème des frais notariaux roumains, en RON et convertis en EUR.",
+      "landRegistryFee": "Frais de Cadastre (Intabulare)",
+      "landRegistryInfo": "Environ 0,15% de la valeur du bien pour l'inscription au livre foncier.",
+      "agentCommissionLabel": "Commission d'Agent",
+      "agentCommissionInfo": "Commission standard de l'agent immobilier, généralement 2-3% du prix du bien.",
+      "stampDuty": "Timbre Fiscal",
+      "stampDutyInfo": "Frais administratifs fixes pour le traitement des documents.",
+      "legalFees": "Frais Juridiques",
+      "legalFeesInfo": "Coût estimé pour la représentation juridique pendant le processus d'achat.",
+      "totalFees": "Total des Coûts Supplémentaires",
+      "grandTotal": "Total Général (Bien + Coûts)",
+      "feesPercent": "Les coûts supplémentaires représentent {percent} du prix du bien"
+    },
+    "rentalYield": {
+      "meta": {
+        "title": "Calculateur de Rendement Locatif — ROI pour Investissements",
+        "description": "Calculez le rendement brut et net, le flux de trésorerie mensuel et la période de récupération pour les biens d'investissement en Roumanie."
+      },
+      "title": "Calculateur de Rendement Locatif",
+      "subtitle": "Estimez le rendement de votre investissement dans les biens locatifs en Transylvanie.",
+      "purchasePrice": "Prix d'Achat",
+      "monthlyRent": "Loyer Mensuel Estimé",
+      "annualExpenses": "Dépenses Annuelles",
+      "annualExpensesInfo": "Inclut l'entretien, la taxe foncière, l'assurance et les frais de gestion.",
+      "grossYield": "Rendement Brut",
+      "netYield": "Rendement Net",
+      "monthlyCashFlow": "Flux de Trésorerie Mensuel",
+      "annualCashFlow": "Flux de Trésorerie Annuel",
+      "paybackPeriod": "Période de Récupération",
+      "paybackYears": "{years} ans",
+      "yieldExcellent": "Excellent",
+      "yieldGood": "Bon",
+      "yieldModerate": "Modéré",
+      "yieldLow": "Faible"
+    },
+    "borrowingCapacity": {
+      "meta": {
+        "title": "Calculateur de Capacité d'Emprunt — Combien Pouvez-Vous Emprunter",
+        "description": "Calculez le crédit hypothécaire maximum que vous pouvez vous permettre selon vos revenus, dettes et réglementations BNR (règle DTI 40%)."
+      },
+      "title": "Calculateur de Capacité d'Emprunt",
+      "subtitle": "Découvrez combien vous pouvez emprunter selon les réglementations bancaires roumaines.",
+      "monthlyIncome": "Revenu Mensuel Net",
+      "existingDebts": "Dettes Mensuelles Existantes",
+      "existingDebtsInfo": "Inclut les crédits auto, cartes de crédit et autres paiements mensuels de dettes.",
+      "interestRate": "Taux d'Intérêt Estimé",
+      "loanTerm": "Durée Souhaitée du Prêt",
+      "years": "ans",
+      "maxMonthlyPayment": "Mensualité Maximum",
+      "maxLoan": "Montant Maximum du Prêt",
+      "maxProperty": "Prix Maximum du Bien",
+      "maxPropertyInfo": "En supposant un apport de 20%.",
+      "dtiRatio": "Ratio d'Endettement Actuel",
+      "dtiExplainer": "Les réglementations BNR limitent les paiements mensuels totaux de dettes à 40% du revenu net.",
+      "dtiAvailable": "Disponible pour le crédit hypothécaire",
+      "dtiUsed": "Utilisé par les dettes existantes",
+      "downPayment": "Apport personnel",
+      "dependents": "Nombre de personnes à charge",
+      "dependentsInfo": "Conjoint, enfants ou autres personnes que vous soutenez financièrement.",
+      "dep0": "Aucune personne à charge",
+      "dep1": "1 personne à charge",
+      "dep2": "2 personnes à charge",
+      "dep3": "3 personnes à charge",
+      "dep4": "4+ personnes à charge",
+      "nouaCasa": "Programme Noua Casă",
+      "nouaCasaInfo": "Programme hypothécaire garanti par l'État. Bien max : 70 000 €. Apport : 5 % (neuf) / 15 % (existant).",
+      "nouaCasaNewBuild": "Neuf",
+      "nouaCasaExisting": "Bien existant",
+      "nouaCasaExceeds": "Le bien dépasse la limite Noua Casă de 70 000 € — plafonné.",
+      "includeInsurance": "Inclure l'assurance dans le DTI",
+      "insuranceInfo": "Les banques exigent une assurance-vie (~0,05 % du solde/mois). Cela réduit légèrement votre capacité d'emprunt.",
+      "ratesUpdated": "Taux mis à jour : {date}",
+      "ratesFallback": "Taux estimés utilisés. Les taux en direct sont actuellement indisponibles.",
+      "totalMonthlyCost": "Coût mensuel total",
+      "totalMonthlyCostInfo": "Assurance et frais inclus."
+    }
+  }
+}

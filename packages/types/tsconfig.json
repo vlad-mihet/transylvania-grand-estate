@@ -1,7 +1,21 @@
 {
   "extends": "../../tsconfig.base.json",
   "compilerOptions": {
-    "outDir": "./dist"
+    "outDir": "./dist",
+    "rootDir": "./src",
+    "noEmit": false,
+    "declaration": true,
+    "declarationMap": false,
+    "sourceMap": false,
+    // Override the workspace default (`module: esnext`). The NestJS API
+    // loads this package via plain `require(...)` under Node 24, which
+    // otherwise picks up the `import` syntax via `--experimental-require-module`
+    // and then fails on the extensionless relative imports tsc emits. A CJS
+    // output keeps things loadable in Node while still being consumable from
+    // Next.js (Webpack handles CJS fine).
+    "module": "commonjs",
+    "moduleResolution": "node"
   },
-  "include": ["src/**/*.ts"]
+  "include": ["src/**/*.ts"],
+  "exclude": ["node_modules", "dist"]
 }

@@ -47,3 +47,10 @@ next-env.d.ts
 
 # API
 apps/api/uploads/
+
+# Local tool caches
+.claude/
+
+# Stray tsc outputs next to sources (real dist goes to packages/types/dist/)
+packages/types/src/**/*.js
+packages/types/src/**/*.js.map

@@ -1,0 +1,60 @@
+@import "leaflet/dist/leaflet.css";
+@import "leaflet.markercluster/dist/MarkerCluster.css";
+@import "leaflet.markercluster/dist/MarkerCluster.Default.css";
+
+/* ── Map price pill markers ── */
+.map-price-icon {
+  background: none !important;
+  border: none !important;
+  overflow: visible !important;
+  width: auto !important;
+  height: auto !important;
+}
+.map-price-pill {
+  background: #fff;
+  color: #111827;
+  padding: 3px 8px;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 700;
+  white-space: nowrap;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+  border: 1.5px solid #e5e7eb;
+  transition: all 0.15s ease;
+  line-height: 1.2;
+  display: inline-block;
+  position: relative;
+}
+.map-price-pill:hover,
+.map-marker-active .map-price-pill {
+  background: #7C3AED;
+  color: #fff;
+  border-color: #7C3AED;
+  box-shadow: 0 2px 10px rgba(124,58,237,0.35);
+}
+
+/* Leaflet popup overrides */
+.leaflet-popup-content-wrapper {
+  border-radius: 12px !important;
+  padding: 0 !important;
+  overflow: hidden;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.12) !important;
+}
+.leaflet-popup-content {
+  margin: 0 !important;
+}
+.leaflet-popup-tip {
+  box-shadow: none !important;
+}
+
+/* Override MarkerCluster default styles */
+.marker-cluster-small,
+.marker-cluster-medium,
+.marker-cluster-large {
+  background: transparent !important;
+}
+.marker-cluster-small div,
+.marker-cluster-medium div,
+.marker-cluster-large div {
+  background: transparent !important;
+}

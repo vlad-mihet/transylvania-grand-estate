@@ -8,6 +8,7 @@ import { apiClient } from "@/lib/api-client";
 import { TestimonialForm } from "@/components/forms/testimonial-form";
 import { PageHeader } from "@/components/shared/page-header";
 import { TestimonialFormValues } from "@/lib/validations/testimonial";
+import type { ApiTestimonial } from "@tge/types";
 import { useTranslations } from "next-intl";
 
 export default function EditTestimonialPage() {
@@ -18,7 +19,7 @@ export default function EditTestimonialPage() {
 
   const { data: testimonial, isLoading } = useQuery({
     queryKey: ["testimonial", id],
-    queryFn: () => apiClient<any>(`/testimonials/${id}`),
+    queryFn: () => apiClient<ApiTestimonial>(`/testimonials/${id}`),
     enabled: !!id,
   });
 
@@ -30,7 +31,6 @@ export default function EditTestimonialPage() {
       toast.success(t("updated"));
       router.push("/testimonials");
     },
-    onError: (err) => toast.error(err.message),
   });
 
   if (isLoading) return <div className="h-64 animate-pulse rounded-lg bg-muted" />;
@@ -43,6 +43,7 @@ export default function EditTestimonialPage() {
         defaultValues={testimonial}
         onSubmit={(data) => updateMutation.mutate(data)}
         loading={updateMutation.isPending}
+        submissionError={updateMutation.error}
       />
     </div>
   );

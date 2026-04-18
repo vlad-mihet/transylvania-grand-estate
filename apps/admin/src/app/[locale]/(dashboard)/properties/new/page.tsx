@@ -52,7 +52,6 @@ export default function NewPropertyPage() {
       toast.success(t("created"));
       router.push("/properties");
     },
-    onError: (err) => toast.error(err.message || t("createFailed")),
   });
 
   return (
@@ -61,6 +60,7 @@ export default function NewPropertyPage() {
       <PropertyForm
         onSubmit={(data, images) => createMutation.mutate({ data, images })}
         loading={createMutation.isPending}
+        submissionError={createMutation.error}
       />
     </div>
   );

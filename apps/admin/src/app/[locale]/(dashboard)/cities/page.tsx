@@ -43,7 +43,7 @@ export default function CitiesPage() {
     onError: () => toast.error(t("deleteFailed")),
   });
 
-  const columns: ColumnDef<City, any>[] = [
+  const columns: ColumnDef<City, unknown>[] = [
     {
       accessorKey: "image",
       header: "",

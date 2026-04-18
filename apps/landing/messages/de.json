@@ -52,7 +52,7 @@
       "propertiesSold": "Vermarktete Immobilien",
       "yearsExperience": "Jahre Erfahrung",
       "citiesServed": "Betreute Städte",
-      "portfolioValue": "Portfoliowert (Mio.\u00a0EUR)"
+      "portfolioValue": "Portfoliowert (Mio. EUR)"
     },
     "cities": {
       "subtitle": "Nach Region Entdecken",
@@ -147,30 +147,102 @@
     "getInTouch": "Kontakt Aufnehmen",
     "milestonesData": {
       "carpathia-imobiliare": [
-        { "year": "2008", "title": "Unternehmensgründung", "description": "Carpathia Imobiliare wurde mit der Vision gegründet, die Wohnbauentwicklung in Siebenbürgen neu zu definieren und europäische Baustandards auf den rumänischen Markt zu bringen." },
-        { "year": "2010", "title": "Erster Wohnkomplex", "description": "Start des ersten Wohnprojekts, ein Komplex mit 120 Einheiten, der neue Maßstäbe für Qualität und Design in der Region setzte." },
-        { "year": "2014", "title": "Expansion in Mehrere Städte", "description": "Ausweitung der Geschäftstätigkeit auf drei große siebenbürgische Städte, mit dem Ruf, erstklassige Wohnräume termingerecht und im Budget zu liefern." },
-        { "year": "2018", "title": "Meilenstein 3.000 Wohnungen", "description": "Feier der Übergabe von über 3.000 Wohnungen, was die Position des Unternehmens als einer der führenden Wohnbauträger Rumäniens festigte." },
-        { "year": "2022", "title": "Nachhaltigkeitsverpflichtung", "description": "Einführung umweltfreundlicher Baupraktiken und energieeffizienter Designprinzipien in allen neuen Entwicklungen, mit Erhalt von Umweltzertifizierungen." },
-        { "year": "2024", "title": "Start des Luxus-Portfolios", "description": "Einführung einer Premium-Luxuslinie von Residenzen, die historische Architektur mit zeitgenössischem Komfort für den anspruchsvollen Käufer verbindet." }
+        {
+          "year": "2008",
+          "title": "Unternehmensgründung",
+          "description": "Carpathia Imobiliare wurde mit der Vision gegründet, die Wohnbauentwicklung in Siebenbürgen neu zu definieren und europäische Baustandards auf den rumänischen Markt zu bringen."
+        },
+        {
+          "year": "2010",
+          "title": "Erster Wohnkomplex",
+          "description": "Start des ersten Wohnprojekts, ein Komplex mit 120 Einheiten, der neue Maßstäbe für Qualität und Design in der Region setzte."
+        },
+        {
+          "year": "2014",
+          "title": "Expansion in Mehrere Städte",
+          "description": "Ausweitung der Geschäftstätigkeit auf drei große siebenbürgische Städte, mit dem Ruf, erstklassige Wohnräume termingerecht und im Budget zu liefern."
+        },
+        {
+          "year": "2018",
+          "title": "Meilenstein 3.000 Wohnungen",
+          "description": "Feier der Übergabe von über 3.000 Wohnungen, was die Position des Unternehmens als einer der führenden Wohnbauträger Rumäniens festigte."
+        },
+        {
+          "year": "2022",
+          "title": "Nachhaltigkeitsverpflichtung",
+          "description": "Einführung umweltfreundlicher Baupraktiken und energieeffizienter Designprinzipien in allen neuen Entwicklungen, mit Erhalt von Umweltzertifizierungen."
+        },
+        {
+          "year": "2024",
+          "title": "Start des Luxus-Portfolios",
+          "description": "Einführung einer Premium-Luxuslinie von Residenzen, die historische Architektur mit zeitgenössischem Komfort für den anspruchsvollen Käufer verbindet."
+        }
       ],
       "gran-via": [
-        { "year": "2012", "title": "Unternehmensgründung", "description": "Gran Via wurde mit dem Fokus gegründet, markante Wohnentwicklungen zu schaffen, die moderne Ästhetik mit funktionaler Eleganz verbinden." },
-        { "year": "2015", "title": "Erstes Preisgekröntes Projekt", "description": "Auszeichnung für herausragendes architektonisches Design, das das Unternehmen als Innovator in der rumänischen Immobilienlandschaft positionierte." },
-        { "year": "2019", "title": "Einstieg ins Premium-Segment", "description": "Expansion in den Premium-Wohnungsmarkt mit hochwertigen Ausstattungen und maßgeschneiderten Designoptionen für ausgewählte Entwicklungen." },
-        { "year": "2023", "title": "Gemeinschaftsorientierte Entwicklungen", "description": "Start integrierter Wohnkonzepte mit gemeinsamen Grünflächen, Wellnesseinrichtungen und Gemeinschaftszentren." }
+        {
+          "year": "2012",
+          "title": "Unternehmensgründung",
+          "description": "Gran Via wurde mit dem Fokus gegründet, markante Wohnentwicklungen zu schaffen, die moderne Ästhetik mit funktionaler Eleganz verbinden."
+        },
+        {
+          "year": "2015",
+          "title": "Erstes Preisgekröntes Projekt",
+          "description": "Auszeichnung für herausragendes architektonisches Design, das das Unternehmen als Innovator in der rumänischen Immobilienlandschaft positionierte."
+        },
+        {
+          "year": "2019",
+          "title": "Einstieg ins Premium-Segment",
+          "description": "Expansion in den Premium-Wohnungsmarkt mit hochwertigen Ausstattungen und maßgeschneiderten Designoptionen für ausgewählte Entwicklungen."
+        },
+        {
+          "year": "2023",
+          "title": "Gemeinschaftsorientierte Entwicklungen",
+          "description": "Start integrierter Wohnkonzepte mit gemeinsamen Grünflächen, Wellnesseinrichtungen und Gemeinschaftszentren."
+        }
       ],
       "nova-building": [
-        { "year": "2014", "title": "Unternehmensgründung", "description": "Nova Building startete mit dem Engagement für innovative Bautechniken und eine kundenorientierte Designphilosophie." },
-        { "year": "2017", "title": "Technologieintegration", "description": "Pionier der Smart-Home-Integration in allen neuen Entwicklungen, die Bewohnern modernste Wohnerfahrungen bietet." },
-        { "year": "2020", "title": "Schnelle Wachstumsphase", "description": "Verdopplung des Projektportfolios und Teamausbau, mit gleichzeitiger Lieferung mehrerer Entwicklungen in der gesamten Region." },
-        { "year": "2024", "title": "Flaggschiff-Luxusprojekt", "description": "Enthüllung eines exklusiven Luxus-Wohnkomplexes, der das Unternehmen an die Spitze des Premium-Immobilienmarktes positioniert." }
+        {
+          "year": "2014",
+          "title": "Unternehmensgründung",
+          "description": "Nova Building startete mit dem Engagement für innovative Bautechniken und eine kundenorientierte Designphilosophie."
+        },
+        {
+          "year": "2017",
+          "title": "Technologieintegration",
+          "description": "Pionier der Smart-Home-Integration in allen neuen Entwicklungen, die Bewohnern modernste Wohnerfahrungen bietet."
+        },
+        {
+          "year": "2020",
+          "title": "Schnelle Wachstumsphase",
+          "description": "Verdopplung des Projektportfolios und Teamausbau, mit gleichzeitiger Lieferung mehrerer Entwicklungen in der gesamten Region."
+        },
+        {
+          "year": "2024",
+          "title": "Flaggschiff-Luxusprojekt",
+          "description": "Enthüllung eines exklusiven Luxus-Wohnkomplexes, der das Unternehmen an die Spitze des Premium-Immobilienmarktes positioniert."
+        }
       ],
       "default": [
-        { "year": "2015", "title": "Unternehmensgründung", "description": "{name} wurde mit der Mission gegründet, außergewöhnliche Wohnräume in {city} zu schaffen, die Qualitätshandwerk mit durchdachtem Design verbinden." },
-        { "year": "2018", "title": "Erste Große Entwicklung", "description": "Erfolgreiche Lieferung des ersten großen Wohnprojekts, das das Vertrauen der Käufer gewann und eine starke Marktpräsenz etablierte." },
-        { "year": "2021", "title": "Portfolio-Erweiterung", "description": "Erweiterung des Entwicklungsportfolios mit vielfältigen Immobilientypen, von modernen Wohnungen bis zu Premium-Villen, für eine breitere Palette anspruchsvoller Käufer." },
-        { "year": "2024", "title": "Anerkannte Exzellenz", "description": "Erreichen eines Meilensteins bei gelieferten Wohnungen und Anerkennung für das Engagement für Qualität, Nachhaltigkeit und Kundenzufriedenheit." }
+        {
+          "year": "2015",
+          "title": "Unternehmensgründung",
+          "description": "{name} wurde mit der Mission gegründet, außergewöhnliche Wohnräume in {city} zu schaffen, die Qualitätshandwerk mit durchdachtem Design verbinden."
+        },
+        {
+          "year": "2018",
+          "title": "Erste Große Entwicklung",
+          "description": "Erfolgreiche Lieferung des ersten großen Wohnprojekts, das das Vertrauen der Käufer gewann und eine starke Marktpräsenz etablierte."
+        },
+        {
+          "year": "2021",
+          "title": "Portfolio-Erweiterung",
+          "description": "Erweiterung des Entwicklungsportfolios mit vielfältigen Immobilientypen, von modernen Wohnungen bis zu Premium-Villen, für eine breitere Palette anspruchsvoller Käufer."
+        },
+        {
+          "year": "2024",
+          "title": "Anerkannte Exzellenz",
+          "description": "Erreichen eines Meilensteins bei gelieferten Wohnungen und Anerkennung für das Engagement für Qualität, Nachhaltigkeit und Kundenzufriedenheit."
+        }
       ]
     }
   },
@@ -219,12 +291,12 @@
       "clearAll": "Alle Löschen",
       "activeFilters": "Aktive Filter",
       "filterBy": "Filtern Nach",
-      "priceUnder500k": "Unter 500K\u00a0€",
-      "price500kTo1m": "500K\u00a0€ - 1 Mio.\u00a0€",
-      "price1to15": "1 Mio.\u00a0€ - 1,5 Mio.\u00a0€",
-      "price15to2": "1,5 Mio.\u00a0€ - 2 Mio.\u00a0€",
-      "price2to3": "2 Mio.\u00a0€ - 3 Mio.\u00a0€",
-      "price3plus": "3 Mio.\u00a0€+"
+      "priceUnder500k": "Unter 500K €",
+      "price500kTo1m": "500K € - 1 Mio. €",
+      "price1to15": "1 Mio. € - 1,5 Mio. €",
+      "price15to2": "1,5 Mio. € - 2 Mio. €",
+      "price2to3": "2 Mio. € - 3 Mio. €",
+      "price3plus": "3 Mio. €+"
     },
     "noResults": {
       "title": "Keine Immobilien Gefunden",
@@ -341,10 +413,10 @@
         "message": "Wir haben Ihre Anfrage erhalten und werden innerhalb von 24 Stunden antworten."
       },
       "budgetOptions": {
-        "1to15": "1 Mio.\u00a0€ - 1,5 Mio.\u00a0€",
-        "15to2": "1,5 Mio.\u00a0€ - 2 Mio.\u00a0€",
-        "2to3": "2 Mio.\u00a0€ - 3 Mio.\u00a0€",
-        "3plus": "3 Mio.\u00a0€+"
+        "1to15": "1 Mio. € - 1,5 Mio. €",
+        "15to2": "1,5 Mio. € - 2 Mio. €",
+        "2to3": "2 Mio. € - 3 Mio. €",
+        "3plus": "3 Mio. €+"
       }
     },
     "offices": {
@@ -369,29 +441,6 @@
       "message": "Wir haben Ihre Anfrage erhalten und werden innerhalb von 24 Stunden antworten."
     },
     "error": "Etwas ist schiefgelaufen. Bitte versuchen Sie es erneut."
-  },
-  "Common": {
-    "currency": "EUR",
-    "sqm": "m²",
-    "viewProperty": "Immobilie Ansehen",
-    "learnMore": "Mehr Erfahren",
-    "readMore": "Weiterlesen",
-    "available": "Verfügbar",
-    "sold": "Verkauft",
-    "reserved": "Reserviert",
-    "new": "Neu",
-    "featured": "Empfohlen",
-    "propertyTypes": {
-      "apartment": "Wohnung",
-      "house": "Haus",
-      "villa": "Villa",
-      "terrain": "Grundstück",
-      "penthouse": "Penthouse",
-      "estate": "Anwesen",
-      "chalet": "Chalet",
-      "mansion": "Herrenhaus",
-      "palace": "Palast"
-    }
   },
   "Breadcrumb": {
     "home": "Startseite",
@@ -457,7 +506,7 @@
     },
     "narrative": {
       "label": "Eine Einladung",
-      "manifesto": "Seit Jahrhunderten hütet Siebenbürgen seine Schätze hinter uralten Wäldern und Gebirgspässen. Wir öffnen die Tore für wenige Auserwählte \u2014 jene, die verstehen, dass wahrer Luxus nicht gekauft, sondern vom Land selbst geerbt wird.",
+      "manifesto": "Seit Jahrhunderten hütet Siebenbürgen seine Schätze hinter uralten Wäldern und Gebirgspässen. Wir öffnen die Tore für wenige Auserwählte — jene, die verstehen, dass wahrer Luxus nicht gekauft, sondern vom Land selbst geerbt wird.",
       "teaser": "Entdecken Sie, was dahinter liegt."
     },
     "story": {
@@ -468,7 +517,7 @@
         },
         "heritage": {
           "title": "Burgen & Zitadellen",
-          "body": "Sieben Jahrhunderte Kirchenburgen, mittelalterliche Zitadellen und Adelsgüter. Geschichte wird hier nicht hinter Glas bewahrt \u2014 sie wird gelebt."
+          "body": "Sieben Jahrhunderte Kirchenburgen, mittelalterliche Zitadellen und Adelsgüter. Geschichte wird hier nicht hinter Glas bewahrt — sie wird gelebt."
         },
         "market": {
           "title": "Eine Aufstrebende Grenze",
@@ -476,7 +525,7 @@
         },
         "lifestyle": {
           "title": "Ein Verfeinertes Leben",
-          "body": "Michelin-Gastronomie, Weinregionen von Weltrang und Kultursaisons, die jeder europäischen Hauptstadt ebenbürtig sind. Dies ist kein Rückzug \u2014 es ist eine Ankunft."
+          "body": "Michelin-Gastronomie, Weinregionen von Weltrang und Kultursaisons, die jeder europäischen Hauptstadt ebenbürtig sind. Dies ist kein Rückzug — es ist eine Ankunft."
         }
       }
     },
@@ -484,7 +533,7 @@
       "propertiesSold": "Vermarktete Immobilien",
       "yearsExperience": "Jahre der Exzellenz",
       "citiesServed": "Betreute Städte",
-      "portfolioValue": "Portfoliowert (Mio.\u00a0EUR)"
+      "portfolioValue": "Portfoliowert (Mio. EUR)"
     },
     "collection": {
       "subtitle": "Die Kollektion",
@@ -507,7 +556,7 @@
     "brand": {
       "label": "Unser Ethos",
       "title": "Was Luxus Bedeutet, Neu Definiert",
-      "description": "Wir präsentieren nicht nur Immobilien. Wir kuratieren Vermächtnisse \u2014 und verbinden visionäre Persönlichkeiten mit Anwesen, die ihre Familien über Generationen definieren werden. In Siebenbürgen haben wir ein Land gefunden, wo das Außergewöhnliche noch möglich ist.",
+      "description": "Wir präsentieren nicht nur Immobilien. Wir kuratieren Vermächtnisse — und verbinden visionäre Persönlichkeiten mit Anwesen, die ihre Familien über Generationen definieren werden. In Siebenbürgen haben wir ein Land gefunden, wo das Außergewöhnliche noch möglich ist.",
       "cta": "Unsere Geschichte Entdecken"
     },
     "landmarks": {
