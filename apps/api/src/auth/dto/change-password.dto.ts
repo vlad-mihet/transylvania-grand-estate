@@ -1,11 +1,4 @@
-import { IsString, MinLength } from 'class-validator';
+import { createZodDto } from 'nestjs-zod';
+import { changePasswordSchema } from '@tge/types/schemas/auth';
 
-export class ChangePasswordDto {
-  @IsString()
-  @MinLength(6)
-  currentPassword: string;
-
-  @IsString()
-  @MinLength(6)
-  newPassword: string;
-}
+export class ChangePasswordDto extends createZodDto(changePasswordSchema) {}
