@@ -4,3 +4,10 @@ export { SiteOriginConfig } from './site.config';
 export { SiteMiddleware } from './site.middleware';
 export { SiteModule } from './site.module';
 export { CurrentSite } from './site.decorator';
+export { tierScopeFilter, scopedPropertiesInclude } from './tier-scope.util';
+export {
+  resolveGeoScope,
+  cityGeoWhere,
+  propertyGeoWhere,
+  isCountyInScope,
+} from './geo-scope.util';

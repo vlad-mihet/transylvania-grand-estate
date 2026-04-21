@@ -94,6 +94,34 @@ function withSiteHeader(
   return { "X-Site": site, ...headers };
 }
 
+/**
+ * Tag every request with a fresh X-Request-Id so the API's audit log can
+ * pivot back to the originating browser/SSR call. The API also accepts an
+ * inbound X-Request-Id (see apps/api/src/app.module.ts pino genReqId), so
+ * if the caller already set one in `headers` we leave it alone.
+ *
+ * randomUUID() exists on every modern browser and on Node 18+. We probe
+ * globalThis.crypto rather than importing node:crypto so the package stays
+ * usable from the browser without a polyfill.
+ */
+function withRequestId(
+  headers?: Record<string, string>,
+): Record<string, string> | undefined {
+  if (headers && (headers["X-Request-Id"] || headers["x-request-id"])) {
+    return headers;
+  }
+  const cryptoApi = (globalThis as { crypto?: { randomUUID?: () => string } })
+    .crypto;
+  if (!cryptoApi?.randomUUID) return headers;
+  return { ...(headers ?? {}), "X-Request-Id": cryptoApi.randomUUID() };
+}
+
+function withCorrelationHeaders(
+  headers?: Record<string, string>,
+): Record<string, string> | undefined {
+  return withRequestId(withSiteHeader(headers));
+}
+
 function withAuth(
   headers: Record<string, string> | undefined,
 ): Record<string, string> | undefined {
@@ -127,7 +155,7 @@ export async function fetchApi<T>(
 ): Promise<T> {
   const res = await fetchWithAuth(`${getApiBase()}${path}`, {
     next: { revalidate: options?.revalidate ?? 60, tags: options?.tags },
-    headers: withSiteHeader(options?.headers),
+    headers: withCorrelationHeaders(options?.headers),
   } as RequestInit);
   if (!res.ok) {
     throw new ApiError(res.status, `API error: ${res.status}`, path);
@@ -143,7 +171,7 @@ export async function fetchApiSafe<T>(
   try {
     const res = await fetchWithAuth(`${getApiBase()}${path}`, {
       next: { revalidate: options?.revalidate ?? 60, tags: options?.tags },
-      headers: withSiteHeader(options?.headers),
+      headers: withCorrelationHeaders(options?.headers),
     } as RequestInit);
     if (!res.ok) {
       return {
@@ -171,7 +199,7 @@ export async function mutateApi<T>(
     : { ...headers };
   const res = await fetchWithAuth(`${getApiBase()}${path}`, {
     method,
-    headers: withSiteHeader(baseHeaders),
+    headers: withCorrelationHeaders(baseHeaders),
     body: shouldSerialize
       ? body === undefined
         ? undefined

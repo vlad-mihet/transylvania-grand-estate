@@ -19,6 +19,26 @@ primary_region = 'ams'
   auto_start_machines = true
   min_machines_running = 0
 
+# Separate live + ready probes so Fly can tell "process is up" from "process
+# can serve traffic". `live` is cheap; `ready` touches Postgres and returns
+# 503 on DB outage, letting Fly pull the VM from the rotation until it
+# recovers.
+[[http_service.checks]]
+  grace_period = '10s'
+  interval = '15s'
+  method = 'get'
+  path = '/api/v1/health/live'
+  protocol = 'http'
+  timeout = '5s'
+
+[[http_service.checks]]
+  grace_period = '20s'
+  interval = '30s'
+  method = 'get'
+  path = '/api/v1/health/ready'
+  protocol = 'http'
+  timeout = '10s'
+
 [[vm]]
   size = 'shared-cpu-1x'
   memory = '512mb'

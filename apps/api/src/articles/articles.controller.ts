@@ -35,19 +35,19 @@ export class ArticlesController {
     return this.articlesService.findBySlug(slug);
   }
 
-  @Roles(AdminRole.ADMIN, AdminRole.SUPER_ADMIN)
+  @Roles(AdminRole.EDITOR, AdminRole.ADMIN, AdminRole.SUPER_ADMIN)
   @Post()
   async create(@Body() dto: CreateArticleDto) {
     return this.articlesService.create(dto);
   }
 
-  @Roles(AdminRole.ADMIN, AdminRole.SUPER_ADMIN)
+  @Roles(AdminRole.EDITOR, AdminRole.ADMIN, AdminRole.SUPER_ADMIN)
   @Patch(':id')
   async update(@Param('id', ParseUUIDPipe) id: string, @Body() dto: UpdateArticleDto) {
     return this.articlesService.update(id, dto);
   }
 
-  @Roles(AdminRole.ADMIN, AdminRole.SUPER_ADMIN)
+  @Roles(AdminRole.EDITOR, AdminRole.ADMIN, AdminRole.SUPER_ADMIN)
   @Delete(':id')
   async remove(@Param('id', ParseUUIDPipe) id: string) {
     return this.articlesService.remove(id);

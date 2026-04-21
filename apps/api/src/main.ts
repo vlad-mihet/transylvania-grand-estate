@@ -2,12 +2,35 @@ import { NestFactory } from '@nestjs/core';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import { ConfigService } from '@nestjs/config';
 import { Logger } from 'nestjs-pino';
+import helmet from 'helmet';
 import { AppModule } from './app.module';
 import { SmartValidationPipe } from './common/pipes/smart-validation.pipe';
+import { initSentry } from './common/sentry/sentry.init';
+import { DEV_ORIGIN_LIST } from './common/site/dev-origins';
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule, { bufferLogs: true });
+  // Sentry before NestFactory so bootstrap failures (including env validation
+  // errors from ConfigModule) get captured too. No-op when SENTRY_DSN is
+  // unset (dev + not-yet-configured prod).
+  const sentryEnabled = initSentry();
+
+  // Env validation runs inside ConfigModule.forRoot via the `validate`
+  // callback in app.module.ts — Nest loads .env then invokes validateEnv,
+  // so the Zod-parsed object (with defaults) backs ConfigService.
+
+  // rawBody=true exposes `req.rawBody` via `@Req() RawBodyRequest<Request>` so
+  // the Resend webhook controller can hash-verify the exact bytes Svix signed.
+  // Parsed JSON would canonicalise key order and lose the byte-for-byte match.
+  const app = await NestFactory.create(AppModule, {
+    bufferLogs: true,
+    rawBody: true,
+  });
   app.useLogger(app.get(Logger));
+
+  // Nest's SIGTERM/SIGINT handler — drains in-flight requests and closes the
+  // Prisma pool before the process exits. Fly.io sends SIGINT on deploy; this
+  // prevents "connection reset" mid-request during rolling releases.
+  app.enableShutdownHooks();
 
   const configService = app.get(ConfigService);
 
@@ -17,8 +40,19 @@ async function bootstrap() {
   // for per-IP rate limiting (Fly.io / Nginx / Cloudflare typically set it).
   app.getHttpAdapter().getInstance().set?.('trust proxy', 1);
 
+  // Baseline security headers. `contentSecurityPolicy: false` — the API
+  // serves JSON + uploaded images with a per-upload CSP in app.module.ts;
+  // a global CSP would break those. `crossOriginResourcePolicy: cross-origin`
+  // lets the admin + public sites load uploaded images.
+  app.use(
+    helmet({
+      contentSecurityPolicy: false,
+      crossOriginResourcePolicy: { policy: 'cross-origin' },
+    }),
+  );
+
   // CORS: require CORS_ORIGINS to be explicit in production. Dev falls back to
-  // the local Next.js ports (landing:3000, admin:3001, reveria:3002) so fresh
+  // the local Next.js ports (landing:3050, admin:3051, reveria:3052) so fresh
   // clones work without extra setup.
   const corsOriginsRaw = configService.get<string>('CORS_ORIGINS');
   if (!corsOriginsRaw && process.env.NODE_ENV === 'production') {
@@ -26,10 +60,7 @@ async function bootstrap() {
       'CORS_ORIGINS must be set in production (comma-separated origin list)',
     );
   }
-  const corsOrigins = (
-    corsOriginsRaw ??
-    'http://localhost:3000,http://localhost:3001,http://localhost:3002'
-  )
+  const corsOrigins = (corsOriginsRaw ?? DEV_ORIGIN_LIST.join(','))
     .split(',')
     .map((o) => o.trim())
     .filter(Boolean);
@@ -78,6 +109,7 @@ async function bootstrap() {
     .addTag('Inquiries', 'Lead capture & admin triage')
     .addTag('Site Config', 'Per-site branding & feature toggles')
     .addTag('Financial Data', 'FX / mortgage / rental-yield reference data')
+    .addTag('Audit', 'Administrative audit log (SUPER_ADMIN)')
     .addTag('Health', 'Liveness & readiness probe')
     .build();
   const document = SwaggerModule.createDocument(app, swaggerConfig);
@@ -89,6 +121,7 @@ async function bootstrap() {
   logger.log(`API running on http://localhost:${port}`);
   logger.log(`Swagger docs at http://localhost:${port}/api/docs`);
   logger.log(`CORS origins: ${corsOrigins.join(', ')}`);
+  if (sentryEnabled) logger.log('Sentry error reporting enabled');
 }
 
 bootstrap();

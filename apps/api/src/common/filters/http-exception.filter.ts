@@ -10,6 +10,7 @@ import { Prisma } from '@prisma/client';
 import { ZodValidationException } from 'nestjs-zod';
 import type { ZodError, ZodIssue } from 'zod';
 import type { Request, Response } from 'express';
+import * as Sentry from '@sentry/node';
 
 interface FieldIssue {
   path: string;
@@ -100,6 +101,21 @@ function prismaToHttp(
           statusCode: HttpStatus.BAD_REQUEST,
           message: 'The operation would violate a required relationship',
           error: 'RelationConstraintViolation',
+        },
+      };
+    // Schema drift — the table or column the query references doesn't exist
+    // in the target DB. Almost always means a migration is pending; surface
+    // that to the client/operator instead of the generic "DatabaseError"
+    // bucket which is opaque and sends on-call down the wrong path.
+    case 'P2021':
+    case 'P2022':
+      return {
+        status: HttpStatus.INTERNAL_SERVER_ERROR,
+        body: {
+          statusCode: HttpStatus.INTERNAL_SERVER_ERROR,
+          message:
+            'Database schema is out of sync with the application. A migration may not have been applied.',
+          error: 'SchemaMismatch',
         },
       };
     // Connection pool timeout → 503 so clients can retry with backoff.
@@ -195,6 +211,13 @@ export class HttpExceptionFilter implements ExceptionFilter {
         `Unhandled exception on ${request.method} ${request.url}${requestId ? ` [reqId=${requestId}]` : ''}`,
         exception instanceof Error ? exception.stack : exception,
       );
+      // Only unhandled + unknown Prisma errors get to Sentry. Expected
+      // exceptions (HttpException, validation, mapped Prisma codes) are
+      // routine 4xx responses \u2014 shipping them would drown real incidents.
+      Sentry.captureException(exception, {
+        tags: { requestId: String(requestId ?? 'unknown') },
+        extra: { method: request.method, url: request.url },
+      });
     }
 
     response.status(status).json({

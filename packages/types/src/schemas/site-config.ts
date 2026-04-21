@@ -20,6 +20,11 @@ export const updateSiteConfigSchema = z
         }),
       )
       .optional(),
+    // County-slug allowlist for the TGE landing site. Applied server-side via
+    // SITE_GEO_SCOPE; ignored for Reveria and Admin. An empty array is valid
+    // but collapses the TGE view to nothing, so the admin form warns before
+    // saving zero counties.
+    tgeCountyScope: z.array(z.string().min(1).max(64)).max(42).optional(),
   })
   .strict();
 

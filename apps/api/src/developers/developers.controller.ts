@@ -21,6 +21,7 @@ import { CreateDeveloperDto } from './dto/create-developer.dto';
 import { UpdateDeveloperDto } from './dto/update-developer.dto';
 import { Public } from '../common/decorators/public.decorator';
 import { Roles } from '../common/decorators/roles.decorator';
+import { CurrentSite, SiteContext } from '../common/site';
 
 @ApiTags('Developers')
 @Controller('developers')
@@ -30,24 +31,43 @@ export class DevelopersController {
   @Public()
   @Get()
   async findAll(
+    @CurrentSite() site: SiteContext,
     @Query('featured') featured?: boolean,
     @Query('city') city?: string,
+    @Query('search') search?: string,
+    @Query('sort') sort?: string,
     @Query('page') page?: number,
     @Query('limit') limit?: number,
   ) {
-    return this.developersService.findAll({ featured, city, page, limit });
+    return this.developersService.findAll(
+      {
+        featured,
+        city,
+        search,
+        sort,
+        page,
+        limit,
+      },
+      site,
+    );
   }
 
   @Public()
   @Get('id/:id')
-  async findById(@Param('id', ParseUUIDPipe) id: string) {
-    return this.developersService.findById(id);
+  async findById(
+    @Param('id', ParseUUIDPipe) id: string,
+    @CurrentSite() site: SiteContext,
+  ) {
+    return this.developersService.findById(id, site);
   }
 
   @Public()
   @Get(':slug')
-  async findBySlug(@Param('slug') slug: string) {
-    return this.developersService.findBySlug(slug);
+  async findBySlug(
+    @Param('slug') slug: string,
+    @CurrentSite() site: SiteContext,
+  ) {
+    return this.developersService.findBySlug(slug, site);
   }
 
   @Roles(AdminRole.ADMIN, AdminRole.SUPER_ADMIN)

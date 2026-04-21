@@ -21,6 +21,7 @@ import { CreateCityDto } from './dto/create-city.dto';
 import { UpdateCityDto } from './dto/update-city.dto';
 import { Public } from '../common/decorators/public.decorator';
 import { Roles } from '../common/decorators/roles.decorator';
+import { CurrentSite, SiteContext } from '../common/site';
 
 @ApiTags('Cities')
 @Controller('cities')
@@ -29,26 +30,45 @@ export class CitiesController {
 
   @Public()
   @Get()
-  async findAll(@Query('county') countySlug?: string) {
-    return this.citiesService.findAll(countySlug);
+  async findAll(
+    @CurrentSite() site: SiteContext,
+    @Query('county') county?: string,
+    @Query('search') search?: string,
+    @Query('sort') sort?: string,
+    @Query('page') page?: number,
+    @Query('limit') limit?: number,
+  ) {
+    return this.citiesService.findAll(
+      { county, search, sort, page, limit },
+      site,
+    );
   }
 
   @Public()
   @Get('id/:id')
-  async findById(@Param('id', ParseUUIDPipe) id: string) {
-    return this.citiesService.findById(id);
+  async findById(
+    @Param('id', ParseUUIDPipe) id: string,
+    @CurrentSite() site: SiteContext,
+  ) {
+    return this.citiesService.findById(id, site);
   }
 
   @Public()
   @Get(':slug/neighborhoods')
-  async findNeighborhoods(@Param('slug') slug: string) {
-    return this.citiesService.findNeighborhoods(slug);
+  async findNeighborhoods(
+    @Param('slug') slug: string,
+    @CurrentSite() site: SiteContext,
+  ) {
+    return this.citiesService.findNeighborhoods(slug, site);
   }
 
   @Public()
   @Get(':slug')
-  async findBySlug(@Param('slug') slug: string) {
-    return this.citiesService.findBySlug(slug);
+  async findBySlug(
+    @Param('slug') slug: string,
+    @CurrentSite() site: SiteContext,
+  ) {
+    return this.citiesService.findBySlug(slug, site);
   }
 
   @Roles(AdminRole.ADMIN, AdminRole.SUPER_ADMIN)

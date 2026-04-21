@@ -1,5 +1,6 @@
 import { Logger, MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
+import { validateEnv } from './common/config/env.schema';
 import { APP_GUARD, APP_FILTER, APP_INTERCEPTOR } from '@nestjs/core';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { ScheduleModule } from '@nestjs/schedule';
@@ -23,11 +24,20 @@ import { CountiesModule } from './counties/counties.module';
 import { LocationsModule } from './locations/locations.module';
 import { FinancialDataModule } from './financial-data/financial-data.module';
 import { HealthModule } from './health/health.module';
+import { SearchModule } from './search/search.module';
 import { JwtAuthGuard } from './common/guards/jwt-auth.guard';
 import { RolesGuard } from './common/guards/roles.guard';
 import { HttpExceptionFilter } from './common/filters/http-exception.filter';
 import { TransformInterceptor } from './common/interceptors/transform.interceptor';
+import { AuditInterceptor } from './common/interceptors/audit.interceptor';
+import { AuditModule } from './audit/audit.module';
+import { EmailModule } from './email/email.module';
+import { InvitationsModule } from './invitations/invitations.module';
+import { PasswordResetModule } from './password-reset/password-reset.module';
+import { WebhooksModule } from './webhooks/webhooks.module';
+import { MetricsModule } from './metrics/metrics.module';
 import { SiteModule, SiteMiddleware } from './common/site';
+import { RequestContextModule } from './common/cls/request-context.module';
 
 // Local dev serves uploaded images from disk; production proxies R2 directly.
 // rootPath must match wherever LocalStorageService writes — resolveUploadsDir
@@ -65,7 +75,7 @@ const serveStaticModules =
 
 @Module({
   imports: [
-    ConfigModule.forRoot({ isGlobal: true }),
+    ConfigModule.forRoot({ isGlobal: true, validate: validateEnv }),
     // Structured logging with per-request correlation IDs. pino-http assigns
     // `req.id` and echoes `x-request-id` on every response; the id also flows
     // into `HttpExceptionFilter`'s error body so a client can quote it when
@@ -110,9 +120,20 @@ const serveStaticModules =
     // (e.g. @Throttle on auth/login, inquiries) can tighten this further.
     ThrottlerModule.forRoot([{ ttl: 60_000, limit: 60 }]),
     ...serveStaticModules,
+    // RequestContextModule mounts AsyncLocalStorage as the very first
+    // middleware so every downstream provider (interceptors, services,
+    // background jobs spawned from a request) shares the same audit
+    // forensics context (requestId, ipHash, brand, method, url, UA).
+    RequestContextModule,
     SiteModule,
     PrismaModule,
+    AuditModule,
+    EmailModule,
     AuthModule,
+    InvitationsModule,
+    PasswordResetModule,
+    WebhooksModule,
+    MetricsModule,
     PropertiesModule,
     DevelopersModule,
     AgentsModule,
@@ -126,6 +147,7 @@ const serveStaticModules =
     LocationsModule,
     FinancialDataModule,
     HealthModule,
+    SearchModule,
   ],
   providers: [
     { provide: APP_GUARD, useClass: ThrottlerGuard },
@@ -133,6 +155,7 @@ const serveStaticModules =
     { provide: APP_GUARD, useClass: RolesGuard },
     { provide: APP_FILTER, useClass: HttpExceptionFilter },
     { provide: APP_INTERCEPTOR, useClass: TransformInterceptor },
+    { provide: APP_INTERCEPTOR, useClass: AuditInterceptor },
   ],
 })
 export class AppModule implements NestModule {

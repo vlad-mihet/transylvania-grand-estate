@@ -164,6 +164,36 @@ async function main() {
     console.log('  Admin user already exists: admin@tge.ro (password unchanged)');
   }
 
+  // 1b. Create default EDITOR fixture so each role is exercisable out of the box.
+  const existingEditor = await prisma.adminUser.findUnique({
+    where: { email: 'editor@tge.ro' },
+    select: { id: true },
+  });
+  if (!existingEditor) {
+    const envPassword = process.env.SEED_EDITOR_PASSWORD;
+    const plainPassword =
+      envPassword && envPassword.length > 0
+        ? envPassword
+        : randomBytes(12).toString('base64url');
+    const passwordHash = await bcrypt.hash(plainPassword, 12);
+    await prisma.adminUser.create({
+      data: {
+        email: 'editor@tge.ro',
+        passwordHash,
+        name: 'Editor User',
+        role: AdminRole.EDITOR,
+      },
+    });
+    if (envPassword) {
+      console.log('  Editor user created: editor@tge.ro (password from SEED_EDITOR_PASSWORD)');
+    } else {
+      console.log(`  Editor user created: editor@tge.ro / ${plainPassword}`);
+      console.log('    ^ random password, set SEED_EDITOR_PASSWORD to pin it');
+    }
+  } else {
+    console.log('  Editor user already exists: editor@tge.ro (password unchanged)');
+  }
+
   // 2. Seed developers (before properties, due to FK)
   const developerIdMap = new Map<string, string>();
   for (const dev of developers) {
@@ -216,6 +246,45 @@ async function main() {
     agentIdsByCity.set(agent.city, cityAgents);
   }
   console.log(`  ${agents.length} agents seeded`);
+
+  // 2c. AGENT-role fixture: creates `agent@tge.ro` linked to the first seeded
+  // Agent. Idempotent — skipped if the email is already registered (whether
+  // linked or not) so repeated runs don't flicker the adminUserId.
+  const firstAgentId = agentIdMap.values().next().value as string | undefined;
+  if (firstAgentId) {
+    const existingAgentUser = await prisma.adminUser.findUnique({
+      where: { email: 'agent@tge.ro' },
+      select: { id: true },
+    });
+    if (!existingAgentUser) {
+      const envPassword = process.env.SEED_AGENT_PASSWORD;
+      const plainPassword =
+        envPassword && envPassword.length > 0
+          ? envPassword
+          : randomBytes(12).toString('base64url');
+      const passwordHash = await bcrypt.hash(plainPassword, 12);
+      const created = await prisma.adminUser.create({
+        data: {
+          email: 'agent@tge.ro',
+          passwordHash,
+          name: 'Test Agent',
+          role: AdminRole.AGENT,
+        },
+      });
+      await prisma.agent.update({
+        where: { id: firstAgentId },
+        data: { adminUserId: created.id },
+      });
+      if (envPassword) {
+        console.log('  Agent user created: agent@tge.ro (password from SEED_AGENT_PASSWORD)');
+      } else {
+        console.log(`  Agent user created: agent@tge.ro / ${plainPassword}`);
+        console.log('    ^ random password, set SEED_AGENT_PASSWORD to pin it');
+      }
+    } else {
+      console.log('  Agent user already exists: agent@tge.ro (password unchanged)');
+    }
+  }
 
   // 2c. Seed counties (before cities, so City.countyId FK can resolve)
   const countyIdBySlug = new Map<string, string>();
@@ -554,6 +623,18 @@ async function main() {
       { platform: 'linkedin', url: 'https://linkedin.com/company/tge' },
       { platform: 'youtube', url: 'https://youtube.com/@tge' },
     ],
+    tgeCountyScope: [
+      'alba',
+      'bistrita-nasaud',
+      'brasov',
+      'cluj',
+      'covasna',
+      'harghita',
+      'hunedoara',
+      'mures',
+      'salaj',
+      'sibiu',
+    ],
   };
   await prisma.siteConfig.upsert({
     where: { id: 'singleton' },
@@ -571,6 +652,7 @@ async function main() {
       description: siteConfigData.description,
       contact: siteConfigData.contact,
       socialLinks: siteConfigData.socialLinks as any,
+      tgeCountyScope: siteConfigData.tgeCountyScope,
     },
   });
   console.log('  Site config seeded');

@@ -1,5 +1,5 @@
 import { Injectable, Logger, NotFoundException } from '@nestjs/common';
-import { Prisma, PropertyStatus, PropertyTier } from '@prisma/client';
+import { AdminRole, Prisma, PropertyStatus, PropertyTier } from '@prisma/client';
 import { PrismaService } from '../prisma/prisma.service';
 import { UploadsService } from '../uploads/uploads.service';
 import { CreatePropertyDto } from './dto/create-property.dto';
@@ -11,8 +11,82 @@ import { ensureFound } from '../common/utils/ensure-found.util';
 import { ensureRef } from '../common/utils/ensure-ref.util';
 import { ensureSlugUnique } from '../common/utils/ensure-slug-unique.util';
 import { toJson } from '../common/utils/prisma-json';
-import { SITE_TIER_SCOPE, SiteContext } from '../common/site';
+import {
+  SITE_TIER_SCOPE,
+  SiteContext,
+  isCountyInScope,
+  propertyGeoWhere,
+  resolveGeoScope,
+  tierScopeFilter,
+} from '../common/site';
+import { SiteConfigService } from '../site-config/site-config.service';
+import type { CurrentUserPayload } from '../common/decorators/user.decorator';
 import { amenityFlagsSchema } from '@tge/types/schemas/_primitives';
+
+/**
+ * Fields an AGENT is allowed to edit on their own listing. Anything not in
+ * this set is silently dropped from the update payload before it reaches
+ * Prisma. This complements — not replaces — the OwnershipGuard: the guard
+ * answers "whose row is this?", this sanitizer answers "which columns can
+ * the role touch?".
+ */
+const AGENT_EDITABLE_FIELDS = new Set<keyof UpdatePropertyDto>([
+  'title',
+  'description',
+  'shortDescription',
+  'price',
+  'currency',
+  'status',
+  'address',
+  'coordinates',
+  'neighborhood',
+  'bedrooms',
+  'bathrooms',
+  'area',
+  'landArea',
+  'floors',
+  'floor',
+  'yearBuilt',
+  'garage',
+  'pool',
+  'furnishing',
+  'material',
+  'condition',
+  'sellerType',
+  'heating',
+  'ownership',
+  'windowType',
+  'availabilityDate',
+  'hasBalcony',
+  'hasTerrace',
+  'hasParking',
+  'hasGarage',
+  'hasSeparateKitchen',
+  'hasStorage',
+  'hasElevator',
+  'hasInteriorStaircase',
+  'hasWashingMachine',
+  'hasFridge',
+  'hasStove',
+  'hasOven',
+  'hasAC',
+  'hasBlinds',
+  'hasArmoredDoors',
+  'hasIntercom',
+  'hasInternet',
+  'hasCableTV',
+  'features',
+]);
+
+function sanitizeForAgent(dto: UpdatePropertyDto): UpdatePropertyDto {
+  const filtered: Record<string, unknown> = {};
+  for (const [key, value] of Object.entries(dto)) {
+    if (AGENT_EDITABLE_FIELDS.has(key as keyof UpdatePropertyDto)) {
+      filtered[key] = value;
+    }
+  }
+  return filtered as UpdatePropertyDto;
+}
 
 // Derive the 18 amenity keys from the shared Zod schema so this stays in
 // lockstep with `CreatePropertyDto` / `UpdatePropertyDto`. If a new flag is
@@ -29,21 +103,66 @@ export class PropertiesService {
   constructor(
     private prisma: PrismaService,
     private uploadsService: UploadsService,
+    private siteConfig: SiteConfigService,
   ) {}
 
-  private buildWhereClause(
+  private async buildWhereClause(
     query: QueryPropertyDto,
     site: SiteContext,
-  ): Prisma.PropertyWhereInput {
+    user?: CurrentUserPayload | null,
+  ): Promise<Prisma.PropertyWhereInput> {
     const where: Prisma.PropertyWhereInput = {};
     this.applyScopeFilters(where, query, site);
+    await this.applyBrandGeoScope(where, site);
     this.applyRangeFilters(where, query);
     this.applyClassificationFilters(where, query);
     this.applyAmenityFilters(where, query);
     this.applyRecencyFilters(where, query);
     this.applyGeoFilters(where, query);
     this.applySearchFilter(where, query);
+    this.applyAgentOwnershipScope(where, user);
     return where;
+  }
+
+  /**
+   * Brand-level geo scope (TGE ≡ Transylvania). Sourced from the admin-editable
+   * SiteConfig via SiteConfigService. AND-composed so it layers cleanly onto
+   * the OR-based search filter and any future top-level clauses. `cityRef`
+   * nested path is used (not the deprecated `countySlug` column) so the fix
+   * doesn't re-entrench a field already flagged for removal.
+   */
+  private async applyBrandGeoScope(
+    where: Prisma.PropertyWhereInput,
+    site: SiteContext,
+  ): Promise<void> {
+    const scope = await resolveGeoScope(site, this.siteConfig);
+    const clause = propertyGeoWhere(scope);
+    if (!clause) return;
+    where.AND = Array.isArray(where.AND)
+      ? [...where.AND, clause]
+      : where.AND
+        ? [where.AND, clause]
+        : [clause];
+  }
+
+  /**
+   * AGENT users see only the properties they own — regardless of whether the
+   * request came with `?agentId=…`. The scope is applied *after* the other
+   * filters so a crafted query can't widen it.
+   */
+  private applyAgentOwnershipScope(
+    where: Prisma.PropertyWhereInput,
+    user: CurrentUserPayload | null | undefined,
+  ) {
+    if (!user) return;
+    if (user.role !== AdminRole.AGENT) return;
+    if (!user.agentId) {
+      // AGENT with no linked Agent record: no properties are theirs. Clamp
+      // to empty rather than leak the full list.
+      where.agentId = '__no-agent__';
+      return;
+    }
+    where.agentId = user.agentId;
   }
 
   /** Scope + foreign-key-style filters: city, county, type, status, tier, etc. */
@@ -80,16 +199,12 @@ export class PropertiesService {
     q: QueryPropertyDto,
     site: SiteContext,
   ) {
-    const scope = SITE_TIER_SCOPE[site.id];
-    if (scope === null) {
+    const filter = tierScopeFilter(site);
+    if (filter === undefined) {
       if (q.tier) where.tier = q.tier;
       return;
     }
-    if (scope.length === 0) {
-      where.tier = { in: [] };
-      return;
-    }
-    where.tier = scope.length === 1 ? scope[0] : { in: scope };
+    where.tier = filter;
   }
 
   /** Numeric ranges: price, bedrooms, bathrooms, area, floor, year built. */
@@ -286,7 +401,11 @@ export class PropertiesService {
     ];
   }
 
-  async findAll(query: QueryPropertyDto, site: SiteContext) {
+  async findAll(
+    query: QueryPropertyDto,
+    site: SiteContext,
+    user?: CurrentUserPayload | null,
+  ) {
     const {
       page = 1,
       limit = 12,
@@ -296,7 +415,7 @@ export class PropertiesService {
       sort,
     } = query;
 
-    const where = this.buildWhereClause(query, site);
+    const where = await this.buildWhereClause(query, site, user);
 
     const orderBy: Prisma.PropertyOrderByWithRelationInput = {};
     switch (sort) {
@@ -394,7 +513,7 @@ export class PropertiesService {
   }
 
   async findMapPins(query: QueryPropertyDto, site: SiteContext) {
-    const where = this.buildWhereClause(query, site);
+    const where = await this.buildWhereClause(query, site);
 
     // Map callers provide lightweight pins (no images beyond the hero), but
     // a missing bbox + no tier/city filter would previously return up to 5000
@@ -451,7 +570,11 @@ export class PropertiesService {
     return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
   }
 
-  async findById(id: string, site: SiteContext) {
+  async findById(
+    id: string,
+    site: SiteContext,
+    user?: CurrentUserPayload | null,
+  ) {
     const property = await ensureFound(
       this.prisma.property.findUnique({
         where: { id },
@@ -459,15 +582,25 @@ export class PropertiesService {
           images: { orderBy: { sortOrder: 'asc' } },
           developer: true,
           agent: true,
+          cityRef: { include: { county: true } },
         },
       }),
       'Property',
     );
     this.assertTierInScope(property.tier, site);
+    await this.assertCountyInScope(
+      property.cityRef?.county.slug ?? null,
+      site,
+    );
+    this.assertAgentOwns(property.agentId, user);
     return property;
   }
 
-  async findBySlug(slug: string, site: SiteContext) {
+  async findBySlug(
+    slug: string,
+    site: SiteContext,
+    user?: CurrentUserPayload | null,
+  ) {
     const property = await ensureFound(
       this.prisma.property.findUnique({
         where: { slug },
@@ -475,12 +608,49 @@ export class PropertiesService {
           images: { orderBy: { sortOrder: 'asc' } },
           developer: true,
           agent: true,
+          cityRef: { include: { county: true } },
         },
       }),
       'Property',
     );
     this.assertTierInScope(property.tier, site);
+    await this.assertCountyInScope(
+      property.cityRef?.county.slug ?? null,
+      site,
+    );
+    this.assertAgentOwns(property.agentId, user);
     return property;
+  }
+
+  /**
+   * 404 when the property's county falls outside the caller's brand geo
+   * scope (e.g. a Constanța villa on TGE). 404 rather than 403 for the same
+   * reason as `assertTierInScope`: don't leak the existence of rows outside
+   * the brand's advertised reach.
+   */
+  private async assertCountyInScope(
+    countySlug: string | null,
+    site: SiteContext,
+  ): Promise<void> {
+    const scope = await resolveGeoScope(site, this.siteConfig);
+    if (!isCountyInScope(countySlug, scope)) {
+      throw new NotFoundException('Property not found');
+    }
+  }
+
+  /**
+   * AGENT single-row reads 404 on other agents' properties — same rationale
+   * as `assertTierInScope`: 404 instead of 403 avoids leaking existence of
+   * rows outside the caller's scope.
+   */
+  private assertAgentOwns(
+    agentId: string | null,
+    user: CurrentUserPayload | null | undefined,
+  ): void {
+    if (!user || user.role !== AdminRole.AGENT) return;
+    if (!user.agentId || agentId !== user.agentId) {
+      throw new NotFoundException('Property not found');
+    }
   }
 
   /**
@@ -558,65 +728,74 @@ export class PropertiesService {
     return created;
   }
 
-  async update(id: string, dto: UpdatePropertyDto) {
+  async update(
+    id: string,
+    dto: UpdatePropertyDto,
+    user?: CurrentUserPayload | null,
+  ) {
     await this.ensureExists(id);
-    await this.validateRefs(dto.developerId, dto.agentId);
+    const effective =
+      user?.role === AdminRole.AGENT ? sanitizeForAgent(dto) : dto;
+    await this.validateRefs(effective.developerId, effective.agentId);
 
     const data: Prisma.PropertyUpdateInput = {};
 
-    if (dto.slug !== undefined) data.slug = dto.slug;
-    if (dto.title !== undefined)
-      data.title = toJson(dto.title);
-    if (dto.description !== undefined)
-      data.description = toJson(dto.description);
-    if (dto.shortDescription !== undefined)
+    if (effective.slug !== undefined) data.slug = effective.slug;
+    if (effective.title !== undefined)
+      data.title = toJson(effective.title);
+    if (effective.description !== undefined)
+      data.description = toJson(effective.description);
+    if (effective.shortDescription !== undefined)
       data.shortDescription =
-        toJson(dto.shortDescription);
-    if (dto.price !== undefined) data.price = dto.price;
-    if (dto.currency !== undefined) data.currency = dto.currency;
-    if (dto.type !== undefined) data.type = dto.type;
-    if (dto.status !== undefined) data.status = dto.status;
-    if (dto.tier !== undefined) data.tier = dto.tier;
-    if (dto.city !== undefined) data.city = dto.city;
-    if (dto.citySlug !== undefined) data.citySlug = dto.citySlug;
-    if (dto.neighborhood !== undefined) data.neighborhood = dto.neighborhood;
-    if (dto.address !== undefined)
-      data.address = toJson(dto.address);
-    if (dto.coordinates !== undefined) {
-      data.latitude = dto.coordinates.lat;
-      data.longitude = dto.coordinates.lng;
+        toJson(effective.shortDescription);
+    if (effective.price !== undefined) data.price = effective.price;
+    if (effective.currency !== undefined) data.currency = effective.currency;
+    if (effective.type !== undefined) data.type = effective.type;
+    if (effective.status !== undefined) data.status = effective.status;
+    if (effective.tier !== undefined) data.tier = effective.tier;
+    if (effective.city !== undefined) data.city = effective.city;
+    if (effective.citySlug !== undefined) data.citySlug = effective.citySlug;
+    if (effective.neighborhood !== undefined)
+      data.neighborhood = effective.neighborhood;
+    if (effective.address !== undefined)
+      data.address = toJson(effective.address);
+    if (effective.coordinates !== undefined) {
+      data.latitude = effective.coordinates.lat;
+      data.longitude = effective.coordinates.lng;
     }
-    if (dto.bedrooms !== undefined) data.bedrooms = dto.bedrooms;
-    if (dto.bathrooms !== undefined) data.bathrooms = dto.bathrooms;
-    if (dto.area !== undefined) data.area = dto.area;
-    if (dto.landArea !== undefined) data.landArea = dto.landArea;
-    if (dto.floors !== undefined) data.floors = dto.floors;
-    if (dto.yearBuilt !== undefined) data.yearBuilt = dto.yearBuilt;
-    if (dto.garage !== undefined) data.garage = dto.garage;
-    if (dto.pool !== undefined) data.pool = dto.pool;
-    if (dto.floor !== undefined) data.floor = dto.floor;
-    if (dto.furnishing !== undefined) data.furnishing = dto.furnishing;
-    if (dto.material !== undefined) data.material = dto.material;
-    if (dto.condition !== undefined) data.condition = dto.condition;
-    if (dto.sellerType !== undefined) data.sellerType = dto.sellerType;
-    if (dto.heating !== undefined) data.heating = dto.heating;
-    if (dto.ownership !== undefined) data.ownership = dto.ownership;
-    if (dto.windowType !== undefined) data.windowType = dto.windowType;
-    if (dto.availabilityDate !== undefined)
-      data.availabilityDate = dto.availabilityDate ? new Date(dto.availabilityDate) : null;
-    Object.assign(data, this.amenityUpdatePatch(dto));
-    if (dto.features !== undefined)
-      data.features = toJson(dto.features);
-    if (dto.featured !== undefined) data.featured = dto.featured;
-    if (dto.isNew !== undefined) data.isNew = dto.isNew;
-    if (dto.developerId !== undefined) {
-      data.developer = dto.developerId
-        ? { connect: { id: dto.developerId } }
+    if (effective.bedrooms !== undefined) data.bedrooms = effective.bedrooms;
+    if (effective.bathrooms !== undefined) data.bathrooms = effective.bathrooms;
+    if (effective.area !== undefined) data.area = effective.area;
+    if (effective.landArea !== undefined) data.landArea = effective.landArea;
+    if (effective.floors !== undefined) data.floors = effective.floors;
+    if (effective.yearBuilt !== undefined) data.yearBuilt = effective.yearBuilt;
+    if (effective.garage !== undefined) data.garage = effective.garage;
+    if (effective.pool !== undefined) data.pool = effective.pool;
+    if (effective.floor !== undefined) data.floor = effective.floor;
+    if (effective.furnishing !== undefined) data.furnishing = effective.furnishing;
+    if (effective.material !== undefined) data.material = effective.material;
+    if (effective.condition !== undefined) data.condition = effective.condition;
+    if (effective.sellerType !== undefined) data.sellerType = effective.sellerType;
+    if (effective.heating !== undefined) data.heating = effective.heating;
+    if (effective.ownership !== undefined) data.ownership = effective.ownership;
+    if (effective.windowType !== undefined) data.windowType = effective.windowType;
+    if (effective.availabilityDate !== undefined)
+      data.availabilityDate = effective.availabilityDate
+        ? new Date(effective.availabilityDate)
+        : null;
+    Object.assign(data, this.amenityUpdatePatch(effective));
+    if (effective.features !== undefined)
+      data.features = toJson(effective.features);
+    if (effective.featured !== undefined) data.featured = effective.featured;
+    if (effective.isNew !== undefined) data.isNew = effective.isNew;
+    if (effective.developerId !== undefined) {
+      data.developer = effective.developerId
+        ? { connect: { id: effective.developerId } }
         : { disconnect: true };
     }
-    if (dto.agentId !== undefined) {
-      data.agent = dto.agentId
-        ? { connect: { id: dto.agentId } }
+    if (effective.agentId !== undefined) {
+      data.agent = effective.agentId
+        ? { connect: { id: effective.agentId } }
         : { disconnect: true };
     }
 
@@ -670,7 +849,7 @@ export class PropertiesService {
     imageId: string,
     dto: UpdatePropertyImageDto,
   ) {
-    await this.ensureExists(propertyId);
+    await this.ensureImageBelongs(propertyId, imageId);
 
     const data: Prisma.PropertyImageUpdateInput = {};
     if (dto.alt !== undefined)
@@ -685,7 +864,7 @@ export class PropertiesService {
   }
 
   async removeImage(propertyId: string, imageId: string) {
-    await this.ensureExists(propertyId);
+    await this.ensureImageBelongs(propertyId, imageId);
     return this.prisma.propertyImage.delete({ where: { id: imageId } });
   }
 
@@ -693,6 +872,22 @@ export class PropertiesService {
     return ensureFound(
       this.prisma.property.findUnique({ where: { id } }),
       'Property',
+    );
+  }
+
+  /**
+   * Confirms the image belongs to the property before mutation. Without this,
+   * `OwnershipGuard` (which only checks `:id`) would let an agent edit/delete
+   * another agent's image by pairing their own `propertyId` with a victim
+   * `imageId` in the route.
+   */
+  private ensureImageBelongs(propertyId: string, imageId: string) {
+    return ensureFound(
+      this.prisma.propertyImage.findFirst({
+        where: { id: imageId, propertyId },
+        select: { id: true },
+      }),
+      'PropertyImage',
     );
   }
 

@@ -6,6 +6,7 @@ import {
   Param,
   ParseUUIDPipe,
   Post,
+  Query,
 } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { AdminRole } from '@prisma/client';
@@ -21,8 +22,14 @@ export class CountiesController {
 
   @Public()
   @Get()
-  async findAll() {
-    return this.countiesService.findAll();
+  async findAll(
+    @Query('search') search?: string,
+    @Query('sort') sort?: string,
+    @Query('page') page?: number,
+    @Query('limit') limit?: number,
+    @Query('light') light?: boolean,
+  ) {
+    return this.countiesService.findAll({ search, sort, page, limit, light });
   }
 
   @Public()

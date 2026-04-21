@@ -8,8 +8,39 @@ import { ensureFound } from '../common/utils/ensure-found.util';
 import { ensureSlugUnique } from '../common/utils/ensure-slug-unique.util';
 import { paginate } from '../common/utils/pagination.util';
 import { toJson } from '../common/utils/prisma-json';
+import {
+  SiteContext,
+  propertyGeoWhere,
+  resolveGeoScope,
+  scopedPropertiesInclude,
+} from '../common/site';
+import { SiteConfigService } from '../site-config/site-config.service';
 
 const UNPAGINATED_CAP = 100;
+
+/**
+ * Sort token resolver. Unknown or missing tokens fall back to alphabetical.
+ * Multi-field tokens (e.g. `featured`) use an array to get tie-breaker order.
+ */
+function resolveDeveloperSort(
+  sort: string | undefined,
+):
+  | Prisma.DeveloperOrderByWithRelationInput
+  | Prisma.DeveloperOrderByWithRelationInput[] {
+  switch (sort) {
+    case 'name_desc':
+      return { name: 'desc' };
+    case 'newest':
+      return { createdAt: 'desc' };
+    case 'oldest':
+      return { createdAt: 'asc' };
+    case 'featured':
+      return [{ featured: 'desc' }, { name: 'asc' }];
+    case 'name_asc':
+    default:
+      return { name: 'asc' };
+  }
+}
 // Cap the related-properties payload on developer list/detail endpoints. A
 // developer with hundreds of properties would otherwise balloon every row in
 // the listing response. Callers that need the full list use
@@ -23,28 +54,56 @@ export class DevelopersService {
   constructor(
     private prisma: PrismaService,
     private uploadsService: UploadsService,
+    private siteConfig: SiteConfigService,
   ) {}
 
-  async findAll(query: {
-    featured?: boolean;
-    city?: string;
-    page?: number;
-    limit?: number;
-  }) {
+  async findAll(
+    query: {
+      featured?: boolean;
+      city?: string;
+      search?: string;
+      sort?: string;
+      page?: number;
+      limit?: number;
+    },
+    site: SiteContext,
+  ) {
     const where: Prisma.DeveloperWhereInput = {};
     if (query.featured !== undefined) where.featured = query.featured;
     if (query.city) where.citySlug = query.city;
+    if (query.search) {
+      const s = query.search;
+      where.OR = [
+        { name: { contains: s, mode: 'insensitive' } },
+        { slug: { contains: s, mode: 'insensitive' } },
+        { city: { contains: s, mode: 'insensitive' } },
+      ];
+    }
 
+    const geo = propertyGeoWhere(
+      await resolveGeoScope(site, this.siteConfig),
+    );
     const include = {
-      properties: {
-        select: { id: true, slug: true, title: true },
-        take: RELATED_PROPERTIES_CAP,
-        orderBy: { createdAt: 'desc' as const },
-      },
+      properties: scopedPropertiesInclude(
+        site,
+        {
+          select: { id: true, slug: true, title: true },
+          take: RELATED_PROPERTIES_CAP,
+          orderBy: { createdAt: 'desc' as const },
+        },
+        geo,
+      ),
     };
-    const orderBy: Prisma.DeveloperOrderByWithRelationInput = { name: 'asc' };
 
-    if (query.page !== undefined || query.limit !== undefined) {
+    const orderBy = resolveDeveloperSort(query.sort);
+
+    const isPaginated =
+      query.page !== undefined ||
+      query.limit !== undefined ||
+      query.search !== undefined ||
+      query.sort !== undefined;
+
+    if (isPaginated) {
       const page = query.page ?? 1;
       const limit = Math.min(query.limit ?? 50, UNPAGINATED_CAP);
       return paginate(
@@ -76,32 +135,46 @@ export class DevelopersService {
     return rows;
   }
 
-  async findById(id: string) {
+  async findById(id: string, site: SiteContext) {
+    const geo = propertyGeoWhere(
+      await resolveGeoScope(site, this.siteConfig),
+    );
     return ensureFound(
       this.prisma.developer.findUnique({
         where: { id },
         include: {
-          properties: {
-            select: { id: true, slug: true, title: true },
-            take: RELATED_PROPERTIES_CAP,
-            orderBy: { createdAt: 'desc' },
-          },
+          properties: scopedPropertiesInclude(
+            site,
+            {
+              select: { id: true, slug: true, title: true },
+              take: RELATED_PROPERTIES_CAP,
+              orderBy: { createdAt: 'desc' as const },
+            },
+            geo,
+          ),
         },
       }),
       'Developer',
     );
   }
 
-  async findBySlug(slug: string) {
+  async findBySlug(slug: string, site: SiteContext) {
+    const geo = propertyGeoWhere(
+      await resolveGeoScope(site, this.siteConfig),
+    );
     return ensureFound(
       this.prisma.developer.findUnique({
         where: { slug },
         include: {
-          properties: {
-            include: { images: { orderBy: { sortOrder: 'asc' } } },
-            take: RELATED_PROPERTIES_CAP,
-            orderBy: { createdAt: 'desc' },
-          },
+          properties: scopedPropertiesInclude(
+            site,
+            {
+              include: { images: { orderBy: { sortOrder: 'asc' as const } } },
+              take: RELATED_PROPERTIES_CAP,
+              orderBy: { createdAt: 'desc' as const },
+            },
+            geo,
+          ),
         },
       }),
       'Developer',

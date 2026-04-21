@@ -143,6 +143,26 @@ export interface ApiDeveloper {
   properties?: ApiProperty[];
 }
 
+export type ApiInvitationStatus =
+  | "PENDING"
+  | "ACCEPTED"
+  | "EXPIRED"
+  | "REVOKED"
+  | "BOUNCED";
+
+/**
+ * Compact invitation summary attached to an Agent row by the list endpoint.
+ * Lets the admin UI render the "Pending invite / Expired / No login" pill
+ * without a second round-trip. Never exposes the token \u2014 that only lives
+ * in the invitee's email.
+ */
+export interface ApiAgentInvitationSummary {
+  id: string;
+  status: ApiInvitationStatus;
+  expiresAt: string;
+  emailSentAt?: string | null;
+}
+
 export interface ApiAgent {
   id: string;
   slug: string;
@@ -153,6 +173,13 @@ export interface ApiAgent {
   photo?: string | null;
   bio: LocalizedString;
   active: boolean;
+  /** Present on admin list responses when the agent has been invited. */
+  invitation?: ApiAgentInvitationSummary | null;
+  /**
+   * Populated when this agent has a linked AdminUser login. `null` for
+   * public-profile-only agents. Only surfaced by admin endpoints.
+   */
+  adminUserId?: string | null;
   properties?: ApiProperty[];
 }
 

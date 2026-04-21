@@ -13,33 +13,71 @@ import { toJson } from '../common/utils/prisma-json';
 // via `?page=` / `?limit=` and switch to the `{ data, meta }` shape.
 const UNPAGINATED_CAP = 100;
 
+function resolveTestimonialSort(
+  sort: string | undefined,
+): Prisma.TestimonialOrderByWithRelationInput {
+  switch (sort) {
+    case 'oldest':
+      return { createdAt: 'asc' };
+    case 'rating_desc':
+      return { rating: 'desc' };
+    case 'rating_asc':
+      return { rating: 'asc' };
+    case 'newest':
+    default:
+      return { createdAt: 'desc' };
+  }
+}
+
 @Injectable()
 export class TestimonialsService {
   private readonly logger = new Logger(TestimonialsService.name);
 
   constructor(private prisma: PrismaService) {}
 
-  async findAll(query: { page?: number; limit?: number } = {}) {
-    const orderBy: Prisma.TestimonialOrderByWithRelationInput = {
-      createdAt: 'desc',
-    };
+  async findAll(
+    query: {
+      page?: number;
+      limit?: number;
+      search?: string;
+      sort?: string;
+    } = {},
+  ) {
+    const where: Prisma.TestimonialWhereInput = {};
+    if (query.search) {
+      const s = query.search;
+      where.OR = [
+        { clientName: { contains: s, mode: 'insensitive' } },
+        { location: { contains: s, mode: 'insensitive' } },
+        { propertyType: { contains: s, mode: 'insensitive' } },
+      ];
+    }
 
-    // Opt-in pagination: when either `page` or `limit` is provided, return
+    const orderBy = resolveTestimonialSort(query.sort);
+
+    // Opt-in pagination: when any of page/limit/search/sort is provided, return
     // the shared `{ data, meta }` envelope. Legacy callers (no params) keep
     // getting a raw array, now bounded by `UNPAGINATED_CAP`.
-    if (query.page !== undefined || query.limit !== undefined) {
+    const isPaginated =
+      query.page !== undefined ||
+      query.limit !== undefined ||
+      query.search !== undefined ||
+      query.sort !== undefined;
+
+    if (isPaginated) {
       const page = query.page ?? 1;
       const limit = Math.min(query.limit ?? 50, UNPAGINATED_CAP);
       return paginate(
         (skip, take) =>
-          this.prisma.testimonial.findMany({ orderBy, skip, take }),
-        () => this.prisma.testimonial.count(),
+          this.prisma.testimonial.findMany({ where, orderBy, skip, take }),
+        () => this.prisma.testimonial.count({ where }),
         page,
         limit,
       );
     }
 
     const rows = await this.prisma.testimonial.findMany({
+      where,
       orderBy,
       take: UNPAGINATED_CAP,
     });

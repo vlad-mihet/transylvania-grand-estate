@@ -9,6 +9,7 @@ import {
   Post,
   Query,
   UploadedFiles,
+  UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
 import { FilesInterceptor } from '@nestjs/platform-express';
@@ -26,7 +27,30 @@ import { QueryPropertyDto } from './dto/query-property.dto';
 import { UpdatePropertyImageDto } from './dto/update-property-image.dto';
 import { Public } from '../common/decorators/public.decorator';
 import { Roles } from '../common/decorators/roles.decorator';
+import {
+  CurrentUser,
+  type CurrentUserPayload,
+} from '../common/decorators/user.decorator';
+import { OwnsResource } from '../common/decorators/owns-resource.decorator';
+import { OwnershipGuard } from '../common/guards/ownership.guard';
+import type { PrismaService } from '../prisma/prisma.service';
 import { CurrentSite, SiteContext } from '../common/site';
+
+/**
+ * Ownership resolver shared across every property-scoped endpoint (including
+ * the image sub-routes) — a single source of truth for "does this agent own
+ * this row?" so adding a new property endpoint just needs `@OwnsResource(propertyOwnership)`.
+ */
+const propertyOwnership = {
+  resource: 'property',
+  paramKey: 'id',
+  resolve: (prisma: PrismaService, id: string) =>
+    prisma.property.findUnique({
+      where: { id },
+      select: { agentId: true },
+    }),
+  ownerField: 'agentId',
+} as const;
 
 @ApiTags('Properties')
 @Controller('properties')
@@ -38,8 +62,9 @@ export class PropertiesController {
   async findAll(
     @Query() query: QueryPropertyDto,
     @CurrentSite() site: SiteContext,
+    @CurrentUser() user: CurrentUserPayload | null,
   ) {
-    return this.propertiesService.findAll(query, site);
+    return this.propertiesService.findAll(query, site, user);
   }
 
   @Public()
@@ -56,8 +81,9 @@ export class PropertiesController {
   async findById(
     @Param('id', ParseUUIDPipe) id: string,
     @CurrentSite() site: SiteContext,
+    @CurrentUser() user: CurrentUserPayload | null,
   ) {
-    return this.propertiesService.findById(id, site);
+    return this.propertiesService.findById(id, site, user);
   }
 
   @Public()
@@ -65,8 +91,9 @@ export class PropertiesController {
   async findBySlug(
     @Param('slug') slug: string,
     @CurrentSite() site: SiteContext,
+    @CurrentUser() user: CurrentUserPayload | null,
   ) {
-    return this.propertiesService.findBySlug(slug, site);
+    return this.propertiesService.findBySlug(slug, site, user);
   }
 
   @Roles(AdminRole.ADMIN, AdminRole.SUPER_ADMIN)
@@ -75,10 +102,16 @@ export class PropertiesController {
     return this.propertiesService.create(dto);
   }
 
-  @Roles(AdminRole.ADMIN, AdminRole.SUPER_ADMIN)
+  @Roles(AdminRole.ADMIN, AdminRole.SUPER_ADMIN, AdminRole.AGENT)
+  @UseGuards(OwnershipGuard)
+  @OwnsResource(propertyOwnership)
   @Patch(':id')
-  async update(@Param('id', ParseUUIDPipe) id: string, @Body() dto: UpdatePropertyDto) {
-    return this.propertiesService.update(id, dto);
+  async update(
+    @Param('id', ParseUUIDPipe) id: string,
+    @Body() dto: UpdatePropertyDto,
+    @CurrentUser() user: CurrentUserPayload,
+  ) {
+    return this.propertiesService.update(id, dto, user);
   }
 
   @Roles(AdminRole.ADMIN, AdminRole.SUPER_ADMIN)
@@ -87,8 +120,10 @@ export class PropertiesController {
     return this.propertiesService.remove(id);
   }
 
-  // Image management
-  @Roles(AdminRole.ADMIN, AdminRole.SUPER_ADMIN)
+  // Image management — AGENT may manage images of their own listings.
+  @Roles(AdminRole.ADMIN, AdminRole.SUPER_ADMIN, AdminRole.AGENT)
+  @UseGuards(OwnershipGuard)
+  @OwnsResource(propertyOwnership)
   @Post(':id/images')
   @UseInterceptors(
     FilesInterceptor('images', IMAGE_UPLOAD_MAX_FILES, IMAGE_UPLOAD_MULTIPLE),
@@ -101,7 +136,9 @@ export class PropertiesController {
     return this.propertiesService.addImages(id, files);
   }
 
-  @Roles(AdminRole.ADMIN, AdminRole.SUPER_ADMIN)
+  @Roles(AdminRole.ADMIN, AdminRole.SUPER_ADMIN, AdminRole.AGENT)
+  @UseGuards(OwnershipGuard)
+  @OwnsResource(propertyOwnership)
   @Patch(':id/images/:imageId')
   async updateImage(
     @Param('id', ParseUUIDPipe) id: string,
@@ -111,7 +148,9 @@ export class PropertiesController {
     return this.propertiesService.updateImage(id, imageId, dto);
   }
 
-  @Roles(AdminRole.ADMIN, AdminRole.SUPER_ADMIN)
+  @Roles(AdminRole.ADMIN, AdminRole.SUPER_ADMIN, AdminRole.AGENT)
+  @UseGuards(OwnershipGuard)
+  @OwnsResource(propertyOwnership)
   @Delete(':id/images/:imageId')
   async removeImage(
     @Param('id', ParseUUIDPipe) id: string,

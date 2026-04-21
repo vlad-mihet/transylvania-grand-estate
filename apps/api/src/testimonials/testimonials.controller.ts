@@ -25,10 +25,12 @@ export class TestimonialsController {
   @Public()
   @Get()
   async findAll(
+    @Query('search') search?: string,
+    @Query('sort') sort?: string,
     @Query('page') page?: number,
     @Query('limit') limit?: number,
   ) {
-    return this.testimonialsService.findAll({ page, limit });
+    return this.testimonialsService.findAll({ search, sort, page, limit });
   }
 
   @Public()

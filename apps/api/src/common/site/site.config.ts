@@ -1,15 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import { DEV_ORIGINS } from './dev-origins';
 import { SiteId } from './site.types';
-
-// Dev fallbacks mirror the per-app `next dev --port` scripts in package.json:
-// landing:3000, admin:3001, reveria:3002. Keeps a local `pnpm dev:*` stack
-// routing correctly without extra env plumbing.
-const DEV_ORIGINS: Record<Exclude<SiteId, SiteId.UNKNOWN>, string[]> = {
-  [SiteId.TGE_LUXURY]: ['http://localhost:3000'],
-  [SiteId.ADMIN]: ['http://localhost:3001'],
-  [SiteId.REVERIA]: ['http://localhost:3002'],
-};
 
 @Injectable()
 export class SiteOriginConfig {
