@@ -1,37 +1,36 @@
 {
   "Login": {
-    "heroTitle": "Manage your luxury\nproperty portfolio",
-    "adminDashboard": "Admin Dashboard",
-    "operationsConsole": "Operations Console",
-    "rolesBand": "ADMINS · AGENTS · EDITORS · + MORE",
-    "welcome": "Welcome back",
     "signIn": "Sign in",
     "signInButton": "Sign in",
-    "subtitle": "Sign in to manage your listings",
-    "useYourAccount": "Operations for admins, agents, editors — and the teams we add next.",
     "email": "Email",
     "password": "Password",
     "signingIn": "Signing in…",
     "loginFailed": "Login failed",
     "or": "or",
-    "ssoGoogle": "Continue with Google Workspace",
-    "ssoMicrosoft": "Continue with Microsoft",
-    "ssoComingSoon": "Soon",
+    "ssoGoogle": "Continue with Google",
     "forgotPassword": "Forgot your password?",
     "needAccess": "Need access? Contact your administrator.",
+    "statusChecking": "Checking system…",
     "statusOk": "All systems operational",
     "statusDegraded": "Status degraded",
-    "statusDown": "Sign-in unavailable — retry shortly",
+    "statusDown": "Reconnecting…",
     "statusUnknown": "Status unknown",
-    "showPassword": "Show password",
-    "hidePassword": "Hide password",
-    "capsLockOn": "Caps Lock is on",
     "errorNoAccount": "We couldn't find a login for this Google account. Ask your administrator to send you an invitation.",
     "errorEmailMismatch": "The Google account you chose doesn't match the invitation email. Try again with the correct account.",
     "errorEmailUnverified": "Google reports this email as unverified. Verify it in your Google account and try again.",
     "errorGoogleNotConfigured": "Google sign-in isn't available on this deployment yet. Use the email + password form.",
     "errorStateInvalid": "The sign-in link looks tampered with or expired. Start over.",
-    "errorOAuthFailed": "Google sign-in didn't complete. Try again or use email + password."
+    "errorOAuthFailed": "Google sign-in didn't complete. Try again or use email + password.",
+    "errorRateLimited": "Too many attempts. Wait a minute and try again."
+  },
+  "Auth": {
+    "showPassword": "Show password",
+    "hidePassword": "Hide password",
+    "capsLockOn": "Caps Lock is on",
+    "requestNewLink": "Request a new link",
+    "handoffFailed": "Sign-in handoff failed. Returning to login…",
+    "signingYouIn": "Signing you in…",
+    "goToLogin": "Go to login"
   },
   "Sidebar": {
     "management": "Management",
@@ -126,7 +125,14 @@
     "len": "12 characters",
     "lower": "Lowercase letter",
     "upper": "Uppercase letter",
-    "digit": "Digit"
+    "digit": "Digit",
+    "errors": {
+      "minLength": "Minimum 12 characters",
+      "needsLowercase": "Needs a lowercase letter",
+      "needsUppercase": "Needs an uppercase letter",
+      "needsDigit": "Needs a digit",
+      "mismatch": "Passwords do not match"
+    }
   },
   "ChangePassword": {
     "title": "Change password",
@@ -265,7 +271,7 @@
   "AcceptInvite": {
     "verifying": "Verifying your invitation\u2026",
     "welcome": "Welcome, {firstName}!",
-    "subtitle": "You've been invited to join TGE. Choose how you'd like to sign in.",
+    "subtitle": "You've been invited to join Transylvania Grand Estate. Choose how you'd like to sign in.",
     "continueWithGoogle": "Continue with Google",
     "or": "or",
     "password": "Password",

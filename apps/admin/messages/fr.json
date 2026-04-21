@@ -1,37 +1,36 @@
 {
   "Login": {
-    "heroTitle": "Gérez votre portefeuille\nimmobilier de luxe",
-    "adminDashboard": "Tableau de bord admin",
-    "operationsConsole": "Console d'exploitation",
-    "rolesBand": "ADMINS · AGENTS · ÉDITEURS · + AUTRES",
-    "welcome": "Bienvenue",
     "signIn": "Connexion",
     "signInButton": "Se connecter",
-    "subtitle": "Connectez-vous pour gérer vos annonces",
-    "useYourAccount": "Opérations pour administrateurs, agents, éditeurs — et les équipes à venir.",
     "email": "E-mail",
     "password": "Mot de passe",
     "signingIn": "Connexion en cours…",
     "loginFailed": "Échec de la connexion",
     "or": "ou",
-    "ssoGoogle": "Continuer avec Google Workspace",
-    "ssoMicrosoft": "Continuer avec Microsoft",
-    "ssoComingSoon": "Bientôt",
+    "ssoGoogle": "Continuer avec Google",
     "forgotPassword": "Mot de passe oublié ?",
     "needAccess": "Besoin d'un accès ? Contactez votre administrateur.",
+    "statusChecking": "Vérification du système…",
     "statusOk": "Tous les services sont opérationnels",
     "statusDegraded": "Services dégradés",
-    "statusDown": "Connexion indisponible — réessayez",
+    "statusDown": "Reconnexion…",
     "statusUnknown": "Statut inconnu",
-    "showPassword": "Afficher le mot de passe",
-    "hidePassword": "Masquer le mot de passe",
-    "capsLockOn": "Verr. Maj. activé",
     "errorNoAccount": "Aucun compte trouvé pour ce compte Google. Demandez une invitation à votre administrateur.",
     "errorEmailMismatch": "Le compte Google choisi ne correspond pas à l'e-mail d'invitation. Réessayez avec le bon compte.",
     "errorEmailUnverified": "Google signale cet e-mail comme non vérifié. Vérifiez-le dans votre compte Google puis réessayez.",
     "errorGoogleNotConfigured": "La connexion Google n'est pas disponible actuellement. Utilisez le formulaire e-mail + mot de passe.",
     "errorStateInvalid": "Le lien de connexion semble altéré ou expiré. Recommencez.",
-    "errorOAuthFailed": "La connexion Google n'a pas abouti. Réessayez ou utilisez e-mail + mot de passe."
+    "errorOAuthFailed": "La connexion Google n'a pas abouti. Réessayez ou utilisez e-mail + mot de passe.",
+    "errorRateLimited": "Trop de tentatives. Attendez une minute et réessayez."
+  },
+  "Auth": {
+    "showPassword": "Afficher le mot de passe",
+    "hidePassword": "Masquer le mot de passe",
+    "capsLockOn": "Verr. Maj. activé",
+    "requestNewLink": "Demander un nouveau lien",
+    "handoffFailed": "La finalisation de la connexion a échoué. Retour à l'écran de connexion…",
+    "signingYouIn": "Connexion en cours…",
+    "goToLogin": "Retour à la connexion"
   },
   "Sidebar": {
     "management": "Gestion",
@@ -126,7 +125,14 @@
     "len": "12 caractères",
     "lower": "Minuscule",
     "upper": "Majuscule",
-    "digit": "Chiffre"
+    "digit": "Chiffre",
+    "errors": {
+      "minLength": "Minimum 12 caractères",
+      "needsLowercase": "Lettre minuscule requise",
+      "needsUppercase": "Lettre majuscule requise",
+      "needsDigit": "Chiffre requis",
+      "mismatch": "Les mots de passe ne correspondent pas"
+    }
   },
   "ChangePassword": {
     "title": "Changer le mot de passe",
@@ -265,7 +271,7 @@
   "AcceptInvite": {
     "verifying": "Vérification de l'invitation\u2026",
     "welcome": "Bienvenue, {firstName} !",
-    "subtitle": "Vous avez été invité à rejoindre TGE. Choisissez comment vous souhaitez vous connecter.",
+    "subtitle": "Vous avez été invité à rejoindre Transylvania Grand Estate. Choisissez comment vous souhaitez vous connecter.",
     "continueWithGoogle": "Continuer avec Google",
     "or": "ou",
     "password": "Mot de passe",

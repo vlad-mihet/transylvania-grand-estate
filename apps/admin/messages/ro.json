@@ -1,37 +1,36 @@
 {
   "Login": {
-    "heroTitle": "Administrează portofoliul\ntău de proprietăți de lux",
-    "adminDashboard": "Panou de administrare",
-    "operationsConsole": "Consolă de Operațiuni",
-    "rolesBand": "ADMINI · AGENȚI · EDITORI · + ALȚII",
-    "welcome": "Bine ai revenit",
     "signIn": "Autentificare",
     "signInButton": "Autentifică-te",
-    "subtitle": "Autentifică-te pentru a gestiona anunțurile",
-    "useYourAccount": "Operațiuni pentru administratori, agenți, editori — și pentru echipele care urmează.",
     "email": "Email",
     "password": "Parolă",
     "signingIn": "Se autentifică…",
     "loginFailed": "Autentificare eșuată",
     "or": "sau",
-    "ssoGoogle": "Continuă cu Google Workspace",
-    "ssoMicrosoft": "Continuă cu Microsoft",
-    "ssoComingSoon": "În curând",
+    "ssoGoogle": "Continuă cu Google",
     "forgotPassword": "Ți-ai uitat parola?",
     "needAccess": "Ai nevoie de acces? Contactează administratorul.",
+    "statusChecking": "Se verifică sistemul…",
     "statusOk": "Toate serviciile funcționează",
     "statusDegraded": "Servicii degradate",
-    "statusDown": "Autentificarea este indisponibilă — reîncearcă",
+    "statusDown": "Se reconectează…",
     "statusUnknown": "Status necunoscut",
-    "showPassword": "Afișează parola",
-    "hidePassword": "Ascunde parola",
-    "capsLockOn": "Caps Lock activ",
     "errorNoAccount": "Nu am găsit un cont pentru acest cont Google. Cere administratorului să îți trimită o invitație.",
     "errorEmailMismatch": "Contul Google ales nu corespunde cu email-ul din invitație. Încearcă din nou cu contul corect.",
     "errorEmailUnverified": "Google raportează acest email ca neverificat. Verifică-l în contul tău Google și încearcă din nou.",
     "errorGoogleNotConfigured": "Autentificarea Google nu este disponibilă momentan. Folosește formularul cu email și parolă.",
     "errorStateInvalid": "Link-ul de autentificare pare modificat sau expirat. Reia procesul.",
-    "errorOAuthFailed": "Autentificarea Google nu s-a finalizat. Încearcă din nou sau folosește email și parolă."
+    "errorOAuthFailed": "Autentificarea Google nu s-a finalizat. Încearcă din nou sau folosește email și parolă.",
+    "errorRateLimited": "Prea multe încercări. Așteaptă un minut și încearcă din nou."
+  },
+  "Auth": {
+    "showPassword": "Afișează parola",
+    "hidePassword": "Ascunde parola",
+    "capsLockOn": "Caps Lock activ",
+    "requestNewLink": "Cere un link nou",
+    "handoffFailed": "Finalizarea autentificării a eșuat. Te redirecționăm la autentificare…",
+    "signingYouIn": "Te autentificăm…",
+    "goToLogin": "Mergi la autentificare"
   },
   "Sidebar": {
     "management": "Gestionare",
@@ -126,7 +125,14 @@
     "len": "12 caractere",
     "lower": "Literă mică",
     "upper": "Literă mare",
-    "digit": "Cifră"
+    "digit": "Cifră",
+    "errors": {
+      "minLength": "Minim 12 caractere",
+      "needsLowercase": "Trebuie o literă mică",
+      "needsUppercase": "Trebuie o literă mare",
+      "needsDigit": "Trebuie o cifră",
+      "mismatch": "Parolele nu coincid"
+    }
   },
   "ChangePassword": {
     "title": "Schimbă parola",
@@ -265,7 +271,7 @@
   "AcceptInvite": {
     "verifying": "Se verifică invitația\u2026",
     "welcome": "Bun venit, {firstName}!",
-    "subtitle": "Ai fost invitat să te alături TGE. Alege cum vrei să te autentifici.",
+    "subtitle": "Ai fost invitat să te alături Transylvania Grand Estate. Alege cum vrei să te autentifici.",
     "continueWithGoogle": "Continuă cu Google",
     "or": "sau",
     "password": "Parolă",

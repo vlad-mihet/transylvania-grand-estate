@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { Loader2, AlertCircle } from "lucide-react";
+import { useTranslations } from "next-intl";
 
 /**
  * Landing page for the Google OAuth handoff. The API callback redirects
@@ -17,6 +18,7 @@ import { Loader2, AlertCircle } from "lucide-react";
  *      re-mount AuthProvider, which re-hydrates from the refresh cookie.
  */
 export default function AuthCompletePage() {
+  const t = useTranslations("Auth");
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
@@ -63,7 +65,7 @@ export default function AuthCompletePage() {
         {error ? (
           <>
             <AlertCircle className="h-6 w-6 text-[var(--color-warning)]" />
-            <p>Sign-in handoff failed. Returning to login\u2026</p>
+            <p>{t("handoffFailed")}</p>
             <a
               href="/login"
               className="underline hover:text-foreground"
@@ -73,13 +75,13 @@ export default function AuthCompletePage() {
                 }
               }}
             >
-              Go to login
+              {t("goToLogin")}
             </a>
           </>
         ) : (
           <>
             <Loader2 className="h-6 w-6 animate-spin" />
-            <p>Signing you in\u2026</p>
+            <p>{t("signingYouIn")}</p>
           </>
         )}
       </div>

@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { useTranslations } from "next-intl";
 import { cn } from "@tge/utils";
 
-type Status = "ok" | "degraded" | "down" | "unknown";
+type Status = "checking" | "ok" | "degraded" | "down" | "unknown";
 
 interface HealthResponse {
   ok?: boolean;
@@ -12,25 +12,31 @@ interface HealthResponse {
 }
 
 /**
- * Live system-status pill for the login page. Hits `/api/v1/health/live`
- * once on mount with a 5s timeout — the endpoint is `@Public()` + skipped
- * from throttling so an unauthenticated browser can probe it cheaply.
+ * Live system-status pill for the login page. Hits `/health/live` once on
+ * mount with a 12s timeout (Fly cold-starts can reach ~10s) — the endpoint
+ * is `@Public()` + skipped from throttling so an unauthenticated browser
+ * can probe it cheaply.
  *
  * Kept dependency-free and pre-auth so it renders the same before and after
- * the user has signed in. If the health probe fails we fall back to
- * "unknown" rather than a red alarm — a status pill that lights up red
- * during normal cold starts would train users to ignore it.
+ * the user has signed in. The pill only goes red for *explicit* 5xx — an
+ * AbortError or network failure maps to grey "unknown" rather than alarm
+ * red. A status pill that lights up red during normal cold starts would
+ * train users to ignore it.
  */
 export function AuthStatus() {
   const t = useTranslations("Login");
-  const [status, setStatus] = useState<Status>("unknown");
+  // Compute the starting state from the env var so the no-API-URL branch
+  // doesn't need a setState-in-effect shortcut.
+  const baseUrl = process.env.NEXT_PUBLIC_API_URL;
+  const [status, setStatus] = useState<Status>(
+    baseUrl ? "checking" : "unknown",
+  );
 
   useEffect(() => {
-    const baseUrl = process.env.NEXT_PUBLIC_API_URL;
     if (!baseUrl) return;
 
     const controller = new AbortController();
-    const timeout = setTimeout(() => controller.abort(), 5000);
+    const timeout = setTimeout(() => controller.abort(), 12000);
 
     fetch(`${baseUrl}/health/live`, {
       signal: controller.signal,
@@ -49,14 +55,14 @@ export function AuthStatus() {
           (data as { data?: HealthResponse }).data ?? (data as HealthResponse);
         setStatus(inner?.ok === false ? "degraded" : "ok");
       })
-      .catch(() => setStatus("down"))
+      .catch(() => setStatus("unknown"))
       .finally(() => clearTimeout(timeout));
 
     return () => {
       clearTimeout(timeout);
       controller.abort();
     };
-  }, []);
+  }, [baseUrl]);
 
   const dotClass =
     status === "ok"
@@ -68,13 +74,15 @@ export function AuthStatus() {
           : "bg-muted-foreground/50";
 
   const label =
-    status === "ok"
-      ? t("statusOk")
-      : status === "degraded"
-        ? t("statusDegraded")
-        : status === "down"
-          ? t("statusDown")
-          : t("statusUnknown");
+    status === "checking"
+      ? t("statusChecking")
+      : status === "ok"
+        ? t("statusOk")
+        : status === "degraded"
+          ? t("statusDegraded")
+          : status === "down"
+            ? t("statusDown")
+            : t("statusUnknown");
 
   return (
     <div className="mono inline-flex items-center gap-1.5 text-[10px] uppercase tracking-[0.08em] text-muted-foreground">

@@ -1,37 +1,36 @@
 {
   "Login": {
-    "heroTitle": "Verwalten Sie Ihr Luxus-\nImmobilienportfolio",
-    "adminDashboard": "Admin-Dashboard",
-    "operationsConsole": "Betriebskonsole",
-    "rolesBand": "ADMINS · MAKLER · REDAKTEURE · + MEHR",
-    "welcome": "Willkommen zurück",
     "signIn": "Anmelden",
     "signInButton": "Anmelden",
-    "subtitle": "Melden Sie sich an, um Ihre Angebote zu verwalten",
-    "useYourAccount": "Betrieb für Administratoren, Makler, Redakteure — und künftige Teams.",
     "email": "E-Mail",
     "password": "Passwort",
     "signingIn": "Anmeldung läuft…",
     "loginFailed": "Anmeldung fehlgeschlagen",
     "or": "oder",
-    "ssoGoogle": "Weiter mit Google Workspace",
-    "ssoMicrosoft": "Weiter mit Microsoft",
-    "ssoComingSoon": "Bald",
+    "ssoGoogle": "Weiter mit Google",
     "forgotPassword": "Passwort vergessen?",
     "needAccess": "Zugang benötigt? Wenden Sie sich an Ihren Administrator.",
+    "statusChecking": "System wird geprüft…",
     "statusOk": "Alle Systeme funktionieren",
     "statusDegraded": "Dienste beeinträchtigt",
-    "statusDown": "Anmeldung nicht verfügbar — später erneut versuchen",
+    "statusDown": "Verbindung wird wiederhergestellt…",
     "statusUnknown": "Status unbekannt",
-    "showPassword": "Passwort anzeigen",
-    "hidePassword": "Passwort ausblenden",
-    "capsLockOn": "Feststelltaste aktiv",
     "errorNoAccount": "Für dieses Google-Konto wurde kein Login gefunden. Bitten Sie den Administrator um eine Einladung.",
     "errorEmailMismatch": "Das gewählte Google-Konto entspricht nicht der Einladungs-E-Mail. Versuchen Sie es mit dem korrekten Konto.",
     "errorEmailUnverified": "Google meldet diese E-Mail als nicht verifiziert. Verifizieren Sie sie in Ihrem Google-Konto.",
     "errorGoogleNotConfigured": "Google-Anmeldung ist derzeit nicht verfügbar. Verwenden Sie das E-Mail + Passwort Formular.",
     "errorStateInvalid": "Der Anmelde-Link scheint manipuliert oder abgelaufen zu sein. Beginnen Sie von vorne.",
-    "errorOAuthFailed": "Google-Anmeldung nicht abgeschlossen. Erneut versuchen oder E-Mail + Passwort verwenden."
+    "errorOAuthFailed": "Google-Anmeldung nicht abgeschlossen. Erneut versuchen oder E-Mail + Passwort verwenden.",
+    "errorRateLimited": "Zu viele Versuche. Warten Sie eine Minute und versuchen Sie es erneut."
+  },
+  "Auth": {
+    "showPassword": "Passwort anzeigen",
+    "hidePassword": "Passwort ausblenden",
+    "capsLockOn": "Feststelltaste aktiv",
+    "requestNewLink": "Neuen Link anfordern",
+    "handoffFailed": "Anmelde-Übergabe fehlgeschlagen. Zurück zur Anmeldung…",
+    "signingYouIn": "Anmeldung läuft…",
+    "goToLogin": "Zur Anmeldung"
   },
   "Sidebar": {
     "management": "Verwaltung",
@@ -126,7 +125,14 @@
     "len": "12 Zeichen",
     "lower": "Kleinbuchstabe",
     "upper": "Großbuchstabe",
-    "digit": "Ziffer"
+    "digit": "Ziffer",
+    "errors": {
+      "minLength": "Mindestens 12 Zeichen",
+      "needsLowercase": "Kleinbuchstabe erforderlich",
+      "needsUppercase": "Großbuchstabe erforderlich",
+      "needsDigit": "Ziffer erforderlich",
+      "mismatch": "Die Passwörter stimmen nicht überein"
+    }
   },
   "ChangePassword": {
     "title": "Passwort ändern",
@@ -265,7 +271,7 @@
   "AcceptInvite": {
     "verifying": "Einladung wird überprüft\u2026",
     "welcome": "Willkommen, {firstName}!",
-    "subtitle": "Sie wurden zu TGE eingeladen. Wählen Sie, wie Sie sich anmelden möchten.",
+    "subtitle": "Sie wurden eingeladen, Transylvania Grand Estate beizutreten. Wählen Sie, wie Sie sich anmelden möchten.",
     "continueWithGoogle": "Mit Google fortfahren",
     "or": "oder",
     "password": "Passwort",

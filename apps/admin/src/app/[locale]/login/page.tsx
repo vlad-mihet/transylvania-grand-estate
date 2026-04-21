@@ -10,8 +10,8 @@ import { useTranslations } from "next-intl";
 
 /**
  * Multi-role entry point — deliberately minimal. The wordmark + copper
- * hairline (both owned by AuthShell) carry the identity; the card's
- * subtitle carries the multi-role signal.
+ * hairline (both owned by AuthShell) carry the identity; the card heading
+ * names the action.
  *
  * Anatomy (top → bottom): wordmark · auth card · action row · status pill ·
  * footer. AuthShell owns everything except the card contents + afterCard slot.
@@ -47,14 +47,9 @@ export default function LoginPage() {
           </>
         }
       >
-        <div className="mb-5 space-y-1">
-          <h1 className="text-[17px] font-semibold tracking-tight text-foreground">
-            {t("signIn")}
-          </h1>
-          <p className="text-[13px] leading-relaxed text-muted-foreground">
-            {t("useYourAccount")}
-          </p>
-        </div>
+        <h1 className="mb-5 text-[17px] font-semibold tracking-tight text-foreground">
+          {t("signIn")}
+        </h1>
         <LoginForm />
       </AuthShell>
     </AuthProvider>

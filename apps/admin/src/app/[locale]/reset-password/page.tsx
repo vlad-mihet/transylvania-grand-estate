@@ -1,16 +1,20 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { z } from "zod";
 import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
-import { Button, Input, Label } from "@tge/ui";
-import { AlertCircle, ArrowLeft, Eye, EyeOff, Loader2 } from "lucide-react";
+import { Button } from "@tge/ui";
+import { AlertCircle, ArrowLeft, Loader2 } from "lucide-react";
 import { AuthShell } from "@/components/auth/auth-shell";
+import { PasswordField } from "@/components/auth/password-field";
 import { PasswordStrength } from "@/components/shared/password-strength";
+import {
+  buildPasswordSchema,
+  type PasswordFormValues,
+} from "@/lib/validations/password";
 
 type VerifyState =
   | { status: "loading" }
@@ -96,6 +100,7 @@ export default function ResetPasswordPage() {
 }
 
 function InvalidTokenNotice({ title, body }: { title: string; body: string }) {
+  const tAuth = useTranslations("Auth");
   return (
     <div className="space-y-3 text-center">
       <AlertCircle
@@ -111,27 +116,11 @@ function InvalidTokenNotice({ title, body }: { title: string; body: string }) {
         className="inline-flex items-center gap-1.5 text-[12px] text-foreground underline hover:opacity-80"
       >
         <ArrowLeft className="h-3 w-3" />
-        Request a new link
+        {tAuth("requestNewLink")}
       </Link>
     </div>
   );
 }
-
-const passwordSchema = z
-  .object({
-    password: z
-      .string()
-      .min(12, "Minimum 12 characters")
-      .refine((v) => /[a-z]/.test(v), "Needs a lowercase letter")
-      .refine((v) => /[A-Z]/.test(v), "Needs an uppercase letter")
-      .refine((v) => /\d/.test(v), "Needs a digit"),
-    confirm: z.string().min(1),
-  })
-  .refine((d) => d.password === d.confirm, {
-    path: ["confirm"],
-    message: "Passwords do not match",
-  });
-type PasswordForm = z.infer<typeof passwordSchema>;
 
 function ResetForm({
   token,
@@ -143,16 +132,28 @@ function ResetForm({
   firstName: string | null;
 }) {
   const t = useTranslations("ResetPassword");
-  const [reveal, setReveal] = useState(false);
+  const tErrors = useTranslations("PasswordStrength.errors");
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const form = useForm<PasswordForm>({
-    resolver: zodResolver(passwordSchema),
+  const schema = useMemo(
+    () =>
+      buildPasswordSchema({
+        minLength: tErrors("minLength"),
+        needsLowercase: tErrors("needsLowercase"),
+        needsUppercase: tErrors("needsUppercase"),
+        needsDigit: tErrors("needsDigit"),
+        mismatch: tErrors("mismatch"),
+      }),
+    [tErrors],
+  );
+
+  const form = useForm<PasswordFormValues>({
+    resolver: zodResolver(schema),
     defaultValues: { password: "", confirm: "" },
   });
 
-  const onSubmit = async (values: PasswordForm) => {
+  const onSubmit = async (values: PasswordFormValues) => {
     setSubmitting(true);
     setError(null);
     try {
@@ -205,51 +206,24 @@ function ResetForm({
         </div>
       )}
 
-      <div className="grid gap-1.5">
-        <Label htmlFor="password" className="text-xs font-medium">
-          {t("password")}
-        </Label>
-        <div className="relative">
-          <Input
-            id="password"
-            type={reveal ? "text" : "password"}
-            autoComplete="new-password"
-            className="h-9 pr-9"
-            {...form.register("password")}
-          />
-          <button
-            type="button"
-            onClick={() => setReveal((r) => !r)}
-            aria-label={reveal ? "Hide password" : "Show password"}
-            className="absolute right-0 top-0 flex h-9 w-9 items-center justify-center text-muted-foreground/70 hover:text-foreground"
-          >
-            {reveal ? (
-              <EyeOff className="h-3.5 w-3.5" />
-            ) : (
-              <Eye className="h-3.5 w-3.5" />
-            )}
-          </button>
-        </div>
+      <div className="space-y-1.5">
+        <PasswordField
+          id="password"
+          label={t("password")}
+          autoComplete="new-password"
+          {...form.register("password")}
+        />
         <PasswordStrength value={form.watch("password")} />
       </div>
 
-      <div className="grid gap-1.5">
-        <Label htmlFor="confirm" className="text-xs font-medium">
-          {t("confirmPassword")}
-        </Label>
-        <Input
-          id="confirm"
-          type={reveal ? "text" : "password"}
-          autoComplete="new-password"
-          className="h-9"
-          {...form.register("confirm")}
-        />
-        {form.formState.errors.confirm && (
-          <p className="text-[11px] text-[var(--color-danger)]">
-            {form.formState.errors.confirm.message}
-          </p>
-        )}
-      </div>
+      <PasswordField
+        id="confirm"
+        label={t("confirmPassword")}
+        autoComplete="new-password"
+        showCapsLock={false}
+        error={form.formState.errors.confirm?.message}
+        {...form.register("confirm")}
+      />
 
       <Button type="submit" className="h-9 w-full" disabled={submitting}>
         {submitting ? (

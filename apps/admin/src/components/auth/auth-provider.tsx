@@ -26,6 +26,19 @@ export interface AuthUser {
   agentId?: string | null;
 }
 
+/**
+ * Thrown by `login()` so callers can branch on HTTP status (429 for rate-
+ * limit) without sniffing the message string.
+ */
+export class AuthError extends Error {
+  readonly status: number;
+  constructor(message: string, status: number) {
+    super(message);
+    this.name = "AuthError";
+    this.status = status;
+  }
+}
+
 interface AuthContextType {
   user: AuthUser | null;
   isLoading: boolean;
@@ -70,8 +83,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       });
 
       if (!res.ok) {
-        const data = await res.json();
-        throw new Error(data.error?.message || "Login failed");
+        const data = await res.json().catch(() => ({}));
+        throw new AuthError(
+          data?.error?.message || "Login failed",
+          res.status,
+        );
       }
 
       const data = (await res.json()) as {

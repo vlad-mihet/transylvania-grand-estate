@@ -53,7 +53,7 @@ export function LanguageSwitcher() {
           <button
             type="button"
             onClick={() => switchTo(l.code)}
-            aria-current={locale === l.code ? "true" : undefined}
+            aria-current={locale === l.code ? "page" : undefined}
             className={cn(
               "rounded-sm px-1 py-0.5 transition-colors",
               locale === l.code
