@@ -30,15 +30,19 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
-      - name: Build shared types
-        run: pnpm --filter @tge/types build
-
+      # Prisma first: @tge/types imports enums (AdminRole, PropertyTier, …)
+      # from @prisma/client, and those symbols only exist after `prisma
+      # generate` emits the client. Building @tge/types before this step
+      # fails with TS2305 "has no exported member" for every enum.
       - name: Generate Prisma client
         run: pnpm --filter @tge/api exec prisma generate
         env:
           # Prisma's validate step expects DATABASE_URL to be set even when
           # we're only generating (not connecting). Dummy value is fine.
           DATABASE_URL: postgresql://ci:ci@localhost:5432/ci
+
+      - name: Build shared types
+        run: pnpm --filter @tge/types build
 
       - name: Typecheck API
         run: pnpm --filter @tge/api exec tsc --noEmit -p tsconfig.build.json
@@ -77,13 +81,14 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
-      - name: Build shared types
-        run: pnpm --filter @tge/types build
-
+      # Prisma first — see the typecheck-build job for why order matters.
       - name: Generate Prisma client
         run: pnpm --filter @tge/api exec prisma generate
         env:
           DATABASE_URL: postgresql://ci:ci@localhost:5432/ci
+
+      - name: Build shared types
+        run: pnpm --filter @tge/types build
 
       - name: Run e2e tests
         run: pnpm --filter @tge/api test:e2e
