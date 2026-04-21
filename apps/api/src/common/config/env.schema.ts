@@ -74,12 +74,13 @@ const productionSchema = baseSchema.extend({
   R2_SECRET_ACCESS_KEY: z.string().optional(),
   R2_PUBLIC_URL: z.string().url().optional(),
 
-  // Email: required in prod so invitations actually send. If RESEND isn't
-  // set up yet, prefer to gate prod deploy rather than silently drop mail.
-  RESEND_API_KEY: z.string().min(1, 'RESEND_API_KEY required in production'),
-  EMAIL_FROM: z
-    .string()
-    .min(1, 'EMAIL_FROM required in production (e.g. "TGE <no-reply@tge.ro>")'),
+  // Email: optional in prod while Resend is not yet provisioned. EmailService
+  // degrades to stdout logging when RESEND_API_KEY is unset (same behavior as
+  // dev), so the API boots and non-email features work. Before inviting real
+  // users via the agent-invitations flow, these must be set — otherwise the
+  // acceptance URL only reaches the Fly logs.
+  RESEND_API_KEY: z.string().optional(),
+  EMAIL_FROM: z.string().optional(),
   // Optional in prod too \u2014 if unset, the webhook endpoint rejects all
   // traffic so we fail closed. Operators should set it after provisioning
   // a Resend webhook.
