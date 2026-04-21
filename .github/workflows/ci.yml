@@ -1,0 +1,96 @@
+name: ci
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  typecheck-build:
+    name: Typecheck + build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Build shared types
+        run: pnpm --filter @tge/types build
+
+      - name: Generate Prisma client
+        run: pnpm --filter @tge/api exec prisma generate
+        env:
+          # Prisma's validate step expects DATABASE_URL to be set even when
+          # we're only generating (not connecting). Dummy value is fine.
+          DATABASE_URL: postgresql://ci:ci@localhost:5432/ci
+
+      - name: Typecheck API
+        run: pnpm --filter @tge/api exec tsc --noEmit -p tsconfig.build.json
+
+      - name: Typecheck admin
+        run: pnpm --filter @tge/admin exec tsc --noEmit
+
+      - name: Build API
+        run: pnpm --filter @tge/api build
+
+      - name: Build admin
+        run: pnpm --filter @tge/admin exec next build
+        env:
+          # Baked into the admin bundle at build time.
+          NEXT_PUBLIC_API_URL: http://localhost:3333/api/v1
+          API_URL: http://localhost:3333/api/v1
+
+  e2e:
+    name: API e2e
+    # Testcontainers needs Docker. ubuntu-latest has it preinstalled.
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Build shared types
+        run: pnpm --filter @tge/types build
+
+      - name: Generate Prisma client
+        run: pnpm --filter @tge/api exec prisma generate
+        env:
+          DATABASE_URL: postgresql://ci:ci@localhost:5432/ci
+
+      - name: Run e2e tests
+        run: pnpm --filter @tge/api test:e2e
+        env:
+          # Testcontainers provides DATABASE_URL at runtime; these only need
+          # to satisfy env validation at Nest bootstrap time.
+          JWT_ACCESS_SECRET: ci_access_secret_ge_32_chars_xxxxxxxxx
+          JWT_REFRESH_SECRET: ci_refresh_secret_ge_32_chars_xxxxxxxx
+          INVITATION_TOKEN_SECRET: ci_invitation_secret_ge_32_chars_xxxxxx
+          ADMIN_PUBLIC_URL: http://admin.ci
