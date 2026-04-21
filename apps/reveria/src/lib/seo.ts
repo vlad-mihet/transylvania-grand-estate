@@ -3,11 +3,20 @@ import { getBrand } from "@tge/branding";
 import { locales, defaultLocale, type Locale } from "@tge/i18n";
 import { getPathname } from "@/i18n/navigation";
 
-// Trimmed absolute origin. Falls back to localhost for dev when the env var is
-// unset so routes like robots.ts still render instead of crashing the build.
-export const SITE_URL = (
-  process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000"
-).replace(/\/$/, "");
+// Trimmed absolute origin. Dev-only fallback to localhost so routes like
+// robots.ts/sitemap.ts still render without an env var; in production we
+// refuse to build, because a silent localhost fallback would ship
+// `<link rel="canonical" href="http://localhost:3052/…">` to crawlers.
+const rawSiteUrl = process.env.NEXT_PUBLIC_SITE_URL;
+if (!rawSiteUrl && process.env.NODE_ENV === "production") {
+  throw new Error(
+    "NEXT_PUBLIC_SITE_URL must be set for production builds — otherwise canonical, og:url, and sitemap leak localhost to crawlers",
+  );
+}
+export const SITE_URL = (rawSiteUrl ?? "http://localhost:3052").replace(
+  /\/$/,
+  "",
+);
 
 export function absoluteUrl(pathname: string): string {
   if (/^https?:/i.test(pathname)) return pathname;

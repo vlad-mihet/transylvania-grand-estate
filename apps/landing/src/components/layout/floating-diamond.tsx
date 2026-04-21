@@ -130,8 +130,14 @@ export function FloatingDiamond() {
       const floatY = Math.min(y * 0.06, vh - 80);
       const floatX = Math.sin(y * 0.0015) * 10;
       const floatRotation = y * 0.008 + Math.sin(y * 0.003) * 5;
-      const floatOpacity = Math.min(0.5 + y * 0.0004, 0.9);
-      const floatScale = 0.64;
+      // Size/opacity tuned so at scrollY=0 this diamond sits exactly on top of
+      // the header-diamond (w-8 at opacity-70): 32 / 44 = 0.727, opacity 0.7.
+      // Stacking the two makes the homepage read as a single diamond at rest;
+      // as the page scrolls the header one leaves with the document flow and
+      // this floating one descends via floatY, producing the "diamant coboară"
+      // effect. CTA arrival still lerps scale->1 and opacity->1 below.
+      const floatOpacity = 0.7;
+      const floatScale = 0.727;
 
       // --- CTA arrival detection ---
       const ctaEl = document.getElementById("cta-section");
@@ -204,8 +210,8 @@ export function FloatingDiamond() {
       ref={elementRef}
       className="floating-diamond fixed z-50 pointer-events-none hidden xl:block"
       style={{
-        opacity: mounted ? (reducedMotion ? 0.7 : 0.5) : 0,
-        transform: "scale(0.64)",
+        opacity: mounted ? 0.7 : 0,
+        transform: "scale(0.727)",
         transition: "opacity 1s var(--ease-luxury)",
         willChange: "transform, opacity",
       }}

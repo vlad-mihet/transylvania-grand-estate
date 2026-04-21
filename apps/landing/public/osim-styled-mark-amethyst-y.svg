@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Transylvania Grand - OSIM styled mark (v6, interpunct monumental, amethyst-Y accent)
+
+  Design language: carved monumental inscription, in the vocabulary of
+  Loro Piana, Montblanc, Aman, and Rolls-Royce wordmarks. The diamond is
+  placed between the two words as an interpunct / figurative centerpiece,
+  not parked beside them - the diamond becomes part of the wordmark rhythm.
+
+  Variant: the Y of TRANSYLVANIA is rendered in amethyst (color-amethyst
+  mid stop #7B68EE) to echo the diamond's color into the wordmark itself.
+  The Y is apt for this accent both because of its phonetic prominence in
+  the name and because its forked silhouette visually mirrors the diamond's
+  upper facets. Full palette now appears: cream + amethyst + copper.
+
+  Typography: Cinzel (Trajan-inspired inscriptional caps), all uppercase,
+  tracked wide, weight 500. Both words carry the same size and weight so
+  the diamond and color hierarchy do the differentiation, not font weight.
+  Playfair Display / Georgia are graceful fallbacks.
+
+  Diamond geometry preserved verbatim from
+  apps/landing/src/components/layout/floating-diamond.tsx (DiamondSvg).
+  Palette values resolved from packages/tailwind-config/src/theme.css:
+    color-amethyst-deep    #5B4FC4
+    color-amethyst         #7B68EE
+    color-amethyst-light   #9D8FFF
+    color-copper           #C47F5A
+    color-cream            #F0EDE8
+
+  Stroke widths are scaled down from the site component because this lockup
+  renders the diamond at 100x100 (site renders it at 44x44). The resulting
+  visual stroke weight matches the site icon at filing size.
+
+  Before filing with OSIM:
+    1. Delete the rect preview background to restore transparency.
+    2. Open in Figma / Illustrator and convert the two text elements to
+       outlined paths (Figma: Flatten; Illustrator: Create Outlines) so the
+       Cinzel geometry is locked and immune to font substitution. OSIM
+       examiner machines will not fetch the Google Fonts import.
+-->
+<svg xmlns="http://www.w3.org/2000/svg"
+     viewBox="0 0 900 180"
+     width="900" height="180"
+     role="img"
+     aria-label="Transylvania Grand">
+  <title>Transylvania Grand</title>
+
+  <defs>
+    <style type="text/css">
+      @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600&amp;display=swap');
+      .tg-wordmark {
+        font-family: 'Cinzel', 'Trajan Pro', 'Playfair Display', 'Cormorant Garamond', Georgia, serif;
+        font-weight: 500;
+        font-size: 40px;
+        letter-spacing: 12px;
+      }
+      .tg-wordmark-ground   { fill: #C47F5A; }
+      .tg-wordmark-hero     { fill: #F0EDE8; }
+      .tg-wordmark-amethyst { fill: #7B68EE; }
+    </style>
+
+    <linearGradient id="tg-diamond-stroke" x1="12" y1="22" x2="12" y2="2" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#5B4FC4"/>
+      <stop offset="50%" stop-color="#7B68EE"/>
+      <stop offset="100%" stop-color="#9D8FFF"/>
+    </linearGradient>
+    <linearGradient id="tg-diamond-fill" x1="12" y1="22" x2="12" y2="2" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#5B4FC4" stop-opacity="0.25"/>
+      <stop offset="50%" stop-color="#7B68EE" stop-opacity="0.15"/>
+      <stop offset="100%" stop-color="#9D8FFF" stop-opacity="0.30"/>
+    </linearGradient>
+    <linearGradient id="tg-diamond-facet" x1="12" y1="22" x2="12" y2="2" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#9D8FFF" stop-opacity="0.10"/>
+      <stop offset="100%" stop-color="#9D8FFF" stop-opacity="0.35"/>
+    </linearGradient>
+  </defs>
+
+  <!-- PREVIEW BACKGROUND - delete for transparent trademark file -->
+  <rect width="900" height="180" fill="#141418"/>
+
+  <!-- Left wordmark: cream letters with an amethyst Y echoing the diamond -->
+  <text class="tg-wordmark" text-anchor="end" x="517" y="105"
+    ><tspan class="tg-wordmark-hero">TRANS</tspan
+    ><tspan class="tg-wordmark-amethyst">Y</tspan
+    ><tspan class="tg-wordmark-hero">LVANIA</tspan></text>
+
+  <!-- Brand diamond as interpunct / figurative centerpiece -->
+  <svg x="540" y="40" width="100" height="100" viewBox="0 0 24 24" overflow="visible">
+    <path d="M12 2L2 9.5L12 22L22 9.5L12 2Z" fill="url(#tg-diamond-fill)"/>
+    <path d="M12 2L2 9.5L12 22L22 9.5L12 2Z"
+          fill="none" stroke="url(#tg-diamond-stroke)" stroke-width="0.6"
+          stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="M2 9.5H22"
+          fill="none" stroke="url(#tg-diamond-stroke)" stroke-width="0.5"
+          stroke-linecap="round"/>
+    <path d="M12 2L8.5 9.5L12 22"
+          fill="none" stroke="url(#tg-diamond-facet)" stroke-width="0.4"
+          stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="M12 2L15.5 9.5L12 22"
+          fill="none" stroke="url(#tg-diamond-facet)" stroke-width="0.4"
+          stroke-linecap="round" stroke-linejoin="round"/>
+  </svg>
+
+  <!-- Right wordmark (copper, distinctive accent / protectable element) -->
+  <text class="tg-wordmark tg-wordmark-ground" text-anchor="start" x="663" y="105">GRAND</text>
+</svg>

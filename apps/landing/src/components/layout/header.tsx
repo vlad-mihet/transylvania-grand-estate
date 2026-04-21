@@ -124,7 +124,7 @@ export function Header({ developers }: HeaderProps) {
         <div className="hidden xl:grid grid-cols-[1fr_auto_1fr] items-center h-20">
           {/* Left: logo */}
           <div className="flex items-center gap-3">
-            <div id="header-diamond" className={cn("relative -translate-y-[3px]", isHomepage ? "opacity-0" : "opacity-70")}>
+            <div id="header-diamond" className="relative -translate-y-[3px] opacity-70">
               <div className="absolute inset-0 -m-2 rounded-full animate-diamond-glow bg-amethyst/20 blur-md" />
               <DiamondSvg className="relative w-8 h-8" />
             </div>

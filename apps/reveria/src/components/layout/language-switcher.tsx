@@ -15,8 +15,8 @@ import { Globe } from "lucide-react";
 import { cn } from "@tge/utils";
 
 const locales = [
-  { code: "en", label: "EN" },
   { code: "ro", label: "RO" },
+  { code: "en", label: "EN" },
   { code: "fr", label: "FR" },
   { code: "de", label: "DE" },
 ] as const;
