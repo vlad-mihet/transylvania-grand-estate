@@ -3,20 +3,33 @@ import { getBrand } from "@tge/branding";
 import { locales, defaultLocale, type Locale } from "@tge/i18n";
 import { getPathname } from "@/i18n/navigation";
 
-// Trimmed absolute origin. Dev-only fallback to localhost so routes like
-// robots.ts/sitemap.ts still render without an env var; in production we
-// refuse to build, because a silent localhost fallback would ship
-// `<link rel="canonical" href="http://localhost:3052/…">` to crawlers.
-const rawSiteUrl = process.env.NEXT_PUBLIC_SITE_URL;
-if (!rawSiteUrl && process.env.NODE_ENV === "production") {
-  throw new Error(
-    "NEXT_PUBLIC_SITE_URL must be set for production builds — otherwise canonical, og:url, and sitemap leak localhost to crawlers",
-  );
+// Canonical origin resolution chain:
+//   1. NEXT_PUBLIC_SITE_URL — operator-set custom domain (e.g. reveria.ro).
+//      Treated as authoritative canonical; site becomes indexable.
+//   2. VERCEL_PROJECT_PRODUCTION_URL — Vercel's stable production alias.
+//   3. VERCEL_URL — Vercel's per-deployment URL (previews/branches).
+//   4. localhost:3052 — dev fallback.
+// Only source 1 flips the site to indexable. Under 2–4, robots.ts emits
+// Disallow: / and createMetadata forces <meta name="robots" noindex> so
+// ephemeral URLs can't be indexed before the custom domain is wired up.
+function resolveOrigin(): { url: string; canonical: boolean } {
+  const explicit = process.env.NEXT_PUBLIC_SITE_URL;
+  if (explicit) return { url: explicit.replace(/\/$/, ""), canonical: true };
+  const prodAlias = process.env.VERCEL_PROJECT_PRODUCTION_URL;
+  if (prodAlias)
+    return {
+      url: `https://${prodAlias.replace(/\/$/, "")}`,
+      canonical: false,
+    };
+  const anyAlias = process.env.VERCEL_URL;
+  if (anyAlias)
+    return { url: `https://${anyAlias.replace(/\/$/, "")}`, canonical: false };
+  return { url: "http://localhost:3052", canonical: false };
 }
-export const SITE_URL = (rawSiteUrl ?? "http://localhost:3052").replace(
-  /\/$/,
-  "",
-);
+
+const origin = resolveOrigin();
+export const SITE_URL = origin.url;
+export const IS_CANONICAL_ORIGIN = origin.canonical;
 
 export function absoluteUrl(pathname: string): string {
   if (/^https?:/i.test(pathname)) return pathname;
@@ -129,8 +142,9 @@ export function createMetadata(opts: CreateMetadataOptions): Metadata {
       description: opts.description,
       images: [image],
     },
-    robots: opts.noIndex
-      ? { index: false, follow: false }
-      : { index: true, follow: true },
+    robots:
+      opts.noIndex || !IS_CANONICAL_ORIGIN
+        ? { index: false, follow: false }
+        : { index: true, follow: true },
   };
 }
