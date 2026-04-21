@@ -1,40 +1,68 @@
 "use client";
 
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { apiClient } from "@/lib/api-client";
-import { DataTable, ColumnDef } from "@/components/shared/data-table";
-import { PageHeader } from "@/components/shared/page-header";
-import { DeleteDialog } from "@/components/shared/delete-dialog";
-import { TableSkeleton } from "@/components/shared/table-skeleton";
-import { QueryError } from "@/components/shared/query-error";
+import { toast } from "@/lib/toast";
 import { Button } from "@tge/ui";
-import { Pencil, Trash2 } from "lucide-react";
-import { Link } from "@/i18n/navigation";
-import Image from "next/image";
-import { useState } from "react";
-import { toast } from "sonner";
+import { Trash2 } from "lucide-react";
+import { useMemo, useState } from "react";
 import { useTranslations } from "next-intl";
+import type { ApiCity, ApiCounty } from "@tge/types";
 
-interface City {
-  id: string;
-  name: string;
-  slug: string;
-  image: string;
-  propertyCount: number;
-}
+import { Link } from "@/i18n/navigation";
+import { ResourceListPage } from "@/components/resource/resource-list-page";
+import { type ColumnDef } from "@/components/resource/resource-table";
+import { DeleteDialog } from "@/components/shared/delete-dialog";
+import { RowActions } from "@/components/shared/row-actions";
+import { Mono, MonoTag } from "@/components/shared/mono";
+import { Thumbnail } from "@/components/shared/thumbnail";
+import { RelativeTime } from "@/components/shared/relative-time";
+import { Can } from "@/components/shared/can";
+import {
+  FilterCheckbox,
+  FilterGroup,
+  FilterRail,
+} from "@/components/shared/filter-rail";
+import { useResourceList } from "@/hooks/use-resource-list";
+
+type City = ApiCity & { id: string; createdAt?: string; updatedAt?: string };
+
+const SORT_TOKENS = {
+  name: { asc: "name_asc", desc: "name_desc" },
+  createdAt: { asc: "oldest", desc: "newest" },
+  propertyCount: { asc: "propertyCount_asc", desc: "propertyCount_desc" },
+} as const;
 
 export default function CitiesPage() {
   const queryClient = useQueryClient();
-  const [deleteId, setDeleteId] = useState<string | null>(null);
   const t = useTranslations("Cities");
+  const tc = useTranslations("Common");
 
-  const { data: cities = [], isLoading, isError, refetch } = useQuery({
-    queryKey: ["cities"],
-    queryFn: () => apiClient<City[]>("/cities"),
+  const [deleteId, setDeleteId] = useState<string | null>(null);
+  const [bulkDeleteOpen, setBulkDeleteOpen] = useState(false);
+  const [countyFilter, setCountyFilter] = useState<string>("");
+
+  // County facet — counties are a closed set (~42 rows for RO), fetch once
+  // with the `light` flag so the filter rail doesn't blow up the payload.
+  const { data: countiesRaw } = useQuery({
+    queryKey: ["counties", { light: true }],
+    queryFn: () => apiClient<ApiCounty[]>("/counties?light=true"),
+  });
+  const counties = useMemo<ApiCounty[]>(
+    () => (Array.isArray(countiesRaw) ? countiesRaw : []),
+    [countiesRaw],
+  );
+
+  const list = useResourceList<City>({
+    resource: "cities",
+    defaultSort: "name_asc",
+    defaultLimit: 20,
+    extraParams: { county: countyFilter || undefined },
   });
 
   const deleteMutation = useMutation({
-    mutationFn: (id: string) => apiClient(`/cities/${id}`, { method: "DELETE" }),
+    mutationFn: (id: string) =>
+      apiClient(`/cities/${id}`, { method: "DELETE" }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["cities"] });
       toast.success(t("deleted"));
@@ -43,109 +71,187 @@ export default function CitiesPage() {
     onError: () => toast.error(t("deleteFailed")),
   });
 
+  const bulkDeleteMutation = useMutation({
+    mutationFn: async (ids: string[]) => {
+      await Promise.all(
+        ids.map((id) => apiClient(`/cities/${id}`, { method: "DELETE" })),
+      );
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["cities"] });
+      toast.success(t("deleted"));
+      list.clearSelection();
+      setBulkDeleteOpen(false);
+    },
+    onError: () => toast.error(t("deleteFailed")),
+  });
+
   const columns: ColumnDef<City, unknown>[] = [
     {
-      accessorKey: "image",
+      id: "image",
       header: "",
+      size: 64,
       enableSorting: false,
-      cell: ({ getValue }) => {
-        const src = getValue() as string | null;
-        return src ? (
-          <Image
-            src={src}
-            alt=""
-            width={80}
-            height={60}
-            className="rounded object-cover"
-            style={{ width: 80, height: 60 }}
+      cell: ({ row }) => (
+        <Thumbnail
+          src={row.original.image}
+          alt={row.original.name}
+          size="sm"
+        />
+      ),
+    },
+    {
+      id: "name",
+      header: t("columnName"),
+      cell: ({ row }) => (
+        <div className="min-w-0">
+          <p className="truncate text-sm font-medium text-foreground">
+            {row.original.name}
+          </p>
+          <Mono className="truncate text-[11px] text-muted-foreground">
+            {row.original.slug}
+          </Mono>
+        </div>
+      ),
+    },
+    {
+      id: "county",
+      header: t("columnCounty"),
+      cell: ({ row }) =>
+        row.original.county ? (
+          <div className="flex items-center gap-1.5">
+            <MonoTag>{row.original.county.code}</MonoTag>
+            <span className="text-sm text-foreground/80">
+              {row.original.county.name}
+            </span>
+          </div>
+        ) : (
+          <Mono>—</Mono>
+        ),
+    },
+    {
+      id: "propertyCount",
+      header: t("columnProperties"),
+      cell: ({ row }) => (
+        <Mono className="text-foreground">{row.original.propertyCount}</Mono>
+      ),
+    },
+    {
+      id: "updatedAt",
+      header: tc("columnUpdated"),
+      cell: ({ row }) =>
+        row.original.updatedAt || row.original.createdAt ? (
+          <RelativeTime
+            value={row.original.updatedAt ?? row.original.createdAt!}
           />
         ) : (
-          <div className="h-[60px] w-[80px] rounded bg-muted" />
-        );
-      },
+          <Mono>—</Mono>
+        ),
     },
-    { accessorKey: "name", header: t("columnName") },
-    { accessorKey: "slug", header: t("columnSlug") },
-    { accessorKey: "propertyCount", header: t("columnProperties") },
     {
       id: "actions",
       header: "",
+      size: 112,
       enableSorting: false,
       cell: ({ row }) => (
-        <div className="flex gap-1">
-          <Button variant="ghost" size="icon" asChild>
-            <Link href={`/cities/${row.original.id}`}>
-              <Pencil className="h-4 w-4" />
-            </Link>
-          </Button>
-          <Button variant="ghost" size="icon" className="text-destructive/60 hover:text-destructive hover:bg-destructive/10" onClick={() => setDeleteId(row.original.id)}>
-            <Trash2 className="h-4 w-4" />
-          </Button>
-        </div>
+        <RowActions
+          viewHref={`/cities/${row.original.id}`}
+          editHref={`/cities/${row.original.id}/edit`}
+          onDelete={() => setDeleteId(row.original.id)}
+          permissions={{
+            edit: "city.update",
+            delete: "city.delete",
+          }}
+        />
       ),
     },
   ];
 
+  const activeFilters = countyFilter ? 1 : 0;
+
   return (
-    <div className="space-y-4">
-      <PageHeader
+    <>
+      <ResourceListPage<City>
         title={t("title")}
-        description={t("count", { count: cities.length })}
         createHref="/cities/new"
         createLabel={t("addCity")}
-      />
-      {isLoading ? (
-        <TableSkeleton rows={5} columns={4} />
-      ) : isError ? (
-        <QueryError onRetry={refetch} />
-      ) : (
-        <DataTable
-          columns={columns}
-          data={cities}
-          mobileCard={(city) => (
-            <div className="rounded-xl border border-copper/[0.08] p-4 space-y-3">
-              <div className="flex items-center gap-3">
-                {city.image ? (
-                  <Image
-                    src={city.image}
-                    alt=""
-                    width={64}
-                    height={48}
-                    className="rounded object-cover shrink-0"
-                    style={{ width: 64, height: 48 }}
-                  />
-                ) : (
-                  <div className="h-[48px] w-[64px] rounded bg-muted shrink-0" />
-                )}
-                <div className="min-w-0 flex-1">
-                  <p className="font-medium">{city.name}</p>
-                  <p className="text-xs text-muted-foreground">{city.slug}</p>
-                </div>
-                <span className="text-sm text-muted-foreground whitespace-nowrap">
-                  {city.propertyCount} {t("columnProperties").toLowerCase()}
+        list={list}
+        columns={columns}
+        sortTokens={SORT_TOKENS}
+        sortOptions={[
+          { value: "name_asc", label: tc("sortNameAsc") },
+          { value: "name_desc", label: tc("sortNameDesc") },
+          { value: "propertyCount_desc", label: tc("sortPropertiesDesc") },
+          { value: "newest", label: tc("sortNewest") },
+          { value: "oldest", label: tc("sortOldest") },
+        ]}
+        activeFilters={activeFilters}
+        filterRail={
+          <FilterRail
+            activeCount={activeFilters}
+            onClear={() => setCountyFilter("")}
+          >
+            <FilterGroup title={t("columnCounty")}>
+              {counties.map((c) => (
+                <FilterCheckbox
+                  key={c.id}
+                  label={`${c.code} · ${c.name}`}
+                  checked={countyFilter === c.slug}
+                  onChange={(checked) =>
+                    setCountyFilter(checked ? c.slug : "")
+                  }
+                />
+              ))}
+            </FilterGroup>
+          </FilterRail>
+        }
+        emptyAction={
+          <Can action="city.create">
+            <Button asChild size="sm">
+              <Link href="/cities/new">{t("addCity")}</Link>
+            </Button>
+          </Can>
+        }
+        bulkActions={() => (
+          <Can action="city.delete">
+            <Button
+              variant="outline"
+              size="sm"
+              className="border-[color-mix(in_srgb,var(--color-danger)_30%,var(--border))] text-[var(--color-danger)] hover:bg-[var(--color-danger-bg)]"
+              onClick={() => setBulkDeleteOpen(true)}
+            >
+              <Trash2 className="mr-1.5 h-3.5 w-3.5" />
+              {tc("delete")}
+            </Button>
+          </Can>
+        )}
+        mobileCard={(city) => (
+          <Link
+            href={`/cities/${city.id}`}
+            className="card-hover block space-y-2 rounded-md border border-border bg-card p-3"
+          >
+            <div className="flex items-center gap-3">
+              <Thumbnail src={city.image} alt={city.name} size="sm" />
+              <div className="min-w-0 flex-1">
+                <p className="truncate text-sm font-medium">{city.name}</p>
+                <Mono className="truncate text-[11px]">{city.slug}</Mono>
+              </div>
+              <Mono className="shrink-0 text-sm text-foreground">
+                {city.propertyCount}
+              </Mono>
+            </div>
+            {city.county && (
+              <div className="flex items-center gap-1.5">
+                <MonoTag>{city.county.code}</MonoTag>
+                <span className="text-xs text-muted-foreground">
+                  {city.county.name}
                 </span>
               </div>
-              <div className="flex items-center justify-end pt-1 border-t border-copper/[0.06]">
-                <div className="flex gap-1">
-                  <Button variant="ghost" size="icon" asChild>
-                    <Link href={`/cities/${city.id}`}>
-                      <Pencil className="h-4 w-4" />
-                    </Link>
-                  </Button>
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    className="text-destructive/60 hover:text-destructive hover:bg-destructive/10"
-                    onClick={() => setDeleteId(city.id)}
-                  >
-                    <Trash2 className="h-4 w-4" />
-                  </Button>
-                </div>
-              </div>
-            </div>
-          )}
-        />
-      )}
+            )}
+          </Link>
+        )}
+      />
+
       <DeleteDialog
         open={!!deleteId}
         onOpenChange={() => setDeleteId(null)}
@@ -153,6 +259,14 @@ export default function CitiesPage() {
         title={t("deleteTitle")}
         loading={deleteMutation.isPending}
       />
-    </div>
+
+      <DeleteDialog
+        open={bulkDeleteOpen}
+        onOpenChange={() => setBulkDeleteOpen(false)}
+        onConfirm={() => bulkDeleteMutation.mutate(Array.from(list.selection))}
+        title={t("deleteTitle")}
+        loading={bulkDeleteMutation.isPending}
+      />
+    </>
   );
 }

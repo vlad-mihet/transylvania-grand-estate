@@ -4,9 +4,8 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { bankRateSchema, BankRateFormValues } from "@/lib/validations/bank-rate";
 import { useApiFormErrors } from "@/lib/form-error";
-import { toast } from "sonner";
+import { toast } from "@/lib/toast";
 import {
-  Button,
   Input,
   Label,
   Select,
@@ -14,12 +13,11 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
+  Switch,
 } from "@tge/ui";
-import { Loader2 } from "lucide-react";
+import { SectionCard } from "@/components/shared/section-card";
+import { FormActions } from "@/components/shared/form-actions";
+import { useUnsavedChangesWarning } from "@/hooks/use-unsaved-changes-warning";
 import { useTranslations } from "next-intl";
 
 interface BankRateFormProps {
@@ -27,9 +25,17 @@ interface BankRateFormProps {
   onSubmit: (data: BankRateFormValues) => void;
   loading?: boolean;
   submissionError?: unknown;
+  /** Where Cancel navigates (detail page on edit, list on create). */
+  cancelHref: string;
 }
 
-export function BankRateForm({ defaultValues, onSubmit, loading, submissionError }: BankRateFormProps) {
+export function BankRateForm({
+  defaultValues,
+  onSubmit,
+  loading,
+  submissionError,
+  cancelHref,
+}: BankRateFormProps) {
   const t = useTranslations("BankRateForm");
   const tc = useTranslations("Common");
 
@@ -51,110 +57,145 @@ export function BankRateForm({ defaultValues, onSubmit, loading, submissionError
   });
 
   useApiFormErrors(form, submissionError, (err) => {
-    toast.error(err instanceof Error ? err.message : "Failed to save");
+    toast.error(err instanceof Error ? err.message : tc("saveFailed"));
   });
 
+  useUnsavedChangesWarning(form.formState.isDirty);
+
   return (
-    <form onSubmit={form.handleSubmit(onSubmit)} className="max-w-5xl space-y-6">
-      <Card>
-        <CardHeader>
-          <CardTitle className="font-serif text-lg">{t("title")}</CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-4">
+    <form
+      onSubmit={form.handleSubmit(onSubmit)}
+      className="w-full space-y-5"
+    >
+      <SectionCard title={t("title")}>
+        <div className="space-y-4">
           <div className="grid gap-4 sm:grid-cols-2">
-            <div className="space-y-2">
+            <div className="space-y-1.5">
               <Label>{t("bankName")}</Label>
               <Input {...form.register("bankName")} />
             </div>
-            <div className="space-y-2">
+            <div className="space-y-1.5">
               <Label>{t("rate")}</Label>
-              <Input type="number" step="0.01" {...form.register("rate")} />
+              <Input
+                type="number"
+                step="0.01"
+                {...form.register("rate")}
+                className="mono"
+              />
             </div>
           </div>
           <div className="grid gap-4 sm:grid-cols-2">
-            <div className="space-y-2">
+            <div className="space-y-1.5">
               <Label>{t("rateType")}</Label>
               <Select
                 value={form.watch("rateType")}
-                onValueChange={(v) => form.setValue("rateType", v as BankRateFormValues["rateType"])}
+                onValueChange={(v) =>
+                  form.setValue(
+                    "rateType",
+                    v as BankRateFormValues["rateType"],
+                  )
+                }
               >
                 <SelectTrigger>
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="fixed">{t("types.fixed")}</SelectItem>
-                  <SelectItem value="variable">{t("types.variable")}</SelectItem>
-                  <SelectItem value="govt_program">{t("types.govtProgram")}</SelectItem>
+                  <SelectItem value="variable">
+                    {t("types.variable")}
+                  </SelectItem>
+                  <SelectItem value="govt_program">
+                    {t("types.govtProgram")}
+                  </SelectItem>
                 </SelectContent>
               </Select>
             </div>
-            <div className="space-y-2">
+            <div className="space-y-1.5">
               <Label>{t("sortOrder")}</Label>
-              <Input type="number" step="1" {...form.register("sortOrder")} />
+              <Input
+                type="number"
+                step="1"
+                {...form.register("sortOrder")}
+                className="mono"
+              />
             </div>
           </div>
-        </CardContent>
-      </Card>
+        </div>
+      </SectionCard>
 
-      <Card>
-        <CardHeader>
-          <CardTitle className="font-serif text-lg">{t("loanDetails")}</CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-4">
+      <SectionCard title={t("loanDetails")}>
+        <div className="space-y-4">
           <div className="grid gap-4 sm:grid-cols-2">
-            <div className="space-y-2">
+            <div className="space-y-1.5">
               <Label>{t("maxLtv")}</Label>
-              <Input type="number" step="0.01" {...form.register("maxLtv")} />
-              <p className="text-xs text-muted-foreground">{t("maxLtvHint")}</p>
+              <Input
+                type="number"
+                step="0.01"
+                {...form.register("maxLtv")}
+                className="mono"
+              />
+              <p className="text-[11px] text-muted-foreground">
+                {t("maxLtvHint")}
+              </p>
             </div>
-            <div className="space-y-2">
+            <div className="space-y-1.5">
               <Label>{t("maxTermYears")}</Label>
-              <Input type="number" step="1" {...form.register("maxTermYears")} />
+              <Input
+                type="number"
+                step="1"
+                {...form.register("maxTermYears")}
+                className="mono"
+              />
             </div>
           </div>
           <div className="grid gap-4 sm:grid-cols-2">
-            <div className="space-y-2">
+            <div className="space-y-1.5">
               <Label>{t("processingFee")}</Label>
-              <Input type="number" step="0.01" {...form.register("processingFee")} />
-              <p className="text-xs text-muted-foreground">{t("processingFeeHint")}</p>
+              <Input
+                type="number"
+                step="0.01"
+                {...form.register("processingFee")}
+                className="mono"
+              />
+              <p className="text-[11px] text-muted-foreground">
+                {t("processingFeeHint")}
+              </p>
             </div>
-            <div className="space-y-2">
+            <div className="space-y-1.5">
               <Label>{t("insuranceRate")}</Label>
-              <Input type="number" step="0.01" {...form.register("insuranceRate")} />
-              <p className="text-xs text-muted-foreground">{t("insuranceRateHint")}</p>
+              <Input
+                type="number"
+                step="0.01"
+                {...form.register("insuranceRate")}
+                className="mono"
+              />
+              <p className="text-[11px] text-muted-foreground">
+                {t("insuranceRateHint")}
+              </p>
             </div>
           </div>
-          <div className="space-y-2">
+          <div className="space-y-1.5">
             <Label>{t("notes")}</Label>
-            <Input {...form.register("notes")} placeholder={t("notesPlaceholder")} />
-          </div>
-          <div className="flex items-center gap-2">
-            <input
-              type="checkbox"
-              id="active"
-              checked={form.watch("active")}
-              onChange={(e) => form.setValue("active", e.target.checked)}
-              className="rounded border-copper/30"
+            <Input
+              {...form.register("notes")}
+              placeholder={t("notesPlaceholder")}
             />
-            <Label htmlFor="active">{t("active")}</Label>
           </div>
-        </CardContent>
-      </Card>
+          <label className="flex items-center gap-2 text-sm">
+            <Switch
+              checked={form.watch("active")}
+              onCheckedChange={(v) => form.setValue("active", v)}
+            />
+            {t("active")}
+          </label>
+        </div>
+      </SectionCard>
 
-      <div className="flex justify-end gap-3">
-        <Button type="button" variant="outline" onClick={() => window.history.back()}>
-          {tc("cancel")}
-        </Button>
-        <Button type="submit" disabled={loading}>
-          {loading ? (
-            <>
-              <Loader2 className="h-4 w-4 animate-spin" /> {tc("saving")}
-            </>
-          ) : (
-            t("saveBankRate")
-          )}
-        </Button>
-      </div>
+      <FormActions
+        cancelHref={cancelHref}
+        loading={loading}
+        dirty={form.formState.isDirty}
+      />
     </form>
   );
 }

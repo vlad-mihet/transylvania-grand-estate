@@ -1,98 +1,117 @@
 "use client";
 
 import { useQuery } from "@tanstack/react-query";
-import { apiClient } from "@/lib/api-client";
-import { Card, CardContent, CardHeader, CardTitle } from "@tge/ui";
+import { useTranslations } from "next-intl";
 import {
   Building2,
   HardHat,
-  UserCircle,
   MapPin,
+  MessageSquare,
   MessageSquareQuote,
+  UserCircle,
 } from "lucide-react";
-import { Link } from "@/i18n/navigation";
-import { useTranslations } from "next-intl";
-import { QueryError } from "@/components/shared/query-error";
 
-interface Stats {
-  properties: number;
-  developers: number;
-  agents: number;
-  cities: number;
-  testimonials: number;
-}
-
-function useStats() {
-  return useQuery({
-    queryKey: ["dashboard-stats"],
-    queryFn: async () => {
-      const [properties, developers, agents, cities, testimonials] =
-        await Promise.all([
-          apiClient<unknown[]>("/properties?limit=100"),
-          apiClient<unknown[]>("/developers"),
-          apiClient<unknown[]>("/agents"),
-          apiClient<unknown[]>("/cities"),
-          apiClient<unknown[]>("/testimonials"),
-        ]);
-      return {
-        properties: Array.isArray(properties) ? properties.length : 0,
-        developers: Array.isArray(developers) ? developers.length : 0,
-        agents: Array.isArray(agents) ? agents.length : 0,
-        cities: Array.isArray(cities) ? cities.length : 0,
-        testimonials: Array.isArray(testimonials) ? testimonials.length : 0,
-      } satisfies Stats;
-    },
-  });
-}
+import { apiClient } from "@/lib/api-client";
+import { usePermissions } from "@/components/auth/auth-provider";
+import { AuditHealthCard } from "@/components/dashboard/audit-health-card";
+import { AuditLogFeed } from "@/components/dashboard/audit-log-feed";
+import { RecentArticles } from "@/components/dashboard/recent-articles";
+import { RecentInquiries } from "@/components/dashboard/recent-inquiries";
+import { RecentProperties } from "@/components/dashboard/recent-properties";
+import { StatTile } from "@/components/dashboard/stat-tile";
+import { Can } from "@/components/shared/can";
+import { PageHeader } from "@/components/shared/page-header";
 
 export default function DashboardPage() {
-  const { data: stats, isLoading, isError, refetch } = useStats();
   const t = useTranslations("Dashboard");
+  const { can } = usePermissions();
 
-  const statCards = [
-    { key: "properties" as const, label: t("properties"), icon: Building2, href: "/properties" as const, color: "text-copper" },
-    { key: "developers" as const, label: t("developers"), icon: HardHat, href: "/developers" as const, color: "text-copper" },
-    { key: "agents" as const, label: t("agents"), icon: UserCircle, href: "/agents" as const, color: "text-copper" },
-    { key: "cities" as const, label: t("cities"), icon: MapPin, href: "/cities" as const, color: "text-copper" },
-    { key: "testimonials" as const, label: t("testimonials"), icon: MessageSquareQuote, href: "/testimonials" as const, color: "text-copper" },
-  ];
+  // Secondary signal for the Inquiries tile — how many are still unread.
+  // Reads `meta.total` from the paginated envelope so the count is exact
+  // regardless of page size; `limit=1` keeps the payload trivial.
+  const newInquiries = useQuery({
+    queryKey: ["dashboard-inquiries-new-count"],
+    queryFn: () =>
+      apiClient<{ meta?: { total?: number } }>(
+        "/inquiries?status=new&limit=1",
+        { envelope: true },
+      ),
+    enabled: can("inquiry.read"),
+    staleTime: 30_000,
+  });
+  const newInquiriesCount = newInquiries.data?.meta?.total ?? 0;
 
   return (
-    <div className="space-y-6">
-      <div>
-        <h1 className="text-2xl font-semibold tracking-[0.01em]">{t("title")}</h1>
-        <p className="mt-1 text-sm text-muted-foreground">
-          {t("description")}
-        </p>
+    <div className="flex flex-col gap-5">
+      <PageHeader title={t("title")} description={t("description")} />
+
+      <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6">
+        <Can action="property.read">
+          <StatTile
+            label={t("properties")}
+            icon={Building2}
+            href="/properties"
+            endpoint="/properties"
+          />
+        </Can>
+        <Can action="developer.read">
+          <StatTile
+            label={t("developers")}
+            icon={HardHat}
+            href="/developers"
+            endpoint="/developers"
+          />
+        </Can>
+        <Can action="agent.read">
+          <StatTile
+            label={t("agents")}
+            icon={UserCircle}
+            href="/agents"
+            endpoint="/agents"
+          />
+        </Can>
+        <Can action="city.read">
+          <StatTile
+            label={t("cities")}
+            icon={MapPin}
+            href="/cities"
+            endpoint="/cities"
+          />
+        </Can>
+        <Can action="testimonial.read">
+          <StatTile
+            label={t("testimonials")}
+            icon={MessageSquareQuote}
+            href="/testimonials"
+            endpoint="/testimonials"
+          />
+        </Can>
+        <Can action="inquiry.read">
+          <StatTile
+            label={t("inquiries")}
+            icon={MessageSquare}
+            href="/inquiries"
+            endpoint="/inquiries"
+            subLine={
+              newInquiriesCount > 0 ? (
+                <span className="text-copper">
+                  {t("inquiriesNew", { count: newInquiriesCount })}
+                </span>
+              ) : null
+            }
+          />
+        </Can>
       </div>
 
-      {isError ? (
-        <QueryError onRetry={refetch} />
-      ) : (
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
-          {statCards.map((card) => (
-            <Link key={card.key} href={card.href}>
-              <Card className="card-hover">
-                <CardHeader className="flex flex-row items-center justify-between pb-2">
-                  <CardTitle className="text-[11px] font-semibold uppercase tracking-[0.06em] text-muted-foreground">
-                    {card.label}
-                  </CardTitle>
-                  <card.icon className={`h-5 w-5 ${card.color}`} />
-                </CardHeader>
-                <CardContent>
-                  {isLoading ? (
-                    <div className="h-8 w-16 animate-pulse rounded bg-muted" />
-                  ) : (
-                    <p className="text-3xl font-semibold font-serif">
-                      {stats?.[card.key] ?? 0}
-                    </p>
-                  )}
-                </CardContent>
-              </Card>
-            </Link>
-          ))}
-        </div>
-      )}
+      <RecentInquiries />
+
+      <div className="grid gap-5 lg:grid-cols-2">
+        <RecentProperties />
+        <RecentArticles />
+      </div>
+
+      <AuditHealthCard />
+      <AuditLogFeed />
     </div>
   );
 }

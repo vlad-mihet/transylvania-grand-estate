@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
-import { Inter, Playfair_Display } from "next/font/google";
+import { Inter, Geist_Mono } from "next/font/google";
+import { Toaster } from "sonner";
+import { BRAND } from "@/lib/config/brand";
 import "./globals.css";
 
 const inter = Inter({
@@ -7,14 +9,14 @@ const inter = Inter({
   variable: "--font-inter",
 });
 
-const playfair = Playfair_Display({
+const geistMono = Geist_Mono({
   subsets: ["latin"],
-  variable: "--font-playfair",
+  variable: "--font-geist-mono",
 });
 
 export const metadata: Metadata = {
-  title: "TGE Admin",
-  description: "Transylvania Grand Estate - Admin Dashboard",
+  title: `${BRAND.shortName} ${BRAND.productName}`,
+  description: `${BRAND.name} — ${BRAND.productName}`,
 };
 
 export default function RootLayout({
@@ -24,8 +26,23 @@ export default function RootLayout({
 }) {
   return (
     <html lang="ro" suppressHydrationWarning>
-      <body className={`${inter.variable} ${playfair.variable} font-sans`}>
+      <body
+        className={`${inter.variable} ${geistMono.variable} font-sans`}
+        suppressHydrationWarning
+      >
         {children}
+        <Toaster
+          position="bottom-right"
+          closeButton
+          toastOptions={{
+            classNames: {
+              toast:
+                "font-sans text-sm border border-border bg-card text-foreground",
+              title: "font-medium",
+              description: "text-muted-foreground",
+            },
+          }}
+        />
       </body>
     </html>
   );

@@ -1,50 +1,63 @@
 "use client";
 
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { useRouter } from "@/i18n/navigation";
 import { useParams } from "next/navigation";
-import { toast } from "sonner";
-import { apiClient } from "@/lib/api-client";
-import { TestimonialForm } from "@/components/forms/testimonial-form";
-import { PageHeader } from "@/components/shared/page-header";
-import { TestimonialFormValues } from "@/lib/validations/testimonial";
-import type { ApiTestimonial } from "@tge/types";
 import { useTranslations } from "next-intl";
+import { Pencil } from "lucide-react";
+import type { ApiTestimonial } from "@tge/types";
 
-export default function EditTestimonialPage() {
+import { Link } from "@/i18n/navigation";
+import { apiClient } from "@/lib/api-client";
+import { Button } from "@tge/ui";
+import { PageHeader } from "@/components/shared/page-header";
+import { DetailView } from "@/components/shared/detail-view";
+import { Can } from "@/components/shared/can";
+import { EntityDeleteButton } from "@/components/shared/entity-delete-button";
+import { DetailPageShell } from "@/components/resource/detail-page-shell";
+import { TestimonialDetailView } from "@/components/testimonials/testimonial-detail-view";
+
+export default function TestimonialViewPage() {
   const { id } = useParams<{ id: string }>();
-  const router = useRouter();
-  const queryClient = useQueryClient();
   const t = useTranslations("Testimonials");
-
-  const { data: testimonial, isLoading } = useQuery({
-    queryKey: ["testimonial", id],
-    queryFn: () => apiClient<ApiTestimonial>(`/testimonials/${id}`),
-    enabled: !!id,
-  });
-
-  const updateMutation = useMutation({
-    mutationFn: (data: TestimonialFormValues) =>
-      apiClient(`/testimonials/${id}`, { method: "PATCH", body: data }),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["testimonial", id] });
-      toast.success(t("updated"));
-      router.push("/testimonials");
-    },
-  });
-
-  if (isLoading) return <div className="h-64 animate-pulse rounded-lg bg-muted" />;
-  if (!testimonial) return <p>{t("notFound")}</p>;
+  const tc = useTranslations("Common");
 
   return (
-    <div className="space-y-6">
-      <PageHeader title={t("editTestimonial")} />
-      <TestimonialForm
-        defaultValues={testimonial}
-        onSubmit={(data) => updateMutation.mutate(data)}
-        loading={updateMutation.isPending}
-        submissionError={updateMutation.error}
-      />
-    </div>
+    <DetailPageShell<ApiTestimonial>
+      queryKey={["testimonial", id]}
+      queryFn={() => apiClient<ApiTestimonial>(`/testimonials/${id}`)}
+      enabled={!!id}
+      notFoundTitle={t("notFound")}
+      render={(testimonial) => (
+        <DetailView>
+          <PageHeader
+            title={testimonial.clientName}
+            actions={
+              <>
+                <EntityDeleteButton
+                  apiPath={`/testimonials/${testimonial.id}`}
+                  permission="testimonial.delete"
+                  listHref="/testimonials"
+                  invalidateKeys={[
+                    ["testimonials"],
+                    ["testimonial", testimonial.id],
+                  ]}
+                  confirmTitle={t("deleteTitle")}
+                  successMessage={t("deleted")}
+                  errorMessage={t("deleteFailed")}
+                />
+                <Can action="testimonial.update">
+                  <Button asChild size="sm">
+                    <Link href={`/testimonials/${testimonial.id}/edit`}>
+                      <Pencil className="h-3.5 w-3.5 sm:mr-1.5" />
+                      <span className="hidden sm:inline">{tc("edit")}</span>
+                    </Link>
+                  </Button>
+                </Can>
+              </>
+            }
+          />
+          <TestimonialDetailView testimonial={testimonial} />
+        </DetailView>
+      )}
+    />
   );
 }

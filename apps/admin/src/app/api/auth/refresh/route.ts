@@ -12,11 +12,19 @@ export async function POST(req: NextRequest) {
 
   const apiUrl = process.env.API_URL!;
 
-  const res = await fetch(`${apiUrl}/auth/refresh`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ refreshToken }),
-  });
+  let res: Response;
+  try {
+    res = await fetch(`${apiUrl}/auth/refresh`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ refreshToken }),
+    });
+  } catch {
+    return NextResponse.json(
+      { error: { message: "Auth service unavailable" } },
+      { status: 503 },
+    );
+  }
 
   const data = await res.json();
 

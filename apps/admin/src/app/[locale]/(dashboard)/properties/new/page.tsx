@@ -1,15 +1,16 @@
 "use client";
 
 import { useMutation } from "@tanstack/react-query";
+import { useTranslations } from "next-intl";
+
 import { useRouter } from "@/i18n/navigation";
-import { toast } from "sonner";
+import { toast } from "@/lib/toast";
 import { apiClient } from "@/lib/api-client";
 import { PropertyForm } from "@/components/forms/property-form";
-import { PageHeader } from "@/components/shared/page-header";
+import { FormPageShell } from "@/components/resource/form-page-shell";
 import { PropertyFormValues } from "@/lib/validations/property";
 import { toPropertyPayload } from "@/lib/transform-property";
 import { GalleryImage } from "@/components/shared/image-gallery-manager";
-import { useTranslations } from "next-intl";
 
 export default function NewPropertyPage() {
   const router = useRouter();
@@ -23,13 +24,11 @@ export default function NewPropertyPage() {
       data: PropertyFormValues;
       images: GalleryImage[];
     }) => {
-      // Create property
       const property = await apiClient<{ id: string }>("/properties", {
         method: "POST",
         body: toPropertyPayload(data),
       });
 
-      // Upload images if any
       const newImages = images.filter((img) => img.file);
       if (newImages.length > 0) {
         const formData = new FormData();
@@ -48,20 +47,20 @@ export default function NewPropertyPage() {
 
       return property;
     },
-    onSuccess: () => {
+    onSuccess: (property) => {
       toast.success(t("created"));
-      router.push("/properties");
+      router.push(`/properties/${property.id}`);
     },
   });
 
   return (
-    <div className="space-y-6">
-      <PageHeader title={t("newProperty")} />
+    <FormPageShell title={t("newProperty")}>
       <PropertyForm
+        cancelHref="/properties"
         onSubmit={(data, images) => createMutation.mutate({ data, images })}
         loading={createMutation.isPending}
         submissionError={createMutation.error}
       />
-    </div>
+    </FormPageShell>
   );
 }

@@ -4,20 +4,13 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { agentSchema, AgentFormValues } from "@/lib/validations/agent";
 import { useApiFormErrors } from "@/lib/form-error";
-import { toast } from "sonner";
+import { toast } from "@/lib/toast";
 import { BilingualTextarea } from "@/components/shared/bilingual-textarea";
 import { ImageUpload } from "@/components/shared/image-upload";
-import {
-  Button,
-  Input,
-  Label,
-  Switch,
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from "@tge/ui";
-import { Loader2 } from "lucide-react";
+import { Button, Input, Label, Switch } from "@tge/ui";
+import { SectionCard } from "@/components/shared/section-card";
+import { FormActions } from "@/components/shared/form-actions";
+import { useUnsavedChangesWarning } from "@/hooks/use-unsaved-changes-warning";
 import { useState } from "react";
 import { useTranslations } from "next-intl";
 
@@ -27,6 +20,8 @@ interface AgentFormProps {
   onSubmit: (data: AgentFormValues, photoFile: File | null) => void;
   loading?: boolean;
   submissionError?: unknown;
+  /** Where Cancel navigates (detail page on edit, list on create). */
+  cancelHref: string;
 }
 
 export function AgentForm({
@@ -35,6 +30,7 @@ export function AgentForm({
   onSubmit,
   loading,
   submissionError,
+  cancelHref,
 }: AgentFormProps) {
   const [photoFile, setPhotoFile] = useState<File | null>(null);
   const t = useTranslations("AgentForm");
@@ -55,8 +51,10 @@ export function AgentForm({
   });
 
   useApiFormErrors(form, submissionError, (err) => {
-    toast.error(err instanceof Error ? err.message : "Failed to save");
+    toast.error(err instanceof Error ? err.message : tc("saveFailed"));
   });
+
+  useUnsavedChangesWarning(form.formState.isDirty);
 
   const generateSlug = () => {
     const firstName = form.getValues("firstName");
@@ -71,13 +69,10 @@ export function AgentForm({
   return (
     <form
       onSubmit={form.handleSubmit((data) => onSubmit(data, photoFile))}
-      className="max-w-5xl space-y-6"
+      className="w-full space-y-5"
     >
-      <Card>
-        <CardHeader>
-          <CardTitle className="font-serif text-lg">{t("title")}</CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-4">
+      <SectionCard title={t("title")}>
+        <div className="space-y-4">
           <div className="grid gap-4 sm:grid-cols-2">
             <div className="space-y-2">
               <Label>{t("firstName")}</Label>
@@ -131,17 +126,14 @@ export function AgentForm({
             value={photoUrl}
             onChange={(file) => setPhotoFile(file)}
           />
-        </CardContent>
-      </Card>
+        </div>
+      </SectionCard>
 
-      <div className="flex justify-end gap-3">
-        <Button type="button" variant="outline" onClick={() => window.history.back()}>
-          {tc("cancel")}
-        </Button>
-        <Button type="submit" disabled={loading}>
-          {loading ? <><Loader2 className="h-4 w-4 animate-spin" /> {tc("saving")}</> : t("saveAgent")}
-        </Button>
-      </div>
+      <FormActions
+        cancelHref={cancelHref}
+        loading={loading}
+        dirty={form.formState.isDirty}
+      />
     </form>
   );
 }

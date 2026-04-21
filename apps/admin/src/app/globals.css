@@ -6,7 +6,7 @@
 /* Scan package source directories for Tailwind class names */
 @source "../../../../packages/ui/src";
 
-/* Import shared theme structure for radius, fonts, animations */
+/* Admin workbench theme — YC-directory inspired: flat, dense, light-first. */
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
@@ -27,52 +27,106 @@
   --color-input: var(--input);
   --color-ring: var(--ring);
 
+  /* Brand accent — single, HN-orange role */
   --color-copper: #C47F5A;
   --color-copper-light: #D4956A;
   --color-copper-dark: #A66B4A;
   --color-cream: #F0EDE8;
 
+  /* Semantic status scale — low-saturation, light-bg chips */
+  --color-success: #0E7C3A;
+  --color-success-bg: #EEF7F0;
+  --color-warning: #B45309;
+  --color-warning-bg: #FBF4E8;
+  --color-danger: #B91C1C;
+  --color-danger-bg: #FCEFEF;
+  --color-info: #1D4ED8;
+  --color-info-bg: #EDF1FB;
+
+  /* Sidebar tokens — now light, same surface family as app */
   --color-sidebar: var(--sidebar-bg);
   --color-sidebar-foreground: var(--sidebar-foreground);
   --color-sidebar-active: var(--sidebar-active);
+  --color-sidebar-muted: var(--sidebar-muted);
 
   --font-sans: var(--font-inter);
-  --font-serif: var(--font-playfair);
+  --font-mono: var(--font-geist-mono);
 
-  --ease-luxury: cubic-bezier(0.33, 1, 0.68, 1);
+  --ease-workbench: cubic-bezier(0.4, 0, 0.2, 1);
 
-  --radius-sm: calc(var(--radius) - 4px);
-  --radius-md: calc(var(--radius) - 2px);
-  --radius-lg: var(--radius);
+  --radius-sm: calc(var(--radius) - 2px);
+  --radius-md: var(--radius);
+  --radius-lg: calc(var(--radius) + 2px);
   --radius-xl: calc(var(--radius) + 4px);
   --radius-2xl: calc(var(--radius) + 8px);
 }
 
-/* Admin warm light theme */
 :root {
-  --radius: 0.625rem;
-  --background: #FAFAF8;
-  --foreground: #2C2823;
-  --card: #ffffff;
-  --card-foreground: #2C2823;
-  --popover: #ffffff;
-  --popover-foreground: #2C2823;
+  --radius: 0.375rem;
+
+  --background: #FAFAFA;
+  --foreground: #0A0A0A;
+  --card: #FFFFFF;
+  --card-foreground: #0A0A0A;
+  --popover: #FFFFFF;
+  --popover-foreground: #0A0A0A;
+
   --primary: #C47F5A;
-  --primary-foreground: #ffffff;
-  --secondary: #F5F2ED;
-  --secondary-foreground: #2C2823;
-  --muted: #F5F2ED;
-  --muted-foreground: #8A8279;
-  --accent: #F8F6F2;
-  --accent-foreground: #C47F5A;
+  --primary-foreground: #FFFFFF;
+
+  --secondary: #F4F4F5;
+  --secondary-foreground: #0A0A0A;
+
+  --muted: #F4F4F5;
+  --muted-foreground: #71717A;
+
+  --accent: #F4F4F5;
+  --accent-foreground: #0A0A0A;
+
   --destructive: #B91C1C;
-  --border: rgba(196, 127, 90, 0.12);
-  --input: rgba(196, 127, 90, 0.15);
+
+  --border: #E5E5E5;
+  --input: #E5E5E5;
   --ring: #C47F5A;
 
-  --sidebar-bg: #1c1c22;
-  --sidebar-foreground: #F0EDE8;
+  /* Light sidebar — hairline separates it from app plane. */
+  --sidebar-bg: #FFFFFF;
+  --sidebar-foreground: #27272A;
+  --sidebar-muted: #71717A;
   --sidebar-active: #C47F5A;
+}
+
+.dark {
+  --background: #0A0A0A;
+  --foreground: #FAFAFA;
+  --card: #141418;
+  --card-foreground: #FAFAFA;
+  --popover: #141418;
+  --popover-foreground: #FAFAFA;
+  --primary: #D4956A;
+  --primary-foreground: #0A0A0A;
+  --secondary: #1A1A1F;
+  --secondary-foreground: #FAFAFA;
+  --muted: #1A1A1F;
+  --muted-foreground: #A1A1AA;
+  --accent: #27272A;
+  --accent-foreground: #FAFAFA;
+  --destructive: #DC2626;
+  --border: #27272A;
+  --input: #27272A;
+  --ring: #D4956A;
+  /* Sidebar slightly lighter than app so the boundary reads even before the
+     hairline border kicks in. */
+  --sidebar-bg: #111116;
+  --sidebar-foreground: #E4E4E7;
+  --sidebar-muted: #71717A;
+  --sidebar-active: #D4956A;
+}
+
+/* Monospace accent — IDs, slugs, timestamps, keyboard shortcuts, batch tags. */
+@utility mono {
+  font-family: var(--font-mono), ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-feature-settings: "ss02", "cv02";
 }
 
 @layer base {
@@ -81,80 +135,94 @@
   }
   body {
     @apply bg-background text-foreground font-sans antialiased;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    font-feature-settings: "cv11", "ss01";
   }
-  h1, h2, h3 {
-    font-family: var(--font-playfair), serif;
+  /* Workbench headings — Inter, not serif. */
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-sans font-semibold;
+    letter-spacing: -0.01em;
   }
 }
 
 @layer components {
-  /* Input/select overrides for light admin theme */
-  [data-slot="input"] {
-    background: transparent;
-    transition: all 200ms var(--ease-luxury);
+  /* Inputs: flat, hairline, subtle copper focus ring. */
+  [data-slot="input"],
+  [data-slot="select-trigger"],
+  [data-slot="textarea"] {
+    background: var(--card);
+    transition: border-color 150ms var(--ease-workbench),
+                box-shadow 150ms var(--ease-workbench);
   }
-  [data-slot="input"]:hover {
-    background: rgba(196, 127, 90, 0.03);
-  }
-  [data-slot="select-trigger"] {
-    background: transparent;
-    transition: all 200ms var(--ease-luxury);
-  }
-  [data-slot="select-trigger"]:hover {
-    background: rgba(196, 127, 90, 0.03);
+  [data-slot="input"]:focus-visible,
+  [data-slot="select-trigger"]:focus-visible,
+  [data-slot="textarea"]:focus-visible {
+    outline: none;
+    border-color: var(--ring);
+    box-shadow: 0 0 0 2px color-mix(in srgb, var(--ring) 20%, transparent);
   }
 
-  /* Table header warm tint */
+  /* Table headers: quiet small-caps. */
   [data-slot="table-header"] [data-slot="table-row"] {
-    background: rgba(196, 127, 90, 0.03);
-    border-bottom-color: rgba(196, 127, 90, 0.08);
+    background: var(--muted);
+    border-bottom-color: var(--border);
   }
   [data-slot="table-head"] {
-    font-size: 0.7rem;
+    font-size: 0.6875rem;
     font-weight: 600;
     text-transform: uppercase;
-    letter-spacing: 0.08em;
+    letter-spacing: 0.06em;
+    color: var(--muted-foreground);
+    height: 2.25rem;
   }
   [data-slot="table-row"] {
-    transition: background-color 200ms var(--ease-luxury);
+    transition: background-color 120ms var(--ease-workbench);
+  }
+  [data-slot="table-row"]:hover {
+    background: color-mix(in srgb, var(--muted) 60%, transparent);
+  }
+  [data-slot="table-cell"] {
+    padding-top: 0.625rem;
+    padding-bottom: 0.625rem;
   }
 
-  /* Interactive card hover */
+  /* Dense card hover — workbench, no gloss. */
   .card-hover {
     cursor: pointer;
-    transition: box-shadow 400ms var(--ease-luxury),
-                border-color 400ms var(--ease-luxury);
+    transition: border-color 150ms var(--ease-workbench),
+                box-shadow 150ms var(--ease-workbench);
   }
   .card-hover:hover {
-    box-shadow: 0 4px 24px -4px rgba(196, 127, 90, 0.08);
-    border-color: rgba(196, 127, 90, 0.2);
+    border-color: color-mix(in srgb, var(--ring) 40%, var(--border));
   }
 
-  /* Copper gradient divider */
-  .divider-copper {
+  /* Keyboard chip — matches YC's minimal `⌘K` hint. */
+  .kbd {
+    @apply mono rounded-sm border border-border bg-muted px-1.5 py-0.5 text-[10px] leading-none text-muted-foreground;
+  }
+
+  /* Utility: hairline divider — replaces the copper-gradient ornamentation. */
+  .hairline {
     height: 1px;
     width: 100%;
-    background: linear-gradient(
-      to right,
-      transparent,
-      rgba(196, 127, 90, 0.15) 20%,
-      rgba(196, 127, 90, 0.15) 80%,
-      transparent
-    );
+    background: var(--border);
   }
 
-  /* Custom scrollbar */
+  /* Scrollbars: thin, track-blended. */
   ::-webkit-scrollbar {
-    width: 6px;
+    width: 10px;
+    height: 10px;
   }
   ::-webkit-scrollbar-track {
     background: transparent;
   }
   ::-webkit-scrollbar-thumb {
-    background: rgba(196, 127, 90, 0.15);
-    border-radius: 3px;
+    background: var(--border);
+    border: 2px solid var(--background);
+    border-radius: 5px;
   }
   ::-webkit-scrollbar-thumb:hover {
-    background: rgba(196, 127, 90, 0.3);
+    background: var(--muted-foreground);
   }
 }

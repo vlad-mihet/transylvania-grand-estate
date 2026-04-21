@@ -4,21 +4,14 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { developerSchema, DeveloperFormValues } from "@/lib/validations/developer";
 import { useApiFormErrors } from "@/lib/form-error";
-import { toast } from "sonner";
+import { toast } from "@/lib/toast";
 import { BilingualInput } from "@/components/shared/bilingual-input";
 import { BilingualTextarea } from "@/components/shared/bilingual-textarea";
 import { ImageUpload } from "@/components/shared/image-upload";
-import {
-  Button,
-  Input,
-  Label,
-  Switch,
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from "@tge/ui";
-import { Loader2 } from "lucide-react";
+import { Button, Input, Label, Switch } from "@tge/ui";
+import { SectionCard } from "@/components/shared/section-card";
+import { FormActions } from "@/components/shared/form-actions";
+import { useUnsavedChangesWarning } from "@/hooks/use-unsaved-changes-warning";
 import { useState } from "react";
 import { useTranslations } from "next-intl";
 
@@ -28,6 +21,8 @@ interface DeveloperFormProps {
   onSubmit: (data: DeveloperFormValues, logoFile: File | null) => void;
   loading?: boolean;
   submissionError?: unknown;
+  /** Where Cancel navigates (detail page on edit, list on create). */
+  cancelHref: string;
 }
 
 export function DeveloperForm({
@@ -36,6 +31,7 @@ export function DeveloperForm({
   onSubmit,
   loading,
   submissionError,
+  cancelHref,
 }: DeveloperFormProps) {
   const [logoFile, setLogoFile] = useState<File | null>(null);
   const t = useTranslations("DeveloperForm");
@@ -58,8 +54,10 @@ export function DeveloperForm({
   });
 
   useApiFormErrors(form, submissionError, (err) => {
-    toast.error(err instanceof Error ? err.message : "Failed to save");
+    toast.error(err instanceof Error ? err.message : tc("saveFailed"));
   });
+
+  useUnsavedChangesWarning(form.formState.isDirty);
 
   const generateSlug = () => {
     const name = form.getValues("name");
@@ -73,24 +71,21 @@ export function DeveloperForm({
   return (
     <form
       onSubmit={form.handleSubmit((data) => onSubmit(data, logoFile))}
-      className="max-w-5xl space-y-6"
+      className="w-full space-y-5"
     >
-      <Card>
-        <CardHeader>
-          <CardTitle className="font-serif text-lg">{t("title")}</CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-4">
+      <SectionCard title={t("title")}>
+        <div className="space-y-4">
           <div className="grid gap-4 sm:grid-cols-2">
-            <div className="space-y-2">
+            <div className="space-y-1.5">
               <Label>{t("name")}</Label>
               <Input {...form.register("name")} />
             </div>
-            <div className="flex gap-3 items-end">
-              <div className="flex-1 space-y-2">
+            <div className="flex items-end gap-2">
+              <div className="flex-1 space-y-1.5">
                 <Label>{t("slug")}</Label>
-                <Input {...form.register("slug")} />
+                <Input {...form.register("slug")} className="mono" />
               </div>
-              <Button type="button" variant="outline" onClick={generateSlug}>
+              <Button type="button" variant="outline" size="sm" onClick={generateSlug}>
                 {tc("generate")}
               </Button>
             </div>
@@ -120,25 +115,25 @@ export function DeveloperForm({
             required
           />
           <div className="grid gap-4 sm:grid-cols-3">
-            <div className="space-y-2">
+            <div className="space-y-1.5">
               <Label>{t("city")}</Label>
               <Input {...form.register("city")} />
             </div>
-            <div className="space-y-2">
+            <div className="space-y-1.5">
               <Label>{t("citySlug")}</Label>
-              <Input {...form.register("citySlug")} />
+              <Input {...form.register("citySlug")} className="mono" />
             </div>
-            <div className="space-y-2">
+            <div className="space-y-1.5">
               <Label>{t("website")}</Label>
               <Input {...form.register("website")} placeholder="https://" />
             </div>
           </div>
-          <div className="grid gap-4 sm:grid-cols-2">
-            <div className="space-y-2">
+          <div className="grid gap-4 sm:grid-cols-2 sm:items-end">
+            <div className="space-y-1.5">
               <Label>{t("projectCount")}</Label>
-              <Input type="number" {...form.register("projectCount")} />
+              <Input type="number" {...form.register("projectCount")} className="mono" />
             </div>
-            <label className="flex items-center gap-2 pt-7 text-sm">
+            <label className="flex items-center gap-2 text-sm">
               <Switch
                 checked={form.watch("featured")}
                 onCheckedChange={(v) => form.setValue("featured", v)}
@@ -151,17 +146,14 @@ export function DeveloperForm({
             value={logoUrl}
             onChange={(file) => setLogoFile(file)}
           />
-        </CardContent>
-      </Card>
+        </div>
+      </SectionCard>
 
-      <div className="flex justify-end gap-3">
-        <Button type="button" variant="outline" onClick={() => window.history.back()}>
-          {tc("cancel")}
-        </Button>
-        <Button type="submit" disabled={loading}>
-          {loading ? <><Loader2 className="h-4 w-4 animate-spin" /> {tc("saving")}</> : t("saveDeveloper")}
-        </Button>
-      </div>
+      <FormActions
+        cancelHref={cancelHref}
+        loading={loading}
+        dirty={form.formState.isDirty}
+      />
     </form>
   );
 }

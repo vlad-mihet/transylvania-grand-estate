@@ -1,125 +1,89 @@
 "use client";
 
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { useRouter } from "@/i18n/navigation";
 import { useParams } from "next/navigation";
-import { toast } from "sonner";
-import { apiClient } from "@/lib/api-client";
-import { PropertyForm } from "@/components/forms/property-form";
-import { PageHeader } from "@/components/shared/page-header";
-import { PropertyFormValues } from "@/lib/validations/property";
-import { toPropertyPayload } from "@/lib/transform-property";
-import { GalleryImage } from "@/components/shared/image-gallery-manager";
+import { useLocale, useTranslations } from "next-intl";
+import { Pencil } from "lucide-react";
 import type { ApiProperty, ApiPropertyImage } from "@tge/types";
-import { useTranslations } from "next-intl";
 
-export default function EditPropertyPage() {
+import { Link } from "@/i18n/navigation";
+import { apiClient } from "@/lib/api-client";
+import { Button } from "@tge/ui";
+import { PageHeader } from "@/components/shared/page-header";
+import { DetailView } from "@/components/shared/detail-view";
+import { Can } from "@/components/shared/can";
+import { EntityDeleteButton } from "@/components/shared/entity-delete-button";
+import { DetailPageShell } from "@/components/resource/detail-page-shell";
+import { type GalleryImage } from "@/components/shared/image-gallery-manager";
+import { PropertyGalleryView } from "@/components/properties/property-gallery-view";
+import { PropertyDetailView } from "@/components/properties/property-detail-view";
+import { HistoryTab } from "@/components/audit/history-tab";
+
+export default function PropertyViewPage() {
   const { id } = useParams<{ id: string }>();
-  const router = useRouter();
-  const queryClient = useQueryClient();
   const t = useTranslations("Properties");
-
-  const { data: property, isLoading } = useQuery({
-    queryKey: ["property", id],
-    queryFn: () => apiClient<ApiProperty>(`/properties/id/${id}`),
-    enabled: !!id,
-  });
-
-  const updateMutation = useMutation({
-    mutationFn: async ({
-      data,
-      images,
-    }: {
-      data: PropertyFormValues;
-      images: GalleryImage[];
-    }) => {
-      await apiClient(`/properties/${id}`, {
-        method: "PATCH",
-        body: toPropertyPayload(data),
-      });
-
-      // Upload new images
-      const newImages = images.filter((img) => img.file);
-      if (newImages.length > 0) {
-        const formData = new FormData();
-        newImages.forEach((img) => {
-          if (img.file) formData.append("images", img.file);
-        });
-        try {
-          await apiClient(`/properties/${id}/images`, {
-            method: "POST",
-            body: formData,
-          });
-        } catch {
-          toast.warning(t("imageUploadFailed"));
-        }
-      }
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["property", id] });
-      toast.success(t("updated"));
-      router.push("/properties");
-    },
-  });
-
-  if (isLoading) {
-    return <div className="h-64 animate-pulse rounded-lg bg-muted" />;
-  }
-
-  if (!property) {
-    return <p>{t("notFound")}</p>;
-  }
-
-  // Map API data to form values. ApiProperty fields are `T | null`;
-  // PropertyFormValues uses `T | undefined` — bridge with `?? undefined`.
-  const defaultValues: Partial<PropertyFormValues> = {
-    title: property.title,
-    description: property.description,
-    shortDescription: property.shortDescription,
-    slug: property.slug,
-    price: property.price,
-    currency: property.currency,
-    type: property.type,
-    status: property.status,
-    city: property.city,
-    citySlug: property.citySlug,
-    neighborhood: property.neighborhood ?? "",
-    address: property.address ?? { en: "", ro: "" },
-    latitude: property.latitude ?? undefined,
-    longitude: property.longitude ?? undefined,
-    bedrooms: property.bedrooms ?? undefined,
-    bathrooms: property.bathrooms ?? undefined,
-    area: property.area ?? undefined,
-    landArea: property.landArea ?? undefined,
-    floors: property.floors ?? undefined,
-    yearBuilt: property.yearBuilt ?? undefined,
-    garage: property.garage ?? undefined,
-    pool: property.pool ?? undefined,
-    features: property.features ?? [],
-    featured: property.featured,
-    isNew: property.isNew,
-    developerId: property.developerId,
-  };
-
-  const existingImages: GalleryImage[] = (property.images ?? []).map(
-    (img: ApiPropertyImage) => ({
-      id: img.id,
-      src: img.src,
-      alt: typeof img.alt === "string" ? img.alt : (img.alt as Record<string, string> | null)?.en ?? "",
-      isHero: img.isHero ?? false,
-    }),
-  );
+  const tc = useTranslations("Common");
+  const locale = useLocale();
 
   return (
-    <div className="space-y-6">
-      <PageHeader title={t("editProperty")} />
-      <PropertyForm
-        defaultValues={defaultValues}
-        images={existingImages}
-        onSubmit={(data, images) => updateMutation.mutate({ data, images })}
-        loading={updateMutation.isPending}
-        submissionError={updateMutation.error}
-      />
-    </div>
+    <DetailPageShell<ApiProperty>
+      queryKey={["property", id]}
+      queryFn={() => apiClient<ApiProperty>(`/properties/id/${id}`)}
+      enabled={!!id}
+      notFoundTitle={t("notFound")}
+      render={(property) => {
+        const localizedTitle =
+          (property.title as Record<string, string>)[locale] ?? property.title.en;
+
+        const galleryImages: GalleryImage[] = (property.images ?? []).map(
+          (img: ApiPropertyImage) => ({
+            id: img.id,
+            src: img.src,
+            alt:
+              typeof img.alt === "string"
+                ? img.alt
+                : (img.alt as Record<string, string> | null)?.[locale] ??
+                  (img.alt as Record<string, string> | null)?.en ??
+                  "",
+            isHero: img.isHero ?? false,
+          }),
+        );
+
+        return (
+          <DetailView>
+            <PageHeader
+              title={localizedTitle}
+              actions={
+                <>
+                  <EntityDeleteButton
+                    apiPath={`/properties/${property.id}`}
+                    permission="property.delete"
+                    resource={property}
+                    listHref="/properties"
+                    invalidateKeys={[["properties"], ["property", property.id]]}
+                    confirmTitle={t("deleteTitle")}
+                    confirmDescription={t("deleteDescription")}
+                    successMessage={t("deleted")}
+                    errorMessage={t("deleteFailed")}
+                  />
+                  <Can action="property.update" resource={property}>
+                    <Button asChild size="sm">
+                      <Link href={`/properties/${property.id}/edit`}>
+                        <Pencil className="h-3.5 w-3.5 sm:mr-1.5" />
+                        <span className="hidden sm:inline">{tc("edit")}</span>
+                      </Link>
+                    </Button>
+                  </Can>
+                </>
+              }
+            />
+            <PropertyGalleryView images={galleryImages} />
+            <PropertyDetailView property={property} />
+            <Can action="audit-log.read">
+              <HistoryTab resource="Property" resourceId={property.id} />
+            </Can>
+          </DetailView>
+        );
+      }}
+    />
   );
 }

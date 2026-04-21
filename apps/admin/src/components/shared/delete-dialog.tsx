@@ -1,16 +1,7 @@
 "use client";
 
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  Button,
-} from "@tge/ui";
-import { Loader2 } from "lucide-react";
 import { useTranslations } from "next-intl";
+import { ConfirmDialog } from "./confirm-dialog";
 
 interface DeleteDialogProps {
   open: boolean;
@@ -29,33 +20,19 @@ export function DeleteDialog({
   description,
   loading = false,
 }: DeleteDialogProps) {
-  const t = useTranslations("Common");
+  const tc = useTranslations("Common");
 
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent>
-        <DialogHeader>
-          <DialogTitle className="font-serif">{title ?? t("deleteItem")}</DialogTitle>
-          <DialogDescription>{description ?? t("deleteConfirm")}</DialogDescription>
-        </DialogHeader>
-        <DialogFooter>
-          <Button
-            variant="outline"
-            onClick={() => onOpenChange(false)}
-            disabled={loading}
-            className="transition-all duration-200"
-          >
-            {t("cancel")}
-          </Button>
-          <Button
-            variant="destructive"
-            onClick={onConfirm}
-            disabled={loading}
-          >
-            {loading ? <><Loader2 className="h-4 w-4 animate-spin" /> {t("deleting")}</> : t("delete")}
-          </Button>
-        </DialogFooter>
-      </DialogContent>
-    </Dialog>
+    <ConfirmDialog
+      open={open}
+      onOpenChange={onOpenChange}
+      onConfirm={onConfirm}
+      title={title ?? tc("deleteItem")}
+      description={description ?? tc("deleteConfirm")}
+      confirmLabel={tc("delete")}
+      loadingLabel={tc("deleting")}
+      loading={loading}
+      tone="destructive"
+    />
   );
 }

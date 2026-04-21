@@ -2,29 +2,148 @@
   "Login": {
     "heroTitle": "Manage your luxury\nproperty portfolio",
     "adminDashboard": "Admin Dashboard",
+    "operationsConsole": "Operations Console",
+    "rolesBand": "ADMINS · AGENTS · EDITORS · + MORE",
     "welcome": "Welcome back",
+    "signIn": "Sign in",
+    "signInButton": "Sign in",
     "subtitle": "Sign in to manage your listings",
+    "useYourAccount": "Operations for admins, agents, editors — and the teams we add next.",
     "email": "Email",
     "password": "Password",
-    "signIn": "Sign In",
-    "signingIn": "Signing in...",
-    "loginFailed": "Login failed"
+    "signingIn": "Signing in…",
+    "loginFailed": "Login failed",
+    "or": "or",
+    "ssoGoogle": "Continue with Google Workspace",
+    "ssoMicrosoft": "Continue with Microsoft",
+    "ssoComingSoon": "Soon",
+    "forgotPassword": "Forgot your password?",
+    "needAccess": "Need access? Contact your administrator.",
+    "statusOk": "All systems operational",
+    "statusDegraded": "Status degraded",
+    "statusDown": "Sign-in unavailable — retry shortly",
+    "statusUnknown": "Status unknown",
+    "showPassword": "Show password",
+    "hidePassword": "Hide password",
+    "capsLockOn": "Caps Lock is on",
+    "errorNoAccount": "We couldn't find a login for this Google account. Ask your administrator to send you an invitation.",
+    "errorEmailMismatch": "The Google account you chose doesn't match the invitation email. Try again with the correct account.",
+    "errorEmailUnverified": "Google reports this email as unverified. Verify it in your Google account and try again.",
+    "errorGoogleNotConfigured": "Google sign-in isn't available on this deployment yet. Use the email + password form.",
+    "errorStateInvalid": "The sign-in link looks tampered with or expired. Start over.",
+    "errorOAuthFailed": "Google sign-in didn't complete. Try again or use email + password."
   },
   "Sidebar": {
     "management": "Management",
+    "overview": "Overview",
+    "catalog": "Catalog",
+    "locations": "Locations",
+    "content": "Content",
+    "finance": "Finance",
+    "settings": "Settings",
     "dashboard": "Dashboard",
     "properties": "Properties",
     "developers": "Developers",
     "agents": "Agents",
     "cities": "Cities",
+    "counties": "Counties",
+    "neighborhoods": "Neighborhoods",
     "testimonials": "Testimonials",
+    "articles": "Articles",
     "bankRates": "Bank Rates",
-    "settings": "Settings",
+    "financialIndicators": "Indicators",
+    "inquiries": "Inquiries",
+    "myListings": "My Listings",
+    "myInquiries": "My Inquiries",
+    "profile": "Profile",
+    "users": "Users",
+    "invitations": "Invitations",
+    "auditLogs": "Audit Log",
+    "allSites": "All Sites",
     "navigation": "Navigation",
-    "version": "Admin Panel v0.1"
+    "version": "v0.1"
   },
   "Header": {
-    "logout": "Logout"
+    "logout": "Logout",
+    "changePassword": "Change password",
+    "menu": "Menu",
+    "search": "Search",
+    "theme": "Theme",
+    "themeLight": "Light",
+    "themeDark": "Dark",
+    "themeSystem": "System"
+  },
+  "GlobalSearch": {
+    "placeholder": "Search agents, properties, cities…",
+    "shortcutHint": "Press / to search",
+    "loading": "Searching…",
+    "empty": "No results for “{query}”.",
+    "error": "Something went wrong. Try again.",
+    "clear": "Clear search",
+    "showAll": "Show all in {group}",
+    "resultsAnnouncement": "{count, plural, =0 {No results.} =1 {1 result.} other {# results.}}",
+    "footerEnterHint": "↵ open",
+    "footerEscHint": "esc close",
+    "groupProperty": "Properties",
+    "groupAgent": "Agents",
+    "groupDeveloper": "Developers",
+    "groupCity": "Cities",
+    "groupCounty": "Counties",
+    "groupArticle": "Articles",
+    "groupInquiry": "Inquiries",
+    "groupTestimonial": "Testimonials",
+    "groupBankRate": "Bank Rates",
+    "groupUser": "Users"
+  },
+  "ForgotPassword": {
+    "title": "Forgot your password?",
+    "subtitle": "Enter the email address on your account. If it matches, we'll send a reset link.",
+    "email": "Email",
+    "submit": "Send reset link",
+    "submitting": "Sending\u2026",
+    "failed": "Couldn't submit. Try again in a moment.",
+    "sentTitle": "Check your inbox",
+    "sentBody": "If an account exists for that email, we just sent a reset link. It expires in an hour.",
+    "backToLogin": "Back to login"
+  },
+  "ResetPassword": {
+    "verifying": "Verifying your reset link\u2026",
+    "headingNamed": "Hi {firstName}, set a new password",
+    "headingGeneric": "Set a new password",
+    "subtitle": "Pick a strong password. You'll be signed in automatically once it's saved.",
+    "password": "New password",
+    "confirmPassword": "Confirm password",
+    "hint": "Min 12 chars with lowercase, uppercase, and a digit.",
+    "submit": "Reset password",
+    "submitting": "Resetting\u2026",
+    "failed": "Couldn't reset your password. Request a new link and try again.",
+    "expiredTitle": "This reset link has expired",
+    "expiredBody": "Links are valid for one hour. Request a new one from the Forgot password page.",
+    "notFoundTitle": "We couldn't find this reset link",
+    "notFoundBody": "The link may be incorrect or was already used. Request a new one."
+  },
+  "PasswordStrength": {
+    "len": "12 characters",
+    "lower": "Lowercase letter",
+    "upper": "Uppercase letter",
+    "digit": "Digit"
+  },
+  "ChangePassword": {
+    "title": "Change password",
+    "description": "Your new password takes effect immediately. Other sessions will continue until their access tokens expire.",
+    "current": "Current password",
+    "new": "New password",
+    "confirm": "Confirm new password",
+    "hint": "Min 12 chars with lowercase, uppercase, and a digit.",
+    "submit": "Update password",
+    "success": "Password updated",
+    "failed": "Failed to update password"
+  },
+  "Forbidden": {
+    "forbidden": "Forbidden",
+    "title": "You don't have access here",
+    "description": "This area requires different permissions. If you think this is a mistake, contact your admin.",
+    "backToDashboard": "Back to dashboard"
   },
   "Dashboard": {
     "title": "Dashboard",
@@ -33,7 +152,17 @@
     "developers": "Developers",
     "agents": "Agents",
     "cities": "Cities",
-    "testimonials": "Testimonials"
+    "testimonials": "Testimonials",
+    "inquiries": "Inquiries",
+    "inquiriesNew": "{count, plural, =0 {none new} one {# new} other {# new}}",
+    "recentInquiries": "Recent inquiries",
+    "recentProperties": "Recent properties",
+    "recentArticles": "Recent articles",
+    "recentActivity": "Recent activity",
+    "emptyInquiries": "No inquiries yet",
+    "emptyProperties": "No properties yet",
+    "emptyArticles": "No articles yet",
+    "viewAll": "View all"
   },
   "Properties": {
     "title": "Properties",
@@ -48,6 +177,7 @@
     "columnStatus": "Status",
     "columnPrice": "Price",
     "columnFeatured": "Featured",
+    "columnUpdated": "Updated",
     "deleteTitle": "Delete property",
     "deleteDescription": "This will permanently delete this property and all its images.",
     "deleted": "Property deleted",
@@ -87,6 +217,7 @@
     "columnEmail": "Email",
     "columnPhone": "Phone",
     "columnActive": "Active",
+    "columnAccount": "Account",
     "deleteTitle": "Delete agent",
     "deleteDescription": "This will permanently delete this agent. Properties assigned to this agent will be unassigned.",
     "deleted": "Agent deleted",
@@ -94,6 +225,63 @@
     "created": "Agent created",
     "updated": "Agent updated",
     "imageUploadFailed": "Saved but photo upload failed. Edit to retry."
+  },
+  "Invitations": {
+    "inviteAgent": "Invite Agent",
+    "inviteDescription": "Create the agent profile and email them a link to set up their login. They can sign in with Google or set a password.",
+    "sent": "Invitation sent to {email}",
+    "sentEmailFailed": "Agent created for {email}, but the email didn't send. Resend it from the Invitations list.",
+    "sendInvite": "Send invite",
+    "sendInviteTitle": "Send invitation to {name}?",
+    "sendInviteDescription": "We'll email {email} a link to set up their login. It's valid for 7 days. You can revoke or resend it from the Invitations list.",
+    "sendInviteConfirm": "Send invite",
+    "sendInviteSuccess": "Invitation sent",
+    "sendInviteFailed": "Failed to send invitation",
+    "listTitle": "Invitations",
+    "listDescription": "Pending and past invitations. Resend or revoke from here.",
+    "columnEmail": "Invitee",
+    "columnStatus": "Status",
+    "columnExpires": "Expires",
+    "columnInvitedBy": "Invited by",
+    "empty": "No invitations match these filters.",
+    "resend": "Resend",
+    "resendSuccess": "Invitation resent",
+    "resendEmailFailed": "Token regenerated but email didn't send. Try again.",
+    "resendFailed": "Failed to resend invitation",
+    "revoke": "Revoke",
+    "revokeTitle": "Revoke invitation?",
+    "revokeDescription": "The current link stops working immediately. You can send a fresh invitation afterwards.",
+    "revokeSuccess": "Invitation revoked",
+    "revokeFailed": "Failed to revoke invitation",
+    "statusPending": "Pending",
+    "statusAccepted": "Accepted",
+    "statusActive": "Active",
+    "statusExpired": "Expired",
+    "statusRevoked": "Revoked",
+    "statusBounced": "Bounced",
+    "statusNoLogin": "No login",
+    "expiresIn": "Expires {days, plural, one {# day} other {# days}}"
+  },
+  "AcceptInvite": {
+    "verifying": "Verifying your invitation\u2026",
+    "welcome": "Welcome, {firstName}!",
+    "subtitle": "You've been invited to join TGE. Choose how you'd like to sign in.",
+    "continueWithGoogle": "Continue with Google",
+    "or": "or",
+    "password": "Password",
+    "confirmPassword": "Confirm password",
+    "hint": "Min 12 chars with lowercase, uppercase, and a digit.",
+    "createAccount": "Create account",
+    "submitting": "Creating account\u2026",
+    "failed": "Couldn't complete your invitation. Try again or ask your administrator for help.",
+    "expiredTitle": "This invitation has expired",
+    "expiredBody": "Invitations are valid for a limited time. Ask your administrator to send you a fresh link.",
+    "notFoundTitle": "We couldn't find this invitation",
+    "notFoundBody": "The link may be incorrect, or it was already used. Reach out to your administrator for a new one.",
+    "alreadySignedInTitle": "You're already signed in",
+    "alreadySignedInBody": "You're signed in as {currentEmail}. This invitation is for {inviteEmail}. Sign out first to accept it.",
+    "signOutAndAccept": "Sign out",
+    "signingOut": "Signing out\u2026"
   },
   "Cities": {
     "title": "Cities",
@@ -104,6 +292,7 @@
     "notFound": "City not found",
     "columnName": "Name",
     "columnSlug": "Slug",
+    "columnCounty": "County",
     "columnProperties": "Properties",
     "deleteTitle": "Delete city",
     "deleted": "City deleted",
@@ -111,6 +300,304 @@
     "created": "City created",
     "updated": "City updated",
     "imageUploadFailed": "Saved but image upload failed. Edit to retry."
+  },
+  "FinancialIndicators": {
+    "title": "Indicators",
+    "description": "Macro rates driving the mortgage calculator.",
+    "empty": "No indicators seeded yet.",
+    "value": "Value",
+    "neverSynced": "Never synced",
+    "neverSet": "Not set yet",
+    "eurRonDescription": "Pulled from BNR. Click Sync to refresh."
+  },
+  "Users": {
+    "title": "Users",
+    "searchPlaceholder": "Search name or email…",
+    "you": "you",
+    "addUser": "Add User",
+    "newUser": "New User",
+    "newUserDescription": "Creates a new admin account. The user can change their password after first login.",
+    "editUser": "Edit User",
+    "create": "Create",
+    "save": "Save",
+    "created": "User created",
+    "updated": "User updated",
+    "deleted": "User deleted",
+    "createFailed": "Failed to create user",
+    "updateFailed": "Failed to update user",
+    "deleteFailed": "Failed to delete user",
+    "cannotDeleteSelf": "You cannot delete your own account",
+    "cannotDemoteSelf": "You cannot demote yourself from SUPER_ADMIN",
+    "agentLink": "Agent",
+    "selectAgent": "Select an agent",
+    "noUnlinkedAgents": "No unlinked agents available. Create one first from Agents.",
+    "agentLinkRequiredForAgentRole": "AGENT role requires linking a sales-agent record.",
+    "unlinkAgent": "Unlink agent",
+    "columnName": "Name",
+    "columnEmail": "Email",
+    "columnRole": "Role",
+    "fieldEmail": "Email",
+    "fieldName": "Name",
+    "fieldPassword": "Password",
+    "fieldRole": "Role",
+    "passwordHint": "Minimum 6 characters.",
+    "deleteTitle": "Delete user",
+    "deleteDescription": "This will permanently delete the admin account. They will lose all access immediately."
+  },
+  "AuditLogs": {
+    "title": "Audit Log",
+    "description": "Append-only record of mutating admin actions.",
+    "searchPlaceholder": "Search action, resource, or id…",
+    "columnWhen": "When",
+    "columnActor": "Actor",
+    "columnAction": "Action",
+    "columnResource": "Resource",
+    "columnResourceId": "Resource ID",
+    "columnBrand": "Brand",
+    "systemActor": "system",
+    "empty": "No audit entries match your filters yet.",
+    "showDiff": "Show diff",
+    "hideDiff": "Hide",
+    "diffFor": "Changes for",
+    "added": "Added",
+    "removed": "Removed",
+    "emptyValue": "(empty)",
+    "export": "Export CSV",
+    "historyTitle": "History",
+    "historyEmpty": "No history recorded for this entity yet.",
+    "healthTitle": "Audit health",
+    "healthFailures": "audit writes have failed since last restart",
+    "healthLastFailure": "Last failure",
+    "actionLabel": {
+      "user": {
+        "login-password": "Logged in with password",
+        "login-google": "Logged in with Google",
+        "logout": "Logged out",
+        "password-reset": "Reset password",
+        "password-changed": "Changed password",
+        "create": "Created user",
+        "update": "Updated user",
+        "delete": "Deleted user"
+      },
+      "property": {
+        "create": "Created property",
+        "update": "Updated property",
+        "delete": "Deleted property",
+        "image": {
+          "create": "Added property image",
+          "update": "Updated property image",
+          "delete": "Removed property image"
+        }
+      },
+      "inquiry": {
+        "create": "Received inquiry",
+        "update": "Updated inquiry",
+        "delete": "Deleted inquiry",
+        "status-change": "Inquiry status changed"
+      },
+      "article": {
+        "create": "Created article",
+        "update": "Updated article",
+        "delete": "Deleted article"
+      },
+      "invitation": {
+        "create": "Sent invitation",
+        "invite-existing": "Invited agent",
+        "resend": "Resent invitation",
+        "revoke": "Revoked invitation",
+        "accept-password": "Accepted invitation"
+      },
+      "agent": {
+        "create": "Created agent",
+        "update": "Updated agent",
+        "delete": "Deleted agent",
+        "photo": {
+          "create": "Updated agent photo",
+          "update": "Updated agent photo",
+          "delete": "Removed agent photo"
+        }
+      },
+      "city": {
+        "create": "Created city",
+        "update": "Updated city",
+        "delete": "Deleted city",
+        "image": {
+          "create": "Updated city image",
+          "update": "Updated city image",
+          "delete": "Removed city image"
+        }
+      },
+      "county": {
+        "create": "Created county",
+        "update": "Updated county",
+        "delete": "Deleted county"
+      },
+      "neighborhood": {
+        "create": "Created neighborhood",
+        "update": "Updated neighborhood",
+        "delete": "Deleted neighborhood"
+      },
+      "developer": {
+        "create": "Created developer",
+        "update": "Updated developer",
+        "delete": "Deleted developer",
+        "logo": {
+          "create": "Updated developer logo",
+          "update": "Updated developer logo",
+          "delete": "Removed developer logo"
+        }
+      },
+      "testimonial": {
+        "create": "Created testimonial",
+        "update": "Updated testimonial",
+        "delete": "Deleted testimonial"
+      },
+      "bank-rate": {
+        "create": "Created bank rate",
+        "update": "Updated bank rate",
+        "delete": "Deleted bank rate"
+      },
+      "financial-indicator": {
+        "update": "Updated financial indicator",
+        "sync-bnr": "Synced indicators from BNR"
+      },
+      "site-config": {
+        "update": "Updated site settings",
+        "tge-scope": {
+          "add": "Added county to TGE scope",
+          "remove": "Removed county from TGE scope"
+        }
+      }
+    },
+    "fieldLabel": {
+      "Property": {
+        "title": "Title",
+        "price": "Price",
+        "tier": "Tier",
+        "status": "Status",
+        "featured": "Featured",
+        "agentId": "Agent",
+        "developerId": "Developer",
+        "cityId": "City",
+        "countyId": "County",
+        "neighborhoodId": "Neighborhood"
+      },
+      "Inquiry": {
+        "status": "Status",
+        "assignedAgentId": "Assigned agent",
+        "notes": "Notes"
+      },
+      "AdminUser": {
+        "role": "Role",
+        "name": "Name",
+        "email": "Email"
+      },
+      "SiteConfig": {
+        "tgeCountyScope": "TGE county scope"
+      }
+    }
+  },
+  "MyListings": {
+    "title": "My Listings"
+  },
+  "MyInquiries": {
+    "title": "My Inquiries"
+  },
+  "Profile": {
+    "title": "My Profile",
+    "description": "Your sales-agent profile visible on the public site.",
+    "save": "Save changes",
+    "saved": "Profile saved",
+    "saveFailed": "Failed to save profile",
+    "noAgentLinked": "No agent linked to your account",
+    "askAdmin": "Ask an administrator to link your login to a sales-agent record before editing your profile.",
+    "contactDetails": "Contact details",
+    "contactDetailsDescription": "Name and phone shown on your agent page.",
+    "bio": "Biography",
+    "bioDescription": "Short introduction shown next to your listings.",
+    "photo": "Profile photo",
+    "photoDescription": "Square image, at least 400×400. Replaces the current photo on save."
+  },
+  "Articles": {
+    "title": "Articles",
+    "addArticle": "Add Article",
+    "newArticle": "New Article",
+    "editArticle": "Edit Article",
+    "notFound": "Article not found",
+    "columnTitle": "Title",
+    "columnCategory": "Category",
+    "columnAuthor": "Author",
+    "columnStatus": "Status",
+    "columnReadTime": "Read",
+    "columnPublishedAt": "Published",
+    "publish": "Publish",
+    "unpublish": "Unpublish",
+    "published": "Article published",
+    "unpublished": "Article moved back to draft",
+    "statusChangeFailed": "Failed to update status",
+    "deleteTitle": "Delete article",
+    "deleteDescription": "This will permanently delete the article and its cover image is no longer referenced.",
+    "deleted": "Article deleted",
+    "deleteFailed": "Failed to delete article",
+    "created": "Article created",
+    "updated": "Article updated",
+    "categoryLabel": {
+      "guide": "Guide",
+      "news": "News",
+      "market-report": "Market Report"
+    }
+  },
+  "Inquiries": {
+    "title": "Inquiries",
+    "columnStatus": "Status",
+    "columnContact": "Contact",
+    "columnType": "Type",
+    "columnMessage": "Message",
+    "columnLinked": "Linked",
+    "columnSource": "Source",
+    "columnReceived": "Received",
+    "markRead": "Mark as read",
+    "archive": "Archive",
+    "reopen": "Reopen",
+    "archived": "Inquiry archived",
+    "markedRead": "Marked as read",
+    "reopened": "Inquiry reopened",
+    "statusChangeFailed": "Failed to update status",
+    "deleteTitle": "Delete inquiry",
+    "deleted": "Inquiry deleted",
+    "deleteFailed": "Failed to delete inquiry",
+    "viewList": "List",
+    "viewKanban": "Kanban"
+  },
+  "Counties": {
+    "title": "Counties",
+    "addCounty": "Add County",
+    "newCounty": "New County",
+    "newCountyDescription": "Romanian county (județ). Code is the ISO 3166-2 suffix.",
+    "save": "Save County",
+    "columnName": "Name",
+    "columnCode": "Code",
+    "columnCities": "Cities",
+    "columnCoords": "Coords",
+    "columnProperties": "Properties",
+    "columnTgeScope": "TGE",
+    "tgeScopeAria": "Visible on Transylvania Grand Estate: {county}",
+    "tgeScopeToggleFailed": "Couldn't update TGE scope",
+    "tgeScopeCount": "{count} on TGE",
+    "tgeScopePresetApplied": "TGE scope updated",
+    "presetStrict": "Strict Transylvania",
+    "presetExtended": "Extended Transylvania",
+    "fieldName": "Name",
+    "fieldSlug": "Slug",
+    "fieldCode": "Code",
+    "fieldLatitude": "Latitude",
+    "fieldLongitude": "Longitude",
+    "deleteTitle": "Delete county",
+    "deleteDescription": "This will permanently delete this county. Cities linked to it will be affected.",
+    "deleted": "County deleted",
+    "deleteFailed": "Failed to delete county",
+    "created": "County created",
+    "createFailed": "Failed to create county"
   },
   "Testimonials": {
     "title": "Testimonials",
@@ -140,6 +627,8 @@
     "columnBank": "Bank",
     "columnRate": "Rate (%)",
     "columnType": "Type",
+    "columnMaxLtv": "Max LTV",
+    "columnMaxTerm": "Max term",
     "columnActive": "Active",
     "columnOrder": "Order",
     "deleteTitle": "Delete bank rate",
@@ -169,8 +658,7 @@
     "insuranceRateHint": "Monthly life insurance as % of outstanding balance",
     "notes": "Notes",
     "notesPlaceholder": "e.g. Noua Casa — max 70.000 EUR",
-    "active": "Active (visible in calculators)",
-    "saveBankRate": "Save Bank Rate"
+    "active": "Active (visible in calculators)"
   },
   "Settings": {
     "title": "Settings",
@@ -235,6 +723,7 @@
     "garageSpots": "Garage spots",
     "pool": "Pool",
     "images": "Images",
+    "noImages": "No images yet.",
     "types": {
       "apartment": "Apartment",
       "house": "House",
@@ -250,8 +739,7 @@
       "available": "Available",
       "reserved": "Reserved",
       "sold": "Sold"
-    },
-    "saveProperty": "Save Property"
+    }
   },
   "DeveloperForm": {
     "title": "Developer Information",
@@ -264,8 +752,7 @@
     "website": "Website",
     "projectCount": "Project Count",
     "featuredDeveloper": "Featured developer",
-    "logo": "Logo",
-    "saveDeveloper": "Save Developer"
+    "logo": "Logo"
   },
   "AgentForm": {
     "title": "Agent Information",
@@ -276,8 +763,7 @@
     "phone": "Phone",
     "bio": "Bio",
     "active": "Active",
-    "photo": "Photo",
-    "saveAgent": "Save Agent"
+    "photo": "Photo"
   },
   "CityForm": {
     "title": "City Information",
@@ -287,8 +773,7 @@
     "selectCounty": "Select a county",
     "description": "Description",
     "propertyCount": "Property Count",
-    "cityImage": "City Image",
-    "saveCity": "Save City"
+    "cityImage": "City Image"
   },
   "TestimonialForm": {
     "title": "Testimonial",
@@ -297,22 +782,72 @@
     "propertyType": "Property Type",
     "rating": "Rating",
     "star": "{count, plural, one {# star} other {# stars}}",
-    "quote": "Quote",
-    "saveTestimonial": "Save Testimonial"
+    "quote": "Quote"
   },
   "Common": {
     "cancel": "Cancel",
+    "save": "Save",
+    "saveFailed": "Failed to save",
+    "confirm": "Confirm",
+    "back": "Back",
+    "view": "View",
+    "edit": "Edit",
     "delete": "Delete",
     "deleting": "Deleting...",
+    "discardTitle": "Discard unsaved changes?",
+    "discardDescription": "Your edits on this page will be lost.",
+    "discard": "Discard",
+    "keepEditing": "Keep editing",
+    "yes": "Yes",
+    "no": "No",
+    "meta": "Meta",
+    "createdLabel": "Created",
+    "updatedLabel": "Updated",
+    "idLabel": "ID",
     "saving": "Saving...",
     "loading": "Loading...",
     "createNew": "Create New",
     "generate": "Generate",
     "add": "Add",
-    "noResults": "No results found",
-    "page": "Page {current} of {total}",
+    "noResults": "No results",
+    "page": "{current} / {total}",
+    "rangeOf": "{from}–{to} of {total}",
+    "searchPlaceholder": "Search…",
+    "emptyTitle": "Nothing to show yet",
+    "emptySearchDescription": "No matches for \"{query}\". Try a different search.",
+    "retry": "Retry",
+    "inquiriesKanbanLabel": "Inquiries kanban — three columns (new, read, archived) of draggable cards",
+    "errorTitle": "Something went wrong",
+    "errorDescription": "We couldn't load this. Retry, or refresh the page if the problem persists.",
+    "notFoundTitle": "Not found",
+    "notFoundDescription": "We couldn't find what you were looking for.",
     "deleteItem": "Delete item",
     "deleteConfirm": "Are you sure? This action cannot be undone.",
+    "sortNewest": "Newest first",
+    "sortOldest": "Oldest first",
+    "sortPriceDesc": "Price: high → low",
+    "sortPriceAsc": "Price: low → high",
+    "sortNameAsc": "Name A → Z",
+    "sortNameDesc": "Name Z → A",
+    "sortFeatured": "Featured first",
+    "sortActive": "Active first",
+    "sortRatingDesc": "Rating: high → low",
+    "sortRatingAsc": "Rating: low → high",
+    "sortPropertiesDesc": "Most properties",
+    "sortCodeAsc": "Code A → Z",
+    "sortCodeDesc": "Code Z → A",
+    "columnUpdated": "Updated",
+    "columnCreated": "Created",
+    "close": "Close",
+    "statusLabel": {
+      "new": "New",
+      "read": "Read",
+      "archived": "Archived",
+      "draft": "Draft",
+      "published": "Published",
+      "active": "Active",
+      "inactive": "Inactive"
+    },
     "dragDrop": "Drag & drop or click to upload",
     "fileFormats": "JPG, PNG, WebP, AVIF up to 10MB",
     "dragDropImages": "Drag & drop images or click to upload",
@@ -329,6 +864,21 @@
   "Status": {
     "AVAILABLE": "Available",
     "RESERVED": "Reserved",
-    "SOLD": "Sold"
+    "SOLD": "Sold",
+    "available": "Available",
+    "reserved": "Reserved",
+    "sold": "Sold",
+    "draft": "Draft",
+    "published": "Published",
+    "archived": "Archived",
+    "new": "New",
+    "read": "Read",
+    "active": "Featured",
+    "inactive": "Inactive",
+    "Property": "Property",
+    "Inquiry": "Inquiry",
+    "Article": "Article",
+    "AdminUser": "User",
+    "Invitation": "Invitation"
   }
 }

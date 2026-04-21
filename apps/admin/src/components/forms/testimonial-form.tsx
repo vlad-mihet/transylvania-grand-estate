@@ -2,12 +2,14 @@
 
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { testimonialSchema, TestimonialFormValues } from "@/lib/validations/testimonial";
+import {
+  testimonialSchema,
+  TestimonialFormValues,
+} from "@/lib/validations/testimonial";
 import { useApiFormErrors } from "@/lib/form-error";
-import { toast } from "sonner";
+import { toast } from "@/lib/toast";
 import { BilingualTextarea } from "@/components/shared/bilingual-textarea";
 import {
-  Button,
   Input,
   Label,
   Select,
@@ -15,12 +17,10 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
 } from "@tge/ui";
-import { Loader2 } from "lucide-react";
+import { SectionCard } from "@/components/shared/section-card";
+import { FormActions } from "@/components/shared/form-actions";
+import { useUnsavedChangesWarning } from "@/hooks/use-unsaved-changes-warning";
 import { useTranslations } from "next-intl";
 
 interface TestimonialFormProps {
@@ -28,9 +28,17 @@ interface TestimonialFormProps {
   onSubmit: (data: TestimonialFormValues) => void;
   loading?: boolean;
   submissionError?: unknown;
+  /** Where Cancel navigates (detail page on edit, list on create). */
+  cancelHref: string;
 }
 
-export function TestimonialForm({ defaultValues, onSubmit, loading, submissionError }: TestimonialFormProps) {
+export function TestimonialForm({
+  defaultValues,
+  onSubmit,
+  loading,
+  submissionError,
+  cancelHref,
+}: TestimonialFormProps) {
   const t = useTranslations("TestimonialForm");
   const tc = useTranslations("Common");
 
@@ -47,32 +55,34 @@ export function TestimonialForm({ defaultValues, onSubmit, loading, submissionEr
   });
 
   useApiFormErrors(form, submissionError, (err) => {
-    toast.error(err instanceof Error ? err.message : "Failed to save");
+    toast.error(err instanceof Error ? err.message : tc("saveFailed"));
   });
 
+  useUnsavedChangesWarning(form.formState.isDirty);
+
   return (
-    <form onSubmit={form.handleSubmit(onSubmit)} className="max-w-5xl space-y-6">
-      <Card>
-        <CardHeader>
-          <CardTitle className="font-serif text-lg">{t("title")}</CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-4">
+    <form
+      onSubmit={form.handleSubmit(onSubmit)}
+      className="w-full space-y-5"
+    >
+      <SectionCard title={t("title")}>
+        <div className="space-y-4">
           <div className="grid gap-4 sm:grid-cols-2">
-            <div className="space-y-2">
+            <div className="space-y-1.5">
               <Label>{t("clientName")}</Label>
               <Input {...form.register("clientName")} />
             </div>
-            <div className="space-y-2">
+            <div className="space-y-1.5">
               <Label>{t("location")}</Label>
               <Input {...form.register("location")} />
             </div>
           </div>
           <div className="grid gap-4 sm:grid-cols-2">
-            <div className="space-y-2">
+            <div className="space-y-1.5">
               <Label>{t("propertyType")}</Label>
               <Input {...form.register("propertyType")} />
             </div>
-            <div className="space-y-2">
+            <div className="space-y-1.5">
               <Label>{t("rating")}</Label>
               <Select
                 value={String(form.watch("rating"))}
@@ -104,12 +114,13 @@ export function TestimonialForm({ defaultValues, onSubmit, loading, submissionEr
             required
             rows={4}
           />
-        </CardContent>
-      </Card>
-      <div className="flex justify-end gap-3">
-        <Button type="button" variant="outline" onClick={() => window.history.back()}>{tc("cancel")}</Button>
-        <Button type="submit" disabled={loading}>{loading ? <><Loader2 className="h-4 w-4 animate-spin" /> {tc("saving")}</> : t("saveTestimonial")}</Button>
-      </div>
+        </div>
+      </SectionCard>
+      <FormActions
+        cancelHref={cancelHref}
+        loading={loading}
+        dirty={form.formState.isDirty}
+      />
     </form>
   );
 }

@@ -4,11 +4,19 @@ export async function POST(req: NextRequest) {
   const body = await req.json();
   const apiUrl = process.env.API_URL!;
 
-  const res = await fetch(`${apiUrl}/auth/login`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(body),
-  });
+  let res: Response;
+  try {
+    res = await fetch(`${apiUrl}/auth/login`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(body),
+    });
+  } catch {
+    return NextResponse.json(
+      { error: { message: "Auth service unavailable" } },
+      { status: 503 },
+    );
+  }
 
   const data = await res.json();
 

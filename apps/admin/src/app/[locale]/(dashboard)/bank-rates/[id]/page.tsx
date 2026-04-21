@@ -1,49 +1,67 @@
 "use client";
 
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { useRouter } from "@/i18n/navigation";
 import { useParams } from "next/navigation";
-import { toast } from "sonner";
-import { apiClient } from "@/lib/api-client";
-import { BankRateForm } from "@/components/forms/bank-rate-form";
-import { PageHeader } from "@/components/shared/page-header";
-import { BankRateFormValues } from "@/lib/validations/bank-rate";
 import { useTranslations } from "next-intl";
+import { Pencil } from "lucide-react";
 
-export default function EditBankRatePage() {
+import { Link } from "@/i18n/navigation";
+import { apiClient } from "@/lib/api-client";
+import { Button } from "@tge/ui";
+import { PageHeader } from "@/components/shared/page-header";
+import { DetailView } from "@/components/shared/detail-view";
+import { Can } from "@/components/shared/can";
+import { EntityDeleteButton } from "@/components/shared/entity-delete-button";
+import { DetailPageShell } from "@/components/resource/detail-page-shell";
+import {
+  BankRateDetailView,
+  type BankRateWithId,
+} from "@/components/bank-rates/bank-rate-detail-view";
+
+export default function BankRateViewPage() {
   const { id } = useParams<{ id: string }>();
-  const router = useRouter();
-  const queryClient = useQueryClient();
   const t = useTranslations("BankRates");
-
-  const { data: bankRate, isLoading } = useQuery({
-    queryKey: ["bank-rate", id],
-    queryFn: () => apiClient<BankRateFormValues & { id: string }>(`/financial-data/bank-rates/${id}`),
-    enabled: !!id,
-  });
-
-  const updateMutation = useMutation({
-    mutationFn: (data: BankRateFormValues) =>
-      apiClient(`/financial-data/bank-rates/${id}`, { method: "PATCH", body: data }),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["bank-rate", id] });
-      toast.success(t("updated"));
-      router.push("/bank-rates");
-    },
-  });
-
-  if (isLoading) return <div className="h-64 animate-pulse rounded-lg bg-muted" />;
-  if (!bankRate) return <p>{t("notFound")}</p>;
+  const tc = useTranslations("Common");
 
   return (
-    <div className="space-y-6">
-      <PageHeader title={t("editBankRate")} />
-      <BankRateForm
-        defaultValues={bankRate}
-        onSubmit={(data) => updateMutation.mutate(data)}
-        loading={updateMutation.isPending}
-        submissionError={updateMutation.error}
-      />
-    </div>
+    <DetailPageShell<BankRateWithId>
+      queryKey={["bank-rate", id]}
+      queryFn={() =>
+        apiClient<BankRateWithId>(`/financial-data/bank-rates/${id}`)
+      }
+      enabled={!!id}
+      notFoundTitle={t("notFound")}
+      render={(bankRate) => (
+        <DetailView>
+          <PageHeader
+            title={bankRate.bankName}
+            actions={
+              <>
+                <EntityDeleteButton
+                  apiPath={`/financial-data/bank-rates/${bankRate.id}`}
+                  permission="bank-rate.delete"
+                  listHref="/bank-rates"
+                  invalidateKeys={[
+                    ["bank-rates"],
+                    ["bank-rate", bankRate.id],
+                  ]}
+                  confirmTitle={t("deleteTitle")}
+                  successMessage={t("deleted")}
+                  errorMessage={t("deleteFailed")}
+                />
+                <Can action="bank-rate.update">
+                  <Button asChild size="sm">
+                    <Link href={`/bank-rates/${bankRate.id}/edit`}>
+                      <Pencil className="h-3.5 w-3.5 sm:mr-1.5" />
+                      <span className="hidden sm:inline">{tc("edit")}</span>
+                    </Link>
+                  </Button>
+                </Can>
+              </>
+            }
+          />
+          <BankRateDetailView bankRate={bankRate} />
+        </DetailView>
+      )}
+    />
   );
 }

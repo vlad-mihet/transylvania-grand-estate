@@ -1,61 +1,65 @@
 "use client";
 
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { useRouter } from "@/i18n/navigation";
 import { useParams } from "next/navigation";
-import { toast } from "sonner";
-import { apiClient } from "@/lib/api-client";
-import { AgentForm } from "@/components/forms/agent-form";
-import { PageHeader } from "@/components/shared/page-header";
-import { AgentFormValues } from "@/lib/validations/agent";
-import type { ApiAgent } from "@tge/types";
 import { useTranslations } from "next-intl";
+import { Pencil } from "lucide-react";
+import type { ApiAgent } from "@tge/types";
 
-export default function EditAgentPage() {
+import { Link } from "@/i18n/navigation";
+import { apiClient } from "@/lib/api-client";
+import { Button } from "@tge/ui";
+import { PageHeader } from "@/components/shared/page-header";
+import { DetailView } from "@/components/shared/detail-view";
+import { Can } from "@/components/shared/can";
+import { EntityDeleteButton } from "@/components/shared/entity-delete-button";
+import { DetailPageShell } from "@/components/resource/detail-page-shell";
+import { AgentDetailView } from "@/components/agents/agent-detail-view";
+import { HistoryTab } from "@/components/audit/history-tab";
+
+export default function AgentViewPage() {
   const { id } = useParams<{ id: string }>();
-  const router = useRouter();
-  const queryClient = useQueryClient();
   const t = useTranslations("Agents");
-
-  const { data: agent, isLoading } = useQuery({
-    queryKey: ["agent", id],
-    queryFn: () => apiClient<ApiAgent>(`/agents/id/${id}`),
-    enabled: !!id,
-  });
-
-  const updateMutation = useMutation({
-    mutationFn: async ({ data, photo }: { data: AgentFormValues; photo: File | null }) => {
-      await apiClient(`/agents/${id}`, { method: "PATCH", body: data });
-      if (photo) {
-        const formData = new FormData();
-        formData.append("photo", photo);
-        try {
-          await apiClient(`/agents/${id}/photo`, { method: "POST", body: formData });
-        } catch {
-          toast.warning(t("imageUploadFailed"));
-        }
-      }
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["agent", id] });
-      toast.success(t("updated"));
-      router.push("/agents");
-    },
-  });
-
-  if (isLoading) return <div className="h-64 animate-pulse rounded-lg bg-muted" />;
-  if (!agent) return <p>{t("notFound")}</p>;
+  const tc = useTranslations("Common");
 
   return (
-    <div className="space-y-6">
-      <PageHeader title={t("editAgent")} />
-      <AgentForm
-        defaultValues={{ ...agent, photo: agent.photo ?? undefined }}
-        photoUrl={agent.photo}
-        onSubmit={(data, photo) => updateMutation.mutate({ data, photo })}
-        loading={updateMutation.isPending}
-        submissionError={updateMutation.error}
-      />
-    </div>
+    <DetailPageShell<ApiAgent>
+      queryKey={["agent", id]}
+      queryFn={() => apiClient<ApiAgent>(`/agents/id/${id}`)}
+      enabled={!!id}
+      notFoundTitle={t("notFound")}
+      render={(agent) => (
+        <DetailView>
+          <PageHeader
+            title={`${agent.firstName} ${agent.lastName}`.trim()}
+            actions={
+              <>
+                <EntityDeleteButton
+                  apiPath={`/agents/${agent.id}`}
+                  permission="agent.delete"
+                  listHref="/agents"
+                  invalidateKeys={[["agents"], ["agent", agent.id]]}
+                  confirmTitle={t("deleteTitle")}
+                  confirmDescription={t("deleteDescription")}
+                  successMessage={t("deleted")}
+                  errorMessage={t("deleteFailed")}
+                />
+                <Can action="agent.update">
+                  <Button asChild size="sm">
+                    <Link href={`/agents/${agent.id}/edit`}>
+                      <Pencil className="h-3.5 w-3.5 sm:mr-1.5" />
+                      <span className="hidden sm:inline">{tc("edit")}</span>
+                    </Link>
+                  </Button>
+                </Can>
+              </>
+            }
+          />
+          <AgentDetailView agent={agent} />
+          <Can action="audit-log.read">
+            <HistoryTab resource="Agent" resourceId={agent.id} />
+          </Can>
+        </DetailView>
+      )}
+    />
   );
 }

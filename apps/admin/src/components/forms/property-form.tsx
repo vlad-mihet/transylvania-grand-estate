@@ -7,7 +7,8 @@ import {
   PropertyFormValues,
 } from "@/lib/validations/property";
 import { useApiFormErrors } from "@/lib/form-error";
-import { toast } from "sonner";
+import { useUnsavedChangesWarning } from "@/hooks/use-unsaved-changes-warning";
+import { toast } from "@/lib/toast";
 import { BilingualInput } from "@/components/shared/bilingual-input";
 import { BilingualTextarea } from "@/components/shared/bilingual-textarea";
 import {
@@ -24,12 +25,9 @@ import {
   SelectTrigger,
   SelectValue,
   Switch,
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
 } from "@tge/ui";
-import { Loader2 } from "lucide-react";
+import { SectionCard } from "@/components/shared/section-card";
+import { FormActions } from "@/components/shared/form-actions";
 import { useState, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { apiClient } from "@/lib/api-client";
@@ -50,6 +48,8 @@ interface PropertyFormProps {
   onSubmit: (data: PropertyFormValues, images: GalleryImage[]) => void;
   loading?: boolean;
   submissionError?: unknown;
+  /** Where Cancel navigates (detail page on edit, list on create). */
+  cancelHref: string;
 }
 
 export function PropertyForm({
@@ -58,6 +58,7 @@ export function PropertyForm({
   onSubmit,
   loading,
   submissionError,
+  cancelHref,
 }: PropertyFormProps) {
   const [galleryImages, setGalleryImages] =
     useState<GalleryImage[]>(initialImages);
@@ -92,8 +93,14 @@ export function PropertyForm({
   });
 
   useApiFormErrors(form, submissionError, (err) => {
-    toast.error(err instanceof Error ? err.message : "Failed to save");
+    toast.error(err instanceof Error ? err.message : tc("saveFailed"));
   });
+
+  // Guard against accidental tab close / browser-nav loss once the form has
+  // unsaved edits. Doesn't cover client-side route changes (Next's App
+  // Router doesn't expose a cancellable interception API yet), but it
+  // catches the common footgun.
+  useUnsavedChangesWarning(form.formState.isDirty);
 
   const watchedType = form.watch("type");
   const isTerrain = watchedType === "terrain";
@@ -147,13 +154,21 @@ export function PropertyForm({
   });
 
   return (
-    <form onSubmit={handleFormSubmit} className="max-w-5xl space-y-6">
+    <form
+      onSubmit={handleFormSubmit}
+      className="w-full space-y-6"
+    >
+      {/* Images — first so the gallery is what users see on open */}
+      <SectionCard title={t("images")}>
+        <ImageGalleryManager
+          images={galleryImages}
+          onChange={setGalleryImages}
+        />
+      </SectionCard>
+
       {/* Basic Info */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="font-serif text-lg">{t("basicInfo")}</CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-4">
+      <SectionCard title={t("basicInfo")}>
+        <div className="space-y-4">
           <BilingualInput
             label={t("title")}
             valueEn={form.watch("title.en")}
@@ -201,15 +216,12 @@ export function PropertyForm({
             required
             rows={2}
           />
-        </CardContent>
-      </Card>
+        </div>
+      </SectionCard>
 
       {/* Type, Status, Price */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="font-serif text-lg">{t("details")}</CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-4">
+      <SectionCard title={t("details")}>
+        <div className="space-y-4">
           <div className="grid gap-4 sm:grid-cols-3">
             <div className="space-y-2">
               <Label>{t("type")}</Label>
@@ -330,15 +342,12 @@ export function PropertyForm({
               {t("newListing")}
             </label>
           </div>
-        </CardContent>
-      </Card>
+        </div>
+      </SectionCard>
 
       {/* Location */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="font-serif text-lg">{t("location")}</CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-4">
+      <SectionCard title={t("location")}>
+        <div className="space-y-4">
           <div className="grid gap-4 sm:grid-cols-2">
             <div className="space-y-2">
               <Label>{t("city")}</Label>
@@ -385,15 +394,12 @@ export function PropertyForm({
               <Input type="number" step="any" {...form.register("longitude")} />
             </div>
           </div>
-        </CardContent>
-      </Card>
+        </div>
+      </SectionCard>
 
       {/* Specs */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="font-serif text-lg">{t("specifications")}</CardTitle>
-        </CardHeader>
-        <CardContent>
+      <SectionCard title={t("specifications")}>
+        <div>
           <div className="grid gap-4 sm:grid-cols-3 lg:grid-cols-4">
             {!isTerrain && (
               <div className="space-y-2">
@@ -433,7 +439,7 @@ export function PropertyForm({
                 <Input type="number" {...form.register("garage")} />
               </div>
             )}
-            <label className="flex items-center gap-2 text-sm pt-7">
+            <label className="flex items-center gap-2 pt-7 text-sm">
               <Switch
                 checked={form.watch("pool")}
                 onCheckedChange={(v) => form.setValue("pool", v)}
@@ -441,31 +447,14 @@ export function PropertyForm({
               {t("pool")}
             </label>
           </div>
-        </CardContent>
-      </Card>
+        </div>
+      </SectionCard>
 
-      {/* Images */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="font-serif text-lg">{t("images")}</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <ImageGalleryManager
-            images={galleryImages}
-            onChange={setGalleryImages}
-          />
-        </CardContent>
-      </Card>
-
-      {/* Submit */}
-      <div className="flex justify-end gap-3">
-        <Button type="button" variant="outline" onClick={() => window.history.back()}>
-          {tc("cancel")}
-        </Button>
-        <Button type="submit" disabled={loading}>
-          {loading ? <><Loader2 className="h-4 w-4 animate-spin" /> {tc("saving")}</> : t("saveProperty")}
-        </Button>
-      </div>
+      <FormActions
+        cancelHref={cancelHref}
+        loading={loading}
+        dirty={form.formState.isDirty}
+      />
     </form>
   );
 }

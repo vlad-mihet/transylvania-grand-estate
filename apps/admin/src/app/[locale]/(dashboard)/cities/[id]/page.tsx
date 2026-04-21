@@ -1,61 +1,64 @@
 "use client";
 
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { useRouter } from "@/i18n/navigation";
 import { useParams } from "next/navigation";
-import { toast } from "sonner";
-import { apiClient } from "@/lib/api-client";
-import { CityForm } from "@/components/forms/city-form";
-import { PageHeader } from "@/components/shared/page-header";
-import { CityFormValues } from "@/lib/validations/city";
-import type { ApiCity } from "@tge/types";
 import { useTranslations } from "next-intl";
+import { Pencil } from "lucide-react";
+import type { ApiCity } from "@tge/types";
 
-export default function EditCityPage() {
+import { Link } from "@/i18n/navigation";
+import { apiClient } from "@/lib/api-client";
+import { Button } from "@tge/ui";
+import { PageHeader } from "@/components/shared/page-header";
+import { DetailView } from "@/components/shared/detail-view";
+import { Can } from "@/components/shared/can";
+import { EntityDeleteButton } from "@/components/shared/entity-delete-button";
+import { DetailPageShell } from "@/components/resource/detail-page-shell";
+import { CityDetailView } from "@/components/cities/city-detail-view";
+import { HistoryTab } from "@/components/audit/history-tab";
+
+export default function CityViewPage() {
   const { id } = useParams<{ id: string }>();
-  const router = useRouter();
-  const queryClient = useQueryClient();
   const t = useTranslations("Cities");
-
-  const { data: city, isLoading } = useQuery({
-    queryKey: ["city", id],
-    queryFn: () => apiClient<ApiCity>(`/cities/id/${id}`),
-    enabled: !!id,
-  });
-
-  const updateMutation = useMutation({
-    mutationFn: async ({ data, image }: { data: CityFormValues; image: File | null }) => {
-      await apiClient(`/cities/${id}`, { method: "PATCH", body: data });
-      if (image) {
-        const fd = new FormData();
-        fd.append("image", image);
-        try {
-          await apiClient(`/cities/${id}/image`, { method: "POST", body: fd });
-        } catch {
-          toast.warning(t("imageUploadFailed"));
-        }
-      }
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["city", id] });
-      toast.success(t("updated"));
-      router.push("/cities");
-    },
-  });
-
-  if (isLoading) return <div className="h-64 animate-pulse rounded-lg bg-muted" />;
-  if (!city) return <p>{t("notFound")}</p>;
+  const tc = useTranslations("Common");
 
   return (
-    <div className="space-y-6">
-      <PageHeader title={t("editCity")} />
-      <CityForm
-        defaultValues={{ ...city, countySlug: city.countySlug ?? undefined, image: city.image ?? undefined }}
-        imageUrl={city.image}
-        onSubmit={(data, image) => updateMutation.mutate({ data, image })}
-        loading={updateMutation.isPending}
-        submissionError={updateMutation.error}
-      />
-    </div>
+    <DetailPageShell<ApiCity>
+      queryKey={["city", id]}
+      queryFn={() => apiClient<ApiCity>(`/cities/id/${id}`)}
+      enabled={!!id}
+      notFoundTitle={t("notFound")}
+      render={(city) => (
+        <DetailView>
+          <PageHeader
+            title={city.name}
+            actions={
+              <>
+                <EntityDeleteButton
+                  apiPath={`/cities/${city.id ?? id}`}
+                  permission="city.delete"
+                  listHref="/cities"
+                  invalidateKeys={[["cities"], ["city", city.id ?? id]]}
+                  confirmTitle={t("deleteTitle")}
+                  successMessage={t("deleted")}
+                  errorMessage={t("deleteFailed")}
+                />
+                <Can action="city.update">
+                  <Button asChild size="sm">
+                    <Link href={`/cities/${city.id ?? id}/edit`}>
+                      <Pencil className="h-3.5 w-3.5 sm:mr-1.5" />
+                      <span className="hidden sm:inline">{tc("edit")}</span>
+                    </Link>
+                  </Button>
+                </Can>
+              </>
+            }
+          />
+          <CityDetailView city={city} />
+          <Can action="audit-log.read">
+            <HistoryTab resource="City" resourceId={city.id ?? id} />
+          </Can>
+        </DetailView>
+      )}
+    />
   );
 }

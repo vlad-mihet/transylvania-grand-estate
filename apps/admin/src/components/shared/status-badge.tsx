@@ -1,23 +1,65 @@
 "use client";
 
-import { Badge } from "@tge/ui";
+import { cn } from "@tge/utils";
 import { useTranslations } from "next-intl";
 
-const statusStyles: Record<string, string> = {
-  AVAILABLE: "bg-copper/10 text-copper-dark border-copper/20 hover:bg-copper/10",
-  RESERVED: "bg-amber-900/10 text-amber-800 border-amber-800/15 hover:bg-amber-900/10",
-  SOLD: "bg-muted text-muted-foreground border-border hover:bg-muted",
+type ToneKey = "neutral" | "success" | "warning" | "danger" | "info";
+
+const toneClasses: Record<ToneKey, string> = {
+  neutral:
+    "bg-muted text-muted-foreground border-border",
+  success:
+    "bg-[var(--color-success-bg)] text-[var(--color-success)] border-[color-mix(in_srgb,var(--color-success)_20%,transparent)]",
+  warning:
+    "bg-[var(--color-warning-bg)] text-[var(--color-warning)] border-[color-mix(in_srgb,var(--color-warning)_20%,transparent)]",
+  danger:
+    "bg-[var(--color-danger-bg)] text-[var(--color-danger)] border-[color-mix(in_srgb,var(--color-danger)_20%,transparent)]",
+  info:
+    "bg-[var(--color-info-bg)] text-[var(--color-info)] border-[color-mix(in_srgb,var(--color-info)_20%,transparent)]",
 };
 
-export function StatusBadge({ status }: { status: string }) {
+const statusTone: Record<string, ToneKey> = {
+  AVAILABLE: "success",
+  RESERVED: "warning",
+  SOLD: "neutral",
+  available: "success",
+  reserved: "warning",
+  sold: "neutral",
+  published: "success",
+  draft: "warning",
+  archived: "neutral",
+  new: "info",
+  read: "neutral",
+  active: "success",
+  inactive: "neutral",
+};
+
+export interface StatusBadgeProps {
+  status: string;
+  tone?: ToneKey;
+  className?: string;
+}
+
+/**
+ * Compact status pill with semantic tone + mono label. Tone is derived from a
+ * known status string unless explicitly overridden.
+ */
+export function StatusBadge({ status, tone, className }: StatusBadgeProps) {
   const t = useTranslations("Status");
+  const resolvedTone: ToneKey = tone ?? statusTone[status] ?? "neutral";
+  const label = t.has(status as Parameters<typeof t.has>[0])
+    ? t(status as Parameters<typeof t>[0])
+    : status.replace(/_/g, " ");
 
   return (
-    <Badge
-      variant="outline"
-      className={`text-[10px] uppercase tracking-[0.08em] font-semibold ${statusStyles[status] ?? ""}`}
+    <span
+      className={cn(
+        "mono inline-flex items-center rounded-sm border px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-[0.06em]",
+        toneClasses[resolvedTone],
+        className,
+      )}
     >
-      {t(status as "AVAILABLE" | "RESERVED" | "SOLD")}
-    </Badge>
+      {label}
+    </span>
   );
 }
