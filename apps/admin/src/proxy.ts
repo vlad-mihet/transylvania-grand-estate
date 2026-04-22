@@ -4,7 +4,17 @@ import { routing } from "./i18n/routing";
 
 const intlMiddleware = createIntlMiddleware(routing);
 
-const publicPages = ["/login"];
+// Pages that must be reachable without a refreshToken cookie. Anything not
+// listed here will be redirected to /login on miss — and that redirect drops
+// the query string, so missing entries silently break token-based flows
+// (password reset link, invitation acceptance, OAuth callback).
+const publicPages = [
+  "/login",
+  "/forgot-password",
+  "/reset-password",
+  "/accept-invite",
+  "/auth/complete",
+];
 
 export function proxy(req: NextRequest) {
   const { pathname } = req.nextUrl;
