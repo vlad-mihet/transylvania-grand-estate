@@ -5,6 +5,7 @@ import { useSearchParams } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { Link, useRouter } from "@/i18n/navigation";
 import { apiFetch, ApiError } from "@/lib/api-client";
+import { PasswordStrength } from "@/components/password-strength";
 
 function ResetPasswordInner() {
   const t = useTranslations("Academy.resetPassword");
@@ -68,6 +69,7 @@ function ResetPasswordInner() {
               onChange={(e) => setPassword(e.target.value)}
               className="w-full rounded-md border border-[color:var(--color-border)] px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-[color:var(--color-ring)]"
             />
+            <PasswordStrength password={password} />
           </label>
           {error ? (
             <p className="text-sm text-red-600" role="alert">

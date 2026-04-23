@@ -10,11 +10,30 @@ const SITE = process.env.NEXT_PUBLIC_SITE ?? "ACADEMY";
 
 const ACCESS_TOKEN_KEY = "academy.accessToken";
 const REFRESH_TOKEN_KEY = "academy.refreshToken";
+// Non-HTTPOnly "I am logged in" hint cookie. The real tokens still live
+// in localStorage (middleware can't read those); this cookie lets the
+// Next.js middleware short-circuit to /login on protected routes without
+// a full client-side bounce. NOT a security boundary — client-side guards
+// remain authoritative. Migrating to HTTPOnly refresh cookies is a
+// separate hardening pass.
+const AUTH_HINT_COOKIE = "academy_auth";
+const AUTH_HINT_MAX_AGE_SECONDS = 7 * 24 * 60 * 60; // 7 days
+
+function setAuthHintCookie(): void {
+  if (typeof document === "undefined") return;
+  document.cookie = `${AUTH_HINT_COOKIE}=1; path=/; max-age=${AUTH_HINT_MAX_AGE_SECONDS}; samesite=lax`;
+}
+
+function clearAuthHintCookie(): void {
+  if (typeof document === "undefined") return;
+  document.cookie = `${AUTH_HINT_COOKIE}=; path=/; max-age=0; samesite=lax`;
+}
 
 export function setTokens(tokens: { accessToken: string; refreshToken: string }) {
   if (typeof window === "undefined") return;
   localStorage.setItem(ACCESS_TOKEN_KEY, tokens.accessToken);
   localStorage.setItem(REFRESH_TOKEN_KEY, tokens.refreshToken);
+  setAuthHintCookie();
 }
 
 export function getAccessToken(): string | null {
@@ -31,6 +50,7 @@ export function clearTokens() {
   if (typeof window === "undefined") return;
   localStorage.removeItem(ACCESS_TOKEN_KEY);
   localStorage.removeItem(REFRESH_TOKEN_KEY);
+  clearAuthHintCookie();
 }
 
 export interface ApiFetchOptions {

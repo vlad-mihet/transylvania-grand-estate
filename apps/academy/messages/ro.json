@@ -10,7 +10,52 @@
       "googleButton": "Continuă cu Google",
       "error": "Email sau parolă incorecte",
       "forgotPassword": "Ai uitat parola?",
-      "resetSuccess": "Parola a fost resetată. Te poți autentifica acum."
+      "resetSuccess": "Parola a fost resetată. Te poți autentifica acum.",
+      "noAccount": "Nou pe TGE Academy?",
+      "registerLink": "Creează un cont"
+    },
+    "register": {
+      "title": "Creează-ți contul",
+      "subtitle": "Deblochează toate cursurile TGE Academy — gratuit, în câteva minute.",
+      "nameLabel": "Nume",
+      "emailLabel": "Email",
+      "passwordLabel": "Parolă",
+      "submit": "Creează contul",
+      "submitting": "Se creează contul…",
+      "googleButton": "Continuă cu Google",
+      "haveAccount": "Ai deja cont?",
+      "loginLink": "Autentifică-te",
+      "sentTitle": "Verifică-ți inbox-ul",
+      "sentBody": "Dacă {email} nu este deja înregistrat, ți-am trimis un link de confirmare. Apasă-l pentru a-ți activa contul.",
+      "sentFootnote": "Nu ai primit email-ul?",
+      "sentResendLink": "Retrimite confirmarea"
+    },
+    "verifyEmail": {
+      "verifying": "Îți verificăm adresa de email…",
+      "successTitle": "Gata",
+      "successBody": "Te redirecționăm către cursurile tale…",
+      "expiredTitle": "Link expirat",
+      "expiredBody": "Acest link de confirmare a expirat sau a fost deja folosit. Solicită unul nou.",
+      "expiredAction": "Retrimite confirmarea",
+      "invalidTitle": "Link invalid",
+      "invalidBody": "Nu am putut verifica acest link. Poate a fost deja folosit sau copiat greșit.",
+      "invalidAction": "Creează un cont"
+    },
+    "resendVerification": {
+      "title": "Retrimite confirmarea",
+      "intro": "Introdu adresa ta de email. Dacă există un cont neconfirmat, îți trimitem un link nou.",
+      "emailLabel": "Email",
+      "submit": "Trimite linkul",
+      "submitting": "Se trimite…",
+      "sent": "Dacă există un cont neconfirmat cu această adresă, ți-am trimis un link nou.",
+      "backToLogin": "Înapoi la autentificare"
+    },
+    "passwordStrength": {
+      "ariaLabel": "Cerințe pentru parolă",
+      "rule_length": "Cel puțin 12 caractere",
+      "rule_lower": "Literă mică",
+      "rule_upper": "Literă mare",
+      "rule_digit": "Cifră"
     },
     "forgotPassword": {
       "title": "Resetare parolă",
@@ -67,7 +112,12 @@
       "newPasswordLabel": "Parolă nouă",
       "changePassword": "Schimbă parola",
       "passwordChanged": "Parola a fost actualizată",
-      "logout": "Deconectare"
+      "logout": "Deconectare",
+      "verificationTitle": "Confirmă-ți adresa de email",
+      "verificationBody": "Mai trebuie să-ți confirmi adresa de email. Nu ai primit linkul?",
+      "verificationResend": "Retrimite confirmarea",
+      "verificationSending": "Se trimite…",
+      "verificationSent": "Email-ul de confirmare a fost trimis."
     },
     "errors": {
       "generic": "A apărut o eroare. Încearcă din nou.",

@@ -17,6 +17,7 @@ type Profile = {
   email: string;
   name: string;
   locale: "ro" | "en" | "fr" | "de" | null;
+  emailVerifiedAt: string | null;
   lastLoginAt: string | null;
   createdAt: string;
 };
@@ -46,6 +47,27 @@ export default function AccountPage() {
   const [pwdSaving, setPwdSaving] = useState(false);
   const [pwdMsg, setPwdMsg] = useState<string | null>(null);
   const [pwdError, setPwdError] = useState<string | null>(null);
+
+  // Verification resend state
+  const [verificationMsg, setVerificationMsg] = useState<string | null>(null);
+  const [verificationSending, setVerificationSending] = useState(false);
+
+  async function onResendVerification() {
+    if (!profile) return;
+    setVerificationSending(true);
+    try {
+      await apiFetch("/academy/auth/resend-verification", {
+        method: "POST",
+        body: { email: profile.email },
+        skipAuth: true,
+      });
+    } catch {
+      // Anti-enumeration: the endpoint always 202s anyway. We
+      // intentionally don't surface failures to the user.
+    }
+    setVerificationMsg(t("account.verificationSent"));
+    setVerificationSending(false);
+  }
 
   useEffect(() => {
     if (!getAccessToken()) {
@@ -149,6 +171,34 @@ export default function AccountPage() {
       <AppHeader />
       <div className="mx-auto max-w-xl px-6 py-8">
         <h1 className="text-2xl font-semibold">{t("account.title")}</h1>
+
+        {!profile.emailVerifiedAt && (
+          <section className="mt-6 rounded-lg border border-amber-200 bg-amber-50 p-5">
+            <h2 className="text-sm font-semibold text-amber-900">
+              {t("account.verificationTitle")}
+            </h2>
+            <p className="mt-2 text-sm text-amber-800">
+              {t("account.verificationBody")}
+            </p>
+            <div className="mt-3 flex items-center gap-3">
+              <button
+                type="button"
+                onClick={onResendVerification}
+                disabled={verificationSending}
+                className="rounded-md bg-amber-600 px-3 py-1.5 text-xs font-medium text-white disabled:opacity-60"
+              >
+                {verificationSending
+                  ? t("account.verificationSending")
+                  : t("account.verificationResend")}
+              </button>
+              {verificationMsg ? (
+                <span className="text-xs text-amber-900" role="status">
+                  {verificationMsg}
+                </span>
+              ) : null}
+            </div>
+          </section>
+        )}
 
         <section className="mt-8 rounded-lg border border-[color:var(--color-border)] bg-white p-5">
           <h2 className="text-sm font-semibold uppercase tracking-wider text-[color:var(--color-muted-foreground)]">

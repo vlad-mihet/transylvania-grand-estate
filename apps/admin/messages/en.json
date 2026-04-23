@@ -895,6 +895,8 @@
     "expired": "Expired",
     "revoked": "Revoked",
     "bounced": "Bounced",
+    "verified": "Verified",
+    "unverified": "Unverified",
     "Property": "Property",
     "Inquiry": "Inquiry",
     "Article": "Article",
@@ -1045,6 +1047,10 @@
       "columnLocale": "Locale",
       "columnEnrollments": "Enrollments",
       "columnLastLogin": "Last login",
+      "columnVerified": "Verified",
+      "filterVerifiedTitle": "Email status",
+      "verifiedYes": "Verified",
+      "verifiedNo": "Unverified",
       "emptyTitle": "No students yet",
       "emptyDescription": "Invite your first student to get started.",
       "lastLoginNever": "Never",
@@ -1052,6 +1058,13 @@
       "detailBackToList": "Students",
       "detailLastLoginRecent": "last login {date}",
       "detailLastLoginNever": "never logged in",
+      "origin_invited": "Invited",
+      "origin_self-registered": "Self-registered",
+      "origin_admin-created": "Admin-created",
+      "verificationTitle": "Email not verified",
+      "verificationDescription": "This student hasn't clicked their verification link yet. Resend to drop a fresh one in their inbox.",
+      "verificationResend": "Resend verification email",
+      "verificationResending": "Sending…",
       "profileTitle": "Profile",
       "profileNameLabel": "Name",
       "profileLocaleLabel": "Preferred language",
@@ -1144,7 +1157,9 @@
       "invitationResent": "Invitation re-sent",
       "invitationResendFailed": "Failed to resend invitation",
       "invitationRevoked": "Invitation revoked",
-      "invitationRevokeFailed": "Failed to revoke invitation"
+      "invitationRevokeFailed": "Failed to revoke invitation",
+      "verificationResent": "Verification email sent",
+      "verificationResendFailed": "Failed to resend verification"
     }
   }
 }

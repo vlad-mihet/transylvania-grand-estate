@@ -9,6 +9,12 @@ import { Link } from "@/i18n/navigation";
 import { Can } from "@/components/shared/can";
 import { Mono } from "@/components/shared/mono";
 import { RelativeTime } from "@/components/shared/relative-time";
+import { StatusBadge } from "@/components/shared/status-badge";
+import {
+  FilterRail,
+  FilterGroup,
+  FilterCheckbox,
+} from "@/components/shared/filter-rail";
 import { ResourceListPage } from "@/components/resource/resource-list-page";
 import { type ColumnDef } from "@/components/resource/resource-table";
 import { useResourceList } from "@/hooks/use-resource-list";
@@ -19,10 +25,13 @@ type Student = {
   email: string;
   name: string;
   locale: string | null;
+  emailVerifiedAt: string | null;
   lastLoginAt: string | null;
   createdAt: string;
   _count: { enrollments: number };
 };
+
+type VerifiedFilter = "verified" | "unverified";
 
 type Course = {
   id: string;
@@ -35,12 +44,26 @@ export default function AcademyStudentsPage() {
   const t = useTranslations("Academy.students");
   const tc = useTranslations("Common");
   const [inviteOpen, setInviteOpen] = useState(false);
+  const [verifiedFilters, setVerifiedFilters] = useState<Set<VerifiedFilter>>(
+    () => new Set(),
+  );
+
+  // Server accepts `verified=true|false`; only pipe it through when
+  // exactly one filter chip is active. Both selected (or neither) means
+  // "no filter" so we omit the param.
+  const verifiedParam =
+    verifiedFilters.size === 1
+      ? verifiedFilters.has("verified")
+        ? "true"
+        : "false"
+      : undefined;
 
   const list = useResourceList<Student>({
     resource: "academy-students",
     endpoint: "/admin/academy/users",
     defaultSort: "newest",
     defaultLimit: 25,
+    extraParams: { verified: verifiedParam },
   });
 
   // Loaded once, scoped by the users list's active page so the invite
@@ -85,6 +108,16 @@ export default function AcademyStudentsPage() {
       ),
     },
     {
+      id: "verified",
+      header: t("columnVerified"),
+      cell: ({ row }) => (
+        <StatusBadge
+          status={row.original.emailVerifiedAt ? "verified" : "unverified"}
+          tone={row.original.emailVerifiedAt ? "success" : "warning"}
+        />
+      ),
+    },
+    {
       id: "enrollments",
       header: t("columnEnrollments"),
       cell: ({ row }) => <Mono>{row.original._count.enrollments}</Mono>,
@@ -115,6 +148,39 @@ export default function AcademyStudentsPage() {
           { value: "newest", label: tc("sortNewest") },
           { value: "oldest", label: tc("sortOldest") },
         ]}
+        filterRail={
+          <FilterRail
+            activeCount={verifiedFilters.size}
+            onClear={() => setVerifiedFilters(new Set())}
+          >
+            <FilterGroup title={t("filterVerifiedTitle")}>
+              <FilterCheckbox
+                label={t("verifiedYes")}
+                checked={verifiedFilters.has("verified")}
+                onChange={(checked) =>
+                  setVerifiedFilters((prev) => {
+                    const next = new Set(prev);
+                    if (checked) next.add("verified");
+                    else next.delete("verified");
+                    return next;
+                  })
+                }
+              />
+              <FilterCheckbox
+                label={t("verifiedNo")}
+                checked={verifiedFilters.has("unverified")}
+                onChange={(checked) =>
+                  setVerifiedFilters((prev) => {
+                    const next = new Set(prev);
+                    if (checked) next.add("unverified");
+                    else next.delete("unverified");
+                    return next;
+                  })
+                }
+              />
+            </FilterGroup>
+          </FilterRail>
+        }
         emptyTitle={t("emptyTitle")}
         emptyDescription={t("emptyDescription")}
         emptyAction={

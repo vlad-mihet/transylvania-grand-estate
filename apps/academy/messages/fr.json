@@ -10,7 +10,52 @@
       "googleButton": "Continuer avec Google",
       "error": "Email ou mot de passe incorrect",
       "forgotPassword": "Mot de passe oublié ?",
-      "resetSuccess": "Mot de passe réinitialisé. Vous pouvez vous connecter."
+      "resetSuccess": "Mot de passe réinitialisé. Vous pouvez vous connecter.",
+      "noAccount": "Nouveau ?",
+      "registerLink": "Créer un compte"
+    },
+    "register": {
+      "title": "Créez votre compte",
+      "subtitle": "Débloquez tous les cours TGE Academy — gratuit, en quelques minutes.",
+      "nameLabel": "Nom",
+      "emailLabel": "Email",
+      "passwordLabel": "Mot de passe",
+      "submit": "Créer le compte",
+      "submitting": "Création en cours…",
+      "googleButton": "Continuer avec Google",
+      "haveAccount": "Vous avez déjà un compte ?",
+      "loginLink": "Se connecter",
+      "sentTitle": "Vérifiez votre boîte",
+      "sentBody": "Si {email} n'est pas déjà inscrit, nous avons envoyé un lien de confirmation. Cliquez dessus pour activer votre compte.",
+      "sentFootnote": "Email non reçu ?",
+      "sentResendLink": "Renvoyer la confirmation"
+    },
+    "verifyEmail": {
+      "verifying": "Vérification de votre email…",
+      "successTitle": "C'est bon",
+      "successBody": "Redirection vers vos cours…",
+      "expiredTitle": "Lien expiré",
+      "expiredBody": "Ce lien de vérification a expiré ou a déjà été utilisé. Demandez-en un nouveau.",
+      "expiredAction": "Renvoyer la confirmation",
+      "invalidTitle": "Lien invalide",
+      "invalidBody": "Impossible de vérifier ce lien. Il a peut-être déjà été utilisé ou mal saisi.",
+      "invalidAction": "Créer un compte"
+    },
+    "resendVerification": {
+      "title": "Renvoyer la confirmation",
+      "intro": "Entrez votre email. Si un compte non vérifié existe, nous enverrons un nouveau lien.",
+      "emailLabel": "Email",
+      "submit": "Envoyer le lien",
+      "submitting": "Envoi…",
+      "sent": "Si un compte non vérifié existe avec cet email, nous avons envoyé un nouveau lien.",
+      "backToLogin": "Retour à la connexion"
+    },
+    "passwordStrength": {
+      "ariaLabel": "Exigences du mot de passe",
+      "rule_length": "Au moins 12 caractères",
+      "rule_lower": "Lettre minuscule",
+      "rule_upper": "Lettre majuscule",
+      "rule_digit": "Chiffre"
     },
     "forgotPassword": {
       "title": "Réinitialiser le mot de passe",
@@ -67,7 +112,12 @@
       "newPasswordLabel": "Nouveau mot de passe",
       "changePassword": "Changer le mot de passe",
       "passwordChanged": "Mot de passe mis à jour",
-      "logout": "Déconnexion"
+      "logout": "Déconnexion",
+      "verificationTitle": "Vérifiez votre email",
+      "verificationBody": "Vous devez encore confirmer votre adresse email. Lien non reçu ?",
+      "verificationResend": "Renvoyer la confirmation",
+      "verificationSending": "Envoi…",
+      "verificationSent": "Email de confirmation envoyé."
     },
     "errors": {
       "generic": "Une erreur s'est produite. Réessayez.",

@@ -10,7 +10,52 @@
       "googleButton": "Mit Google fortfahren",
       "error": "Falsche E-Mail oder falsches Passwort",
       "forgotPassword": "Passwort vergessen?",
-      "resetSuccess": "Passwort zurückgesetzt. Sie können sich jetzt anmelden."
+      "resetSuccess": "Passwort zurückgesetzt. Sie können sich jetzt anmelden.",
+      "noAccount": "Neu hier?",
+      "registerLink": "Konto erstellen"
+    },
+    "register": {
+      "title": "Konto erstellen",
+      "subtitle": "Schalten Sie alle TGE Academy-Kurse frei — kostenlos, in wenigen Minuten.",
+      "nameLabel": "Name",
+      "emailLabel": "E-Mail",
+      "passwordLabel": "Passwort",
+      "submit": "Konto erstellen",
+      "submitting": "Konto wird erstellt…",
+      "googleButton": "Mit Google fortfahren",
+      "haveAccount": "Haben Sie bereits ein Konto?",
+      "loginLink": "Anmelden",
+      "sentTitle": "Posteingang prüfen",
+      "sentBody": "Falls {email} noch nicht registriert ist, haben wir einen Bestätigungslink gesendet. Klicken Sie ihn, um Ihr Konto zu aktivieren.",
+      "sentFootnote": "E-Mail nicht erhalten?",
+      "sentResendLink": "Bestätigung erneut senden"
+    },
+    "verifyEmail": {
+      "verifying": "E-Mail wird verifiziert…",
+      "successTitle": "Geschafft",
+      "successBody": "Wir leiten Sie zu Ihren Kursen weiter…",
+      "expiredTitle": "Link abgelaufen",
+      "expiredBody": "Dieser Bestätigungslink ist abgelaufen oder wurde bereits verwendet. Fordern Sie einen neuen an.",
+      "expiredAction": "Bestätigung erneut senden",
+      "invalidTitle": "Ungültiger Link",
+      "invalidBody": "Dieser Link konnte nicht verifiziert werden. Möglicherweise wurde er bereits verwendet oder falsch eingegeben.",
+      "invalidAction": "Konto erstellen"
+    },
+    "resendVerification": {
+      "title": "Bestätigung erneut senden",
+      "intro": "Geben Sie Ihre E-Mail ein. Falls ein unverifiziertes Konto existiert, senden wir einen neuen Link.",
+      "emailLabel": "E-Mail",
+      "submit": "Link senden",
+      "submitting": "Wird gesendet…",
+      "sent": "Falls ein unverifiziertes Konto mit dieser E-Mail existiert, haben wir einen neuen Link gesendet.",
+      "backToLogin": "Zurück zur Anmeldung"
+    },
+    "passwordStrength": {
+      "ariaLabel": "Passwortanforderungen",
+      "rule_length": "Mindestens 12 Zeichen",
+      "rule_lower": "Kleinbuchstabe",
+      "rule_upper": "Großbuchstabe",
+      "rule_digit": "Ziffer"
     },
     "forgotPassword": {
       "title": "Passwort zurücksetzen",
@@ -67,7 +112,12 @@
       "newPasswordLabel": "Neues Passwort",
       "changePassword": "Passwort ändern",
       "passwordChanged": "Passwort aktualisiert",
-      "logout": "Abmelden"
+      "logout": "Abmelden",
+      "verificationTitle": "E-Mail bestätigen",
+      "verificationBody": "Sie müssen Ihre E-Mail-Adresse noch bestätigen. Link nicht erhalten?",
+      "verificationResend": "Bestätigung erneut senden",
+      "verificationSending": "Wird gesendet…",
+      "verificationSent": "Bestätigungs-E-Mail gesendet."
     },
     "errors": {
       "generic": "Etwas ist schiefgegangen. Bitte erneut versuchen.",

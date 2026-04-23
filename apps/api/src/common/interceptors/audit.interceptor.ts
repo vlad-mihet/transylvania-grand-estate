@@ -517,6 +517,14 @@ function classifyAcademy(
   }
 
   if (area === 'users') {
+    // /admin/academy/users/:id/resend-verification — admin-triggered
+    // resend of the verification email on an unverified student.
+    if (third === 'resend-verification' && method === 'POST') {
+      return {
+        resource: 'AcademyUser',
+        action: 'academy-user.resend-verification',
+      };
+    }
     return {
       resource: 'AcademyUser',
       action: `academy-user.${verbFor(method)}`,

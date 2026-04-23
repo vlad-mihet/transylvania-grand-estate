@@ -75,6 +75,6 @@ import { EnrolledGuard } from './guards/enrolled.guard';
     AcademyUsersService,
     EnrolledGuard,
   ],
-  exports: [AcademyAuthService],
+  exports: [AcademyAuthService, AcademyInvitationsService],
 })
 export class AcademyModule {}

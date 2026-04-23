@@ -23,6 +23,7 @@ import {
 } from './dto/invite-academy-user.dto';
 import type { AcademyInvitationLocale } from '../../email/templates/academy-invitation.template';
 import { pickLocalized } from '../utils/locale-fallback';
+import { withAdvisoryLock } from '../../common/utils/advisory-lock.util';
 
 const DEFAULT_EXPIRES_DAYS = 7;
 const BCRYPT_COST = 12;
@@ -345,6 +346,12 @@ export class AcademyInvitationsService {
 
   @Cron(CronExpression.EVERY_HOUR)
   async expireStale(): Promise<void> {
+    await withAdvisoryLock(this.prisma, 'academy-invitation.expire', () =>
+      this.expireStaleInner(),
+    );
+  }
+
+  private async expireStaleInner(): Promise<void> {
     const { count } = await this.prisma.academyInvitation.updateMany({
       where: {
         status: InvitationStatus.PENDING,
@@ -353,8 +360,199 @@ export class AcademyInvitationsService {
       data: { status: InvitationStatus.EXPIRED },
     });
     if (count > 0) {
+      this.metrics.academyInvitations.inc({ outcome: 'expired' }, count);
       this.logger.log({ event: 'academy.invitation.expired_bulk', count });
     }
+  }
+
+  /**
+   * Retry cron for academy invitations whose email failed to send. Same
+   * shape as the admin `invitations.service.ts:retryFailedEmails` —
+   * exponential backoff, cap at 5 attempts, token regenerated each time.
+   * Bounces are OUT of scope here (webhook marks them BOUNCED); this cron
+   * only retries rows where the send attempt itself failed.
+   */
+  @Cron(CronExpression.EVERY_10_MINUTES)
+  async retryFailedEmails(): Promise<void> {
+    await withAdvisoryLock(this.prisma, 'academy-invitation.retry', () =>
+      this.retryFailedEmailsInner(),
+    );
+  }
+
+  private async retryFailedEmailsInner(): Promise<void> {
+    const BACKOFFS_MS = [
+      1 * 60_000,
+      5 * 60_000,
+      15 * 60_000,
+      60 * 60_000,
+      4 * 60 * 60_000,
+    ];
+    const MAX_ATTEMPTS = BACKOFFS_MS.length;
+
+    const candidates = await this.prisma.academyInvitation.findMany({
+      where: {
+        status: InvitationStatus.PENDING,
+        emailSentAt: null,
+        emailAttempts: { lt: MAX_ATTEMPTS },
+        expiresAt: { gt: new Date() },
+      },
+      take: 50,
+      orderBy: { emailLastAttemptAt: { sort: 'asc', nulls: 'first' } },
+    });
+
+    for (const inv of candidates) {
+      const lastAttempt = inv.emailLastAttemptAt?.getTime() ?? 0;
+      const dueAt =
+        lastAttempt +
+        BACKOFFS_MS[Math.min(inv.emailAttempts, BACKOFFS_MS.length - 1)];
+      if (lastAttempt > 0 && Date.now() < dueAt) continue;
+
+      const { plaintext, hash } = this.generateToken();
+      await this.prisma.academyInvitation.update({
+        where: { id: inv.id },
+        data: { tokenHash: hash },
+      });
+
+      await this.sendInvitationEmail({
+        invitationId: inv.id,
+        to: inv.email,
+        name: inv.email.split('@')[0] ?? 'Student',
+        plaintext,
+        expiresAt: inv.expiresAt,
+        actorId: inv.invitedById,
+        locale: 'ro',
+        initialCourseId: inv.initialCourseId,
+      });
+    }
+
+    if (candidates.length > 0) {
+      this.logger.log({
+        event: 'academy.invitation.retry_processed',
+        count: candidates.length,
+      });
+    }
+  }
+
+  /**
+   * Hourly reminder sweep for invitations expiring in 23–25h. Rotates the
+   * token (the original plaintext isn't recoverable) and sends the
+   * academy-branded reminder email. `reminderSentAt` ensures each row
+   * gets at most one nudge even if the cron runs mid-window twice.
+   */
+  @Cron(CronExpression.EVERY_HOUR)
+  async sendExpiryReminders(): Promise<void> {
+    await withAdvisoryLock(this.prisma, 'academy-invitation.reminder', () =>
+      this.sendExpiryRemindersInner(),
+    );
+  }
+
+  private async sendExpiryRemindersInner(): Promise<void> {
+    const now = new Date();
+    const windowStart = new Date(now.getTime() + 23 * 60 * 60 * 1000);
+    const windowEnd = new Date(now.getTime() + 25 * 60 * 60 * 1000);
+
+    const candidates = await this.prisma.academyInvitation.findMany({
+      where: {
+        status: InvitationStatus.PENDING,
+        emailSentAt: { not: null },
+        reminderSentAt: null,
+        expiresAt: { gte: windowStart, lte: windowEnd },
+      },
+      take: 50,
+    });
+
+    for (const inv of candidates) {
+      const { plaintext, hash } = this.generateToken();
+      await this.prisma.academyInvitation.update({
+        where: { id: inv.id },
+        data: { tokenHash: hash },
+      });
+      const acceptUrl = this.buildAcceptUrl(plaintext);
+      const result = await this.emailService.sendAcademyInvitationReminder(
+        inv.email,
+        {
+          name: inv.email.split('@')[0] ?? 'Student',
+          acceptUrl,
+          expiresAt: inv.expiresAt,
+          locale: 'ro',
+        },
+      );
+      // Mark `reminderSentAt` regardless of delivery result — bounces
+      // land on the webhook path; a transient send failure here would
+      // otherwise re-fire the same reminder on every subsequent hour.
+      await this.prisma.academyInvitation.update({
+        where: { id: inv.id },
+        data: { reminderSentAt: new Date() },
+      });
+      if (!result.ok) {
+        this.logger.warn({
+          event: 'academy.invitation.reminder_failed',
+          invitationId: inv.id,
+          reason: result.reason,
+        });
+      }
+    }
+    if (candidates.length > 0) {
+      this.logger.log({
+        event: 'academy.invitation.reminder_batch_sent',
+        count: candidates.length,
+      });
+    }
+  }
+
+  /**
+   * Webhook-driven bounce flip. Signature mirrors `InvitationsService.
+   * markBounced` so the `/webhooks/resend` dispatcher can hand off to
+   * either service with the same input shape. Soft bounces stay PENDING
+   * (retry cron handles them); hard bounces + complaints flip to BOUNCED.
+   */
+  async markBounced(args: {
+    resendEmailId: string | null;
+    email: string;
+    reason: 'hard' | 'soft' | 'complaint';
+  }): Promise<{ matched: boolean; invitationId?: string }> {
+    const where = args.resendEmailId
+      ? { resendEmailId: args.resendEmailId }
+      : {
+          email: args.email.toLowerCase(),
+          status: InvitationStatus.PENDING as InvitationStatus,
+        };
+    const target = await this.prisma.academyInvitation.findFirst({
+      where,
+      orderBy: { createdAt: 'desc' },
+    });
+    if (!target) {
+      this.logger.warn({
+        event: 'academy.invitation.bounce_unmatched',
+        reason: args.reason,
+      });
+      return { matched: false };
+    }
+    if (target.status === InvitationStatus.ACCEPTED) {
+      // Late-arriving bounce on an already-accepted invitation is a
+      // ghost — user already completed the flow out of band.
+      return { matched: false };
+    }
+    await this.prisma.academyInvitation.update({
+      where: { id: target.id },
+      data: {
+        status:
+          args.reason === 'soft'
+            ? target.status
+            : InvitationStatus.BOUNCED,
+        bouncedAt: new Date(),
+        bounceReason: args.reason,
+      },
+    });
+    if (args.reason !== 'soft') {
+      this.metrics.academyInvitations.inc({ outcome: 'bounced' });
+    }
+    this.logger.log({
+      event: 'academy.invitation.bounced',
+      invitationId: target.id,
+      reason: args.reason,
+    });
+    return { matched: true, invitationId: target.id };
   }
 
   private async sendInvitationEmail(args: {

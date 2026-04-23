@@ -893,6 +893,8 @@
     "expired": "Expirée",
     "revoked": "Révoquée",
     "bounced": "Rejetée",
+    "verified": "Vérifié",
+    "unverified": "Non vérifié",
     "Property": "Propriété",
     "Inquiry": "Demande",
     "Article": "Article",
@@ -1043,6 +1045,10 @@
       "columnLocale": "Langue",
       "columnEnrollments": "Inscriptions",
       "columnLastLogin": "Dernière connexion",
+      "columnVerified": "Vérifié",
+      "filterVerifiedTitle": "Statut email",
+      "verifiedYes": "Vérifié",
+      "verifiedNo": "Non vérifié",
       "emptyTitle": "Aucun étudiant pour le moment",
       "emptyDescription": "Invitez votre premier étudiant pour commencer.",
       "lastLoginNever": "Jamais",
@@ -1050,6 +1056,13 @@
       "detailBackToList": "Étudiants",
       "detailLastLoginRecent": "dernière connexion {date}",
       "detailLastLoginNever": "jamais connecté",
+      "origin_invited": "Invité",
+      "origin_self-registered": "Auto-inscrit",
+      "origin_admin-created": "Créé par l'admin",
+      "verificationTitle": "Email non vérifié",
+      "verificationDescription": "Cet étudiant n'a pas encore cliqué sur son lien de vérification. Renvoyez-en un nouveau dans sa boîte.",
+      "verificationResend": "Renvoyer l'email de vérification",
+      "verificationResending": "Envoi…",
       "profileTitle": "Profil",
       "profileNameLabel": "Nom",
       "profileLocaleLabel": "Langue préférée",
@@ -1142,7 +1155,9 @@
       "invitationResent": "Invitation renvoyée",
       "invitationResendFailed": "Échec du renvoi de l'invitation",
       "invitationRevoked": "Invitation révoquée",
-      "invitationRevokeFailed": "Échec de la révocation de l'invitation"
+      "invitationRevokeFailed": "Échec de la révocation de l'invitation",
+      "verificationResent": "Email de vérification envoyé",
+      "verificationResendFailed": "Échec du renvoi de la vérification"
     }
   }
 }

@@ -14,6 +14,7 @@ import { createHash, randomBytes, randomUUID } from 'node:crypto';
 import { PrismaService } from '../../prisma/prisma.service';
 import { EmailService } from '../../email/email.service';
 import { MetricsService } from '../../metrics/metrics.service';
+import { AuditService } from '../../audit/audit.service';
 import { AcademyLoginDto } from './dto/login.dto';
 import { AcademyChangePasswordDto } from './dto/change-password.dto';
 import type {
@@ -21,6 +22,11 @@ import type {
   AcademyResetPasswordDto,
   UpdateAcademyProfileDto,
 } from './dto/forgot-password.dto';
+import type {
+  AcademyRegisterDto,
+  AcademyResendVerificationDto,
+  AcademyVerifyEmailDto,
+} from './dto/register.dto';
 
 interface AcademyAuthUserShape {
   id: string;
@@ -44,6 +50,7 @@ export class AcademyAuthService {
     private readonly configService: ConfigService,
     private readonly emailService: EmailService,
     private readonly metrics: MetricsService,
+    private readonly auditService: AuditService,
   ) {}
 
   async login(dto: AcademyLoginDto) {
@@ -125,6 +132,35 @@ export class AcademyAuthService {
   }
 
   /**
+   * Returning-user signup / sign-in via Google — if the Google identity
+   * already maps to an academy user, issue tokens; otherwise call
+   * `provisionViaGoogleSignup` to create the user inline. This is the
+   * idempotent entry point for the `intent=register` OAuth branch, so
+   * a user who clicks "Sign up with Google" twice doesn't get a
+   * confusing "email already exists" error.
+   */
+  async signInOrProvisionViaGoogle(profile: {
+    providerAccountId: string;
+    email: string;
+    firstName?: string | null;
+    lastName?: string | null;
+  }): Promise<{ accessToken: string; refreshToken: string; user: AcademyAuthUserShape }> {
+    const identity = await this.prisma.academyUserIdentity.findUnique({
+      where: {
+        provider_providerAccountId: {
+          provider: 'GOOGLE',
+          providerAccountId: profile.providerAccountId,
+        },
+      },
+      select: { userId: true },
+    });
+    if (identity) {
+      return this.issueTokensForUserId(identity.userId);
+    }
+    return this.provisionViaGoogleSignup(profile);
+  }
+
+  /**
    * Google sign-in for a returning academy user. Same philosophy as the
    * admin flow: no email-fallback lookup — an unknown Google account at
    * /academy/auth/google means they haven't been invited (or unlinked),
@@ -182,6 +218,7 @@ export class AcademyAuthService {
         email: true,
         name: true,
         locale: true,
+        emailVerifiedAt: true,
         lastLoginAt: true,
         createdAt: true,
       },
@@ -202,6 +239,7 @@ export class AcademyAuthService {
         email: true,
         name: true,
         locale: true,
+        emailVerifiedAt: true,
         lastLoginAt: true,
         createdAt: true,
       },
@@ -330,6 +368,394 @@ export class AcademyAuthService {
       .getOrThrow<string>('ACADEMY_PUBLIC_URL')
       .replace(/\/$/, '');
     return `${base}/reset-password?token=${encodeURIComponent(token)}`;
+  }
+
+  private buildVerificationUrl(token: string): string {
+    const base = this.configService
+      .getOrThrow<string>('ACADEMY_PUBLIC_URL')
+      .replace(/\/$/, '');
+    return `${base}/verify-email?token=${encodeURIComponent(token)}`;
+  }
+
+  /**
+   * Public self-service registration. Always returns 202 regardless of
+   * whether the email is new, a pending unverified dup, or a taken
+   * verified account — the response copy on the controller is the
+   * anti-enumeration generic "check your inbox". The real signal lives
+   * in the metrics counter (`outcome` label).
+   *
+   * Side-effect: creates a fresh AcademyUser (if new) or rotates the
+   * verification token + re-sends the email (if pending). For verified
+   * addresses, no DB writes; the counter fires `email_taken` and the
+   * endpoint still returns 202.
+   *
+   * Anti-abuse: the tight controller throttle (3/min) is the primary
+   * defence; the email-verification gate ensures no tokens are issued
+   * without a working inbox. If scraping ever becomes a problem, add
+   * hCaptcha on the frontend — don't weaken the silent-202 pattern.
+   */
+  async register(dto: AcademyRegisterDto): Promise<{ ok: true }> {
+    const normalizedEmail = dto.email.toLowerCase();
+    const existing = await this.prisma.academyUser.findUnique({
+      where: { email: normalizedEmail },
+      select: {
+        id: true,
+        email: true,
+        name: true,
+        locale: true,
+        emailVerifiedAt: true,
+      },
+    });
+
+    if (existing?.emailVerifiedAt) {
+      this.metrics.academyRegistrations.inc({ outcome: 'email_taken' });
+      this.logger.debug({
+        event: 'academy.register.email_taken_verified',
+        toDomain: emailDomain(normalizedEmail),
+      });
+      return { ok: true };
+    }
+
+    const passwordHash = await bcrypt.hash(dto.password, 12);
+    const locale = dto.locale ?? 'ro';
+    let userId: string;
+    let name: string;
+
+    if (existing) {
+      // Unverified retry — update password + name so the most-recent
+      // register attempt wins, then rotate the verification token. This
+      // gracefully handles "I typed my password wrong in the form".
+      await this.prisma.academyUser.update({
+        where: { id: existing.id },
+        data: { passwordHash, name: dto.name, locale },
+      });
+      userId = existing.id;
+      name = dto.name;
+    } else {
+      const created = await this.prisma.academyUser.create({
+        data: {
+          email: normalizedEmail,
+          passwordHash,
+          name: dto.name,
+          locale,
+        },
+        select: { id: true, name: true },
+      });
+      userId = created.id;
+      name = created.name;
+    }
+
+    await this.issueVerificationToken(userId, normalizedEmail, name, locale);
+    this.metrics.academyRegistrations.inc({ outcome: 'requested' });
+    // Self-attributed audit entry — the registrant is both actor and
+    // subject. A separate `academy-user.verify-email` row lands when the
+    // token is consumed, so the audit trail captures both halves of the
+    // flow (and reveals abandoned verifications as "register without a
+    // matching verify").
+    void this.auditService.record({
+      actorId: userId,
+      action: 'academy-user.self-register',
+      resource: 'AcademyUser',
+      resourceId: userId,
+    });
+    return { ok: true };
+  }
+
+  /**
+   * Consumes a verification token. On success: marks `emailVerifiedAt`,
+   * grants a wildcard `AcademyEnrollment` (open-catalog auto-enrollment),
+   * and issues access + refresh tokens so the caller lands on the
+   * dashboard without a second login round-trip.
+   *
+   * Wildcard grant caveat: this assumes every published course is free.
+   * If paid courses land later, the enrollment creation here must become
+   * per-course or no-grant (with checkout producing the enrollment).
+   *
+   * Concurrency: `updateMany(usedAt IS NULL)` is the atomic claim. Two
+   * parallel requests with the same token — only one sees `count=1`;
+   * the second gets 410.
+   */
+  async verifyEmail(
+    dto: AcademyVerifyEmailDto,
+  ): Promise<{ accessToken: string; refreshToken: string; user: AcademyAuthUserShape }> {
+    const tokenHash = createHash('sha256').update(dto.token).digest('hex');
+    const record = await this.prisma.academyEmailVerificationToken.findUnique({
+      where: { tokenHash },
+    });
+    if (!record) {
+      this.metrics.academyVerifications.inc({ outcome: 'invalid' });
+      throw new NotFoundException('Verification token not found');
+    }
+    if (record.usedAt) {
+      this.metrics.academyVerifications.inc({ outcome: 'already_verified' });
+      throw new GoneException('Verification token already used');
+    }
+    if (record.expiresAt < new Date()) {
+      this.metrics.academyVerifications.inc({ outcome: 'expired' });
+      throw new GoneException('Verification token has expired');
+    }
+
+    const user = await this.prisma.$transaction(async (tx) => {
+      const claim = await tx.academyEmailVerificationToken.updateMany({
+        where: { id: record.id, usedAt: null },
+        data: { usedAt: new Date() },
+      });
+      if (claim.count === 0) {
+        throw new GoneException('Verification token already used');
+      }
+      const updated = await tx.academyUser.update({
+        where: { id: record.userId },
+        data: { emailVerifiedAt: new Date(), lastLoginAt: new Date() },
+        select: { id: true, email: true, name: true },
+      });
+      // Wildcard enrollment — grantedById NULL marks this as a
+      // self-service row so audit dashboards can tell it apart from
+      // admin grants. `createMany + skipDuplicates` handles the edge
+      // case where an invitation already granted one: Prisma's
+      // compound-unique-with-null doesn't match via upsert (SQL treats
+      // nulls as not-equal-to-null), so a plain create() followed by
+      // a duplicate catch is the canonical workaround.
+      await tx.academyEnrollment.createMany({
+        data: [
+          {
+            userId: updated.id,
+            courseId: null,
+            grantedById: null,
+          },
+        ],
+        skipDuplicates: true,
+      });
+      return updated;
+    });
+
+    this.metrics.academyVerifications.inc({ outcome: 'success' });
+    this.metrics.academyRegistrations.inc({ outcome: 'verified' });
+    void this.auditService.record({
+      actorId: user.id,
+      action: 'academy-user.verify-email',
+      resource: 'AcademyUser',
+      resourceId: user.id,
+    });
+    return this.generateTokens(this.shape(user));
+  }
+
+  /**
+   * Resends a verification email. Anti-enumeration: returns 202 whether
+   * the address exists, is already verified, or was never seen. Only the
+   * "exists and not yet verified" case triggers a new token + email.
+   */
+  async resendVerification(
+    dto: AcademyResendVerificationDto,
+  ): Promise<{ ok: true }> {
+    const normalizedEmail = dto.email.toLowerCase();
+    const user = await this.prisma.academyUser.findUnique({
+      where: { email: normalizedEmail },
+      select: {
+        id: true,
+        email: true,
+        name: true,
+        locale: true,
+        emailVerifiedAt: true,
+      },
+    });
+    if (!user || user.emailVerifiedAt) {
+      this.logger.debug({
+        event: 'academy.resend_verification.noop',
+        toDomain: emailDomain(normalizedEmail),
+        reason: user ? 'already_verified' : 'unknown_email',
+      });
+      return { ok: true };
+    }
+    await this.issueVerificationToken(
+      user.id,
+      user.email,
+      user.name,
+      user.locale ?? 'ro',
+    );
+    return { ok: true };
+  }
+
+  /**
+   * Admin-triggered variant of resendVerification. Unlike the public
+   * endpoint, this one surfaces "already verified" / "user not found"
+   * as real errors because the admin is authenticated and the anti-
+   * enumeration concern doesn't apply.
+   */
+  async adminResendVerification(userId: string): Promise<{ ok: true }> {
+    const user = await this.prisma.academyUser.findUnique({
+      where: { id: userId },
+      select: {
+        id: true,
+        email: true,
+        name: true,
+        locale: true,
+        emailVerifiedAt: true,
+      },
+    });
+    if (!user) throw new NotFoundException('Academy user not found');
+    if (user.emailVerifiedAt) {
+      throw new GoneException({
+        message: 'User email is already verified',
+        code: 'ALREADY_VERIFIED',
+      });
+    }
+    await this.issueVerificationToken(
+      user.id,
+      user.email,
+      user.name,
+      user.locale ?? 'ro',
+    );
+    return { ok: true };
+  }
+
+  /**
+   * Writes a fresh verification token and sends the email. Existing
+   * unused tokens for the same user are invalidated (single outstanding
+   * link at any time) to avoid confusion when a user requests a resend.
+   */
+  private async issueVerificationToken(
+    userId: string,
+    email: string,
+    name: string,
+    locale: string,
+  ): Promise<void> {
+    const plaintext = randomBytes(32).toString('base64url');
+    const tokenHash = createHash('sha256').update(plaintext).digest('hex');
+    const expiresAt = new Date(Date.now() + 24 * 60 * 60 * 1000); // 24h
+
+    await this.prisma.$transaction([
+      this.prisma.academyEmailVerificationToken.updateMany({
+        where: { userId, usedAt: null },
+        data: { usedAt: new Date() },
+      }),
+      this.prisma.academyEmailVerificationToken.create({
+        data: { userId, email, tokenHash, expiresAt },
+      }),
+    ]);
+
+    const verifyUrl = this.buildVerificationUrl(plaintext);
+    const mailResult = await this.emailService.sendAcademyVerification(email, {
+      name,
+      verifyUrl,
+      expiresAt,
+      locale: locale === 'ro' ? 'ro' : 'en',
+    });
+    if (!mailResult.ok) {
+      this.logger.warn({
+        event: 'academy.verification.send_failed',
+        toDomain: emailDomain(email),
+        reason: mailResult.reason,
+      });
+    }
+  }
+
+  /**
+   * Daily cron: purge consumed / long-expired verification tokens. Runs
+   * alongside the reset-token purge on the same 3AM schedule.
+   */
+  @Cron(CronExpression.EVERY_DAY_AT_3AM)
+  async purgeVerificationTokens(): Promise<void> {
+    const cutoff = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
+    await this.prisma.academyEmailVerificationToken.deleteMany({
+      where: {
+        OR: [{ expiresAt: { lt: cutoff } }, { usedAt: { lt: cutoff } }],
+      },
+    });
+  }
+
+  /**
+   * Self-service account provisioning via Google. Reached from the
+   * `/academy/auth/google?intent=register` callback when no existing
+   * identity/user matches the Google profile. Creates the user + Google
+   * identity + wildcard enrollment in one transaction; email counts as
+   * verified because Google's strategy rejects unverified accounts.
+   *
+   * Merge edge case: if an invitation was sent to the same email but
+   * never accepted, mark it ACCEPTED (acceptedVia: 'google') so the
+   * reminder cron doesn't later nudge a user who already has access.
+   */
+  async provisionViaGoogleSignup(profile: {
+    providerAccountId: string;
+    email: string;
+    firstName?: string | null;
+    lastName?: string | null;
+  }): Promise<{ accessToken: string; refreshToken: string; user: AcademyAuthUserShape }> {
+    const normalizedEmail = profile.email.toLowerCase();
+    const displayName =
+      [profile.firstName, profile.lastName].filter(Boolean).join(' ').trim() ||
+      normalizedEmail.split('@')[0];
+
+    const result = await this.prisma.$transaction(async (tx) => {
+      // Email collision: if the email already has an academy account,
+      // that account owns the inbox — we don't let a Google sign-up
+      // silently link to it (the user would still need to prove
+      // control of the password path). Fail and prompt them to sign in.
+      const existing = await tx.academyUser.findUnique({
+        where: { email: normalizedEmail },
+        select: { id: true },
+      });
+      if (existing) {
+        throw new ForbiddenException({
+          message:
+            'An academy account already exists for this email. Sign in instead.',
+          code: 'EMAIL_EXISTS',
+        });
+      }
+
+      const user = await tx.academyUser.create({
+        data: {
+          email: normalizedEmail,
+          name: displayName,
+          // Google email is pre-verified (strategy rejects unverified).
+          emailVerifiedAt: new Date(),
+          lastLoginAt: new Date(),
+        },
+        select: { id: true, email: true, name: true },
+      });
+
+      await tx.academyUserIdentity.create({
+        data: {
+          userId: user.id,
+          provider: 'GOOGLE',
+          providerAccountId: profile.providerAccountId,
+          email: normalizedEmail,
+          emailVerified: true,
+        },
+      });
+
+      await tx.academyEnrollment.create({
+        data: {
+          userId: user.id,
+          courseId: null,
+          grantedById: null,
+        },
+      });
+
+      // Merge: any pending invitation for this email is now moot.
+      await tx.academyInvitation.updateMany({
+        where: {
+          email: normalizedEmail,
+          status: 'PENDING',
+        },
+        data: {
+          status: 'ACCEPTED',
+          acceptedAt: new Date(),
+          acceptedVia: 'google',
+          acceptedUserId: user.id,
+        },
+      });
+
+      return user;
+    });
+
+    this.metrics.academyRegistrations.inc({ outcome: 'verified' });
+    void this.auditService.record({
+      actorId: result.id,
+      action: 'academy-user.google-signup',
+      resource: 'AcademyUser',
+      resourceId: result.id,
+    });
+    return this.generateTokens(this.shape(result));
   }
 
   private shape(user: {

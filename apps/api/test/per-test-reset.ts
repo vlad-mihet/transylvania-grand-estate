@@ -26,6 +26,7 @@ const TRUNCATE_ORDER = [
   // within this block, but the explicit sequence documents intent.
   'academy_revoked_tokens',
   'academy_password_reset_tokens',
+  'academy_email_verification_tokens',
   'academy_user_identities',
   'academy_enrollments',
   'academy_invitations',

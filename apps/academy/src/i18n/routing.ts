@@ -13,6 +13,9 @@ export const routing = defineRouting({
   pathnames: {
     "/": "/",
     "/login": "/login",
+    "/register": "/register",
+    "/verify-email": "/verify-email",
+    "/resend-verification": "/resend-verification",
     "/forgot-password": "/forgot-password",
     "/reset-password": "/reset-password",
     "/accept-invite": "/accept-invite",

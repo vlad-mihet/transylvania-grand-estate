@@ -28,6 +28,11 @@ import {
   AcademyResetPasswordDto,
   UpdateAcademyProfileDto,
 } from './dto/forgot-password.dto';
+import {
+  AcademyRegisterDto,
+  AcademyResendVerificationDto,
+  AcademyVerifyEmailDto,
+} from './dto/register.dto';
 import { Public } from '../../common/decorators/public.decorator';
 import { Realm } from '../../common/decorators/realm.decorator';
 import {
@@ -117,6 +122,45 @@ export class AcademyAuthController {
     return this.authService.requestPasswordReset(dto);
   }
 
+  /**
+   * Public self-service registration. Always-202 response — the same
+   * "check your inbox" message covers new accounts, retries, and taken
+   * addresses so the endpoint never reveals whether the email is in the
+   * pool. Tight throttle (3/min/IP) because hot-path cost is an email.
+   */
+  @Public()
+  @Throttle({ default: { ttl: 60_000, limit: 3 } })
+  @Post('register')
+  async register(@Body() dto: AcademyRegisterDto) {
+    return this.authService.register(dto);
+  }
+
+  /**
+   * Consumes the token from the verification email. Success returns
+   * `{ accessToken, refreshToken, user }` — the client stores both and
+   * lands on the dashboard. Verification also flips the wildcard
+   * AcademyEnrollment on so every published course is immediately
+   * readable.
+   */
+  @Public()
+  @Throttle({ default: { ttl: 60_000, limit: 10 } })
+  @Post('verify-email')
+  async verifyEmail(@Body() dto: AcademyVerifyEmailDto) {
+    return this.authService.verifyEmail(dto);
+  }
+
+  /**
+   * Re-sends a verification email for a pending self-registration.
+   * Silently returns 202 for unknown / already-verified addresses to
+   * match the anti-enumeration posture of /register.
+   */
+  @Public()
+  @Throttle({ default: { ttl: 60_000, limit: 2 } })
+  @Post('resend-verification')
+  async resendVerification(@Body() dto: AcademyResendVerificationDto) {
+    return this.authService.resendVerification(dto);
+  }
+
   @Public()
   @Throttle({ default: { ttl: 60_000, limit: 5 } })
   @Post('reset-password')
@@ -145,11 +189,15 @@ export class AcademyAuthController {
   @Get('google')
   async googleAuth(
     @Query('invitation') invitation: string | undefined,
+    @Query('intent') intent: string | undefined,
     @Req() req: ExpressRequest,
     @Res() res: ExpressResponse,
   ) {
     this.ensureGoogleConfigured();
-    const state = this.signOAuthState({ invitation: invitation ?? null });
+    const state = this.signOAuthState({
+      invitation: invitation ?? null,
+      intent: intent === 'register' ? 'register' : null,
+    });
     const clientId = this.config.getOrThrow<string>('GOOGLE_CLIENT_ID');
     const callback = this.config.getOrThrow<string>('GOOGLE_ACADEMY_CALLBACK_URL');
     const params = new URLSearchParams({
@@ -188,27 +236,49 @@ export class AcademyAuthController {
     }
 
     let invitationToken: string | null = null;
+    let intent: 'register' | null = null;
     if (rawState) {
       try {
         const payload = this.verifyOAuthState(rawState);
         invitationToken = payload.invitation ?? null;
+        intent = payload.intent === 'register' ? 'register' : null;
       } catch {
         return this.redirectWithError(res, academyBase, 'state_invalid');
       }
     }
 
     try {
-      const tokens = invitationToken
-        ? await this.invitationsService.acceptWithGoogle(invitationToken, {
+      let tokens: { refreshToken: string };
+      if (invitationToken) {
+        // Invitation path wins over register intent — a user who
+        // received an invite should consume it (even if they arrived
+        // via the /register button).
+        tokens = await this.invitationsService.acceptWithGoogle(
+          invitationToken,
+          {
             providerAccountId: profile.providerAccountId,
             email: profile.email,
             firstName: profile.firstName,
             lastName: profile.lastName,
-          })
-        : await this.authService.signInWithGoogle({
-            providerAccountId: profile.providerAccountId,
-            email: profile.email,
-          });
+          },
+        );
+      } else if (intent === 'register') {
+        // Self-service signup via Google. The helper is idempotent:
+        // returning users get tokens, new Google accounts get a fresh
+        // AcademyUser + wildcard enrollment. EMAIL_EXISTS only fires
+        // when a non-Google account already owns the email.
+        tokens = await this.authService.signInOrProvisionViaGoogle({
+          providerAccountId: profile.providerAccountId,
+          email: profile.email,
+          firstName: profile.firstName,
+          lastName: profile.lastName,
+        });
+      } else {
+        tokens = await this.authService.signInWithGoogle({
+          providerAccountId: profile.providerAccountId,
+          email: profile.email,
+        });
+      }
 
       const fragment = new URLSearchParams({
         rt: tokens.refreshToken,
@@ -242,16 +312,23 @@ export class AcademyAuthController {
     }
   }
 
-  private signOAuthState(payload: { invitation: string | null }): string {
+  private signOAuthState(payload: {
+    invitation: string | null;
+    intent: 'register' | null;
+  }): string {
     const secret = this.config.getOrThrow<string>('INVITATION_TOKEN_SECRET');
     return this.jwtService.sign(payload, { secret, expiresIn: '10m' });
   }
 
-  private verifyOAuthState(state: string): { invitation: string | null } {
+  private verifyOAuthState(state: string): {
+    invitation: string | null;
+    intent?: 'register' | null;
+  } {
     const secret = this.config.getOrThrow<string>('INVITATION_TOKEN_SECRET');
-    return this.jwtService.verify<{ invitation: string | null }>(state, {
-      secret,
-    });
+    return this.jwtService.verify<{
+      invitation: string | null;
+      intent?: 'register' | null;
+    }>(state, { secret });
   }
 
   private getAcademyBase(): string {

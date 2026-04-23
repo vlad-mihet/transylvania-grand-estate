@@ -69,6 +69,26 @@ export class MockEmailService {
     });
     return { ok: true as const, id: 'mock-id' };
   }
+
+  async sendAcademyVerification(to: string, input: { verifyUrl: string }) {
+    this.captured.push({
+      to,
+      template: 'academy-verification',
+      url: input.verifyUrl,
+      subject: 'academy-verification',
+    });
+    return { ok: true as const, id: 'mock-id' };
+  }
+
+  async sendAcademyInvitationReminder(to: string, input: { acceptUrl: string }) {
+    this.captured.push({
+      to,
+      template: 'academy-invitation-reminder',
+      url: input.acceptUrl,
+      subject: 'academy-reminder',
+    });
+    return { ok: true as const, id: 'mock-id' };
+  }
 }
 
 /**

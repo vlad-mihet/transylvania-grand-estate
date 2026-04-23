@@ -728,21 +728,27 @@ enum LessonStatus {
 }
 
 model AcademyUser {
-  id           String    @id @default(uuid())
-  email        String    @unique
+  id              String    @id @default(uuid())
+  email           String    @unique
   // Nullable for SSO-only accounts (mirror AdminUser.passwordHash).
-  passwordHash String?   @map("password_hash")
-  name         String
+  passwordHash    String?   @map("password_hash")
+  name            String
   // Preferred UI locale, e.g. "ro" | "en" | "fr" | "de". Null → defaultLocale.
-  locale       String?
-  lastLoginAt  DateTime? @map("last_login_at")
-  createdAt    DateTime  @default(now()) @map("created_at")
-  updatedAt    DateTime  @updatedAt @map("updated_at")
+  locale          String?
+  // Set when a user clicks the email verification link after self-registration,
+  // or immediately on Google signup (Google email is pre-verified). Null until
+  // then — the verifyEmail flow gates token issuance + wildcard enrollment on
+  // this column.
+  emailVerifiedAt DateTime? @map("email_verified_at")
+  lastLoginAt     DateTime? @map("last_login_at")
+  createdAt       DateTime  @default(now()) @map("created_at")
+  updatedAt       DateTime  @updatedAt @map("updated_at")
 
-  identities   AcademyUserIdentity[]
-  enrollments  AcademyEnrollment[]
-  invitations  AcademyInvitation[]        @relation("AcademyInvitationAcceptedUser")
-  resetTokens  AcademyPasswordResetToken[]
+  identities         AcademyUserIdentity[]
+  enrollments        AcademyEnrollment[]
+  invitations        AcademyInvitation[]             @relation("AcademyInvitationAcceptedUser")
+  resetTokens        AcademyPasswordResetToken[]
+  verificationTokens AcademyEmailVerificationToken[]
 
   @@map("academy_users")
 }
@@ -789,6 +795,9 @@ model AcademyInvitation {
   resendEmailId      String?          @map("resend_email_id")
   bouncedAt          DateTime?        @map("bounced_at")
   bounceReason       String?          @map("bounce_reason")
+  // Set by the hourly reminder cron after sending the 24h-expiry warning email;
+  // ensures each invitation receives at most one reminder.
+  reminderSentAt     DateTime?        @map("reminder_sent_at")
   createdAt          DateTime         @default(now()) @map("created_at")
   updatedAt          DateTime         @updatedAt @map("updated_at")
 
@@ -796,6 +805,26 @@ model AcademyInvitation {
   @@index([status, expiresAt])
   @@index([invitedById])
   @@map("academy_invitations")
+}
+
+/// Email-verification tokens issued during self-service registration. Parallel
+/// shape to AcademyPasswordResetToken: plaintext never persisted, only sha256
+/// hash; one-shot via atomic updateMany(usedAt IS NULL).
+model AcademyEmailVerificationToken {
+  id        String      @id @default(uuid())
+  tokenHash String      @unique @map("token_hash")
+  userId    String      @map("user_id")
+  user      AcademyUser @relation(fields: [userId], references: [id], onDelete: Cascade)
+  // Snapshot of the email at send time; if the user later changes their email,
+  // existing tokens remain tied to the address they were issued for.
+  email     String
+  expiresAt DateTime    @map("expires_at")
+  usedAt    DateTime?   @map("used_at")
+  createdAt DateTime    @default(now()) @map("created_at")
+
+  @@index([userId])
+  @@index([expiresAt])
+  @@map("academy_email_verification_tokens")
 }
 
 /// Self-serve password reset for AcademyUsers with a passwordHash set.
@@ -877,18 +906,22 @@ model Lesson {
 }
 
 /// Grants an AcademyUser access to academy content. `courseId` nullable:
-/// NULL = wildcard "all current + future courses". Per-course access is
-/// expressed as a non-null row. `grantedById` references AdminUser (no FK
-/// — cross-surface) to record who issued the grant; `revokedAt` soft-deletes.
+/// NULL courseId = wildcard "all current + future courses". Per-course access
+/// is expressed as a non-null row. `grantedById` references AdminUser (no FK
+/// — cross-surface); NULL means the row was created by the self-service
+/// registration flow (no admin grantor). `revokedAt` soft-deletes.
 model AcademyEnrollment {
-  id          String    @id @default(uuid())
-  userId      String    @map("user_id")
+  id          String      @id @default(uuid())
+  userId      String      @map("user_id")
   user        AcademyUser @relation(fields: [userId], references: [id], onDelete: Cascade)
-  courseId    String?   @map("course_id")
-  course      Course?   @relation(fields: [courseId], references: [id], onDelete: Cascade)
-  grantedById String    @map("granted_by_id")
-  enrolledAt  DateTime  @default(now()) @map("enrolled_at")
-  revokedAt   DateTime? @map("revoked_at")
+  courseId    String?     @map("course_id")
+  course      Course?     @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  // NULL = self-service signup (open-catalog registration). Admin-granted rows
+  // MUST populate this column — the invitations + enrollments services enforce
+  // that invariant.
+  grantedById String?     @map("granted_by_id")
+  enrolledAt  DateTime    @default(now()) @map("enrolled_at")
+  revokedAt   DateTime?   @map("revoked_at")
 
   @@unique([userId, courseId])
   @@index([userId])

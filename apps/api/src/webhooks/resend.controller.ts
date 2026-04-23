@@ -17,6 +17,7 @@ import type { Request } from 'express';
 import { Webhook } from 'svix';
 import { Public } from '../common/decorators/public.decorator';
 import { InvitationsService } from '../invitations/invitations.service';
+import { AcademyInvitationsService } from '../academy/invitations/academy-invitations.service';
 
 /**
  * Shape Resend emits for `email.*` events. Typed minimally; we don't rely
@@ -53,6 +54,7 @@ export class ResendWebhookController {
   constructor(
     private readonly config: ConfigService,
     private readonly invitations: InvitationsService,
+    private readonly academyInvitations: AcademyInvitationsService,
   ) {}
 
   @Public()
@@ -109,7 +111,7 @@ export class ResendWebhookController {
     switch (event.type) {
       case 'email.bounced': {
         const bounceType = event.data.bounce?.type;
-        await this.invitations.markBounced({
+        await this.dispatchBounce({
           resendEmailId: event.data.email_id,
           email: to,
           reason: bounceType === 'soft' ? 'soft' : 'hard',
@@ -117,7 +119,7 @@ export class ResendWebhookController {
         break;
       }
       case 'email.complained': {
-        await this.invitations.markBounced({
+        await this.dispatchBounce({
           resendEmailId: event.data.email_id,
           email: to,
           reason: 'complaint',
@@ -134,6 +136,30 @@ export class ResendWebhookController {
         break;
       default:
         this.logger.log(`Unhandled Resend event type: ${event.type}`);
+    }
+  }
+
+  /**
+   * Dispatch a bounce/complaint to whichever invitation owns the email.
+   * `resendEmailId` is globally unique across admin + academy sends, so a
+   * match on it is authoritative. If neither service recognises the id or
+   * recipient, the event is logged and discarded — unmatched bounces
+   * are almost always transactional mail that never created an invitation
+   * row (e.g. password reset, verification).
+   */
+  private async dispatchBounce(input: {
+    resendEmailId: string;
+    email: string;
+    reason: 'hard' | 'soft' | 'complaint';
+  }): Promise<void> {
+    const admin = await this.invitations.markBounced(input);
+    if (admin.matched) return;
+    const academy = await this.academyInvitations.markBounced(input);
+    if (!academy.matched) {
+      this.logger.debug({
+        event: 'webhook.resend.bounce_unmatched',
+        reason: input.reason,
+      });
     }
   }
 }

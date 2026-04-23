@@ -13,7 +13,7 @@ export class AcademyUsersService {
   constructor(private readonly prisma: PrismaService) {}
 
   async list(query: ListAcademyUsersDto) {
-    const { page = 1, limit = 20, search, enrolled, sort } = query;
+    const { page = 1, limit = 20, search, enrolled, verified, sort } = query;
     const where: Prisma.AcademyUserWhereInput = {};
     if (search) {
       where.OR = [
@@ -25,6 +25,11 @@ export class AcademyUsersService {
       where.enrollments = { some: { revokedAt: null } };
     } else if (enrolled === false) {
       where.enrollments = { none: { revokedAt: null } };
+    }
+    if (verified === true) {
+      where.emailVerifiedAt = { not: null };
+    } else if (verified === false) {
+      where.emailVerifiedAt = null;
     }
     const orderBy: Prisma.AcademyUserOrderByWithRelationInput =
       sort === 'oldest'
@@ -45,6 +50,7 @@ export class AcademyUsersService {
             email: true,
             name: true,
             locale: true,
+            emailVerifiedAt: true,
             lastLoginAt: true,
             createdAt: true,
             _count: { select: { enrollments: { where: { revokedAt: null } } } },
@@ -65,11 +71,20 @@ export class AcademyUsersService {
           email: true,
           name: true,
           locale: true,
+          emailVerifiedAt: true,
           lastLoginAt: true,
           createdAt: true,
           enrollments: {
             where: { revokedAt: null },
-            include: { course: { select: { id: true, slug: true, title: true } } },
+            select: {
+              id: true,
+              courseId: true,
+              // Expose grantedById so the admin UI can label each row
+              // "Self-service" (null) vs. "Granted by X" (admin id).
+              grantedById: true,
+              enrolledAt: true,
+              course: { select: { id: true, slug: true, title: true } },
+            },
           },
           identities: {
             select: { id: true, provider: true, email: true, emailVerified: true },

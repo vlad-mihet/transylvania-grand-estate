@@ -130,6 +130,24 @@ export class MetricsService {
     registers: [this.registry],
   });
 
+  readonly academyRegistrations = new Counter({
+    name: 'tge_academy_registrations_total',
+    help: 'Academy self-service registration lifecycle events',
+    // requested = register endpoint accepted (new row or silent re-send);
+    // verified = verify-email consumed; expired = verification token expired
+    // before consumption; email_taken = would-be duplicate address (silent 202
+    // returned to caller; row not created).
+    labelNames: ['outcome'] as const,
+    registers: [this.registry],
+  });
+
+  readonly academyVerifications = new Counter({
+    name: 'tge_academy_verifications_total',
+    help: 'Academy email-verification token consumption attempts',
+    labelNames: ['outcome'] as const,
+    registers: [this.registry],
+  });
+
   constructor() {
     // Default Node.js process metrics (event loop lag, GC, heap, RSS). Cheap
     // to collect, invaluable for diagnosing "is it the app or the infra".

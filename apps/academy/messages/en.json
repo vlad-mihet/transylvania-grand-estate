@@ -10,7 +10,52 @@
       "googleButton": "Continue with Google",
       "error": "Incorrect email or password",
       "forgotPassword": "Forgot your password?",
-      "resetSuccess": "Your password has been reset. Sign in now."
+      "resetSuccess": "Your password has been reset. Sign in now.",
+      "noAccount": "New here?",
+      "registerLink": "Create an account"
+    },
+    "register": {
+      "title": "Create your account",
+      "subtitle": "Unlock every TGE Academy course — free, in minutes.",
+      "nameLabel": "Name",
+      "emailLabel": "Email",
+      "passwordLabel": "Password",
+      "submit": "Create account",
+      "submitting": "Creating account…",
+      "googleButton": "Continue with Google",
+      "haveAccount": "Already have an account?",
+      "loginLink": "Sign in",
+      "sentTitle": "Check your inbox",
+      "sentBody": "If {email} isn’t already registered, we’ve sent a verification link. Click it to activate your account.",
+      "sentFootnote": "Didn’t get the email?",
+      "sentResendLink": "Resend verification"
+    },
+    "verifyEmail": {
+      "verifying": "Verifying your email…",
+      "successTitle": "You’re in",
+      "successBody": "Redirecting you to your courses…",
+      "expiredTitle": "Link expired",
+      "expiredBody": "This verification link has expired or been used already. Request a new one.",
+      "expiredAction": "Resend verification",
+      "invalidTitle": "Link invalid",
+      "invalidBody": "We couldn’t verify that link. It may have been used already or typed incorrectly.",
+      "invalidAction": "Create an account"
+    },
+    "resendVerification": {
+      "title": "Resend verification",
+      "intro": "Enter your email. If an unverified account exists, we’ll send a fresh link.",
+      "emailLabel": "Email",
+      "submit": "Send link",
+      "submitting": "Sending…",
+      "sent": "If an unverified account exists with that email, we’ve sent a fresh link.",
+      "backToLogin": "Back to sign in"
+    },
+    "passwordStrength": {
+      "ariaLabel": "Password requirements",
+      "rule_length": "At least 12 characters",
+      "rule_lower": "Lowercase letter",
+      "rule_upper": "Uppercase letter",
+      "rule_digit": "Number"
     },
     "forgotPassword": {
       "title": "Reset your password",
@@ -67,7 +112,12 @@
       "newPasswordLabel": "New password",
       "changePassword": "Change password",
       "passwordChanged": "Password updated",
-      "logout": "Sign out"
+      "logout": "Sign out",
+      "verificationTitle": "Verify your email",
+      "verificationBody": "You still need to confirm your email address. Didn’t get the link?",
+      "verificationResend": "Resend verification",
+      "verificationSending": "Sending…",
+      "verificationSent": "Verification email sent."
     },
     "errors": {
       "generic": "Something went wrong. Please try again.",

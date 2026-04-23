@@ -895,6 +895,8 @@
     "expired": "Expirată",
     "revoked": "Revocată",
     "bounced": "Respinsă",
+    "verified": "Verificat",
+    "unverified": "Neverificat",
     "Property": "Proprietate",
     "Inquiry": "Cerere",
     "Article": "Articol",
@@ -1045,6 +1047,10 @@
       "columnLocale": "Limbă",
       "columnEnrollments": "Înrolări",
       "columnLastLogin": "Ultima autentificare",
+      "columnVerified": "Verificat",
+      "filterVerifiedTitle": "Status email",
+      "verifiedYes": "Verificat",
+      "verifiedNo": "Neverificat",
       "emptyTitle": "Niciun student încă",
       "emptyDescription": "Invită primul student ca să începi.",
       "lastLoginNever": "Niciodată",
@@ -1052,6 +1058,13 @@
       "detailBackToList": "Studenți",
       "detailLastLoginRecent": "ultima autentificare {date}",
       "detailLastLoginNever": "nu s-a autentificat niciodată",
+      "origin_invited": "Invitat",
+      "origin_self-registered": "Auto-înregistrat",
+      "origin_admin-created": "Creat de admin",
+      "verificationTitle": "Email neverificat",
+      "verificationDescription": "Acest student nu a apăsat încă linkul de confirmare. Retrimite-i unul proaspăt.",
+      "verificationResend": "Retrimite email de confirmare",
+      "verificationResending": "Se trimite…",
       "profileTitle": "Profil",
       "profileNameLabel": "Nume",
       "profileLocaleLabel": "Limba preferată",
@@ -1144,7 +1157,9 @@
       "invitationResent": "Invitație retrimisă",
       "invitationResendFailed": "Nu am putut retrimite invitația",
       "invitationRevoked": "Invitație revocată",
-      "invitationRevokeFailed": "Nu am putut revoca invitația"
+      "invitationRevokeFailed": "Nu am putut revoca invitația",
+      "verificationResent": "Email de confirmare trimis",
+      "verificationResendFailed": "Nu am putut retrimite confirmarea"
     }
   }
 }

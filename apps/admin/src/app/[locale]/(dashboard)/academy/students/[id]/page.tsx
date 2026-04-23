@@ -31,11 +31,13 @@ import { pickTitle, WILDCARD_COURSE_VALUE } from "@/lib/academy/pick-title";
 
 type Enrollment = {
   id: string;
-  userId: string;
+  userId?: string;
   courseId: string | null;
-  grantedById: string;
+  // Nullable: null = self-service signup; non-null = granted by the admin
+  // with that id.
+  grantedById: string | null;
   enrolledAt: string;
-  revokedAt: string | null;
+  revokedAt?: string | null;
   course: {
     id: string;
     slug: string;
@@ -57,6 +59,7 @@ type Student = {
   email: string;
   name: string;
   locale: StudentLocale | null;
+  emailVerifiedAt: string | null;
   lastLoginAt: string | null;
   createdAt: string;
   enrollments: Enrollment[];
@@ -201,6 +204,21 @@ export default function AcademyStudentDetailPage() {
       ),
   });
 
+  const resendVerificationMutation = useMutation({
+    mutationFn: () =>
+      apiClient(`/admin/academy/users/${params.id}/resend-verification`, {
+        method: "POST",
+        body: {},
+      }),
+    onSuccess: () => {
+      toast.success(tt("verificationResent"));
+    },
+    onError: (err) =>
+      toast.error(
+        err instanceof ApiError ? err.message : tt("verificationResendFailed"),
+      ),
+  });
+
   const student = studentQuery.data;
   const activeEnrollments = useMemo(
     () =>
@@ -235,6 +253,29 @@ export default function AcademyStudentDetailPage() {
   const effectiveLocale: StudentLocale =
     localeDraft ?? student.locale ?? "ro";
 
+  // Origin is "Invited" if any invitation has been accepted for this
+  // email; otherwise "Self-registered" when the oldest enrollment was
+  // granted without an admin actor; fall back to "Admin-created" for
+  // the rare edge case where someone was seeded directly.
+  const acceptedInvitation = invitationsQuery.data?.data.find(
+    (inv) => inv.status === "ACCEPTED",
+  );
+  const oldestEnrollment = student.enrollments.reduce<Enrollment | null>(
+    (oldest, current) => {
+      if (!oldest) return current;
+      return new Date(current.enrolledAt) < new Date(oldest.enrolledAt)
+        ? current
+        : oldest;
+    },
+    null,
+  );
+  const origin: "invited" | "self-registered" | "admin-created" =
+    acceptedInvitation
+      ? "invited"
+      : oldestEnrollment && oldestEnrollment.grantedById === null
+        ? "self-registered"
+        : "admin-created";
+
   return (
     <div className="space-y-6">
       <PageHeader
@@ -257,9 +298,37 @@ export default function AcademyStudentDetailPage() {
       />
 
       <div className="mx-auto flex w-full max-w-3xl flex-col gap-5">
-        <p className="-mt-3 text-xs">
+        <div className="-mt-3 flex flex-wrap items-center gap-2 text-xs">
           <Mono className="text-muted-foreground">{student.email}</Mono>
-        </p>
+          <StatusBadge
+            status={student.emailVerifiedAt ? "verified" : "unverified"}
+            tone={student.emailVerifiedAt ? "success" : "warning"}
+          />
+          <span className="rounded-full border border-border px-2 py-0.5 text-[10px] uppercase tracking-[0.06em] text-muted-foreground">
+            {t(`origin_${origin}`)}
+          </span>
+        </div>
+
+        {!student.emailVerifiedAt && (
+          <SectionCard title={t("verificationTitle")}>
+            <p className="text-sm text-muted-foreground">
+              {t("verificationDescription")}
+            </p>
+            <div className="mt-4">
+              <Can action="academy.user.manage">
+                <Button
+                  size="sm"
+                  disabled={resendVerificationMutation.isPending}
+                  onClick={() => resendVerificationMutation.mutate()}
+                >
+                  {resendVerificationMutation.isPending
+                    ? t("verificationResending")
+                    : t("verificationResend")}
+                </Button>
+              </Can>
+            </div>
+          </SectionCard>
+        )}
 
         <SectionCard title={t("profileTitle")}>
           <div className="flex flex-col gap-4">

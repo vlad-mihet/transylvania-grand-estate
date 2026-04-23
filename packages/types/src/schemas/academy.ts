@@ -155,6 +155,12 @@ export const listAcademyUsersSchema = paginationSchema.extend({
   enrolled: z
     .union([z.boolean(), z.enum(["true", "false"]).transform((v) => v === "true")])
     .optional(),
+  // Filter on whether the student's email has been verified. Surfaces both
+  // self-registered-but-unverified accounts and Google/invited accounts
+  // (both of which are verified at creation time).
+  verified: z
+    .union([z.boolean(), z.enum(["true", "false"]).transform((v) => v === "true")])
+    .optional(),
   sort: z.enum(["newest", "oldest", "lastLogin"]).optional(),
 });
 
@@ -277,6 +283,52 @@ export const updateAcademyProfileSchema = z
     locale: z.enum(["ro", "en", "fr", "de"]).nullable().optional(),
   })
   .strict();
+
+/**
+ * Public self-service registration for the academy. Unlike invitations
+ * (admin-issued), this endpoint is open to anyone; bot defence is the
+ * rate limit on the controller + the email-verification gate (no tokens
+ * issued until the user clicks the link). Successful registration creates
+ * an unverified AcademyUser and emails a verification link.
+ */
+export const academyRegisterSchema = z
+  .object({
+    email: z.string().email().max(200),
+    password: passwordPolicy,
+    name: z.string().min(2).max(200),
+    locale: z.enum(["ro", "en", "fr", "de"]).optional(),
+  })
+  .strict();
+
+/**
+ * Completes self-service registration. Atomic one-shot via `updateMany`
+ * on `usedAt IS NULL`; on success the server marks `emailVerifiedAt`,
+ * grants a wildcard `AcademyEnrollment`, and returns access + refresh
+ * tokens so the caller can land on the dashboard without a second login.
+ */
+export const academyVerifyEmailSchema = z
+  .object({
+    token: z.string().min(16).max(256),
+  })
+  .strict();
+
+/**
+ * Re-sends the verification email for a pending self-registration.
+ * Anti-enumeration: always returns 202 whether the address exists or is
+ * already verified. Controller-level throttle is tight (2/min) because
+ * the happy-path cost is a Resend API call.
+ */
+export const academyResendVerificationSchema = z
+  .object({
+    email: z.string().email().max(200),
+  })
+  .strict();
+
+export type AcademyRegisterInput = z.infer<typeof academyRegisterSchema>;
+export type AcademyVerifyEmailInput = z.infer<typeof academyVerifyEmailSchema>;
+export type AcademyResendVerificationInput = z.infer<
+  typeof academyResendVerificationSchema
+>;
 
 export type AcademyLoginInput = z.infer<typeof academyLoginSchema>;
 export type AcademyRefreshInput = z.infer<typeof academyRefreshSchema>;

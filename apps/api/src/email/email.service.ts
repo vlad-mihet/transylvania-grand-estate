@@ -22,6 +22,14 @@ import {
   renderAcademyPasswordReset,
   type AcademyPasswordResetInput,
 } from './templates/academy-password-reset.template';
+import {
+  renderAcademyVerification,
+  type AcademyVerificationInput,
+} from './templates/academy-verification.template';
+import {
+  renderAcademyInvitationReminder,
+  type AcademyInvitationReminderInput,
+} from './templates/academy-invitation-reminder.template';
 
 /**
  * Thin wrapper over Resend. Two design choices:
@@ -105,6 +113,34 @@ export class EmailService implements OnModuleInit {
       html,
       text,
       template: 'academy-password-reset',
+    });
+  }
+
+  async sendAcademyVerification(
+    to: string,
+    input: AcademyVerificationInput,
+  ): Promise<SendResult> {
+    const { subject, html, text } = renderAcademyVerification(input);
+    return this.deliver({
+      to,
+      subject,
+      html,
+      text,
+      template: 'academy-verification',
+    });
+  }
+
+  async sendAcademyInvitationReminder(
+    to: string,
+    input: AcademyInvitationReminderInput,
+  ): Promise<SendResult> {
+    const { subject, html, text } = renderAcademyInvitationReminder(input);
+    return this.deliver({
+      to,
+      subject,
+      html,
+      text,
+      template: 'academy-invitation-reminder',
     });
   }
 
