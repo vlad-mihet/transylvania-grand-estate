@@ -782,7 +782,8 @@
     "title": "Pagina Negăsită",
     "description": "Pagina pe care o cauți nu există sau a fost mutată.",
     "goHome": "Acasă",
-    "browseProperties": "Răsfoiește Proprietăți"
+    "browseProperties": "Răsfoiește Proprietăți",
+    "browseArticles": "Citește Articole"
   },
   "ErrorPage": {
     "title": "Ceva nu a funcționat",

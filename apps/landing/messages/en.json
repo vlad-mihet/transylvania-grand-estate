@@ -640,6 +640,13 @@
     "title": "Page Not Found",
     "description": "The page you're looking for may have been moved or no longer exists. Let us help you find what you're looking for.",
     "goHome": "Go Home",
-    "browseProperties": "Browse Properties"
+    "browseProperties": "Browse Properties",
+    "learnMore": "About Us"
+  },
+  "ErrorPage": {
+    "title": "Something went wrong",
+    "description": "We couldn't load this content right now. Please try again.",
+    "retry": "Try again",
+    "goHome": "Go home"
   }
 }

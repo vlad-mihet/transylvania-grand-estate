@@ -640,6 +640,13 @@
     "title": "Seite Nicht Gefunden",
     "description": "Die gesuchte Seite wurde möglicherweise verschoben oder existiert nicht mehr. Lassen Sie uns Ihnen helfen, das Gewünschte zu finden.",
     "goHome": "Startseite",
-    "browseProperties": "Immobilien Durchsuchen"
+    "browseProperties": "Immobilien Durchsuchen",
+    "learnMore": "Über Uns"
+  },
+  "ErrorPage": {
+    "title": "Etwas ist schiefgelaufen",
+    "description": "Wir konnten diesen Inhalt derzeit nicht laden. Bitte versuchen Sie es erneut.",
+    "retry": "Erneut versuchen",
+    "goHome": "Startseite"
   }
 }

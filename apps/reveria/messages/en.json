@@ -782,7 +782,8 @@
     "title": "Page Not Found",
     "description": "The page you're looking for doesn't exist or has been moved.",
     "goHome": "Go Home",
-    "browseProperties": "Browse Properties"
+    "browseProperties": "Browse Properties",
+    "browseArticles": "Read Articles"
   },
   "ErrorPage": {
     "title": "Something went wrong",

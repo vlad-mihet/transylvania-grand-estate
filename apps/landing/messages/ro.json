@@ -640,6 +640,13 @@
     "title": "Pagină Negăsită",
     "description": "Pagina pe care o cauți poate fi mutată sau nu mai există. Lasă-ne să te ajutăm să găsești ceea ce cauți.",
     "goHome": "Acasă",
-    "browseProperties": "Răsfoiește Proprietăți"
+    "browseProperties": "Răsfoiește Proprietăți",
+    "learnMore": "Despre Noi"
+  },
+  "ErrorPage": {
+    "title": "Ceva nu a funcționat",
+    "description": "Nu am putut încărca acest conținut acum. Te rugăm să încerci din nou.",
+    "retry": "Încearcă din nou",
+    "goHome": "Acasă"
   }
 }

@@ -640,6 +640,13 @@
     "title": "Page Non Trouvée",
     "description": "La page que vous recherchez a peut-être été déplacée ou n'existe plus. Laissez-nous vous aider à trouver ce que vous cherchez.",
     "goHome": "Accueil",
-    "browseProperties": "Parcourir les Propriétés"
+    "browseProperties": "Parcourir les Propriétés",
+    "learnMore": "À Propos"
+  },
+  "ErrorPage": {
+    "title": "Une erreur est survenue",
+    "description": "Nous n'avons pas pu charger ce contenu pour le moment. Veuillez réessayer.",
+    "retry": "Réessayer",
+    "goHome": "Accueil"
   }
 }

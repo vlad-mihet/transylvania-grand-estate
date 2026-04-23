@@ -779,10 +779,11 @@
     "cookies": "Cookie Policy"
   },
   "NotFoundPage": {
-    "title": "Page Not Found",
-    "description": "The page you're looking for doesn't exist or has been moved.",
-    "goHome": "Go Home",
-    "browseProperties": "Browse Properties"
+    "title": "Seite nicht gefunden",
+    "description": "Die gesuchte Seite existiert nicht oder wurde verschoben.",
+    "goHome": "Startseite",
+    "browseProperties": "Immobilien durchsuchen",
+    "browseArticles": "Artikel lesen"
   },
   "ErrorPage": {
     "title": "Etwas ist schiefgelaufen",
