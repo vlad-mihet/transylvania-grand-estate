@@ -2,7 +2,7 @@ import Image from "next/image";
 import { notFound } from "next/navigation";
 import { getTranslations, getLocale } from "next-intl/server";
 import { Link } from "@/i18n/navigation";
-import { fetchApi, fetchApiSafe } from "@tge/api-client";
+import { fetchApiSafe } from "@tge/api-client";
 import { mapApiArticle, mapApiArticles } from "@tge/api-client";
 import type { ApiArticle, Article, Locale } from "@tge/types";
 import { localize } from "@tge/utils";
@@ -28,22 +28,21 @@ const categoryColors: Record<string, string> = {
 
 export async function generateMetadata({ params }: { params: Promise<Params> }) {
   const { locale, slug } = await params;
-  try {
-    const raw = await fetchApi<ApiArticle>(`/articles/${slug}`);
-    const article = mapApiArticle(raw);
-    return createMetadata({
-      title: localize(article.title, locale),
-      description: localize(article.excerpt, locale),
-      path: `/blog/${slug}`,
-      locale,
-      image: article.coverImage ?? null,
-      type: "article",
-      publishedTime: article.publishedAt,
-      authors: [article.authorName],
-    });
-  } catch {
-    return {};
-  }
+  // Metadata is best-effort: any failure (404, network, 5xx) returns an empty
+  // object so the page can still render without crashing the SEO pipeline.
+  const result = await fetchApiSafe<ApiArticle>(`/articles/${slug}`);
+  if (!result.ok) return {};
+  const article = mapApiArticle(result.data);
+  return createMetadata({
+    title: localize(article.title, locale),
+    description: localize(article.excerpt, locale),
+    path: `/blog/${slug}`,
+    locale,
+    image: article.coverImage ?? null,
+    type: "article",
+    publishedTime: article.publishedAt,
+    authors: [article.authorName],
+  });
 }
 
 export default async function ArticleDetailPage({ params }: { params: Promise<Params> }) {
@@ -53,13 +52,16 @@ export default async function ArticleDetailPage({ params }: { params: Promise<Pa
   const tBreadcrumb = await getTranslations("Breadcrumb");
   const locale = await getLocale() as Locale;
 
-  let article;
-  try {
-    const raw = await fetchApi<ApiArticle>(`/articles/${slug}`);
-    article = mapApiArticle(raw);
-  } catch {
-    notFound();
+  // Only call notFound() when the API genuinely returns 404. Network errors,
+  // 5xx, and malformed responses rethrow so the nearest error.tsx boundary
+  // renders — that way a broken API doesn't silently disguise itself as a
+  // missing article.
+  const result = await fetchApiSafe<ApiArticle>(`/articles/${slug}`);
+  if (!result.ok) {
+    if (result.error.status === 404) notFound();
+    throw result.error;
   }
+  const article = mapApiArticle(result.data);
 
   const relatedResult = await fetchApiSafe<ApiArticle[]>(
     `/articles?status=published&category=${article.category}&limit=3`,
