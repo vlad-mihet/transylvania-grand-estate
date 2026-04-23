@@ -442,6 +442,11 @@ export class AuthService {
         email: user.email,
         role: user.role,
         agentId: user.agentId,
+        // Explicit realm lets the academy surface reject admin tokens (and
+        // vice versa) without inspecting role or email. Legacy tokens minted
+        // before this rollout carry no realm and default to 'admin' on the
+        // consuming side.
+        realm: 'admin' as const,
       },
       {
         secret: this.configService.get('JWT_ACCESS_SECRET'),

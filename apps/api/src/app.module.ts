@@ -20,6 +20,7 @@ import { SiteConfigModule } from './site-config/site-config.module';
 import { UploadsModule } from './uploads/uploads.module';
 import { InquiriesModule } from './inquiries/inquiries.module';
 import { ArticlesModule } from './articles/articles.module';
+import { AcademyModule } from './academy/academy.module';
 import { CountiesModule } from './counties/counties.module';
 import { LocationsModule } from './locations/locations.module';
 import { FinancialDataModule } from './financial-data/financial-data.module';
@@ -27,6 +28,7 @@ import { HealthModule } from './health/health.module';
 import { SearchModule } from './search/search.module';
 import { JwtAuthGuard } from './common/guards/jwt-auth.guard';
 import { RolesGuard } from './common/guards/roles.guard';
+import { RealmGuard } from './common/guards/realm.guard';
 import { HttpExceptionFilter } from './common/filters/http-exception.filter';
 import { TransformInterceptor } from './common/interceptors/transform.interceptor';
 import { AuditInterceptor } from './common/interceptors/audit.interceptor';
@@ -143,6 +145,7 @@ const serveStaticModules =
     UploadsModule,
     InquiriesModule,
     ArticlesModule,
+    AcademyModule,
     CountiesModule,
     LocationsModule,
     FinancialDataModule,
@@ -153,6 +156,10 @@ const serveStaticModules =
     { provide: APP_GUARD, useClass: ThrottlerGuard },
     { provide: APP_GUARD, useClass: JwtAuthGuard },
     { provide: APP_GUARD, useClass: RolesGuard },
+    // Enforces @Realm(...) metadata globally so @Realm('academy') can never
+    // cross-wire to an admin JWT (and vice-versa). Runs after RolesGuard;
+    // short-circuits @Public() routes. Missing decorator defaults to 'admin'.
+    { provide: APP_GUARD, useClass: RealmGuard },
     { provide: APP_FILTER, useClass: HttpExceptionFilter },
     { provide: APP_INTERCEPTOR, useClass: TransformInterceptor },
     { provide: APP_INTERCEPTOR, useClass: AuditInterceptor },

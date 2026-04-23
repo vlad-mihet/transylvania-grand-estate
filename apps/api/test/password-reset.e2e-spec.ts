@@ -1,4 +1,5 @@
-import * as request from 'supertest';
+import './per-test-reset';
+import request from 'supertest';
 import { INestApplication } from '@nestjs/common';
 import { PrismaClient, AdminRole } from '@prisma/client';
 import * as bcrypt from 'bcrypt';
@@ -46,10 +47,10 @@ describe('Password reset (e2e)', () => {
   }
 
   it('forgot \u2192 reset \u2192 login with new password', async () => {
-    await seedUser('user@test');
+    await seedUser('user@test.local');
     await request(app.getHttpServer())
       .post('/api/v1/auth/forgot-password')
-      .send({ email: 'user@test' })
+      .send({ email: 'user@test.local' })
       .expect(201);
     const captured = mockEmail.captured.find(
       (c) => c.template === 'password-reset',
@@ -64,15 +65,15 @@ describe('Password reset (e2e)', () => {
 
     await request(app.getHttpServer())
       .post('/api/v1/auth/login')
-      .send({ email: 'user@test', password: 'BrandNewPass456789' })
+      .send({ email: 'user@test.local', password: 'BrandNewPass456789' })
       .expect(201);
   });
 
   it('SSO-only user \u2192 no email, always 201', async () => {
-    await seedUser('sso@test', { ssoOnly: true });
+    await seedUser('sso@test.local', { ssoOnly: true });
     await request(app.getHttpServer())
       .post('/api/v1/auth/forgot-password')
-      .send({ email: 'sso@test' })
+      .send({ email: 'sso@test.local' })
       .expect(201);
     expect(
       mockEmail.captured.filter((c) => c.template === 'password-reset'),
@@ -82,21 +83,27 @@ describe('Password reset (e2e)', () => {
   it('unknown email \u2192 no email, always 201 (no enumeration)', async () => {
     await request(app.getHttpServer())
       .post('/api/v1/auth/forgot-password')
-      .send({ email: 'ghost@test' })
+      .send({ email: 'ghost@test.local' })
       .expect(201);
     expect(mockEmail.captured).toHaveLength(0);
   });
 
   it('requesting again invalidates the earlier token', async () => {
-    await seedUser('user@test');
+    await seedUser('user@test.local');
     await request(app.getHttpServer())
       .post('/api/v1/auth/forgot-password')
-      .send({ email: 'user@test' });
+      .send({ email: 'user@test.local' });
     const firstToken = extractToken(mockEmail.captured[0].url!);
+
+    // The service applies a 60s per-email cooldown. Push the first token's
+    // createdAt out of that window so the second request is not suppressed.
+    await prisma.passwordResetToken.updateMany({
+      data: { createdAt: new Date(Date.now() - 120_000) },
+    });
 
     await request(app.getHttpServer())
       .post('/api/v1/auth/forgot-password')
-      .send({ email: 'user@test' });
+      .send({ email: 'user@test.local' });
     const secondToken = extractToken(mockEmail.captured[1].url!);
 
     // Second overrides first.

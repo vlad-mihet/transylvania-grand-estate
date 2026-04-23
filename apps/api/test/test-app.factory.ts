@@ -1,7 +1,8 @@
-import { INestApplication, ValidationPipe } from '@nestjs/common';
+import { INestApplication } from '@nestjs/common';
 import { Test } from '@nestjs/testing';
 import { AppModule } from '../src/app.module';
 import { EmailService } from '../src/email/email.service';
+import { SmartValidationPipe } from '../src/common/pipes/smart-validation.pipe';
 
 /**
  * Captured copy of every email the service would have sent. Tests read this
@@ -48,6 +49,26 @@ export class MockEmailService {
     });
     return { ok: true as const, id: 'mock-id' };
   }
+
+  async sendAcademyInvitation(to: string, input: { acceptUrl: string }) {
+    this.captured.push({
+      to,
+      template: 'academy-invitation',
+      url: input.acceptUrl,
+      subject: 'academy-invitation',
+    });
+    return { ok: true as const, id: 'mock-id' };
+  }
+
+  async sendAcademyPasswordReset(to: string, input: { resetUrl: string }) {
+    this.captured.push({
+      to,
+      template: 'academy-password-reset',
+      url: input.resetUrl,
+      subject: 'academy-reset',
+    });
+    return { ok: true as const, id: 'mock-id' };
+  }
 }
 
 /**
@@ -70,8 +91,12 @@ export async function createTestApp(): Promise<{
 
   const app = moduleRef.createNestApplication({ rawBody: true });
   app.setGlobalPrefix('api/v1');
+  // Match production: SmartValidationPipe routes Zod DTOs to the
+  // ZodValidationPipe and class-validator DTOs to the class-validator
+  // ValidationPipe. Using plain ValidationPipe here would silently skip
+  // validation on nestjs-zod DTOs and let malformed bodies through.
   app.useGlobalPipes(
-    new ValidationPipe({
+    new SmartValidationPipe({
       whitelist: true,
       transform: true,
       transformOptions: { enableImplicitConversion: true },

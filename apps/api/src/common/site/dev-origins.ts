@@ -6,14 +6,16 @@ import { SiteId } from './site.types';
  *   apps/landing/package.json   --port 3050
  *   apps/admin/package.json     --port 3051
  *   apps/reveria/package.json   --port 3052
+ *   apps/academy/package.json   --port 3053
  * Consumed by SiteOriginConfig (brand routing) and the CORS fallback in
- * main.ts. Deliberately not derived at build time; three port flags aren't
+ * main.ts. Deliberately not derived at build time; four port flags aren't
  * worth a cross-package-json plumbing layer.
  */
 export const DEV_ORIGINS: Record<Exclude<SiteId, SiteId.UNKNOWN>, string[]> = {
   [SiteId.TGE_LUXURY]: ['http://localhost:3050'],
   [SiteId.ADMIN]: ['http://localhost:3051'],
   [SiteId.REVERIA]: ['http://localhost:3052'],
+  [SiteId.ACADEMY]: ['http://localhost:3053'],
 };
 
 export const DEV_ORIGIN_LIST: readonly string[] =

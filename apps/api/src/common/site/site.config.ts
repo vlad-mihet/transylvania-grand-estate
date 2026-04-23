@@ -12,6 +12,7 @@ export class SiteOriginConfig {
     this.register(config.get<string>('ADMIN_ORIGIN'), SiteId.ADMIN);
     this.register(config.get<string>('TGE_ORIGIN'), SiteId.TGE_LUXURY);
     this.register(config.get<string>('REVERIA_ORIGIN'), SiteId.REVERIA);
+    this.register(config.get<string>('ACADEMY_ORIGIN'), SiteId.ACADEMY);
 
     if (process.env.NODE_ENV !== 'production') {
       for (const [site, origins] of Object.entries(DEV_ORIGINS) as [

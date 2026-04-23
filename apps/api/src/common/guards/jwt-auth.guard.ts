@@ -6,6 +6,8 @@ import {
 import { Reflector } from '@nestjs/core';
 import { AuthGuard } from '@nestjs/passport';
 import { IS_PUBLIC_KEY } from '../decorators/public.decorator';
+import { REALM_KEY } from '../decorators/realm.decorator';
+import type { AuthRealm } from '../auth/realm';
 
 /**
  * Primary HTTP auth gate. Always runs Passport's JWT strategy so `req.user`
@@ -13,9 +15,11 @@ import { IS_PUBLIC_KEY } from '../decorators/public.decorator';
  * routes, which lets endpoints like `/properties` auto-scope for an
  * authenticated AGENT without rejecting anonymous public-site callers.
  *
- * `handleRequest` decides whether a missing / invalid token is fatal:
- * public routes tolerate it (user stays unauthenticated), protected routes
- * throw 401.
+ * Routes marked `@Realm('academy')` are completely skipped here; the
+ * academy surface runs its own strategy via `JwtAcademyAuthGuard` attached
+ * with `@UseGuards`, so this global admin gate must not reject their
+ * Bearer tokens (which carry a different realm claim the admin strategy
+ * refuses).
  */
 @Injectable()
 export class JwtAuthGuard extends AuthGuard('jwt-access') {
@@ -24,6 +28,16 @@ export class JwtAuthGuard extends AuthGuard('jwt-access') {
   }
 
   canActivate(context: ExecutionContext) {
+    const realm = this.reflector.getAllAndOverride<AuthRealm | undefined>(
+      REALM_KEY,
+      [context.getHandler(), context.getClass()],
+    );
+    if (realm === 'academy') {
+      // Academy realm routes carry tokens the admin strategy rejects by
+      // design. Let them pass through here — their own @UseGuards layer
+      // enforces the academy strategy.
+      return true;
+    }
     return super.canActivate(context);
   }
 

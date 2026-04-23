@@ -1,15 +1,19 @@
 import { ExecutionContext, createParamDecorator } from '@nestjs/common';
 import { AdminRole } from '@prisma/client';
+import type { AuthRealm } from '../auth/realm';
 
 /**
- * Shape of `req.user` populated by the JWT access strategy. `agentId` is only
- * present for AGENT-role users whose AdminUser row is linked to a sales Agent.
+ * Shape of `req.user` populated by the admin JWT access strategy. `agentId`
+ * is only present for AGENT-role users whose AdminUser row is linked to a
+ * sales Agent. `realm` is always `'admin'` on this shape — academy tokens
+ * are handled by a separate strategy that writes `AcademyUserPayload`.
  */
 export interface CurrentUserPayload {
   id: string;
   email: string;
   role: AdminRole;
   agentId?: string | null;
+  realm?: AuthRealm;
 }
 
 /**

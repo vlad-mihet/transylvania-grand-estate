@@ -14,6 +14,14 @@ import {
   renderInvitationReminder,
   type InvitationReminderInput,
 } from './templates/invitation-reminder.template';
+import {
+  renderAcademyInvitation,
+  type AcademyInvitationInput,
+} from './templates/academy-invitation.template';
+import {
+  renderAcademyPasswordReset,
+  type AcademyPasswordResetInput,
+} from './templates/academy-password-reset.template';
 
 /**
  * Thin wrapper over Resend. Two design choices:
@@ -76,6 +84,28 @@ export class EmailService implements OnModuleInit {
   ): Promise<SendResult> {
     const { subject, html, text } = renderInvitationReminder(input);
     return this.deliver({ to, subject, html, text, template: 'invitation-reminder' });
+  }
+
+  async sendAcademyInvitation(
+    to: string,
+    input: AcademyInvitationInput,
+  ): Promise<SendResult> {
+    const { subject, html, text } = renderAcademyInvitation(input);
+    return this.deliver({ to, subject, html, text, template: 'academy-invitation' });
+  }
+
+  async sendAcademyPasswordReset(
+    to: string,
+    input: AcademyPasswordResetInput,
+  ): Promise<SendResult> {
+    const { subject, html, text } = renderAcademyPasswordReset(input);
+    return this.deliver({
+      to,
+      subject,
+      html,
+      text,
+      template: 'academy-password-reset',
+    });
   }
 
   private async deliver(params: {

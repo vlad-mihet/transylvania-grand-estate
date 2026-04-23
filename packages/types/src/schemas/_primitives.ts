@@ -121,3 +121,101 @@ export const amenityQueryFlagsSchema = z.object(
 
 export type AmenityFlagsInput = z.infer<typeof amenityFlagsSchema>;
 export type GeoFilterInput = z.infer<typeof geoFilterSchema>;
+
+/**
+ * Embed-URL normalizer for academy video lessons. Accepts the handful of
+ * YouTube and Vimeo URL shapes a content editor might paste (share URL,
+ * embed URL, privacy-enhanced embed URL) and returns a canonical embed URL.
+ *
+ * The canonical form always points at a privacy-friendly embed host:
+ *   - YouTube -> https://www.youtube-nocookie.com/embed/<id>
+ *   - Vimeo   -> https://player.vimeo.com/video/<id>
+ *
+ * The ?start= query is preserved when present; tracking params (?si=,
+ * ?feature=) are stripped. Throws for unsupported hosts or malformed ids.
+ * The allowlist is the entire security contract — only these two families
+ * are accepted, so the reader-side iframe can be sandboxed with confidence.
+ */
+const YOUTUBE_ID = /^[A-Za-z0-9_-]{11}$/;
+const VIMEO_ID = /^[0-9]{5,12}$/;
+
+export function normalizeLessonEmbedUrl(raw: string): string {
+  let u: URL;
+  try {
+    u = new URL(raw);
+  } catch {
+    throw new Error("Not a valid URL");
+  }
+  if (u.protocol !== "https:" && u.protocol !== "http:") {
+    throw new Error("Embed URL must be https");
+  }
+  const host = u.hostname.toLowerCase().replace(/^www\./, "");
+  const start = u.searchParams.get("start");
+
+  // YouTube family: youtu.be/<id>, youtube.com/watch?v=<id>,
+  // youtube.com/embed/<id>, youtube-nocookie.com/embed/<id>.
+  if (host === "youtu.be") {
+    const id = u.pathname.replace(/^\//, "").split("/")[0];
+    if (!YOUTUBE_ID.test(id))
+      throw new Error("Not a supported YouTube video id");
+    return buildYoutube(id, start);
+  }
+  if (host === "youtube.com" || host === "youtube-nocookie.com") {
+    if (u.pathname === "/watch") {
+      const id = u.searchParams.get("v");
+      if (!id || !YOUTUBE_ID.test(id))
+        throw new Error("Not a supported YouTube video id");
+      return buildYoutube(id, start);
+    }
+    const embedMatch = u.pathname.match(/^\/embed\/([A-Za-z0-9_-]+)/);
+    if (embedMatch) {
+      const id = embedMatch[1];
+      if (!YOUTUBE_ID.test(id))
+        throw new Error("Not a supported YouTube video id");
+      return buildYoutube(id, start);
+    }
+    throw new Error("Not a supported YouTube URL shape");
+  }
+
+  // Vimeo family: vimeo.com/<id>, player.vimeo.com/video/<id>.
+  if (host === "vimeo.com") {
+    const id = u.pathname.replace(/^\//, "").split("/")[0];
+    if (!VIMEO_ID.test(id)) throw new Error("Not a supported Vimeo video id");
+    return buildVimeo(id, start);
+  }
+  if (host === "player.vimeo.com") {
+    const m = u.pathname.match(/^\/video\/([0-9]+)/);
+    if (!m) throw new Error("Not a supported Vimeo URL shape");
+    const id = m[1];
+    if (!VIMEO_ID.test(id)) throw new Error("Not a supported Vimeo video id");
+    return buildVimeo(id, start);
+  }
+
+  throw new Error("Embed host not allowed — use YouTube or Vimeo");
+}
+
+function buildYoutube(id: string, start: string | null): string {
+  const base = `https://www.youtube-nocookie.com/embed/${id}`;
+  return start && /^\d+$/.test(start) ? `${base}?start=${start}` : base;
+}
+
+function buildVimeo(id: string, start: string | null): string {
+  const base = `https://player.vimeo.com/video/${id}`;
+  return start && /^\d+$/.test(start) ? `${base}#t=${start}s` : base;
+}
+
+export const lessonEmbedUrlSchema = z
+  .string()
+  .url()
+  .max(1000)
+  .transform((raw, ctx) => {
+    try {
+      return normalizeLessonEmbedUrl(raw);
+    } catch (e) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: (e as Error).message,
+      });
+      return z.NEVER;
+    }
+  });

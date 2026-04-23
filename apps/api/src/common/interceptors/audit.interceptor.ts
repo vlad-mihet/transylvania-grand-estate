@@ -219,6 +219,49 @@ export class AuditInterceptor implements NestInterceptor {
             updatedAt: true,
           },
         });
+      case 'Course':
+        return this.prisma.course.findUnique({ where: { id } });
+      case 'Lesson':
+        return this.prisma.lesson.findUnique({ where: { id } });
+      case 'AcademyUser':
+        // Same discipline as AdminUser — the password hash lives on this
+        // row too, so never snapshot it into an audit diff.
+        return this.prisma.academyUser.findUnique({
+          where: { id },
+          select: {
+            id: true,
+            email: true,
+            name: true,
+            locale: true,
+            lastLoginAt: true,
+            createdAt: true,
+            updatedAt: true,
+          },
+        });
+      case 'AcademyEnrollment':
+        return this.prisma.academyEnrollment.findUnique({ where: { id } });
+      case 'AcademyInvitation':
+        // Same tokenHash-is-sensitive rule as the admin Invitation case.
+        return this.prisma.academyInvitation.findUnique({
+          where: { id },
+          select: {
+            id: true,
+            email: true,
+            status: true,
+            expiresAt: true,
+            acceptedAt: true,
+            acceptedVia: true,
+            acceptedUserId: true,
+            initialCourseId: true,
+            invitedById: true,
+            emailSentAt: true,
+            emailAttempts: true,
+            bouncedAt: true,
+            bounceReason: true,
+            createdAt: true,
+            updatedAt: true,
+          },
+        });
       case 'Invitation':
         // tokenHash is sensitive (pre-image of the email link); omit from
         // audit diff — the resourceId + status changes are enough for
@@ -280,6 +323,13 @@ export class AuditInterceptor implements NestInterceptor {
       // callback) have no authenticated actor at request time. Services
       // emit their own audit rows in those flows via recordCustom().
       return null;
+    }
+
+    // Admin-scoped sub-surfaces live under /admin/<area>/... — currently
+    // only the academy admin routes use this shape. Peel the `admin`
+    // prefix and dispatch on the next segment.
+    if (head === 'admin' && second === 'academy') {
+      return classifyAcademy(segments.slice(2), method);
     }
 
     switch (head) {
@@ -415,6 +465,85 @@ export class AuditInterceptor implements NestInterceptor {
         return null;
     }
   }
+}
+
+/**
+ * Classify an academy admin route. `segments` starts after `/admin/academy/`
+ * — e.g. `['courses', ':id', 'lessons', 'reorder']`. Returns an audit
+ * metadata object or null if the route shouldn't be audited.
+ *
+ * Special cases that don't fit the bare verb-for(method) mapping:
+ *   - `POST /courses/:courseId/lessons/reorder` — pin the audit entry to
+ *     the course (not to a single lesson) via `resourceIdParam: 'courseId'`.
+ *     One row per drag-drop commit instead of 24 individual Lesson updates.
+ *   - `/courses/:id/cover-image` (POST/DELETE) — no resource row to snapshot
+ *     cleanly; we still want the `course.cover-image.update|delete` event.
+ *   - `POST /invitations/:id/resend` — treated as `invitation.resend`.
+ */
+function classifyAcademy(
+  segments: string[],
+  method: string,
+): AuditMetadata | null {
+  const [area, , third, fourth] = segments;
+
+  if (area === 'courses') {
+    // /courses/:id/lessons/reorder
+    if (third === 'lessons' && fourth === 'reorder' && method === 'POST') {
+      return {
+        resource: 'Course',
+        action: 'course.lesson.reorder',
+        resourceIdParam: 'courseId',
+      };
+    }
+    // /courses/:id/lessons/:lessonId
+    if (third === 'lessons') {
+      return {
+        resource: 'Lesson',
+        action: `lesson.${verbFor(method)}`,
+      };
+    }
+    // /courses/:id/cover-image
+    if (third === 'cover-image') {
+      return {
+        resource: 'Course',
+        action: `course.cover-image.${verbFor(method)}`,
+        resourceIdParam: 'id',
+      };
+    }
+    return {
+      resource: 'Course',
+      action: `course.${verbFor(method)}`,
+    };
+  }
+
+  if (area === 'users') {
+    return {
+      resource: 'AcademyUser',
+      action: `academy-user.${verbFor(method)}`,
+    };
+  }
+
+  if (area === 'enrollments') {
+    return {
+      resource: 'AcademyEnrollment',
+      action: `academy-enrollment.${verbFor(method)}`,
+    };
+  }
+
+  if (area === 'invitations') {
+    if (third === 'resend' && method === 'POST') {
+      return {
+        resource: 'AcademyInvitation',
+        action: 'academy-invitation.resend',
+      };
+    }
+    return {
+      resource: 'AcademyInvitation',
+      action: `academy-invitation.${verbFor(method)}`,
+    };
+  }
+
+  return null;
 }
 
 function verbFor(method: string): string {

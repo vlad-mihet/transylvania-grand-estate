@@ -1,4 +1,5 @@
-import * as request from 'supertest';
+import './per-test-reset';
+import request from 'supertest';
 import { INestApplication } from '@nestjs/common';
 import {
   PrismaClient,
@@ -72,7 +73,8 @@ describe('Agents — tier scope on nested properties (e2e)', () => {
         slug: 'dual-tier',
         firstName: 'Dual',
         lastName: 'Tier',
-        email: 'dual@test',
+        email: 'dual@test.local',
+        phone: '+40700000001',
         bio: { en: 'bio', ro: 'bio' },
         active: true,
       },
@@ -162,7 +164,7 @@ describe('Agents — tier scope on nested properties (e2e)', () => {
       .set('X-Site', 'REVERIA')
       .expect(200);
 
-    const rows = res.body.data.data as Array<{
+    const rows = res.body.data as Array<{
       properties: { id: string }[];
     }>;
     const allIds = rows.flatMap((r) => r.properties.map((p) => p.id));

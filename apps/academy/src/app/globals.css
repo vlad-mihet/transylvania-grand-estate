@@ -1,0 +1,33 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+
+@theme {
+  --font-sans: "DM Sans", ui-sans-serif, system-ui, sans-serif;
+  --color-primary: #5b21b6;
+  --color-primary-foreground: #ffffff;
+  --color-background: #ffffff;
+  --color-foreground: #0a0a0a;
+  --color-muted: #f4f4f5;
+  --color-muted-foreground: #525252;
+  --color-border: #e5e7eb;
+  --color-ring: #8b5cf6;
+}
+
+html,
+body {
+  background: var(--color-background);
+  color: var(--color-foreground);
+}
+
+body {
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Prose tweaks for lesson content — the API returns raw markdown which
+   react-markdown renders; Tailwind's `prose` class gives sensible
+   typography without wiring a full typography plugin theme. */
+.lesson-prose :is(h1, h2, h3) {
+  scroll-margin-top: 2rem;
+}

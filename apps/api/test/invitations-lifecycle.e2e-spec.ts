@@ -1,4 +1,5 @@
-import * as request from 'supertest';
+import './per-test-reset';
+import request from 'supertest';
 import { INestApplication } from '@nestjs/common';
 import { PrismaClient, InvitationStatus } from '@prisma/client';
 import { createTestApp, MockEmailService } from './test-app.factory';
@@ -46,7 +47,7 @@ describe('Invitations \u2014 lifecycle (e2e)', () => {
     const list = await request(app.getHttpServer())
       .get('/api/v1/invitations')
       .set(bearer(admin.accessToken));
-    const inv = list.body.data.data[0];
+    const inv = list.body.data[0];
 
     await request(app.getHttpServer())
       .post(`/api/v1/invitations/${inv.id}/resend`)

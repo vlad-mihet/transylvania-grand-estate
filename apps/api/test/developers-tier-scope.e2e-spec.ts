@@ -1,4 +1,5 @@
-import * as request from 'supertest';
+import './per-test-reset';
+import request from 'supertest';
 import { INestApplication } from '@nestjs/common';
 import {
   PrismaClient,

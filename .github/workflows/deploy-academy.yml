@@ -1,0 +1,28 @@
+name: Deploy Academy to Fly.io
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'apps/academy/**'
+      - 'packages/**'
+  workflow_dispatch:
+
+concurrency:
+  group: deploy-academy-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    name: Deploy Academy
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: superfly/flyctl-actions/setup-flyctl@master
+      - run: |
+          flyctl deploy --config apps/academy/fly.toml --remote-only \
+            --build-arg NEXT_PUBLIC_API_URL="${NEXT_PUBLIC_API_URL}" \
+            --build-arg NEXT_PUBLIC_SITE="ACADEMY"
+        env:
+          FLY_API_TOKEN: ${{ secrets.FLY_DEPLOY_TOKEN_ACADEMY }}
+          NEXT_PUBLIC_API_URL: https://tge-api.fly.dev/api/v1

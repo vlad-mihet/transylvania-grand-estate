@@ -32,6 +32,11 @@ const statusTone: Record<string, ToneKey> = {
   read: "neutral",
   active: "success",
   inactive: "neutral",
+  pending: "warning",
+  accepted: "success",
+  expired: "neutral",
+  revoked: "neutral",
+  bounced: "danger",
 };
 
 export interface StatusBadgeProps {

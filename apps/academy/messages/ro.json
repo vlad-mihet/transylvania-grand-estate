@@ -1,0 +1,77 @@
+{
+  "Academy": {
+    "appName": "TGE Academy",
+    "tagline": "Platformă de studiu pentru agenți imobiliari",
+    "login": {
+      "title": "Autentificare",
+      "emailLabel": "Email",
+      "passwordLabel": "Parolă",
+      "submit": "Intră în cont",
+      "googleButton": "Continuă cu Google",
+      "error": "Email sau parolă incorecte",
+      "forgotPassword": "Ai uitat parola?",
+      "resetSuccess": "Parola a fost resetată. Te poți autentifica acum."
+    },
+    "forgotPassword": {
+      "title": "Resetare parolă",
+      "intro": "Introdu adresa ta de email. Îți trimitem un link pentru a-ți alege o parolă nouă.",
+      "emailLabel": "Email",
+      "submit": "Trimite linkul",
+      "sent": "Dacă există un cont cu această adresă, ți-am trimis un email. Verifică inbox-ul.",
+      "backToLogin": "Înapoi la autentificare"
+    },
+    "resetPassword": {
+      "title": "Alege o parolă nouă",
+      "intro": "Introdu parola nouă (minim 12 caractere).",
+      "passwordLabel": "Parolă nouă",
+      "submit": "Salvează",
+      "invalid": "Linkul este invalid sau a expirat. Solicită unul nou.",
+      "backToLogin": "Înapoi la autentificare"
+    },
+    "acceptInvite": {
+      "title": "Acceptă invitația",
+      "subtitle": "Configurează-ți contul pentru a începe cursul",
+      "passwordLabel": "Alege o parolă",
+      "submit": "Creează contul",
+      "invalid": "Linkul de invitație este invalid sau a expirat",
+      "googleButton": "Continuă cu Google"
+    },
+    "dashboard": {
+      "title": "Cursurile tale",
+      "empty": "Nu ai încă acces la niciun curs. Contactează administratorul."
+    },
+    "course": {
+      "lessonsTitle": "Lecții",
+      "readingTime": "~{{count}} min",
+      "videoDuration": "{{minutes}}:{{seconds}}",
+      "readingBadge": "Lectură",
+      "videoBadge": "Video",
+      "translationPendingBadge": "Disponibil în {{locale}}"
+    },
+    "lesson": {
+      "back": "Înapoi la curs",
+      "next": "Lecția următoare",
+      "previous": "Lecția anterioară",
+      "translationPending": "Această lecție încă nu a fost tradusă în limba ta preferată — o afișăm în limba originală."
+    },
+    "account": {
+      "title": "Contul meu",
+      "profileHeading": "Profil",
+      "emailLabel": "Email",
+      "nameLabel": "Nume",
+      "localeLabel": "Limbă preferată",
+      "save": "Salvează",
+      "saved": "Modificări salvate",
+      "passwordHeading": "Parolă",
+      "currentPasswordLabel": "Parolă curentă",
+      "newPasswordLabel": "Parolă nouă",
+      "changePassword": "Schimbă parola",
+      "passwordChanged": "Parola a fost actualizată",
+      "logout": "Deconectare"
+    },
+    "errors": {
+      "generic": "A apărut o eroare. Încearcă din nou.",
+      "notEnrolled": "Nu ești înscris la niciun curs."
+    }
+  }
+}

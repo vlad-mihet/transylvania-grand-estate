@@ -1,0 +1,77 @@
+{
+  "Academy": {
+    "appName": "TGE Academy",
+    "tagline": "Plateforme d'apprentissage pour agents immobiliers",
+    "login": {
+      "title": "Connexion",
+      "emailLabel": "Email",
+      "passwordLabel": "Mot de passe",
+      "submit": "Se connecter",
+      "googleButton": "Continuer avec Google",
+      "error": "Email ou mot de passe incorrect",
+      "forgotPassword": "Mot de passe oublié ?",
+      "resetSuccess": "Mot de passe réinitialisé. Vous pouvez vous connecter."
+    },
+    "forgotPassword": {
+      "title": "Réinitialiser le mot de passe",
+      "intro": "Entrez votre email. Nous vous enverrons un lien pour choisir un nouveau mot de passe.",
+      "emailLabel": "Email",
+      "submit": "Envoyer le lien",
+      "sent": "Si un compte existe avec cet email, nous vous avons envoyé un lien. Vérifiez votre boîte.",
+      "backToLogin": "Retour à la connexion"
+    },
+    "resetPassword": {
+      "title": "Choisir un nouveau mot de passe",
+      "intro": "Entrez votre nouveau mot de passe (au moins 12 caractères).",
+      "passwordLabel": "Nouveau mot de passe",
+      "submit": "Enregistrer",
+      "invalid": "Ce lien est invalide ou expiré. Demandez-en un nouveau.",
+      "backToLogin": "Retour à la connexion"
+    },
+    "acceptInvite": {
+      "title": "Accepter l'invitation",
+      "subtitle": "Configurez votre compte pour commencer le cours",
+      "passwordLabel": "Choisissez un mot de passe",
+      "submit": "Créer le compte",
+      "invalid": "Ce lien d'invitation est invalide ou a expiré",
+      "googleButton": "Continuer avec Google"
+    },
+    "dashboard": {
+      "title": "Vos cours",
+      "empty": "Vous n'avez pas encore accès à des cours. Contactez votre administrateur."
+    },
+    "course": {
+      "lessonsTitle": "Leçons",
+      "readingTime": "~{{count}} min",
+      "videoDuration": "{{minutes}}:{{seconds}}",
+      "readingBadge": "Lecture",
+      "videoBadge": "Vidéo",
+      "translationPendingBadge": "Disponible en {{locale}}"
+    },
+    "lesson": {
+      "back": "Retour au cours",
+      "next": "Leçon suivante",
+      "previous": "Leçon précédente",
+      "translationPending": "Cette leçon n'a pas encore été traduite — affichée dans la langue originale."
+    },
+    "account": {
+      "title": "Mon compte",
+      "profileHeading": "Profil",
+      "emailLabel": "Email",
+      "nameLabel": "Nom",
+      "localeLabel": "Langue préférée",
+      "save": "Enregistrer",
+      "saved": "Modifications enregistrées",
+      "passwordHeading": "Mot de passe",
+      "currentPasswordLabel": "Mot de passe actuel",
+      "newPasswordLabel": "Nouveau mot de passe",
+      "changePassword": "Changer le mot de passe",
+      "passwordChanged": "Mot de passe mis à jour",
+      "logout": "Déconnexion"
+    },
+    "errors": {
+      "generic": "Une erreur s'est produite. Réessayez.",
+      "notEnrolled": "Vous n'êtes inscrit à aucun cours."
+    }
+  }
+}

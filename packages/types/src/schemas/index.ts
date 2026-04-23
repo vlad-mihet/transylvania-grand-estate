@@ -1,4 +1,5 @@
 export * from "./_primitives";
+export * from "./academy";
 export * from "./agent";
 export * from "./article";
 export * from "./auth";

@@ -2,9 +2,11 @@ import type { ComponentType } from "react";
 import {
   Building2,
   FileText,
+  GraduationCap,
   HardHat,
   Landmark,
   LayoutDashboard,
+  Mail,
   Map,
   MapPin,
   MessageSquareQuote,
@@ -123,6 +125,33 @@ export const COMMAND_ACTIONS: CommandAction[] = [
     shortcut: "g a",
     requires: "article.read",
     keywords: ["blog", "content"],
+  },
+  {
+    id: "nav.academy-courses",
+    label: "Academy Courses",
+    group: "navigate",
+    icon: GraduationCap,
+    href: "/academy/courses",
+    requires: "academy.course.read",
+    keywords: ["academy", "courses", "lessons", "study", "education"],
+  },
+  {
+    id: "nav.academy-students",
+    label: "Academy Students",
+    group: "navigate",
+    icon: Users,
+    href: "/academy/students",
+    requires: "academy.user.manage",
+    keywords: ["academy", "students", "learners", "enrollments"],
+  },
+  {
+    id: "nav.academy-invitations",
+    label: "Academy Invitations",
+    group: "navigate",
+    icon: Mail,
+    href: "/academy/invitations",
+    requires: "academy.user.manage",
+    keywords: ["academy", "invitations", "invites"],
   },
   {
     id: "nav.bank-rates",
@@ -259,5 +288,26 @@ export const COMMAND_ACTIONS: CommandAction[] = [
     icon: Plus,
     href: "/bank-rates/new",
     requires: "bank-rate.create",
+  },
+  {
+    id: "create.academy-course",
+    label: "Create academy course",
+    group: "create",
+    icon: Plus,
+    href: "/academy/courses/new",
+    requires: "academy.course.create",
+    keywords: ["new", "academy", "course", "lesson"],
+  },
+  {
+    id: "create.academy-invitation",
+    // Invitation creation lives inside the Students page (dialog), so the
+    // palette shortcut routes there — dropping the admin directly into the
+    // surface where the invite CTA is one click away.
+    label: "Invite academy student",
+    group: "create",
+    icon: Plus,
+    href: "/academy/students",
+    requires: "academy.user.manage",
+    keywords: ["invite", "academy", "student"],
   },
 ];

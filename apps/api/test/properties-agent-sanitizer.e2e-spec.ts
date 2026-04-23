@@ -1,4 +1,5 @@
-import * as request from 'supertest';
+import './per-test-reset';
+import request from 'supertest';
 import { INestApplication } from '@nestjs/common';
 import {
   AdminRole,
@@ -63,7 +64,8 @@ describe('Properties — AGENT field sanitizer (e2e)', () => {
         slug: 'agent-one',
         firstName: 'Agent',
         lastName: 'One',
-        email: 'agent@test',
+        email: 'agent@test.local',
+        phone: '+40700000010',
         bio: { en: 'bio', ro: 'bio' },
         active: true,
         adminUserId: agentUser.id,
@@ -74,7 +76,8 @@ describe('Properties — AGENT field sanitizer (e2e)', () => {
         slug: 'agent-two',
         firstName: 'Agent',
         lastName: 'Two',
-        email: 'other@test',
+        email: 'other@test.local',
+        phone: '+40700000011',
         bio: { en: 'bio', ro: 'bio' },
         active: true,
       },

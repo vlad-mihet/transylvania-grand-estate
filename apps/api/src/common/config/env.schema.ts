@@ -55,6 +55,17 @@ const baseSchema = z.object({
   GOOGLE_CLIENT_ID: z.string().optional(),
   GOOGLE_CLIENT_SECRET: z.string().optional(),
   GOOGLE_CALLBACK_URL: z.string().url().optional(),
+  // Academy callback URL distinguishes realm via URL path so an attacker
+  // cannot coerce an academy Google callback into an admin session. Same
+  // credentials are reused — only the redirect differs.
+  GOOGLE_ACADEMY_CALLBACK_URL: z.string().url().optional(),
+
+  // Academy frontend origin + public URL. ORIGIN is consumed by
+  // SiteOriginConfig (brand routing via X-Site); PUBLIC_URL is the
+  // absolute base used in accept-invite links and the Google callback
+  // redirect back to the academy app.
+  ACADEMY_ORIGIN: z.string().optional(),
+  ACADEMY_PUBLIC_URL: z.string().url().default('http://localhost:3053'),
 
   // Audit IP pepper. When unset, audit rows store ipHash=null — the audit
   // path keeps writing rows but loses cross-request actor correlation.
@@ -89,6 +100,9 @@ const productionSchema = baseSchema.extend({
   ADMIN_PUBLIC_URL: z
     .string()
     .url('ADMIN_PUBLIC_URL must be a valid URL (e.g. https://admin.tge.ro)'),
+  ACADEMY_PUBLIC_URL: z
+    .string()
+    .url('ACADEMY_PUBLIC_URL must be a valid URL (e.g. https://academy.tge.ro)'),
   INVITATION_TOKEN_SECRET: z
     .string()
     .min(32, 'INVITATION_TOKEN_SECRET must be ≥32 chars in production'),

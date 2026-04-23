@@ -24,7 +24,9 @@ const config: Config = {
   },
   globalSetup: '<rootDir>/test/global-setup.ts',
   globalTeardown: '<rootDir>/test/global-teardown.ts',
-  setupFilesAfterEach: ['<rootDir>/test/per-test-reset.ts'],
+  // Per-test DB reset is registered by each spec via `import './per-test-reset'`.
+  // Jest's setup-file hooks load before the framework globals, so `afterEach`
+  // isn't available there; an import-side-effect inside the spec context is.
   testTimeout: 60_000,
   maxWorkers: 1,
 };

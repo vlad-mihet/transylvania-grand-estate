@@ -70,7 +70,18 @@ export type Action =
   // inquiries
   | "inquiry.read"
   | "inquiry.update"
-  | "inquiry.delete";
+  | "inquiry.delete"
+  // academy (courses + lessons managed by EDITOR+; students + enrollments
+  // managed by ADMIN+)
+  | "academy.course.read"
+  | "academy.course.create"
+  | "academy.course.update"
+  | "academy.course.delete"
+  | "academy.lesson.create"
+  | "academy.lesson.update"
+  | "academy.lesson.delete"
+  | "academy.user.read"
+  | "academy.user.manage";
 
 // Map of actions restricted to SUPER_ADMIN capability. Users-page + audit-log
 // are kept here because they sit behind the SUPER_ADMIN role which reads
@@ -127,6 +138,15 @@ const matrix: Record<AdminRole, ReadonlySet<Action> | "all"> = {
     "inquiry.read",
     "inquiry.update",
     "inquiry.delete",
+    "academy.course.read",
+    "academy.course.create",
+    "academy.course.update",
+    "academy.course.delete",
+    "academy.lesson.create",
+    "academy.lesson.update",
+    "academy.lesson.delete",
+    "academy.user.read",
+    "academy.user.manage",
   ]),
   EDITOR: new Set<Action>([
     // Server scopes audit reads to Article/Property/Testimonial only.
@@ -146,6 +166,14 @@ const matrix: Record<AdminRole, ReadonlySet<Action> | "all"> = {
     "bank-rate.read",
     "financial-indicator.read",
     "inquiry.read",
+    // EDITOR can author academy content — server allows delete at EDITOR,
+    // matches the articles.controller pattern. User + enrollment admin is
+    // reserved for ADMIN+.
+    "academy.course.read",
+    "academy.course.create",
+    "academy.course.update",
+    "academy.lesson.create",
+    "academy.lesson.update",
   ]),
   AGENT: new Set<Action>([
     // Server scopes audit reads to own actions + own properties only.

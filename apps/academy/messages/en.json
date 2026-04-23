@@ -1,0 +1,77 @@
+{
+  "Academy": {
+    "appName": "TGE Academy",
+    "tagline": "Study platform for real-estate agents",
+    "login": {
+      "title": "Sign in",
+      "emailLabel": "Email",
+      "passwordLabel": "Password",
+      "submit": "Sign in",
+      "googleButton": "Continue with Google",
+      "error": "Incorrect email or password",
+      "forgotPassword": "Forgot your password?",
+      "resetSuccess": "Your password has been reset. Sign in now."
+    },
+    "forgotPassword": {
+      "title": "Reset your password",
+      "intro": "Enter your email. We’ll send you a link to choose a new password.",
+      "emailLabel": "Email",
+      "submit": "Send link",
+      "sent": "If an account exists with that email, we’ve sent you a reset link. Check your inbox.",
+      "backToLogin": "Back to sign in"
+    },
+    "resetPassword": {
+      "title": "Choose a new password",
+      "intro": "Enter your new password (at least 12 characters).",
+      "passwordLabel": "New password",
+      "submit": "Save",
+      "invalid": "This link is invalid or expired. Request a new one.",
+      "backToLogin": "Back to sign in"
+    },
+    "acceptInvite": {
+      "title": "Accept invitation",
+      "subtitle": "Set up your account to start the course",
+      "passwordLabel": "Choose a password",
+      "submit": "Create account",
+      "invalid": "This invitation link is invalid or has expired",
+      "googleButton": "Continue with Google"
+    },
+    "dashboard": {
+      "title": "Your courses",
+      "empty": "You don't have access to any courses yet. Contact your administrator."
+    },
+    "course": {
+      "lessonsTitle": "Lessons",
+      "readingTime": "~{{count}} min",
+      "videoDuration": "{{minutes}}:{{seconds}}",
+      "readingBadge": "Reading",
+      "videoBadge": "Video",
+      "translationPendingBadge": "Available in {{locale}}"
+    },
+    "lesson": {
+      "back": "Back to course",
+      "next": "Next lesson",
+      "previous": "Previous lesson",
+      "translationPending": "This lesson hasn't been translated into your preferred language yet — showing it in the original language."
+    },
+    "account": {
+      "title": "My account",
+      "profileHeading": "Profile",
+      "emailLabel": "Email",
+      "nameLabel": "Name",
+      "localeLabel": "Preferred language",
+      "save": "Save",
+      "saved": "Changes saved",
+      "passwordHeading": "Password",
+      "currentPasswordLabel": "Current password",
+      "newPasswordLabel": "New password",
+      "changePassword": "Change password",
+      "passwordChanged": "Password updated",
+      "logout": "Sign out"
+    },
+    "errors": {
+      "generic": "Something went wrong. Please try again.",
+      "notEnrolled": "You are not enrolled in any course."
+    }
+  }
+}
