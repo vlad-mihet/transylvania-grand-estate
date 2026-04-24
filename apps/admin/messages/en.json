@@ -897,6 +897,8 @@
     "bounced": "Bounced",
     "verified": "Verified",
     "unverified": "Unverified",
+    "public": "Public",
+    "enrolled": "Enrolled",
     "Property": "Property",
     "Inquiry": "Inquiry",
     "Article": "Article",
@@ -909,6 +911,10 @@
       "published": "Published",
       "archived": "Archived",
       "all": "All statuses"
+    },
+    "visibilities": {
+      "public": "Public",
+      "enrolled": "Enrolled"
     },
     "invitationStatuses": {
       "pending": "Pending",
@@ -936,6 +942,7 @@
       "columnTitle": "Title",
       "columnSlug": "Slug",
       "columnStatus": "Status",
+      "columnVisibility": "Visibility",
       "columnLessons": "Lessons",
       "columnOrder": "Order",
       "columnActions": "Actions",
@@ -954,7 +961,7 @@
       "notFoundTitle": "Course not found",
       "notFoundDescription": "We couldn't find that course. It may have been deleted or the URL is wrong.",
       "detailBackToList": "Courses",
-      "detailSummary": "{lessonCount, plural, =0 {No lessons} one {# lesson} other {# lessons}} · {status}",
+      "detailSummary": "{lessonCount, plural, =0 {No lessons} one {# lesson} other {# lessons}} · {status} · {visibility}",
       "publishAction": "Publish",
       "unpublishAction": "Unpublish",
       "editAction": "Edit",
@@ -974,6 +981,10 @@
       "coverImageUrlPlaceholder": "https://…",
       "coverImageUrlHelper": "Paste an already-hosted URL. Once the course is saved, a drag-and-drop uploader replaces this input.",
       "coverImageUploadHelper": "Uploads save immediately — no need to click Save for the image to stick; that's just for the rest of the metadata.",
+      "accessTitle": "Access",
+      "accessDescription": "Who can open this course. Public = any authenticated academy user can browse it from the catalog; Enrolled = only students with a matching grant (wildcard or per-course).",
+      "visibilityLabel": "Visibility",
+      "visibilityHelper": "Choose Public for intro content anyone with an academy account can read. Choose Enrolled for gated courses assigned by an admin.",
       "publishingTitle": "Publishing",
       "publishingDescription": "Status controls whether enrolled students see this course. Order is the sparse sort key used by listings — move it inside a gap (e.g. 15) to slot between two neighbours without rewriting everyone.",
       "statusLabel": "Status",

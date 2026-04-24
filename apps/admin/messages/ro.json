@@ -897,6 +897,8 @@
     "bounced": "Respinsă",
     "verified": "Verificat",
     "unverified": "Neverificat",
+    "public": "Public",
+    "enrolled": "Înscriere",
     "Property": "Proprietate",
     "Inquiry": "Cerere",
     "Article": "Articol",
@@ -909,6 +911,10 @@
       "published": "Publicat",
       "archived": "Arhivat",
       "all": "Toate statusurile"
+    },
+    "visibilities": {
+      "public": "Public",
+      "enrolled": "Înscriere"
     },
     "invitationStatuses": {
       "pending": "În așteptare",
@@ -936,6 +942,7 @@
       "columnTitle": "Titlu",
       "columnSlug": "Slug",
       "columnStatus": "Status",
+      "columnVisibility": "Vizibilitate",
       "columnLessons": "Lecții",
       "columnOrder": "Ordine",
       "columnActions": "Acțiuni",
@@ -954,7 +961,7 @@
       "notFoundTitle": "Curs negăsit",
       "notFoundDescription": "Nu am găsit acel curs. Poate a fost șters sau URL-ul e greșit.",
       "detailBackToList": "Cursuri",
-      "detailSummary": "{lessonCount, plural, =0 {Nicio lecție} one {# lecție} other {# lecții}} · {status}",
+      "detailSummary": "{lessonCount, plural, =0 {Nicio lecție} one {# lecție} other {# lecții}} · {status} · {visibility}",
       "publishAction": "Publică",
       "unpublishAction": "Retrage",
       "editAction": "Editează",
@@ -974,6 +981,10 @@
       "coverImageUrlPlaceholder": "https://…",
       "coverImageUrlHelper": "Lipește un URL deja găzduit. După ce salvezi cursul, un uploader drag-and-drop înlocuiește acest câmp.",
       "coverImageUploadHelper": "Încărcările se salvează imediat — nu e nevoie să apeși Salvează ca imaginea să rămână; acel buton e doar pentru restul metadatelor.",
+      "accessTitle": "Acces",
+      "accessDescription": "Cine poate deschide cursul. Public = orice utilizator autentificat al academiei îl vede în catalog; Înscriere = vizibil doar studenților înscriși (wildcard sau pe curs).",
+      "visibilityLabel": "Vizibilitate",
+      "visibilityHelper": "Alege Public pentru conținut introductiv pe care oricine cu cont poate să-l răsfoiască. Alege Înscriere pentru cursuri protejate, atribuite de admin.",
       "publishingTitle": "Publicare",
       "publishingDescription": "Statusul controlează dacă studenții înrolați văd cursul. Ordinea este cheia rară de sortare folosită în liste — mut-o într-un interval liber (ex. 15) ca să intercalezi între doi vecini fără să rescrii pe toți.",
       "statusLabel": "Status",

@@ -41,6 +41,12 @@ export function AppHeader() {
           {t("appName")}
         </Link>
         <div className="flex items-center gap-3">
+          <Link
+            href="/catalog"
+            className="text-xs font-medium text-[color:var(--color-muted-foreground)] hover:text-[color:var(--color-primary)]"
+          >
+            {t("catalog.navLink")}
+          </Link>
           <LocaleSwitcher />
           <Link
             href="/account"

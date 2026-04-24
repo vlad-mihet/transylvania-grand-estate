@@ -1,5 +1,10 @@
 import { z } from "zod";
-import { CourseStatus, LessonStatus, LessonType } from "@prisma/client";
+import {
+  CourseStatus,
+  CourseVisibility,
+  LessonStatus,
+  LessonType,
+} from "@prisma/client";
 import {
   createCourseSchema,
   createLessonSchema,
@@ -35,4 +40,9 @@ export const COURSE_STATUSES: readonly CourseStatus[] = [
   CourseStatus.draft,
   CourseStatus.published,
   CourseStatus.archived,
+];
+
+export const COURSE_VISIBILITIES: readonly CourseVisibility[] = [
+  CourseVisibility.enrolled,
+  CourseVisibility.public,
 ];

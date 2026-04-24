@@ -57,11 +57,16 @@ export class LessonsService {
   }) {
     const course = await this.prisma.course.findUnique({
       where: { slug: args.courseSlug },
-      select: { id: true, status: true },
+      select: { id: true, status: true, visibility: true },
     });
     if (!course || course.status !== 'published') return null;
 
-    const canRead = await this.userCanRead(args.userId, course.id);
+    // Public-visibility courses are readable by any authenticated academy
+    // user — no enrollment lookup. `enrolled` courses still require an
+    // active wildcard or per-course enrollment row.
+    const canRead =
+      course.visibility === 'public' ||
+      (await this.userCanRead(args.userId, course.id));
     if (!canRead) return null;
 
     const lesson = await this.prisma.lesson.findUnique({

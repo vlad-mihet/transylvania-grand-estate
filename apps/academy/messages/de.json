@@ -83,7 +83,19 @@
     },
     "dashboard": {
       "title": "Ihre Kurse",
-      "empty": "Sie haben noch keinen Zugang zu Kursen. Wenden Sie sich an Ihren Administrator."
+      "empty": "Sie haben noch keinen Zugang zu Kursen. Wenden Sie sich an Ihren Administrator.",
+      "emptyIntro": "Sie sind noch in keinem Kurs eingeschrieben.",
+      "emptyBrowseCatalog": "Öffentlichen Katalog durchstöbern →"
+    },
+    "catalog": {
+      "title": "Katalog",
+      "subtitle": "Öffentliche Kurse, die jede/r mit einem Academy-Konto lesen kann. Keine separate Einschreibung nötig.",
+      "empty": "Derzeit sind keine öffentlichen Kurse verfügbar. Schauen Sie bald wieder vorbei.",
+      "navLink": "Katalog"
+    },
+    "visibilities": {
+      "public": "Öffentlich",
+      "enrolled": "Einschreibung"
     },
     "course": {
       "lessonsTitle": "Lektionen",
@@ -120,8 +132,7 @@
       "verificationSent": "Bestätigungs-E-Mail gesendet."
     },
     "errors": {
-      "generic": "Etwas ist schiefgegangen. Bitte erneut versuchen.",
-      "notEnrolled": "Sie sind in keinem Kurs eingeschrieben."
+      "generic": "Etwas ist schiefgegangen. Bitte erneut versuchen."
     }
   }
 }

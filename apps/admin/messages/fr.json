@@ -895,6 +895,8 @@
     "bounced": "Rejetée",
     "verified": "Vérifié",
     "unverified": "Non vérifié",
+    "public": "Public",
+    "enrolled": "Inscription",
     "Property": "Propriété",
     "Inquiry": "Demande",
     "Article": "Article",
@@ -907,6 +909,10 @@
       "published": "Publié",
       "archived": "Archivé",
       "all": "Tous les statuts"
+    },
+    "visibilities": {
+      "public": "Public",
+      "enrolled": "Inscription"
     },
     "invitationStatuses": {
       "pending": "En attente",
@@ -934,6 +940,7 @@
       "columnTitle": "Titre",
       "columnSlug": "Slug",
       "columnStatus": "Statut",
+      "columnVisibility": "Visibilité",
       "columnLessons": "Leçons",
       "columnOrder": "Ordre",
       "columnActions": "Actions",
@@ -952,7 +959,7 @@
       "notFoundTitle": "Cours introuvable",
       "notFoundDescription": "Nous n'avons pas trouvé ce cours. Il a peut-être été supprimé ou l'URL est incorrecte.",
       "detailBackToList": "Cours",
-      "detailSummary": "{lessonCount, plural, =0 {Aucune leçon} one {# leçon} other {# leçons}} · {status}",
+      "detailSummary": "{lessonCount, plural, =0 {Aucune leçon} one {# leçon} other {# leçons}} · {status} · {visibility}",
       "publishAction": "Publier",
       "unpublishAction": "Retirer",
       "editAction": "Modifier",
@@ -972,6 +979,10 @@
       "coverImageUrlPlaceholder": "https://…",
       "coverImageUrlHelper": "Collez une URL déjà hébergée. Une fois le cours enregistré, un uploader glisser-déposer remplace ce champ.",
       "coverImageUploadHelper": "Les téléversements s'enregistrent immédiatement — pas besoin d'appuyer sur Enregistrer pour que l'image reste ; ce bouton ne concerne que le reste des métadonnées.",
+      "accessTitle": "Accès",
+      "accessDescription": "Qui peut ouvrir ce cours. Public = tout utilisateur Academy authentifié peut le parcourir depuis le catalogue ; Inscription = réservé aux étudiants ayant une autorisation (wildcard ou par cours).",
+      "visibilityLabel": "Visibilité",
+      "visibilityHelper": "Choisissez Public pour du contenu introductif consultable par toute personne ayant un compte Academy. Choisissez Inscription pour les cours protégés attribués par un admin.",
       "publishingTitle": "Publication",
       "publishingDescription": "Le statut contrôle si les étudiants inscrits voient ce cours. L'ordre est la clé de tri éparse utilisée par les listings — placez-le dans un intervalle libre (p. ex. 15) pour l'insérer entre deux voisins sans tout réécrire.",
       "statusLabel": "Statut",

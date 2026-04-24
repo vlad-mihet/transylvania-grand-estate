@@ -264,6 +264,22 @@ export default function AccountPage() {
             {t("account.passwordHeading")}
           </h2>
           <form onSubmit={onChangePassword} className="mt-4 flex flex-col gap-4">
+            {/*
+              Hidden username field so browser password managers can associate
+              the credential with the logged-in account. Required by the
+              accessibility/autofill contract — Chrome warns "Password forms
+              should have (optionally hidden) username fields" otherwise.
+            */}
+            <input
+              type="text"
+              name="username"
+              autoComplete="username"
+              value={profile.email}
+              readOnly
+              aria-hidden="true"
+              tabIndex={-1}
+              className="sr-only"
+            />
             <label className="text-sm">
               <span className="mb-1 block font-medium">
                 {t("account.currentPasswordLabel")}

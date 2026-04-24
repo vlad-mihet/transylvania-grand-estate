@@ -1,5 +1,10 @@
 import { z } from "zod";
-import { CourseStatus, LessonType, LessonStatus } from "@prisma/client";
+import {
+  CourseStatus,
+  CourseVisibility,
+  LessonType,
+  LessonStatus,
+} from "@prisma/client";
 import {
   lessonEmbedUrlSchema,
   localizedStringSchema,
@@ -17,12 +22,19 @@ import { passwordPolicy } from "./auth";
 
 // ─── Course ─────────────────────────────────────────────
 
+export const courseVisibilitySchema = z.nativeEnum(CourseVisibility);
+
 export const createCourseSchema = z
   .object({
     slug: slugSchema,
     title: localizedStringSchema,
     description: localizedStringSchema,
     coverImage: z.string().min(1).max(500).optional(),
+    // `enrolled` = listing + lesson access require an AcademyEnrollment row;
+    // `public` = any authenticated academy user can read without enrollment.
+    // Default `enrolled` preserves pre-existing semantics for admin-authored
+    // courses that don't explicitly mark themselves public.
+    visibility: courseVisibilitySchema.optional(),
     // Sparse int so reorders don't rewrite every row. Admin UI defaults to
     // `maxExistingOrder + 10`. Plain number (not coerced) because this
     // field only travels in JSON bodies — query params never carry it.
@@ -40,6 +52,7 @@ export const updateCourseSchema = createCourseSchema
 
 export const queryCourseSchema = paginationSchema.extend({
   status: z.nativeEnum(CourseStatus).optional(),
+  visibility: courseVisibilitySchema.optional(),
   search: z.string().max(200).optional(),
   sort: z.enum(["order", "newest", "oldest"]).optional(),
 });
@@ -361,6 +374,7 @@ export type AcademyCourseSummary = {
   lessonCount: number;
   order: number;
   publishedAt: string | null;
+  visibility: "public" | "enrolled";
 };
 
 export type AcademyLessonSummary = {

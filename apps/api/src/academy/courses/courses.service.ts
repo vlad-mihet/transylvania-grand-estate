@@ -1,5 +1,5 @@
 import { ConflictException, Injectable } from '@nestjs/common';
-import { CourseStatus, Prisma } from '@prisma/client';
+import { CourseStatus, CourseVisibility, Prisma } from '@prisma/client';
 import { PrismaService } from '../../prisma/prisma.service';
 import { UploadsService } from '../../uploads/uploads.service';
 import { ensureFound } from '../../common/utils/ensure-found.util';
@@ -72,10 +72,12 @@ export class CoursesService {
   }
 
   /**
-   * Student list: only published courses where the user has an active
-   * enrollment (global-wildcard row OR a row targeting this specific
+   * Student list (enrolled): only published courses where the user has an
+   * active enrollment (global-wildcard row OR a row targeting this specific
    * course). Wildcard takes precedence so we never skip a course the user
-   * should see.
+   * should see. Public-visibility courses are NOT returned here — they live
+   * on the dedicated catalog endpoint so the dashboard can cleanly separate
+   * "what you're enrolled in" from "what you could browse".
    */
   async findAllForStudent(userId: string) {
     const hasGlobal = await this.prisma.academyEnrollment.findFirst({
@@ -92,6 +94,23 @@ export class CoursesService {
     }
     return this.prisma.course.findMany({
       where,
+      orderBy: [{ order: 'asc' }, { publishedAt: 'desc' }],
+      include: { _count: { select: { lessons: { where: { status: 'published' } } } } },
+    });
+  }
+
+  /**
+   * Public catalog: published courses flagged `visibility: public`. Any
+   * authenticated academy user can list them; no enrollment required. Used
+   * by the academy `/catalog` page so new signups (and admin-invited users
+   * with narrow grants) can discover freely readable content.
+   */
+  async findAllPublic() {
+    return this.prisma.course.findMany({
+      where: {
+        status: CourseStatus.published,
+        visibility: CourseVisibility.public,
+      },
       orderBy: [{ order: 'asc' }, { publishedAt: 'desc' }],
       include: { _count: { select: { lessons: { where: { status: 'published' } } } } },
     });
@@ -125,7 +144,12 @@ export class CoursesService {
     if (!course || course.status !== CourseStatus.published) {
       return null;
     }
-    const canRead = await this.userCanRead(userId, course.id);
+    // Public-visibility courses bypass the enrollment lookup entirely —
+    // anyone with a valid academy JWT can read them. For `enrolled` courses
+    // we still require the user to have an active matching enrollment.
+    const canRead =
+      course.visibility === CourseVisibility.public ||
+      (await this.userCanRead(userId, course.id));
     if (!canRead) return null;
     return course;
   }
@@ -145,6 +169,7 @@ export class CoursesService {
         title: toJson(dto.title),
         description: toJson(dto.description),
         coverImage: dto.coverImage ?? null,
+        visibility: dto.visibility ?? CourseVisibility.enrolled,
         order: nextOrder,
       },
     });
@@ -168,6 +193,7 @@ export class CoursesService {
     if (dto.description !== undefined)
       data.description = toJson(dto.description);
     if (dto.coverImage !== undefined) data.coverImage = dto.coverImage;
+    if (dto.visibility !== undefined) data.visibility = dto.visibility;
     if (dto.order !== undefined) data.order = dto.order;
     if (dto.status !== undefined) {
       data.status = dto.status;

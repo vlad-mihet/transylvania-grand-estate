@@ -26,7 +26,6 @@ import { ReorderLessonsDto } from './dto/reorder-lessons.dto';
 import { Roles } from '../../common/decorators/roles.decorator';
 import { Realm } from '../../common/decorators/realm.decorator';
 import { JwtAcademyAuthGuard } from '../auth/guards/jwt-academy-auth.guard';
-import { EnrolledGuard } from '../guards/enrolled.guard';
 import {
   CurrentAcademyUser,
   type AcademyUserPayload,
@@ -105,7 +104,7 @@ export class AdminLessonsController {
 @ApiTags('Academy Lessons (Student)')
 @Controller('academy/courses/:courseSlug/lessons')
 @Realm('academy')
-@UseGuards(JwtAcademyAuthGuard, EnrolledGuard)
+@UseGuards(JwtAcademyAuthGuard)
 export class StudentLessonsController {
   constructor(
     private readonly lessonsService: LessonsService,

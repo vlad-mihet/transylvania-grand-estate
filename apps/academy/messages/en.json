@@ -83,7 +83,19 @@
     },
     "dashboard": {
       "title": "Your courses",
-      "empty": "You don't have access to any courses yet. Contact your administrator."
+      "empty": "You don't have access to any courses yet. Contact your administrator.",
+      "emptyIntro": "You're not enrolled in any courses yet.",
+      "emptyBrowseCatalog": "Browse the public catalog →"
+    },
+    "catalog": {
+      "title": "Catalog",
+      "subtitle": "Public courses open to anyone with an Academy account. No separate enrollment needed.",
+      "empty": "No public courses are available right now. Check back soon.",
+      "navLink": "Catalog"
+    },
+    "visibilities": {
+      "public": "Public",
+      "enrolled": "Enrolled"
     },
     "course": {
       "lessonsTitle": "Lessons",
@@ -120,8 +132,7 @@
       "verificationSent": "Verification email sent."
     },
     "errors": {
-      "generic": "Something went wrong. Please try again.",
-      "notEnrolled": "You are not enrolled in any course."
+      "generic": "Something went wrong. Please try again."
     }
   }
 }

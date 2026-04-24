@@ -14,14 +14,16 @@ primary_region = 'ams'
   auto_start_machines = true
   min_machines_running = 0
 
-# Health probe — /login renders without requiring an active session and
-# returns 200 (same rationale as admin). Replace with a dedicated /health
-# route once routes stabilise.
+# Health probe — next-intl redirects /login → /ro/login (307), and Fly's
+# http_service.checks refuses to accept the machine as healthy in that
+# case (observed: "connect: connection refused" during the initial probe
+# window). Probing the default locale directly returns 200 in one hop.
+# Grace period bumped to match cold-start time observed on 256MB VMs.
 [[http_service.checks]]
-  grace_period = '15s'
+  grace_period = '30s'
   interval = '30s'
   method = 'get'
-  path = '/login'
+  path = '/ro/login'
   protocol = 'http'
   timeout = '5s'
 

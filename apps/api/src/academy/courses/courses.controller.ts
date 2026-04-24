@@ -28,7 +28,6 @@ import { Realm } from '../../common/decorators/realm.decorator';
 import { IMAGE_UPLOAD_SINGLE } from '../../common/config/upload.config';
 import { ValidateUploadInterceptor } from '../../common/interceptors/validate-upload.interceptor';
 import { JwtAcademyAuthGuard } from '../auth/guards/jwt-academy-auth.guard';
-import { EnrolledGuard } from '../guards/enrolled.guard';
 import {
   CurrentAcademyUser,
   type AcademyUserPayload,
@@ -39,8 +38,9 @@ import { computeReadingTimeMinutes } from '@tge/types/utils/reading-time';
 /**
  * Split into two controller classes so the @UseGuards stacks stay clean —
  * admin routes ride the global JwtAuthGuard + RolesGuard, student routes
- * ride JwtAcademyAuthGuard + EnrolledGuard. Mixing them on one class would
- * force per-route guard annotation everywhere.
+ * ride JwtAcademyAuthGuard and enforce per-course access at the service
+ * layer (public visibility OR matching enrollment). Mixing the two surfaces
+ * on one class would force per-route guard annotation everywhere.
  */
 @ApiTags('Academy Courses (Admin)')
 @Controller('admin/academy/courses')
@@ -125,7 +125,7 @@ export class AdminCoursesController {
 @ApiTags('Academy Courses (Student)')
 @Controller('academy/courses')
 @Realm('academy')
-@UseGuards(JwtAcademyAuthGuard, EnrolledGuard)
+@UseGuards(JwtAcademyAuthGuard)
 export class StudentCoursesController {
   constructor(private readonly coursesService: CoursesService) {}
 
@@ -141,6 +141,27 @@ export class StudentCoursesController {
       lessonCount: c._count.lessons,
       order: c.order,
       publishedAt: c.publishedAt?.toISOString() ?? null,
+      visibility: c.visibility,
+    }));
+  }
+
+  /**
+   * Public catalog — no enrollment required. Declared before `:slug` so the
+   * literal "catalog" path never gets shadowed by slug matching.
+   */
+  @Get('catalog')
+  async findCatalog() {
+    const courses = await this.coursesService.findAllPublic();
+    return courses.map((c) => ({
+      id: c.id,
+      slug: c.slug,
+      title: c.title,
+      description: c.description,
+      coverImage: c.coverImage,
+      lessonCount: c._count.lessons,
+      order: c.order,
+      publishedAt: c.publishedAt?.toISOString() ?? null,
+      visibility: c.visibility,
     }));
   }
 

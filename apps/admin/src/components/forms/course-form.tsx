@@ -24,6 +24,7 @@ import { toast } from "@/lib/toast";
 import {
   courseFormSchema,
   COURSE_STATUSES,
+  COURSE_VISIBILITIES,
   type CourseFormValues,
 } from "@/lib/validations/academy";
 
@@ -47,6 +48,7 @@ const EMPTY_DEFAULTS: CourseFormValues = {
   title: { ro: "", en: "", fr: "", de: "" },
   description: { ro: "", en: "", fr: "", de: "" },
   coverImage: undefined,
+  visibility: "enrolled",
   order: undefined,
   status: undefined,
 };
@@ -62,6 +64,7 @@ export function CourseForm({
 }: CourseFormProps) {
   const t = useTranslations("Academy.courseForm");
   const tStatus = useTranslations("Academy.statuses");
+  const tVisibility = useTranslations("Academy.visibilities");
   const form = useForm<CourseFormValues>({
     resolver: zodResolver(courseFormSchema),
     defaultValues: { ...EMPTY_DEFAULTS, ...defaultValues },
@@ -179,6 +182,35 @@ export function CourseForm({
               </>
             )}
           </div>
+        </div>
+      </SectionCard>
+
+      <SectionCard title={t("accessTitle")} description={t("accessDescription")}>
+        <div className="flex flex-col gap-1">
+          <Label htmlFor="course-visibility">{t("visibilityLabel")}</Label>
+          <Select
+            value={form.watch("visibility") ?? "enrolled"}
+            onValueChange={(v) =>
+              form.setValue("visibility", v as CourseFormValues["visibility"], {
+                shouldDirty: true,
+                shouldValidate: true,
+              })
+            }
+          >
+            <SelectTrigger id="course-visibility" className="mt-1.5">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              {COURSE_VISIBILITIES.map((v) => (
+                <SelectItem key={v} value={v}>
+                  {tVisibility(v)}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+          <p className="mt-1 text-xs text-muted-foreground">
+            {t("visibilityHelper")}
+          </p>
         </div>
       </SectionCard>
 

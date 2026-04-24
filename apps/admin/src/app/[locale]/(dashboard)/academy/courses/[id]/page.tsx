@@ -40,6 +40,7 @@ type Course = {
   title: Record<string, string | undefined>;
   description: Record<string, string | undefined>;
   status: "draft" | "published" | "archived";
+  visibility: "public" | "enrolled";
   order: number;
   publishedAt: string | null;
   _count: { lessons: number };
@@ -66,6 +67,7 @@ export default function AcademyCourseDetailPage() {
   const t = useTranslations("Academy.courses");
   const tLessons = useTranslations("Academy.lessons");
   const tStatus = useTranslations("Academy.statuses");
+  const tVisibility = useTranslations("Academy.visibilities");
   const tc = useTranslations("Common");
   const tt = useTranslations("Academy.toasts");
 
@@ -189,6 +191,7 @@ export default function AcademyCourseDetailPage() {
         description={t("detailSummary", {
           lessonCount: orderedLessons.length,
           status: tStatus(course.status),
+          visibility: tVisibility(course.visibility),
         })}
         breadcrumb={
           <Link

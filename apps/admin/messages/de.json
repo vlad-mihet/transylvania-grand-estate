@@ -895,6 +895,8 @@
     "bounced": "Zurückgewiesen",
     "verified": "Verifiziert",
     "unverified": "Unverifiziert",
+    "public": "Öffentlich",
+    "enrolled": "Einschreibung",
     "Property": "Immobilie",
     "Inquiry": "Anfrage",
     "Article": "Artikel",
@@ -907,6 +909,10 @@
       "published": "Veröffentlicht",
       "archived": "Archiviert",
       "all": "Alle Status"
+    },
+    "visibilities": {
+      "public": "Öffentlich",
+      "enrolled": "Einschreibung"
     },
     "invitationStatuses": {
       "pending": "Ausstehend",
@@ -934,6 +940,7 @@
       "columnTitle": "Titel",
       "columnSlug": "Slug",
       "columnStatus": "Status",
+      "columnVisibility": "Sichtbarkeit",
       "columnLessons": "Lektionen",
       "columnOrder": "Reihenfolge",
       "columnActions": "Aktionen",
@@ -952,7 +959,7 @@
       "notFoundTitle": "Kurs nicht gefunden",
       "notFoundDescription": "Wir konnten diesen Kurs nicht finden. Er wurde möglicherweise gelöscht oder die URL ist falsch.",
       "detailBackToList": "Kurse",
-      "detailSummary": "{lessonCount, plural, =0 {Keine Lektionen} one {# Lektion} other {# Lektionen}} · {status}",
+      "detailSummary": "{lessonCount, plural, =0 {Keine Lektionen} one {# Lektion} other {# Lektionen}} · {status} · {visibility}",
       "publishAction": "Veröffentlichen",
       "unpublishAction": "Zurückziehen",
       "editAction": "Bearbeiten",
@@ -972,6 +979,10 @@
       "coverImageUrlPlaceholder": "https://…",
       "coverImageUrlHelper": "Fügen Sie eine bereits gehostete URL ein. Sobald der Kurs gespeichert ist, ersetzt ein Drag-and-Drop-Uploader dieses Feld.",
       "coverImageUploadHelper": "Uploads werden sofort gespeichert — Sie müssen nicht Speichern klicken, damit das Bild bleibt; der Button betrifft nur die übrigen Metadaten.",
+      "accessTitle": "Zugriff",
+      "accessDescription": "Wer diesen Kurs öffnen kann. Öffentlich = jede/r authentifizierte Academy-Nutzer/in kann ihn im Katalog durchstöbern; Einschreibung = nur Studierende mit passender Berechtigung (Wildcard oder kursspezifisch).",
+      "visibilityLabel": "Sichtbarkeit",
+      "visibilityHelper": "Wählen Sie Öffentlich für Einführungsinhalte, die jede/r mit einem Academy-Konto lesen darf. Wählen Sie Einschreibung für geschützte Kurse, die von einem Admin zugewiesen werden.",
       "publishingTitle": "Veröffentlichung",
       "publishingDescription": "Der Status steuert, ob eingeschriebene Studierende den Kurs sehen. Die Reihenfolge ist der dünne Sortierschlüssel — verschieben Sie ihn in eine Lücke (z. B. 15), um zwischen zwei Nachbarn einzufügen, ohne alle umzuschreiben.",
       "statusLabel": "Status",

@@ -30,6 +30,7 @@ type Course = {
   slug: string;
   title: Record<string, string | undefined>;
   status: "draft" | "published" | "archived";
+  visibility: "public" | "enrolled";
   order: number;
   publishedAt: string | null;
   updatedAt: string;
@@ -135,6 +136,16 @@ export default function AcademyCoursesPage() {
       id: "status",
       header: t("columnStatus"),
       cell: ({ row }) => <StatusBadge status={row.original.status} />,
+    },
+    {
+      id: "visibility",
+      header: t("columnVisibility"),
+      cell: ({ row }) => (
+        <StatusBadge
+          status={row.original.visibility}
+          tone={row.original.visibility === "public" ? "info" : "neutral"}
+        />
+      ),
     },
     {
       id: "lessons",

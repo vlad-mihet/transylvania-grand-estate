@@ -10,7 +10,7 @@ import { CourseForm } from "@/components/forms/course-form";
 import { FormPageShell } from "@/components/resource/form-page-shell";
 import { LoadingState } from "@/components/shared/states";
 import type { CourseFormValues } from "@/lib/validations/academy";
-import type { CourseStatus } from "@prisma/client";
+import type { CourseStatus, CourseVisibility } from "@prisma/client";
 
 type Course = {
   id: string;
@@ -19,6 +19,7 @@ type Course = {
   description: Record<string, string | undefined>;
   coverImage: string | null;
   status: CourseStatus;
+  visibility: CourseVisibility;
   order: number;
 };
 
@@ -78,6 +79,7 @@ export default function EditAcademyCoursePage() {
     },
     coverImage: course.coverImage ?? undefined,
     status: course.status,
+    visibility: course.visibility,
     order: course.order,
   };
 

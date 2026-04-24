@@ -727,6 +727,16 @@ enum LessonStatus {
   archived
 }
 
+/// Course access dimension, orthogonal to CourseStatus. `enrolled` = listing +
+/// lesson access require a matching AcademyEnrollment row (wildcard or
+/// per-course). `public` = any authenticated academy user may list and open the
+/// course without an enrollment. Default `enrolled` keeps pre-existing rows
+/// behaving as they did before the column was introduced.
+enum CourseVisibility {
+  public
+  enrolled
+}
+
 model AcademyUser {
   id              String    @id @default(uuid())
   email           String    @unique
@@ -857,17 +867,18 @@ model AcademyRevokedToken {
 }
 
 model Course {
-  id          String       @id @default(uuid())
-  slug        String       @unique
+  id          String           @id @default(uuid())
+  slug        String           @unique
   title       Json // LocalizedString {ro, en, fr?, de?}
   description Json // LocalizedString
-  coverImage  String?      @map("cover_image")
-  status      CourseStatus @default(draft)
+  coverImage  String?          @map("cover_image")
+  status      CourseStatus     @default(draft)
+  visibility  CourseVisibility @default(enrolled)
   // Sparse ordering (10, 20, 30…) so inserts/reorders don't rewrite every row.
-  order       Int          @default(0)
-  publishedAt DateTime?    @map("published_at")
-  createdAt   DateTime     @default(now()) @map("created_at")
-  updatedAt   DateTime     @updatedAt @map("updated_at")
+  order       Int              @default(0)
+  publishedAt DateTime?        @map("published_at")
+  createdAt   DateTime         @default(now()) @map("created_at")
+  updatedAt   DateTime         @updatedAt @map("updated_at")
 
   lessons              Lesson[]
   enrollments          AcademyEnrollment[]
@@ -875,6 +886,7 @@ model Course {
 
   @@index([status])
   @@index([order])
+  @@index([visibility, status])
   @@map("courses")
 }
 

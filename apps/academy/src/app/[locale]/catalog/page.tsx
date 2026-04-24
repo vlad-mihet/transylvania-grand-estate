@@ -2,12 +2,17 @@
 
 import { useEffect, useState } from "react";
 import { useLocale, useTranslations } from "next-intl";
-import { Link, useRouter } from "@/i18n/navigation";
+import { useRouter } from "@/i18n/navigation";
 import { apiFetch, ApiError, getAccessToken, clearTokens } from "@/lib/api-client";
 import { AppHeader } from "@/components/app-header";
 import { CourseCard, type CourseSummary } from "@/components/course-card";
 
-export default function DashboardPage() {
+/**
+ * Public-course catalog. Any authenticated academy user can browse what's
+ * flagged `visibility: public` on the API. Enrollment is not required — a
+ * user with no grants still lands here with something to read.
+ */
+export default function CatalogPage() {
   const t = useTranslations("Academy");
   const locale = useLocale();
   const router = useRouter();
@@ -20,7 +25,7 @@ export default function DashboardPage() {
       router.replace("/login");
       return;
     }
-    apiFetch<CourseSummary[]>("/academy/courses", { locale })
+    apiFetch<CourseSummary[]>("/academy/courses/catalog", { locale })
       .then(setCourses)
       .catch((err) => {
         if (err instanceof ApiError && err.status === 401) {
@@ -42,8 +47,11 @@ export default function DashboardPage() {
             {t("appName")}
           </p>
           <h1 className="mt-1 text-3xl font-semibold">
-            {t("dashboard.title")}
+            {t("catalog.title")}
           </h1>
+          <p className="mt-2 max-w-2xl text-sm text-[color:var(--color-muted-foreground)]">
+            {t("catalog.subtitle")}
+          </p>
         </header>
 
         {loading ? (
@@ -53,21 +61,18 @@ export default function DashboardPage() {
             {error}
           </p>
         ) : courses.length === 0 ? (
-          <div className="rounded-lg border border-dashed border-[color:var(--color-border)] p-8 text-center">
-            <p className="text-sm text-[color:var(--color-muted-foreground)]">
-              {t("dashboard.emptyIntro")}
-            </p>
-            <Link
-              href="/catalog"
-              className="mt-3 inline-block text-sm font-medium text-[color:var(--color-primary)] underline"
-            >
-              {t("dashboard.emptyBrowseCatalog")}
-            </Link>
-          </div>
+          <p className="text-sm text-[color:var(--color-muted-foreground)]">
+            {t("catalog.empty")}
+          </p>
         ) : (
           <div className="grid gap-6 sm:grid-cols-2">
             {courses.map((course) => (
-              <CourseCard key={course.id} course={course} locale={locale} />
+              <CourseCard
+                key={course.id}
+                course={course}
+                locale={locale}
+                showVisibilityBadge
+              />
             ))}
           </div>
         )}

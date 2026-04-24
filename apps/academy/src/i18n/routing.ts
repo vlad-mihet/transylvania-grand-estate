@@ -22,6 +22,7 @@ export const routing = defineRouting({
     "/auth/complete": "/auth/complete",
     "/courses/[slug]": "/courses/[slug]",
     "/courses/[slug]/[lessonSlug]": "/courses/[slug]/[lessonSlug]",
+    "/catalog": "/catalog",
     "/account": "/account",
   },
 });

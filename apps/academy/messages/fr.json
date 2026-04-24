@@ -83,7 +83,19 @@
     },
     "dashboard": {
       "title": "Vos cours",
-      "empty": "Vous n'avez pas encore accès à des cours. Contactez votre administrateur."
+      "empty": "Vous n'avez pas encore accès à des cours. Contactez votre administrateur.",
+      "emptyIntro": "Vous n'êtes inscrit à aucun cours pour le moment.",
+      "emptyBrowseCatalog": "Parcourir le catalogue public →"
+    },
+    "catalog": {
+      "title": "Catalogue",
+      "subtitle": "Cours publics ouverts à toute personne disposant d'un compte Academy. Aucune inscription supplémentaire requise.",
+      "empty": "Aucun cours public n'est disponible pour le moment. Revenez bientôt.",
+      "navLink": "Catalogue"
+    },
+    "visibilities": {
+      "public": "Public",
+      "enrolled": "Inscription"
     },
     "course": {
       "lessonsTitle": "Leçons",
@@ -120,8 +132,7 @@
       "verificationSent": "Email de confirmation envoyé."
     },
     "errors": {
-      "generic": "Une erreur s'est produite. Réessayez.",
-      "notEnrolled": "Vous n'êtes inscrit à aucun cours."
+      "generic": "Une erreur s'est produite. Réessayez."
     }
   }
 }

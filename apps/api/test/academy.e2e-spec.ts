@@ -16,9 +16,11 @@ import {
  *      student reads a lesson.
  *   2. Realm leakage — admin JWT must not unlock academy routes (and vice
  *      versa), even when role + enrollment would otherwise be satisfied.
- *   3. Revoke-mid-flight — the EnrolledGuard hits the DB on every request,
- *      so revoking an enrollment fails the next lesson read with no TTL
- *      wait needed.
+ *   3. Revoke-mid-flight — per-request DB access check so revoking an
+ *      enrollment fails the next lesson read with no TTL wait needed.
+ *   4. Public visibility — courses flagged `visibility: public` are readable
+ *      by any authenticated academy user; the dedicated catalog endpoint
+ *      surfaces them without an enrollment lookup.
  */
 describe('Academy (e2e)', () => {
   let app: INestApplication;
@@ -214,7 +216,7 @@ describe('Academy (e2e)', () => {
   // ── 3. Revoke-mid-flight ────────────────────────────────────────────
 
   describe('revoke mid-flight', () => {
-    it('next lesson read returns 403 NOT_ENROLLED after enrollment is revoked', async () => {
+    it('next lesson read returns 404 after enrollment is revoked', async () => {
       const { course, lesson } = await seedCourseWithLesson();
 
       // Invite + accept to produce a student with an active wildcard
@@ -254,11 +256,14 @@ describe('Academy (e2e)', () => {
         .expect(200);
 
       // Next read — same access token, still within its 15-minute TTL —
-      // must 403 because the EnrolledGuard hits the DB per request.
+      // the service-layer access check returns null on a revoked
+      // enrollment for an `enrolled` course, which surfaces as 404 at the
+      // controller. Either way, no TTL wait is required: the per-request
+      // DB check ensures revocation is immediate.
       await request(app.getHttpServer())
         .get(`/api/v1/academy/courses/${course.slug}/lessons/${lesson.slug}`)
         .set(bearer(studentAccessToken))
-        .expect(403);
+        .expect(404);
     });
   });
 
@@ -419,6 +424,139 @@ describe('Academy (e2e)', () => {
       expect(body.videoUrl).toBe(canonicalYt);
       // Video lessons: duration surfaces from the DB, reading time stays null.
       expect(body.readingTimeMinutes).toBeNull();
+    });
+  });
+
+  // ── 4. Public visibility ────────────────────────────────────────────
+
+  describe('public visibility', () => {
+    async function seedPublicAndEnrolled() {
+      const [publicCourse, enrolledCourse] = await Promise.all([
+        prisma.course.create({
+          data: {
+            slug: 'public-intro',
+            title: { ro: 'Intro public', en: 'Public intro' },
+            description: { ro: 'Oricine', en: 'Anyone' },
+            status: 'published',
+            visibility: 'public',
+            order: 10,
+            publishedAt: new Date(),
+          },
+        }),
+        prisma.course.create({
+          data: {
+            slug: 'enrolled-deep-dive',
+            title: { ro: 'Deep dive', en: 'Deep dive' },
+            description: { ro: 'Doar înscriși', en: 'Enrolled only' },
+            status: 'published',
+            visibility: 'enrolled',
+            order: 20,
+            publishedAt: new Date(),
+          },
+        }),
+      ]);
+      const publicLesson = await prisma.lesson.create({
+        data: {
+          courseId: publicCourse.id,
+          slug: 'welcome',
+          order: 10,
+          title: { ro: 'Bun venit', en: 'Welcome' },
+          excerpt: { ro: 'Scurt', en: 'Short' },
+          content: { ro: 'Conținut public', en: 'Public content' },
+          type: 'text',
+          status: 'published',
+          publishedAt: new Date(),
+        },
+      });
+      return { publicCourse, enrolledCourse, publicLesson };
+    }
+
+    /**
+     * Builds a brand-new academy user with ZERO enrollments and returns an
+     * access token. Used to validate that a user with no grants still lands
+     * on a non-empty catalog.
+     */
+    async function createUnenrolledStudent(): Promise<string> {
+      const jwt = app.get(JwtService);
+      const user = await prisma.academyUser.create({
+        data: {
+          email: `unenrolled-${Date.now()}@example.com`,
+          passwordHash: null,
+          name: 'Unenrolled Student',
+          emailVerifiedAt: new Date(),
+        },
+      });
+      return jwt.sign(
+        {
+          sub: user.id,
+          email: user.email,
+          name: user.name,
+          realm: 'academy',
+        },
+        {
+          secret: process.env.JWT_ACCESS_SECRET,
+          expiresIn: '15m',
+        },
+      );
+    }
+
+    it('GET /academy/courses/catalog returns only public courses for an unenrolled user', async () => {
+      const { publicCourse } = await seedPublicAndEnrolled();
+      const token = await createUnenrolledStudent();
+
+      const res = await request(app.getHttpServer())
+        .get('/api/v1/academy/courses/catalog')
+        .set(bearer(token))
+        .expect(200);
+      const catalog = unwrap<Array<{ slug: string; visibility: string }>>(res);
+      const slugs = catalog.map((c) => c.slug);
+      expect(slugs).toContain(publicCourse.slug);
+      expect(slugs).not.toContain('enrolled-deep-dive');
+      expect(catalog.every((c) => c.visibility === 'public')).toBe(true);
+    });
+
+    it('GET /academy/courses returns an empty list (not 403) for an unenrolled user', async () => {
+      await seedPublicAndEnrolled();
+      const token = await createUnenrolledStudent();
+
+      const res = await request(app.getHttpServer())
+        .get('/api/v1/academy/courses')
+        .set(bearer(token))
+        .expect(200);
+      expect(unwrap<unknown[]>(res)).toEqual([]);
+    });
+
+    it('public course detail + lesson are readable without enrollment', async () => {
+      const { publicCourse, publicLesson } = await seedPublicAndEnrolled();
+      const token = await createUnenrolledStudent();
+
+      await request(app.getHttpServer())
+        .get(`/api/v1/academy/courses/${publicCourse.slug}`)
+        .set(bearer(token))
+        .expect(200);
+
+      const lesson = await request(app.getHttpServer())
+        .get(
+          `/api/v1/academy/courses/${publicCourse.slug}/lessons/${publicLesson.slug}`,
+        )
+        .set(bearer(token))
+        .expect(200);
+      expect(unwrap<{ content: string }>(lesson).content).toContain(
+        'Conținut public',
+      );
+    });
+
+    it('enrolled-visibility course is still 404 for an unenrolled user', async () => {
+      const { enrolledCourse } = await seedPublicAndEnrolled();
+      const token = await createUnenrolledStudent();
+
+      // Course detail returns 404 for private courses the user can't see —
+      // the service collapses the no-access case into not-found to avoid
+      // leaking existence.
+      await request(app.getHttpServer())
+        .get(`/api/v1/academy/courses/${enrolledCourse.slug}`)
+        .set(bearer(token))
+        .expect(404);
     });
   });
 });

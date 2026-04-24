@@ -83,7 +83,19 @@
     },
     "dashboard": {
       "title": "Cursurile tale",
-      "empty": "Nu ai încă acces la niciun curs. Contactează administratorul."
+      "empty": "Nu ai încă acces la niciun curs. Contactează administratorul.",
+      "emptyIntro": "Încă nu ai cursuri înscrise în contul tău.",
+      "emptyBrowseCatalog": "Răsfoiește catalogul public →"
+    },
+    "catalog": {
+      "title": "Catalog",
+      "subtitle": "Cursuri publice disponibile oricui are un cont Academy. Nu e nevoie de înscriere separată.",
+      "empty": "Nu există momentan cursuri publice. Revino curând.",
+      "navLink": "Catalog"
+    },
+    "visibilities": {
+      "public": "Public",
+      "enrolled": "Înscriere"
     },
     "course": {
       "lessonsTitle": "Lecții",
@@ -120,8 +132,7 @@
       "verificationSent": "Email-ul de confirmare a fost trimis."
     },
     "errors": {
-      "generic": "A apărut o eroare. Încearcă din nou.",
-      "notEnrolled": "Nu ești înscris la niciun curs."
+      "generic": "A apărut o eroare. Încearcă din nou."
     }
   }
 }
