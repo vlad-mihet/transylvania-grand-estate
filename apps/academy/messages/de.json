@@ -85,7 +85,10 @@
       "title": "Ihre Kurse",
       "empty": "Sie haben noch keinen Zugang zu Kursen. Wenden Sie sich an Ihren Administrator.",
       "emptyIntro": "Sie sind noch in keinem Kurs eingeschrieben.",
-      "emptyBrowseCatalog": "Öffentlichen Katalog durchstöbern →"
+      "emptyBrowseCatalog": "Öffentlichen Katalog durchstöbern →",
+      "unenrollAction": "Aus meiner Liste entfernen",
+      "unenrollConfirm": "„{title}“ aus Ihrer Liste entfernen? Der Kurs bleibt im Katalog verfügbar.",
+      "unenrollSuccess": "Kurs aus Ihrer Liste entfernt."
     },
     "catalog": {
       "title": "Katalog",
@@ -101,6 +104,10 @@
       "lessonsTitle": "Lektionen",
       "readingTime": "~{count} Min",
       "videoDuration": "{minutes}:{seconds}",
+      "enrollButton": "Zum Kurs anmelden",
+      "enrolledBadge": "Angemeldet",
+      "enrollPending": "Anmeldung läuft…",
+      "enrollFailed": "Anmeldung fehlgeschlagen. Bitte versuchen Sie es gleich erneut.",
       "readingBadge": "Lesen",
       "videoBadge": "Video",
       "translationPendingBadge": "Verfügbar in {locale}"

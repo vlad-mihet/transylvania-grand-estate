@@ -2,6 +2,7 @@ import { BadRequestException, Injectable } from '@nestjs/common';
 import { LessonStatus, Prisma } from '@prisma/client';
 import { PrismaService } from '../../prisma/prisma.service';
 import { MetricsService } from '../../metrics/metrics.service';
+import { EnrollmentsService } from '../enrollments/enrollments.service';
 import { ensureFound } from '../../common/utils/ensure-found.util';
 import { toJson } from '../../common/utils/prisma-json';
 import { paginate } from '../../common/utils/pagination.util';
@@ -16,6 +17,7 @@ export class LessonsService {
   constructor(
     private readonly prisma: PrismaService,
     private readonly metrics: MetricsService,
+    private readonly enrollments: EnrollmentsService,
   ) {}
 
   async findAllForAdmin(courseId: string, query: QueryLessonDto) {
@@ -73,6 +75,15 @@ export class LessonsService {
       where: { courseId_slug: { courseId: course.id, slug: args.lessonSlug } },
     });
     if (!lesson || lesson.status !== LessonStatus.published) return null;
+
+    // Side-effect: reading a lesson on a public-visibility course implicitly
+    // enrolls the student so the course lands on their dashboard. No-op if a
+    // wildcard or per-course row already covers them; swallows errors so
+    // the read never fails on an enrollment write race.
+    if (course.visibility === 'public') {
+      await this.enrollments.autoEnrollIfPublic(args.userId, course.id);
+    }
+
     return lesson;
   }
 

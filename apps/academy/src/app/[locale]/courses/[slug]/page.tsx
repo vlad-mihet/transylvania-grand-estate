@@ -14,6 +14,9 @@ type CourseDetail = {
   description: Record<string, string | undefined>;
   coverImage: string | null;
   publishedAt: string | null;
+  visibility: "public" | "enrolled";
+  enrolled: boolean;
+  canUnenroll?: boolean;
   servedLocale: string;
   localizedTitle: string;
   localizedDescription: string;
@@ -41,6 +44,7 @@ export default function CoursePage() {
   const [course, setCourse] = useState<CourseDetail | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [enrolling, setEnrolling] = useState(false);
 
   useEffect(() => {
     if (!getAccessToken()) {
@@ -62,6 +66,26 @@ export default function CoursePage() {
       })
       .finally(() => setLoading(false));
   }, [params.slug, locale, router]);
+
+  async function onEnroll() {
+    if (!course || enrolling) return;
+    setEnrolling(true);
+    try {
+      await apiFetch<{ enrolled: boolean }>(
+        `/academy/courses/${encodeURIComponent(params.slug)}/enroll`,
+        { method: "POST", locale },
+      );
+      // Server is authoritative, but optimistic flip is fine: the endpoint
+      // only resolves with enrolled=true on success. `canUnenroll` goes
+      // true when the row is new self-service; it stays false when the
+      // user was already wildcard-covered (server reported reason='wildcard').
+      setCourse({ ...course, enrolled: true, canUnenroll: true });
+    } catch (err) {
+      setError(err instanceof Error ? err.message : t("course.enrollFailed"));
+    } finally {
+      setEnrolling(false);
+    }
+  }
 
   if (loading) {
     return (
@@ -105,6 +129,26 @@ export default function CoursePage() {
         <p className="mt-3 inline-block rounded-full bg-[color:var(--color-muted)] px-3 py-1 text-xs text-[color:var(--color-muted-foreground)]">
           {t("course.translationPendingBadge", { locale: course.servedLocale })}
         </p>
+      ) : null}
+
+      {course.visibility === "public" ? (
+        <div className="mt-6">
+          {course.enrolled ? (
+            <span className="inline-flex items-center gap-1.5 rounded-md border border-emerald-500/30 bg-emerald-500/10 px-3 py-1.5 text-sm font-medium text-emerald-700">
+              <span aria-hidden="true">✓</span>
+              {t("course.enrolledBadge")}
+            </span>
+          ) : (
+            <button
+              type="button"
+              onClick={onEnroll}
+              disabled={enrolling}
+              className="rounded-md bg-[color:var(--color-primary)] px-4 py-2 text-sm font-medium text-white transition hover:opacity-90 disabled:opacity-60"
+            >
+              {enrolling ? t("course.enrollPending") : t("course.enrollButton")}
+            </button>
+          )}
+        </div>
       ) : null}
 
       <h2 className="mt-10 text-lg font-semibold">{t("course.lessonsTitle")}</h2>

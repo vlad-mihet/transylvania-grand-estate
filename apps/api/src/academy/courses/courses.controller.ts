@@ -4,6 +4,7 @@ import {
   Controller,
   Delete,
   Get,
+  HttpCode,
   NotFoundException,
   Param,
   ParseUUIDPipe,
@@ -18,6 +19,7 @@ import { FileInterceptor } from '@nestjs/platform-express';
 import { ApiTags } from '@nestjs/swagger';
 import { AdminRole } from '@prisma/client';
 import { CoursesService } from './courses.service';
+import { EnrollmentsService } from '../enrollments/enrollments.service';
 import {
   CreateCourseDto,
   UpdateCourseDto,
@@ -127,7 +129,10 @@ export class AdminCoursesController {
 @Realm('academy')
 @UseGuards(JwtAcademyAuthGuard)
 export class StudentCoursesController {
-  constructor(private readonly coursesService: CoursesService) {}
+  constructor(
+    private readonly coursesService: CoursesService,
+    private readonly enrollmentsService: EnrollmentsService,
+  ) {}
 
   @Get()
   async findAll(@CurrentAcademyUser() user: AcademyUserPayload) {
@@ -142,6 +147,8 @@ export class StudentCoursesController {
       order: c.order,
       publishedAt: c.publishedAt?.toISOString() ?? null,
       visibility: c.visibility,
+      enrolled: c.enrolled,
+      canUnenroll: c.canUnenroll,
     }));
   }
 
@@ -150,8 +157,8 @@ export class StudentCoursesController {
    * literal "catalog" path never gets shadowed by slug matching.
    */
   @Get('catalog')
-  async findCatalog() {
-    const courses = await this.coursesService.findAllPublic();
+  async findCatalog(@CurrentAcademyUser() user: AcademyUserPayload) {
+    const courses = await this.coursesService.findAllPublic(user.id);
     return courses.map((c) => ({
       id: c.id,
       slug: c.slug,
@@ -162,7 +169,42 @@ export class StudentCoursesController {
       order: c.order,
       publishedAt: c.publishedAt?.toISOString() ?? null,
       visibility: c.visibility,
+      enrolled: c.enrolled,
+      canUnenroll: c.canUnenroll,
     }));
+  }
+
+  /**
+   * Student self-service enroll in a public course. Idempotent — double
+   * clicks and stale catalog state re-hit this endpoint harmlessly. Returns
+   * 403 if the slug points at an `enrolled`-visibility course (admin grant
+   * required); 404 if the slug doesn't exist or isn't published.
+   */
+  @Post(':slug/enroll')
+  @HttpCode(200)
+  async enrollInCourse(
+    @CurrentAcademyUser() user: AcademyUserPayload,
+    @Param('slug') slug: string,
+  ) {
+    const result = await this.enrollmentsService.selfEnrollInPublicCourse(
+      user.id,
+      slug,
+    );
+    return { enrolled: result.enrolled };
+  }
+
+  /**
+   * Student self-service unenroll from the same course. Only soft-revokes
+   * the caller's per-course, self-service row — admin grants and
+   * wildcards are out of scope (404 when the caller has neither).
+   */
+  @Delete(':slug/enroll')
+  @HttpCode(200)
+  async unenrollFromCourse(
+    @CurrentAcademyUser() user: AcademyUserPayload,
+    @Param('slug') slug: string,
+  ) {
+    return this.enrollmentsService.selfUnenrollFromCourse(user.id, slug);
   }
 
   @Get(':slug')
@@ -183,6 +225,9 @@ export class StudentCoursesController {
       description: course.description,
       coverImage: course.coverImage,
       publishedAt: course.publishedAt?.toISOString() ?? null,
+      visibility: course.visibility,
+      enrolled: course.enrolled,
+      canUnenroll: course.canUnenroll,
       servedLocale: title.servedLocale,
       localizedTitle: title.text,
       localizedDescription: description.text,

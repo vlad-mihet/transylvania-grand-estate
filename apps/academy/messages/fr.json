@@ -85,7 +85,10 @@
       "title": "Vos cours",
       "empty": "Vous n'avez pas encore accès à des cours. Contactez votre administrateur.",
       "emptyIntro": "Vous n'êtes inscrit à aucun cours pour le moment.",
-      "emptyBrowseCatalog": "Parcourir le catalogue public →"
+      "emptyBrowseCatalog": "Parcourir le catalogue public →",
+      "unenrollAction": "Retirer de ma liste",
+      "unenrollConfirm": "Retirer « {title} » de votre liste ? Le cours reste disponible dans le catalogue.",
+      "unenrollSuccess": "Cours retiré de votre liste."
     },
     "catalog": {
       "title": "Catalogue",
@@ -101,6 +104,10 @@
       "lessonsTitle": "Leçons",
       "readingTime": "~{count} min",
       "videoDuration": "{minutes}:{seconds}",
+      "enrollButton": "S'inscrire au cours",
+      "enrolledBadge": "Inscrit",
+      "enrollPending": "Inscription en cours…",
+      "enrollFailed": "L'inscription a échoué. Réessayez dans un instant.",
       "readingBadge": "Lecture",
       "videoBadge": "Vidéo",
       "translationPendingBadge": "Disponible en {locale}"

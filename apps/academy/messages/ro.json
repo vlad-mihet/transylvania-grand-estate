@@ -85,7 +85,10 @@
       "title": "Cursurile tale",
       "empty": "Nu ai încă acces la niciun curs. Contactează administratorul.",
       "emptyIntro": "Încă nu ai cursuri înscrise în contul tău.",
-      "emptyBrowseCatalog": "Răsfoiește catalogul public →"
+      "emptyBrowseCatalog": "Răsfoiește catalogul public →",
+      "unenrollAction": "Elimină din lista mea",
+      "unenrollConfirm": "Sigur vrei să elimini „{title}” din lista ta? Cursul rămâne disponibil în catalog.",
+      "unenrollSuccess": "Cursul a fost eliminat din lista ta."
     },
     "catalog": {
       "title": "Catalog",
@@ -103,7 +106,11 @@
       "videoDuration": "{minutes}:{seconds}",
       "readingBadge": "Lectură",
       "videoBadge": "Video",
-      "translationPendingBadge": "Disponibil în {locale}"
+      "translationPendingBadge": "Disponibil în {locale}",
+      "enrollButton": "Înscrie-te la curs",
+      "enrolledBadge": "Înscris",
+      "enrollPending": "Se procesează…",
+      "enrollFailed": "Înscrierea a eșuat. Reîncearcă în câteva momente."
     },
     "lesson": {
       "back": "Înapoi la curs",

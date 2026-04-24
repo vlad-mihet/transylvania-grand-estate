@@ -85,7 +85,10 @@
       "title": "Your courses",
       "empty": "You don't have access to any courses yet. Contact your administrator.",
       "emptyIntro": "You're not enrolled in any courses yet.",
-      "emptyBrowseCatalog": "Browse the public catalog →"
+      "emptyBrowseCatalog": "Browse the public catalog →",
+      "unenrollAction": "Remove from my list",
+      "unenrollConfirm": "Remove “{title}” from your list? The course stays available in the catalog.",
+      "unenrollSuccess": "Course removed from your list."
     },
     "catalog": {
       "title": "Catalog",
@@ -101,6 +104,10 @@
       "lessonsTitle": "Lessons",
       "readingTime": "~{count} min",
       "videoDuration": "{minutes}:{seconds}",
+      "enrollButton": "Enroll in course",
+      "enrolledBadge": "Enrolled",
+      "enrollPending": "Enrolling…",
+      "enrollFailed": "Enrollment failed. Please try again in a moment.",
       "readingBadge": "Reading",
       "videoBadge": "Video",
       "translationPendingBadge": "Available in {locale}"

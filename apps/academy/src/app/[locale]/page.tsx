@@ -14,6 +14,7 @@ export default function DashboardPage() {
   const [courses, setCourses] = useState<CourseSummary[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [unenrollingSlug, setUnenrollingSlug] = useState<string | null>(null);
 
   useEffect(() => {
     if (!getAccessToken()) {
@@ -32,6 +33,28 @@ export default function DashboardPage() {
       })
       .finally(() => setLoading(false));
   }, [locale, router]);
+
+  async function onUnenroll(slug: string) {
+    const target = courses.find((c) => c.slug === slug);
+    const courseTitle =
+      target?.title[locale] ?? target?.title.ro ?? target?.slug ?? slug;
+    const confirmed = window.confirm(
+      t("dashboard.unenrollConfirm", { title: courseTitle }),
+    );
+    if (!confirmed) return;
+    setUnenrollingSlug(slug);
+    try {
+      await apiFetch(`/academy/courses/${encodeURIComponent(slug)}/enroll`, {
+        method: "DELETE",
+        locale,
+      });
+      setCourses((prev) => prev.filter((c) => c.slug !== slug));
+    } catch (err) {
+      setError(err instanceof Error ? err.message : String(err));
+    } finally {
+      setUnenrollingSlug(null);
+    }
+  }
 
   return (
     <>
@@ -67,7 +90,13 @@ export default function DashboardPage() {
         ) : (
           <div className="grid gap-6 sm:grid-cols-2">
             {courses.map((course) => (
-              <CourseCard key={course.id} course={course} locale={locale} />
+              <CourseCard
+                key={course.id}
+                course={course}
+                locale={locale}
+                onUnenroll={onUnenroll}
+                unenrollPending={unenrollingSlug === course.slug}
+              />
             ))}
           </div>
         )}

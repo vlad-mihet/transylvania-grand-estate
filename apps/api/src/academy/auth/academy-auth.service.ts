@@ -508,23 +508,12 @@ export class AcademyAuthService {
         data: { emailVerifiedAt: new Date(), lastLoginAt: new Date() },
         select: { id: true, email: true, name: true },
       });
-      // Wildcard enrollment — grantedById NULL marks this as a
-      // self-service row so audit dashboards can tell it apart from
-      // admin grants. `createMany + skipDuplicates` handles the edge
-      // case where an invitation already granted one: Prisma's
-      // compound-unique-with-null doesn't match via upsert (SQL treats
-      // nulls as not-equal-to-null), so a plain create() followed by
-      // a duplicate catch is the canonical workaround.
-      await tx.academyEnrollment.createMany({
-        data: [
-          {
-            userId: updated.id,
-            courseId: null,
-            grantedById: null,
-          },
-        ],
-        skipDuplicates: true,
-      });
+      // No wildcard enrollment is created here anymore. Self-service users
+      // land on an empty dashboard and pick up per-course rows either by
+      // hitting the `POST /academy/courses/:slug/enroll` button from the
+      // catalog or by opening a lesson (auto-enroll in `LessonsService`).
+      // Admin-initiated invitations still grant access explicitly through
+      // `AcademyInvitationsService.grantInitialEnrollment`.
       return updated;
     });
 
@@ -723,13 +712,10 @@ export class AcademyAuthService {
         },
       });
 
-      await tx.academyEnrollment.create({
-        data: {
-          userId: user.id,
-          courseId: null,
-          grantedById: null,
-        },
-      });
+      // No wildcard enrollment on Google sign-up either — self-service
+      // accounts start empty and accrue per-course rows via the enroll
+      // button or lesson auto-enroll. Admin invitations keep their
+      // explicit grant path.
 
       // Merge: any pending invitation for this email is now moot.
       await tx.academyInvitation.updateMany({

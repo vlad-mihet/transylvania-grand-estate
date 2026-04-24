@@ -375,6 +375,20 @@ export type AcademyCourseSummary = {
   order: number;
   publishedAt: string | null;
   visibility: "public" | "enrolled";
+  /**
+   * Whether the requesting student has any active enrollment covering this
+   * course — either a per-course row or a non-revoked wildcard. Dashboard
+   * rows are always `true` by definition; catalog rows compute this so the
+   * UI can surface an `Înscris` badge and hide the enroll button.
+   */
+  enrolled: boolean;
+  /**
+   * True only when the user's enrollment for this course is a self-service,
+   * per-course row (`grantedById IS NULL AND courseId = this.id`). Admin
+   * grants and wildcards aren't self-removable — those show no unenroll
+   * affordance on the dashboard. Absent when `enrolled` is false.
+   */
+  canUnenroll?: boolean;
 };
 
 export type AcademyLessonSummary = {

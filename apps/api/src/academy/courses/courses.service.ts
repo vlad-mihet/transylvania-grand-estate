@@ -78,6 +78,10 @@ export class CoursesService {
    * should see. Public-visibility courses are NOT returned here — they live
    * on the dedicated catalog endpoint so the dashboard can cleanly separate
    * "what you're enrolled in" from "what you could browse".
+   *
+   * Each row carries an `enrolled` flag (always true here, included for
+   * response-shape symmetry with catalog) and `canUnenroll` so the dashboard
+   * can render the "Elimină din lista mea" menu only for self-service rows.
    */
   async findAllForStudent(userId: string) {
     const hasGlobal = await this.prisma.academyEnrollment.findFirst({
@@ -92,11 +96,20 @@ export class CoursesService {
         some: { userId, revokedAt: null },
       };
     }
-    return this.prisma.course.findMany({
+    const courses = await this.prisma.course.findMany({
       where,
       orderBy: [{ order: 'asc' }, { publishedAt: 'desc' }],
       include: { _count: { select: { lessons: { where: { status: 'published' } } } } },
     });
+    const state = await this.computeEnrollmentState(
+      userId,
+      courses.map((c) => c.id),
+    );
+    return courses.map((c) => ({
+      ...c,
+      enrolled: true,
+      canUnenroll: state.get(c.id)?.canUnenroll ?? false,
+    }));
   }
 
   /**
@@ -104,15 +117,31 @@ export class CoursesService {
    * authenticated academy user can list them; no enrollment required. Used
    * by the academy `/catalog` page so new signups (and admin-invited users
    * with narrow grants) can discover freely readable content.
+   *
+   * Each row carries an `enrolled` flag so the UI can surface an `Înscris`
+   * badge and hide the enroll button for courses already on the user's
+   * dashboard. A wildcard enrollment counts as enrolled for every course.
    */
-  async findAllPublic() {
-    return this.prisma.course.findMany({
+  async findAllPublic(userId: string) {
+    const courses = await this.prisma.course.findMany({
       where: {
         status: CourseStatus.published,
         visibility: CourseVisibility.public,
       },
       orderBy: [{ order: 'asc' }, { publishedAt: 'desc' }],
       include: { _count: { select: { lessons: { where: { status: 'published' } } } } },
+    });
+    const state = await this.computeEnrollmentState(
+      userId,
+      courses.map((c) => c.id),
+    );
+    return courses.map((c) => {
+      const s = state.get(c.id);
+      return {
+        ...c,
+        enrolled: s?.enrolled ?? false,
+        canUnenroll: s?.canUnenroll ?? false,
+      };
     });
   }
 
@@ -151,7 +180,13 @@ export class CoursesService {
       course.visibility === CourseVisibility.public ||
       (await this.userCanRead(userId, course.id));
     if (!canRead) return null;
-    return course;
+    const state = await this.computeEnrollmentState(userId, [course.id]);
+    const s = state.get(course.id);
+    return {
+      ...course,
+      enrolled: s?.enrolled ?? false,
+      canUnenroll: s?.canUnenroll ?? false,
+    };
   }
 
   async create(dto: CreateCourseDto) {
@@ -336,5 +371,48 @@ export class CoursesService {
       select: { id: true },
     });
     return match !== null;
+  }
+
+  /**
+   * Given a user and a set of course ids, return a map keyed by courseId
+   * with the enrollment-derived UI flags. One round-trip to the DB:
+   *   - wildcard row (courseId NULL, revokedAt NULL) covers all of them
+   *   - per-course rows override only for their matching courseId
+   *
+   * `canUnenroll` requires a non-wildcard, self-service row for that
+   * specific course — admin-granted rows and wildcards aren't removable
+   * by the student.
+   */
+  private async computeEnrollmentState(
+    userId: string,
+    courseIds: string[],
+  ): Promise<Map<string, { enrolled: boolean; canUnenroll: boolean }>> {
+    const result = new Map<string, { enrolled: boolean; canUnenroll: boolean }>();
+    if (courseIds.length === 0) return result;
+
+    const rows = await this.prisma.academyEnrollment.findMany({
+      where: {
+        userId,
+        revokedAt: null,
+        OR: [{ courseId: null }, { courseId: { in: courseIds } }],
+      },
+      select: { courseId: true, grantedById: true },
+    });
+    const wildcardActive = rows.some((r) => r.courseId === null);
+    const perCourse = new Map<string, { grantedById: string | null }>();
+    for (const r of rows) {
+      if (r.courseId !== null) {
+        perCourse.set(r.courseId, { grantedById: r.grantedById });
+      }
+    }
+
+    for (const id of courseIds) {
+      const row = perCourse.get(id);
+      const enrolled = wildcardActive || row !== undefined;
+      const canUnenroll =
+        !wildcardActive && row !== undefined && row.grantedById === null;
+      result.set(id, { enrolled, canUnenroll });
+    }
+    return result;
   }
 }

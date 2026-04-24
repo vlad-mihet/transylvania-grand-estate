@@ -559,4 +559,295 @@ describe('Academy (e2e)', () => {
         .expect(404);
     });
   });
+
+  // ── 5. Self-service enrollment (public courses) ────────────────────
+
+  describe('self-service enrollment', () => {
+    async function seedPublicAndEnrolled() {
+      const [publicCourse, enrolledCourse] = await Promise.all([
+        prisma.course.create({
+          data: {
+            slug: 'public-intro',
+            title: { ro: 'Intro public', en: 'Public intro' },
+            description: { ro: 'Oricine', en: 'Anyone' },
+            status: 'published',
+            visibility: 'public',
+            order: 10,
+            publishedAt: new Date(),
+          },
+        }),
+        prisma.course.create({
+          data: {
+            slug: 'enrolled-deep-dive',
+            title: { ro: 'Deep dive', en: 'Deep dive' },
+            description: { ro: 'Doar înscriși', en: 'Enrolled only' },
+            status: 'published',
+            visibility: 'enrolled',
+            order: 20,
+            publishedAt: new Date(),
+          },
+        }),
+      ]);
+      const publicLesson = await prisma.lesson.create({
+        data: {
+          courseId: publicCourse.id,
+          slug: 'welcome',
+          order: 10,
+          title: { ro: 'Bun venit', en: 'Welcome' },
+          excerpt: { ro: 'Scurt', en: 'Short' },
+          content: { ro: 'Conținut public', en: 'Public content' },
+          type: 'text',
+          status: 'published',
+          publishedAt: new Date(),
+        },
+      });
+      return { publicCourse, enrolledCourse, publicLesson };
+    }
+
+    async function createUnenrolledStudent(): Promise<{
+      userId: string;
+      token: string;
+    }> {
+      const jwt = app.get(JwtService);
+      const user = await prisma.academyUser.create({
+        data: {
+          email: `enrollee-${Date.now()}-${Math.random()}@example.com`,
+          passwordHash: null,
+          name: 'Enrollee',
+          emailVerifiedAt: new Date(),
+        },
+      });
+      const token = jwt.sign(
+        {
+          sub: user.id,
+          email: user.email,
+          name: user.name,
+          realm: 'academy',
+        },
+        {
+          secret: process.env.JWT_ACCESS_SECRET,
+          expiresIn: '15m',
+        },
+      );
+      return { userId: user.id, token };
+    }
+
+    it('POST /academy/courses/:slug/enroll creates a per-course row and the course surfaces on /courses', async () => {
+      const { publicCourse } = await seedPublicAndEnrolled();
+      const { userId, token } = await createUnenrolledStudent();
+
+      await request(app.getHttpServer())
+        .post(`/api/v1/academy/courses/${publicCourse.slug}/enroll`)
+        .set(bearer(token))
+        .expect(200)
+        .expect((res) => expect(res.body.data.enrolled).toBe(true));
+
+      const rows = await prisma.academyEnrollment.findMany({
+        where: { userId, revokedAt: null },
+      });
+      expect(rows).toHaveLength(1);
+      expect(rows[0].courseId).toBe(publicCourse.id);
+      expect(rows[0].grantedById).toBeNull();
+
+      const dashboard = await request(app.getHttpServer())
+        .get('/api/v1/academy/courses')
+        .set(bearer(token))
+        .expect(200);
+      const list = unwrap<Array<{ slug: string; enrolled: boolean; canUnenroll: boolean }>>(dashboard);
+      expect(list).toHaveLength(1);
+      expect(list[0].slug).toBe(publicCourse.slug);
+      expect(list[0].enrolled).toBe(true);
+      expect(list[0].canUnenroll).toBe(true);
+    });
+
+    it('POST enroll twice is idempotent — no duplicate row, no error', async () => {
+      const { publicCourse } = await seedPublicAndEnrolled();
+      const { userId, token } = await createUnenrolledStudent();
+
+      for (let i = 0; i < 2; i++) {
+        await request(app.getHttpServer())
+          .post(`/api/v1/academy/courses/${publicCourse.slug}/enroll`)
+          .set(bearer(token))
+          .expect(200);
+      }
+      const rows = await prisma.academyEnrollment.findMany({
+        where: { userId, courseId: publicCourse.id },
+      });
+      expect(rows).toHaveLength(1);
+    });
+
+    it('POST enroll on an enrolled-visibility course returns 403', async () => {
+      const { enrolledCourse } = await seedPublicAndEnrolled();
+      const { token } = await createUnenrolledStudent();
+
+      await request(app.getHttpServer())
+        .post(`/api/v1/academy/courses/${enrolledCourse.slug}/enroll`)
+        .set(bearer(token))
+        .expect(403);
+    });
+
+    it('POST enroll on a nonexistent slug returns 404', async () => {
+      const { token } = await createUnenrolledStudent();
+
+      await request(app.getHttpServer())
+        .post('/api/v1/academy/courses/does-not-exist/enroll')
+        .set(bearer(token))
+        .expect(404);
+    });
+
+    it('opening a lesson on a public course auto-upserts an enrollment row', async () => {
+      const { publicCourse, publicLesson } = await seedPublicAndEnrolled();
+      const { userId, token } = await createUnenrolledStudent();
+
+      await request(app.getHttpServer())
+        .get(
+          `/api/v1/academy/courses/${publicCourse.slug}/lessons/${publicLesson.slug}`,
+        )
+        .set(bearer(token))
+        .expect(200);
+
+      const rows = await prisma.academyEnrollment.findMany({
+        where: { userId, revokedAt: null },
+      });
+      expect(rows).toHaveLength(1);
+      expect(rows[0].courseId).toBe(publicCourse.id);
+      expect(rows[0].grantedById).toBeNull();
+    });
+
+    it('DELETE /academy/courses/:slug/enroll soft-revokes the self-service row', async () => {
+      const { publicCourse } = await seedPublicAndEnrolled();
+      const { userId, token } = await createUnenrolledStudent();
+
+      await request(app.getHttpServer())
+        .post(`/api/v1/academy/courses/${publicCourse.slug}/enroll`)
+        .set(bearer(token))
+        .expect(200);
+
+      await request(app.getHttpServer())
+        .delete(`/api/v1/academy/courses/${publicCourse.slug}/enroll`)
+        .set(bearer(token))
+        .expect(200)
+        .expect((res) => expect(res.body.data.enrolled).toBe(false));
+
+      const row = await prisma.academyEnrollment.findFirst({
+        where: { userId, courseId: publicCourse.id },
+      });
+      expect(row?.revokedAt).not.toBeNull();
+
+      // Dashboard drops the course; catalog still lists it without the
+      // enrolled flag.
+      const dashboard = await request(app.getHttpServer())
+        .get('/api/v1/academy/courses')
+        .set(bearer(token))
+        .expect(200);
+      expect(unwrap<unknown[]>(dashboard)).toEqual([]);
+
+      const catalog = await request(app.getHttpServer())
+        .get('/api/v1/academy/courses/catalog')
+        .set(bearer(token))
+        .expect(200);
+      const entry = unwrap<Array<{ slug: string; enrolled: boolean }>>(catalog).find(
+        (c) => c.slug === publicCourse.slug,
+      );
+      expect(entry?.enrolled).toBe(false);
+    });
+
+    it('DELETE returns 404 when the user has no self-service row (admin-granted only)', async () => {
+      const { publicCourse } = await seedPublicAndEnrolled();
+      const { userId, token } = await createUnenrolledStudent();
+
+      // Admin-style grant (grantedById non-null). A self-unenroll against
+      // this row must fail — admin grants are not student-removable.
+      await prisma.academyEnrollment.create({
+        data: {
+          userId,
+          courseId: publicCourse.id,
+          grantedById: admin.userId,
+        },
+      });
+
+      await request(app.getHttpServer())
+        .delete(`/api/v1/academy/courses/${publicCourse.slug}/enroll`)
+        .set(bearer(token))
+        .expect(404);
+
+      // And the admin grant is untouched.
+      const row = await prisma.academyEnrollment.findFirst({
+        where: { userId, courseId: publicCourse.id },
+      });
+      expect(row?.revokedAt).toBeNull();
+    });
+
+    it('DELETE then re-POST un-revokes the same row', async () => {
+      const { publicCourse } = await seedPublicAndEnrolled();
+      const { userId, token } = await createUnenrolledStudent();
+
+      await request(app.getHttpServer())
+        .post(`/api/v1/academy/courses/${publicCourse.slug}/enroll`)
+        .set(bearer(token))
+        .expect(200);
+      const firstId = (
+        await prisma.academyEnrollment.findFirstOrThrow({
+          where: { userId, courseId: publicCourse.id },
+        })
+      ).id;
+
+      await request(app.getHttpServer())
+        .delete(`/api/v1/academy/courses/${publicCourse.slug}/enroll`)
+        .set(bearer(token))
+        .expect(200);
+      await request(app.getHttpServer())
+        .post(`/api/v1/academy/courses/${publicCourse.slug}/enroll`)
+        .set(bearer(token))
+        .expect(200);
+
+      const rows = await prisma.academyEnrollment.findMany({
+        where: { userId, courseId: publicCourse.id },
+      });
+      expect(rows).toHaveLength(1);
+      expect(rows[0].id).toBe(firstId);
+      expect(rows[0].revokedAt).toBeNull();
+      expect(rows[0].grantedById).toBeNull();
+    });
+
+    it('self-service verify-email no longer creates a wildcard — dashboard is empty post-verify', async () => {
+      await seedPublicAndEnrolled();
+
+      // Register + verify end-to-end.
+      await request(app.getHttpServer())
+        .post('/api/v1/academy/auth/register')
+        .send({
+          email: 'fresh@example.com',
+          password: 'Str0ngPassword!!',
+          name: 'Fresh User',
+          locale: 'ro',
+        })
+        .expect(201);
+
+      const verify = mockEmail.captured.find(
+        (c) => c.template === 'academy-email-verification',
+      );
+      expect(verify).toBeDefined();
+      const token = new URL(verify!.url!).searchParams.get('token')!;
+
+      const verified = await request(app.getHttpServer())
+        .post('/api/v1/academy/auth/verify-email')
+        .send({ token })
+        .expect(201);
+      const accessToken: string = verified.body.data.accessToken;
+
+      // No wildcard row means the dashboard is empty until the user
+      // enrolls (button or lesson read).
+      const dashboard = await request(app.getHttpServer())
+        .get('/api/v1/academy/courses')
+        .set(bearer(accessToken))
+        .expect(200);
+      expect(unwrap<unknown[]>(dashboard)).toEqual([]);
+
+      const rows = await prisma.academyEnrollment.findMany({
+        where: { user: { email: 'fresh@example.com' } },
+      });
+      expect(rows).toEqual([]);
+    });
+  });
 });
