@@ -825,7 +825,7 @@ describe('Academy (e2e)', () => {
         .expect(201);
 
       const verify = mockEmail.captured.find(
-        (c) => c.template === 'academy-email-verification',
+        (c) => c.template === 'academy-verification',
       );
       expect(verify).toBeDefined();
       const token = new URL(verify!.url!).searchParams.get('token')!;

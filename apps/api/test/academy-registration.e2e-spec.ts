@@ -7,8 +7,10 @@ import { bearer, unwrap } from './fixtures';
 
 /**
  * End-to-end coverage for the self-service registration flow:
- *   1. Happy path — register → verify → tokens issued → wildcard enrollment
- *      grants access to every published course.
+ *   1. Happy path — register → verify → tokens issued → empty dashboard →
+ *      auto-enroll on first public lesson read lands the course on the
+ *      dashboard. No wildcard is created on verify-email; the visibility
+ *      gate is now meaningful for self-service accounts.
  *   2. Duplicate email — the second /register call on the same address
  *      returns 202 without minting a second AcademyUser row; the
  *      verification token is rotated so the stale link can't land access.
@@ -49,6 +51,10 @@ describe('Academy registration (e2e)', () => {
         title: { ro: 'Fundamentele', en: 'Fundamentals' },
         description: { ro: 'Curs intro', en: 'Intro course' },
         status: 'published',
+        // Public so a self-service user (who no longer gets a wildcard on
+        // verify-email) can actually read the lesson end-to-end in the
+        // happy-path test.
+        visibility: 'public',
         order: 10,
         publishedAt: new Date(),
       },
@@ -70,7 +76,7 @@ describe('Academy registration (e2e)', () => {
   }
 
   describe('happy path', () => {
-    it('register → verify → wildcard enrollment → course access', async () => {
+    it('register → verify → empty dashboard → lesson read auto-enrolls into the public course', async () => {
       const { course, lesson } = await seedPublishedCourse();
 
       // 1. Register.
@@ -97,7 +103,9 @@ describe('Academy registration (e2e)', () => {
       expect(preVerify).toBeDefined();
       expect(preVerify!.emailVerifiedAt).toBeNull();
 
-      // 2. Verify.
+      // 2. Verify — sets emailVerifiedAt and returns access tokens, but
+      // no enrollment row is created. Self-service signups now start with
+      // an empty dashboard; engagement populates it.
       const verified = await request(app.getHttpServer())
         .post('/api/v1/academy/auth/verify-email')
         .send({ token: plaintextToken })
@@ -112,26 +120,38 @@ describe('Academy registration (e2e)', () => {
       });
       expect(postVerify!.emailVerifiedAt).not.toBeNull();
 
-      // Wildcard enrollment exists with null grantedById (self-service).
-      const enrollment = await prisma.academyEnrollment.findFirst({
+      const postVerifyEnrollments = await prisma.academyEnrollment.findMany({
         where: { userId: postVerify!.id },
       });
-      expect(enrollment).toBeDefined();
-      expect(enrollment!.courseId).toBeNull();
-      expect(enrollment!.grantedById).toBeNull();
+      expect(postVerifyEnrollments).toEqual([]);
 
-      // 3. Course list + lesson read succeed with the issued access token.
-      const coursesRes = await request(app.getHttpServer())
+      // Dashboard is empty immediately after verify.
+      const emptyDashboard = await request(app.getHttpServer())
         .get('/api/v1/academy/courses')
         .set(bearer(body.accessToken))
         .expect(200);
-      const courses = unwrap<Array<{ slug: string }>>(coursesRes);
-      expect(courses.map((c) => c.slug)).toContain(course.slug);
+      expect(unwrap<unknown[]>(emptyDashboard)).toEqual([]);
 
+      // 3. Lesson read on a public course: succeeds (no enrollment gate)
+      // and auto-enrolls the student so the course lands on the dashboard.
       await request(app.getHttpServer())
         .get(`/api/v1/academy/courses/${course.slug}/lessons/${lesson.slug}`)
         .set(bearer(body.accessToken))
         .expect(200);
+
+      const autoEnrollment = await prisma.academyEnrollment.findFirst({
+        where: { userId: postVerify!.id, revokedAt: null },
+      });
+      expect(autoEnrollment).not.toBeNull();
+      expect(autoEnrollment!.courseId).toBe(course.id);
+      expect(autoEnrollment!.grantedById).toBeNull();
+
+      const dashboard = await request(app.getHttpServer())
+        .get('/api/v1/academy/courses')
+        .set(bearer(body.accessToken))
+        .expect(200);
+      const slugs = unwrap<Array<{ slug: string }>>(dashboard).map((c) => c.slug);
+      expect(slugs).toContain(course.slug);
     });
   });
 
