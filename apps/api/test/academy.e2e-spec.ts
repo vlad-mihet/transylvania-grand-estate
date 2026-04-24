@@ -850,4 +850,264 @@ describe('Academy (e2e)', () => {
       expect(rows).toEqual([]);
     });
   });
+
+  // ── 6. Progress tracking ────────────────────────────────────────────
+
+  describe('progress tracking', () => {
+    async function seedCourseWithThreeLessons(slug = 'progress-course') {
+      const course = await prisma.course.create({
+        data: {
+          slug,
+          title: { ro: 'Curs progres', en: 'Progress course' },
+          description: { ro: 'Test', en: 'Test' },
+          status: 'published',
+          visibility: 'public',
+          order: 10,
+          publishedAt: new Date(),
+        },
+      });
+      const lessons = await Promise.all(
+        ['intro', 'middle', 'outro'].map((s, i) =>
+          prisma.lesson.create({
+            data: {
+              courseId: course.id,
+              slug: s,
+              order: (i + 1) * 10,
+              title: { ro: s, en: s },
+              excerpt: { ro: s, en: s },
+              content: { ro: `conținut ${s}`, en: `content ${s}` },
+              type: 'text',
+              status: 'published',
+              publishedAt: new Date(),
+            },
+          }),
+        ),
+      );
+      return { course, lessons };
+    }
+
+    async function mintAcademyToken(
+      email = `progress-${Date.now()}-${Math.random()}@example.com`,
+    ): Promise<{ userId: string; token: string }> {
+      const jwt = app.get(JwtService);
+      const user = await prisma.academyUser.create({
+        data: {
+          email,
+          passwordHash: null,
+          name: 'Progress Student',
+          emailVerifiedAt: new Date(),
+        },
+      });
+      const token = jwt.sign(
+        {
+          sub: user.id,
+          email: user.email,
+          name: user.name,
+          realm: 'academy',
+        },
+        {
+          secret: process.env.JWT_ACCESS_SECRET,
+          expiresIn: '15m',
+        },
+      );
+      return { userId: user.id, token };
+    }
+
+    it('lesson GET upserts a LessonProgress row with startedAt and lastSeenAt', async () => {
+      const { course, lessons } = await seedCourseWithThreeLessons();
+      const { userId, token } = await mintAcademyToken();
+
+      await request(app.getHttpServer())
+        .get(`/api/v1/academy/courses/${course.slug}/lessons/${lessons[0].slug}`)
+        .set(bearer(token))
+        .expect(200);
+
+      const row = await prisma.lessonProgress.findUnique({
+        where: { userId_lessonId: { userId, lessonId: lessons[0].id } },
+      });
+      expect(row).not.toBeNull();
+      expect(row!.startedAt).toBeInstanceOf(Date);
+      expect(row!.lastSeenAt).toBeInstanceOf(Date);
+      expect(row!.completedAt).toBeNull();
+    });
+
+    it('POST /complete sets completedAt; repeat POST keeps the same timestamp', async () => {
+      const { course, lessons } = await seedCourseWithThreeLessons();
+      const { userId, token } = await mintAcademyToken();
+
+      const first = await request(app.getHttpServer())
+        .post(
+          `/api/v1/academy/courses/${course.slug}/lessons/${lessons[0].slug}/complete`,
+        )
+        .set(bearer(token))
+        .expect(200);
+      const firstAt = unwrap<{ completedAt: string }>(first).completedAt;
+
+      // Second call is idempotent — same timestamp returned, same row in the DB.
+      await new Promise((r) => setTimeout(r, 10));
+      const second = await request(app.getHttpServer())
+        .post(
+          `/api/v1/academy/courses/${course.slug}/lessons/${lessons[0].slug}/complete`,
+        )
+        .set(bearer(token))
+        .expect(200);
+      expect(unwrap<{ completedAt: string }>(second).completedAt).toBe(firstAt);
+
+      const rows = await prisma.lessonProgress.findMany({
+        where: { userId, lessonId: lessons[0].id },
+      });
+      expect(rows).toHaveLength(1);
+      expect(rows[0].completedAt?.toISOString()).toBe(firstAt);
+    });
+
+    it('POST /complete on a nonexistent lesson slug returns 404', async () => {
+      const { course } = await seedCourseWithThreeLessons();
+      const { token } = await mintAcademyToken();
+
+      await request(app.getHttpServer())
+        .post(
+          `/api/v1/academy/courses/${course.slug}/lessons/does-not-exist/complete`,
+        )
+        .set(bearer(token))
+        .expect(404);
+    });
+
+    it('POST /complete on an enrolled-visibility course without enrollment returns 404', async () => {
+      const course = await prisma.course.create({
+        data: {
+          slug: 'gated-course',
+          title: { ro: 'Gated', en: 'Gated' },
+          description: { ro: 'x', en: 'x' },
+          status: 'published',
+          visibility: 'enrolled',
+          order: 10,
+          publishedAt: new Date(),
+        },
+      });
+      const lesson = await prisma.lesson.create({
+        data: {
+          courseId: course.id,
+          slug: 'first',
+          order: 10,
+          title: { ro: 'First', en: 'First' },
+          excerpt: { ro: 'x', en: 'x' },
+          content: { ro: 'x', en: 'x' },
+          type: 'text',
+          status: 'published',
+          publishedAt: new Date(),
+        },
+      });
+      const { token } = await mintAcademyToken();
+
+      await request(app.getHttpServer())
+        .post(
+          `/api/v1/academy/courses/${course.slug}/lessons/${lesson.slug}/complete`,
+        )
+        .set(bearer(token))
+        .expect(404);
+    });
+
+    it('GET /academy/courses returns progress stats with resumeLessonSlug pointing at the right lesson', async () => {
+      const { course, lessons } = await seedCourseWithThreeLessons();
+      const { token } = await mintAcademyToken();
+
+      // Read lessons 0 and 1, complete lesson 0 only.
+      await request(app.getHttpServer())
+        .get(`/api/v1/academy/courses/${course.slug}/lessons/${lessons[0].slug}`)
+        .set(bearer(token))
+        .expect(200);
+      await request(app.getHttpServer())
+        .post(
+          `/api/v1/academy/courses/${course.slug}/lessons/${lessons[0].slug}/complete`,
+        )
+        .set(bearer(token))
+        .expect(200);
+      await request(app.getHttpServer())
+        .get(`/api/v1/academy/courses/${course.slug}/lessons/${lessons[1].slug}`)
+        .set(bearer(token))
+        .expect(200);
+
+      const dashboard = await request(app.getHttpServer())
+        .get('/api/v1/academy/courses')
+        .set(bearer(token))
+        .expect(200);
+      const rows = unwrap<
+        Array<{
+          slug: string;
+          progress: {
+            totalLessons: number;
+            completedLessons: number;
+            lastSeenAt: string | null;
+            resumeLessonSlug: string | null;
+          };
+        }>
+      >(dashboard);
+      expect(rows).toHaveLength(1);
+      expect(rows[0].progress.totalLessons).toBe(3);
+      expect(rows[0].progress.completedLessons).toBe(1);
+      // Resume points at lesson 1 (middle) — it's in progress but not
+      // completed, so the Continue CTA should land there.
+      expect(rows[0].progress.resumeLessonSlug).toBe(lessons[1].slug);
+    });
+
+    it('dashboard sort puts most-recently-seen course first', async () => {
+      const a = await seedCourseWithThreeLessons('progress-a');
+      const b = await seedCourseWithThreeLessons('progress-b');
+      const { token } = await mintAcademyToken();
+
+      // Touch A first, then B — B should sort to the top.
+      await request(app.getHttpServer())
+        .get(`/api/v1/academy/courses/${a.course.slug}/lessons/${a.lessons[0].slug}`)
+        .set(bearer(token))
+        .expect(200);
+      await new Promise((r) => setTimeout(r, 20));
+      await request(app.getHttpServer())
+        .get(`/api/v1/academy/courses/${b.course.slug}/lessons/${b.lessons[0].slug}`)
+        .set(bearer(token))
+        .expect(200);
+
+      const dashboard = await request(app.getHttpServer())
+        .get('/api/v1/academy/courses')
+        .set(bearer(token))
+        .expect(200);
+      const slugs = unwrap<Array<{ slug: string }>>(dashboard).map((c) => c.slug);
+      expect(slugs[0]).toBe(b.course.slug);
+      expect(slugs[1]).toBe(a.course.slug);
+    });
+
+    it('lesson GET returns prev/next pointing at neighbouring published lessons', async () => {
+      const { course, lessons } = await seedCourseWithThreeLessons();
+      const { token } = await mintAcademyToken();
+
+      // Middle: both neighbours populated.
+      const middle = await request(app.getHttpServer())
+        .get(`/api/v1/academy/courses/${course.slug}/lessons/${lessons[1].slug}`)
+        .set(bearer(token))
+        .expect(200);
+      const mid = unwrap<{
+        prev: { slug: string } | null;
+        next: { slug: string } | null;
+      }>(middle);
+      expect(mid.prev?.slug).toBe(lessons[0].slug);
+      expect(mid.next?.slug).toBe(lessons[2].slug);
+
+      // First: prev null.
+      const first = await request(app.getHttpServer())
+        .get(`/api/v1/academy/courses/${course.slug}/lessons/${lessons[0].slug}`)
+        .set(bearer(token))
+        .expect(200);
+      expect(
+        unwrap<{ prev: { slug: string } | null }>(first).prev,
+      ).toBeNull();
+
+      // Last: next null.
+      const last = await request(app.getHttpServer())
+        .get(`/api/v1/academy/courses/${course.slug}/lessons/${lessons[2].slug}`)
+        .set(bearer(token))
+        .expect(200);
+      expect(
+        unwrap<{ next: { slug: string } | null }>(last).next,
+      ).toBeNull();
+    });
+  });
 });

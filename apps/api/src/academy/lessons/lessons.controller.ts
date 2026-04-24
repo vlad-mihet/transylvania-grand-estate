@@ -118,12 +118,13 @@ export class StudentLessonsController {
     @Param('lessonSlug') lessonSlug: string,
     @Query('locale') localeRaw?: string,
   ) {
-    const lesson = await this.lessonsService.findForStudent({
+    const result = await this.lessonsService.findForStudent({
       userId: user.id,
       courseSlug,
       lessonSlug,
     });
-    if (!lesson) throw new NotFoundException('Lesson not found');
+    if (!result) throw new NotFoundException('Lesson not found');
+    const { lesson, prev, next, completedAt } = result;
     const locale = normalizeLocale(localeRaw);
     const title = pickLocalized(lesson.title, locale);
     const excerpt = pickLocalized(lesson.excerpt, locale);
@@ -153,6 +154,20 @@ export class StudentLessonsController {
       servedLocale: content.servedLocale,
       localizedTitle: title.text,
       localizedExcerpt: excerpt.text,
+      completed: completedAt !== null,
+      completedAt: completedAt?.toISOString() ?? null,
+      prev: prev
+        ? {
+            slug: prev.slug,
+            localizedTitle: pickLocalized(prev.title, locale).text,
+          }
+        : null,
+      next: next
+        ? {
+            slug: next.slug,
+            localizedTitle: pickLocalized(next.title, locale).text,
+          }
+        : null,
     };
   }
 }

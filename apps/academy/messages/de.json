@@ -108,6 +108,13 @@
       "enrolledBadge": "Angemeldet",
       "enrollPending": "Anmeldung läuft…",
       "enrollFailed": "Anmeldung fehlgeschlagen. Bitte versuchen Sie es gleich erneut.",
+      "enrollSuccess": "Sie sind jetzt angemeldet.",
+      "startButton": "Kurs starten →",
+      "continueButton": "Fortsetzen →",
+      "reviewButton": "Noch einmal lesen →",
+      "progressLabel": "{completed} von {total} Lektionen",
+      "lessonCompletedBadge": "Gelesen",
+      "allCompletedBadge": "Abgeschlossen",
       "readingBadge": "Lesen",
       "videoBadge": "Video",
       "translationPendingBadge": "Verfügbar in {locale}"
@@ -116,7 +123,15 @@
       "back": "Zurück zum Kurs",
       "next": "Nächste Lektion",
       "previous": "Vorherige Lektion",
-      "translationPending": "Diese Lektion wurde noch nicht übersetzt — wir zeigen sie in der Originalsprache."
+      "translationPending": "Diese Lektion wurde noch nicht übersetzt — wir zeigen sie in der Originalsprache.",
+      "markDoneAndNext": "Als erledigt markieren und weiter",
+      "completePending": "Wird gespeichert…",
+      "completedPill": "Abgeschlossen",
+      "backToCourse": "Zurück zum Kurs",
+      "completeSuccess": "Lektion als erledigt markiert.",
+      "courseCompletedToast": "Herzlichen Glückwunsch! Sie haben alle Lektionen abgeschlossen.",
+      "prevAriaLabel": "Vorherige Lektion: {title}",
+      "nextAriaLabel": "Nächste Lektion: {title}"
     },
     "account": {
       "title": "Mein Konto",

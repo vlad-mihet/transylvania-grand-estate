@@ -3,6 +3,7 @@ import { LessonStatus, Prisma } from '@prisma/client';
 import { PrismaService } from '../../prisma/prisma.service';
 import { MetricsService } from '../../metrics/metrics.service';
 import { EnrollmentsService } from '../enrollments/enrollments.service';
+import { LessonProgressService } from '../progress/lesson-progress.service';
 import { ensureFound } from '../../common/utils/ensure-found.util';
 import { toJson } from '../../common/utils/prisma-json';
 import { paginate } from '../../common/utils/pagination.util';
@@ -18,6 +19,7 @@ export class LessonsService {
     private readonly prisma: PrismaService,
     private readonly metrics: MetricsService,
     private readonly enrollments: EnrollmentsService,
+    private readonly progress: LessonProgressService,
   ) {}
 
   async findAllForAdmin(courseId: string, query: QueryLessonDto) {
@@ -49,8 +51,9 @@ export class LessonsService {
 
   /**
    * Student read: resolves a lesson by course slug + lesson slug, enforces
-   * enrollment, and returns only the fields the reader needs. Assumes the
-   * caller is authenticated + enrolled at the controller layer.
+   * enrollment, stamps progress, and returns the lesson + neighbouring
+   * navigation pointers. Assumes the caller is authenticated at the
+   * controller layer.
    */
   async findForStudent(args: {
     userId: string;
@@ -71,10 +74,18 @@ export class LessonsService {
       (await this.userCanRead(args.userId, course.id));
     if (!canRead) return null;
 
-    const lesson = await this.prisma.lesson.findUnique({
-      where: { courseId_slug: { courseId: course.id, slug: args.lessonSlug } },
+    // Pull every published lesson in the course in one go — used for
+    // the target lesson lookup + prev/next computation. One query
+    // instead of two.
+    const lessons = await this.prisma.lesson.findMany({
+      where: { courseId: course.id, status: LessonStatus.published },
+      orderBy: { order: 'asc' },
     });
-    if (!lesson || lesson.status !== LessonStatus.published) return null;
+    const idx = lessons.findIndex((l) => l.slug === args.lessonSlug);
+    if (idx < 0) return null;
+    const lesson = lessons[idx];
+    const prev = idx > 0 ? lessons[idx - 1] : null;
+    const next = idx < lessons.length - 1 ? lessons[idx + 1] : null;
 
     // Side-effect: reading a lesson on a public-visibility course implicitly
     // enrolls the student so the course lands on their dashboard. No-op if a
@@ -84,7 +95,21 @@ export class LessonsService {
       await this.enrollments.autoEnrollIfPublic(args.userId, course.id);
     }
 
-    return lesson;
+    // Stamp progress (upsert with lastSeenAt = now). Swallowed errors —
+    // see LessonProgressService.markSeen.
+    await this.progress.markSeen(args.userId, lesson.id);
+
+    const progressRow = await this.prisma.lessonProgress.findUnique({
+      where: { userId_lessonId: { userId: args.userId, lessonId: lesson.id } },
+      select: { completedAt: true },
+    });
+
+    return {
+      lesson,
+      prev,
+      next,
+      completedAt: progressRow?.completedAt ?? null,
+    };
   }
 
   async create(courseId: string, dto: CreateLessonDto) {

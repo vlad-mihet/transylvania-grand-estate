@@ -759,6 +759,7 @@ model AcademyUser {
   invitations        AcademyInvitation[]             @relation("AcademyInvitationAcceptedUser")
   resetTokens        AcademyPasswordResetToken[]
   verificationTokens AcademyEmailVerificationToken[]
+  lessonProgress     LessonProgress[]
 
   @@map("academy_users")
 }
@@ -911,10 +912,34 @@ model Lesson {
   createdAt       DateTime     @default(now()) @map("created_at")
   updatedAt       DateTime     @updatedAt @map("updated_at")
 
+  progress        LessonProgress[]
+
   @@unique([courseId, slug])
   @@index([courseId, order])
   @@index([status])
   @@map("lessons")
+}
+
+/// Per-student lesson state. `startedAt` is stamped on first read;
+/// `lastSeenAt` bumps on every subsequent GET; `completedAt` is set by
+/// the explicit "Marchează ca terminată" action and is idempotent (first
+/// write wins). Dashboard progress bars + the `Continuă` CTA are both
+/// derived from this table — the Course model has no denormalised
+/// counters, so drift is impossible.
+model LessonProgress {
+  id          String      @id @default(uuid())
+  userId      String      @map("user_id")
+  user        AcademyUser @relation(fields: [userId], references: [id], onDelete: Cascade)
+  lessonId    String      @map("lesson_id")
+  lesson      Lesson      @relation(fields: [lessonId], references: [id], onDelete: Cascade)
+  startedAt   DateTime    @default(now()) @map("started_at")
+  completedAt DateTime?   @map("completed_at")
+  lastSeenAt  DateTime    @default(now()) @map("last_seen_at")
+
+  @@unique([userId, lessonId])
+  @@index([userId, completedAt])
+  @@index([userId, lastSeenAt(sort: Desc)])
+  @@map("academy_lesson_progress")
 }
 
 /// Grants an AcademyUser access to academy content. `courseId` nullable:

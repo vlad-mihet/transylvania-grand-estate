@@ -110,13 +110,28 @@
       "enrollButton": "Înscrie-te la curs",
       "enrolledBadge": "Înscris",
       "enrollPending": "Se procesează…",
-      "enrollFailed": "Înscrierea a eșuat. Reîncearcă în câteva momente."
+      "enrollFailed": "Înscrierea a eșuat. Reîncearcă în câteva momente.",
+      "enrollSuccess": "Te-ai înscris la curs.",
+      "startButton": "Începe cursul →",
+      "continueButton": "Continuă →",
+      "reviewButton": "Recitește →",
+      "progressLabel": "{completed} din {total} lecții",
+      "lessonCompletedBadge": "Citită",
+      "allCompletedBadge": "Completat"
     },
     "lesson": {
       "back": "Înapoi la curs",
       "next": "Lecția următoare",
       "previous": "Lecția anterioară",
-      "translationPending": "Această lecție încă nu a fost tradusă în limba ta preferată — o afișăm în limba originală."
+      "translationPending": "Această lecție încă nu a fost tradusă în limba ta preferată — o afișăm în limba originală.",
+      "markDoneAndNext": "Marchează ca terminată și continuă",
+      "completePending": "Se salvează…",
+      "completedPill": "Completat",
+      "backToCourse": "Înapoi la curs",
+      "completeSuccess": "Lecție marcată ca terminată.",
+      "courseCompletedToast": "Felicitări! Ai finalizat toate lecțiile.",
+      "prevAriaLabel": "Lecția anterioară: {title}",
+      "nextAriaLabel": "Lecția următoare: {title}"
     },
     "account": {
       "title": "Contul meu",

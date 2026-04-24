@@ -34,6 +34,9 @@ import { EnrollmentsController } from './enrollments/enrollments.controller';
 import { AcademyUsersService } from './users/academy-users.service';
 import { AcademyUsersController } from './users/academy-users.controller';
 
+import { LessonProgressService } from './progress/lesson-progress.service';
+import { LessonProgressController } from './progress/lesson-progress.controller';
+
 import { EnrolledGuard } from './guards/enrolled.guard';
 
 /**
@@ -60,6 +63,7 @@ import { EnrolledGuard } from './guards/enrolled.guard';
     StudentLessonsController,
     EnrollmentsController,
     AcademyUsersController,
+    LessonProgressController,
   ],
   providers: [
     AcademyAuthService,
@@ -73,6 +77,7 @@ import { EnrolledGuard } from './guards/enrolled.guard';
     LessonsService,
     EnrollmentsService,
     AcademyUsersService,
+    LessonProgressService,
     EnrolledGuard,
   ],
   exports: [AcademyAuthService, AcademyInvitationsService],

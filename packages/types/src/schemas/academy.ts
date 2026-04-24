@@ -389,6 +389,22 @@ export type AcademyCourseSummary = {
    * affordance on the dashboard. Absent when `enrolled` is false.
    */
   canUnenroll?: boolean;
+  /**
+   * Per-student progress summary. Populated on both the dashboard (`GET
+   * /academy/courses`) and catalog (`GET /academy/courses/catalog`) lists;
+   * the frontend uses it to render the progress bar + `Continuă →` CTA.
+   * `resumeLessonSlug` is the lesson the "Continue" button should link to:
+   * the in-progress lesson with the most recent `lastSeenAt`, else the
+   * first never-opened lesson, else the course's first lesson when every
+   * lesson is already complete. `null` when the course has zero published
+   * lessons.
+   */
+  progress: {
+    totalLessons: number;
+    completedLessons: number;
+    lastSeenAt: string | null;
+    resumeLessonSlug: string | null;
+  };
 };
 
 export type AcademyLessonSummary = {
@@ -406,6 +422,10 @@ export type AcademyLessonSummary = {
   // is a follow-up; editors can also set it manually for now).
   videoDurationSeconds: number | null;
   publishedAt: string | null;
+  // Per-student completion flag — true when the user has clicked
+  // `Marchează ca terminată`. Only present on the course-detail response
+  // where the API attaches it from `LessonProgressService`.
+  completed?: boolean;
 };
 
 export type AcademyLessonDetail = AcademyLessonSummary & {
@@ -416,4 +436,12 @@ export type AcademyLessonDetail = AcademyLessonSummary & {
   content: string;
   servedLocale: "ro" | "en" | "fr" | "de";
   videoUrl: string | null;
+  // Completion + navigation: the API stamps the user's own row on read,
+  // then returns completion state + the neighbouring lessons (by
+  // `order`) so the lesson page can render prev/next + a "Marchează ca
+  // terminată" control without a second request.
+  completed: boolean;
+  completedAt: string | null;
+  prev: { slug: string; localizedTitle: string } | null;
+  next: { slug: string; localizedTitle: string } | null;
 };

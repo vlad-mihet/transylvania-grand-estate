@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useLocale, useTranslations } from "next-intl";
+import { toast } from "sonner";
 import { Link, useRouter } from "@/i18n/navigation";
 import { apiFetch, ApiError, getAccessToken, clearTokens } from "@/lib/api-client";
 import { AppHeader } from "@/components/app-header";
@@ -49,8 +50,9 @@ export default function DashboardPage() {
         locale,
       });
       setCourses((prev) => prev.filter((c) => c.slug !== slug));
+      toast.success(t("dashboard.unenrollSuccess"));
     } catch (err) {
-      setError(err instanceof Error ? err.message : String(err));
+      toast.error(err instanceof Error ? err.message : String(err));
     } finally {
       setUnenrollingSlug(null);
     }
@@ -94,6 +96,7 @@ export default function DashboardPage() {
                 key={course.id}
                 course={course}
                 locale={locale}
+                showProgress
                 onUnenroll={onUnenroll}
                 unenrollPending={unenrollingSlug === course.slug}
               />

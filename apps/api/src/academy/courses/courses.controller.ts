@@ -149,6 +149,12 @@ export class StudentCoursesController {
       visibility: c.visibility,
       enrolled: c.enrolled,
       canUnenroll: c.canUnenroll,
+      progress: {
+        totalLessons: c.progress.totalLessons,
+        completedLessons: c.progress.completedLessons,
+        lastSeenAt: c.progress.lastSeenAt?.toISOString() ?? null,
+        resumeLessonSlug: c.progress.resumeLessonSlug,
+      },
     }));
   }
 
@@ -171,6 +177,12 @@ export class StudentCoursesController {
       visibility: c.visibility,
       enrolled: c.enrolled,
       canUnenroll: c.canUnenroll,
+      progress: {
+        totalLessons: c.progress.totalLessons,
+        completedLessons: c.progress.completedLessons,
+        lastSeenAt: c.progress.lastSeenAt?.toISOString() ?? null,
+        resumeLessonSlug: c.progress.resumeLessonSlug,
+      },
     }));
   }
 
@@ -228,6 +240,12 @@ export class StudentCoursesController {
       visibility: course.visibility,
       enrolled: course.enrolled,
       canUnenroll: course.canUnenroll,
+      progress: {
+        totalLessons: course.progress.totalLessons,
+        completedLessons: course.progress.completedLessons,
+        lastSeenAt: course.progress.lastSeenAt?.toISOString() ?? null,
+        resumeLessonSlug: course.progress.resumeLessonSlug,
+      },
       servedLocale: title.servedLocale,
       localizedTitle: title.text,
       localizedDescription: description.text,
@@ -247,6 +265,7 @@ export class StudentCoursesController {
           videoDurationSeconds:
             l.type === 'video' ? l.videoDurationSeconds : null,
           publishedAt: l.publishedAt?.toISOString() ?? null,
+          completed: l.completed,
         };
       }),
     };

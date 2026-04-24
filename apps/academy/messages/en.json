@@ -108,6 +108,13 @@
       "enrolledBadge": "Enrolled",
       "enrollPending": "Enrolling…",
       "enrollFailed": "Enrollment failed. Please try again in a moment.",
+      "enrollSuccess": "You're enrolled.",
+      "startButton": "Start course →",
+      "continueButton": "Continue →",
+      "reviewButton": "Review →",
+      "progressLabel": "{completed} of {total} lessons",
+      "lessonCompletedBadge": "Read",
+      "allCompletedBadge": "Completed",
       "readingBadge": "Reading",
       "videoBadge": "Video",
       "translationPendingBadge": "Available in {locale}"
@@ -116,7 +123,15 @@
       "back": "Back to course",
       "next": "Next lesson",
       "previous": "Previous lesson",
-      "translationPending": "This lesson hasn't been translated into your preferred language yet — showing it in the original language."
+      "translationPending": "This lesson hasn't been translated into your preferred language yet — showing it in the original language.",
+      "markDoneAndNext": "Mark as done and continue",
+      "completePending": "Saving…",
+      "completedPill": "Completed",
+      "backToCourse": "Back to course",
+      "completeSuccess": "Lesson marked as done.",
+      "courseCompletedToast": "Congratulations! You finished every lesson.",
+      "prevAriaLabel": "Previous lesson: {title}",
+      "nextAriaLabel": "Next lesson: {title}"
     },
     "account": {
       "title": "My account",

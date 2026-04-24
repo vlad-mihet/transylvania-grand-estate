@@ -3,11 +3,21 @@ import { LessonsService } from './lessons.service';
 import type { PrismaService } from '../../prisma/prisma.service';
 import type { MetricsService } from '../../metrics/metrics.service';
 import type { EnrollmentsService } from '../enrollments/enrollments.service';
+import type { LessonProgressService } from '../progress/lesson-progress.service';
 
 function makeEnrollments(): EnrollmentsService {
   return {
     autoEnrollIfPublic: jest.fn().mockResolvedValue(undefined),
   } as unknown as EnrollmentsService;
+}
+
+function makeProgress(): LessonProgressService {
+  return {
+    markSeen: jest.fn().mockResolvedValue(undefined),
+    markCompleted: jest.fn().mockResolvedValue({ completedAt: new Date() }),
+    getStatsForCourses: jest.fn().mockResolvedValue(new Map()),
+    getProgressForCourse: jest.fn().mockResolvedValue(new Map()),
+  } as unknown as LessonProgressService;
 }
 
 /**
@@ -50,7 +60,7 @@ describe('LessonsService.reorder', () => {
     const prisma = {
       course: { findUnique: jest.fn().mockResolvedValue(null) },
     } as unknown as PrismaService;
-    const service = new LessonsService(prisma, makeMetrics(), makeEnrollments());
+    const service = new LessonsService(prisma, makeMetrics(), makeEnrollments(), makeProgress());
     await expect(
       service.reorder(COURSE_ID, [LESSON_A]),
     ).rejects.toThrow(NotFoundException);
@@ -58,7 +68,7 @@ describe('LessonsService.reorder', () => {
 
   it('rejects duplicate lesson ids before any DB write', async () => {
     const { prisma, tx } = makePrisma([LESSON_A, LESSON_B, LESSON_C]);
-    const service = new LessonsService(prisma, makeMetrics(), makeEnrollments());
+    const service = new LessonsService(prisma, makeMetrics(), makeEnrollments(), makeProgress());
     await expect(
       service.reorder(COURSE_ID, [LESSON_A, LESSON_A, LESSON_B]),
     ).rejects.toThrow(BadRequestException);
@@ -67,7 +77,7 @@ describe('LessonsService.reorder', () => {
 
   it('rejects when the array length does not cover every lesson in the course', async () => {
     const { prisma, tx } = makePrisma([LESSON_A, LESSON_B, LESSON_C]);
-    const service = new LessonsService(prisma, makeMetrics(), makeEnrollments());
+    const service = new LessonsService(prisma, makeMetrics(), makeEnrollments(), makeProgress());
     await expect(
       service.reorder(COURSE_ID, [LESSON_A, LESSON_B]),
     ).rejects.toThrow(BadRequestException);
@@ -76,7 +86,7 @@ describe('LessonsService.reorder', () => {
 
   it('rejects foreign lesson ids (belong to another course)', async () => {
     const { prisma, tx } = makePrisma([LESSON_A, LESSON_B, LESSON_C]);
-    const service = new LessonsService(prisma, makeMetrics(), makeEnrollments());
+    const service = new LessonsService(prisma, makeMetrics(), makeEnrollments(), makeProgress());
     await expect(
       service.reorder(COURSE_ID, [LESSON_A, LESSON_B, FOREIGN_LESSON]),
     ).rejects.toThrow(BadRequestException);
@@ -86,7 +96,7 @@ describe('LessonsService.reorder', () => {
   it('writes sparse orders (10/20/30…) in a single transaction on the happy path', async () => {
     const { prisma, tx } = makePrisma([LESSON_A, LESSON_B, LESSON_C]);
     const metrics = makeMetrics();
-    const service = new LessonsService(prisma, metrics, makeEnrollments());
+    const service = new LessonsService(prisma, metrics, makeEnrollments(), makeProgress());
     const result = await service.reorder(COURSE_ID, [
       LESSON_C,
       LESSON_A,

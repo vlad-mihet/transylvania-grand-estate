@@ -2,6 +2,7 @@ import { ConflictException, Injectable } from '@nestjs/common';
 import { CourseStatus, CourseVisibility, Prisma } from '@prisma/client';
 import { PrismaService } from '../../prisma/prisma.service';
 import { UploadsService } from '../../uploads/uploads.service';
+import { LessonProgressService } from '../progress/lesson-progress.service';
 import { ensureFound } from '../../common/utils/ensure-found.util';
 import { ensureSlugUnique } from '../../common/utils/ensure-slug-unique.util';
 import { toJson } from '../../common/utils/prisma-json';
@@ -13,6 +14,7 @@ export class CoursesService {
   constructor(
     private readonly prisma: PrismaService,
     private readonly uploads: UploadsService,
+    private readonly progress: LessonProgressService,
   ) {}
 
   /**
@@ -98,18 +100,52 @@ export class CoursesService {
     }
     const courses = await this.prisma.course.findMany({
       where,
+      // Stable base order so courses the student has never opened keep
+      // their admin-set sequence. Recently-touched courses re-sort to the
+      // top below in-memory once progress stats are loaded.
       orderBy: [{ order: 'asc' }, { publishedAt: 'desc' }],
       include: { _count: { select: { lessons: { where: { status: 'published' } } } } },
     });
-    const state = await this.computeEnrollmentState(
-      userId,
-      courses.map((c) => c.id),
-    );
-    return courses.map((c) => ({
-      ...c,
-      enrolled: true,
-      canUnenroll: state.get(c.id)?.canUnenroll ?? false,
-    }));
+    const courseIds = courses.map((c) => c.id);
+    const [state, lessons, progressPerCourse] = await Promise.all([
+      this.computeEnrollmentState(userId, courseIds),
+      this.fetchPublishedLessonMeta(courseIds),
+      this.fetchUserProgressForCourses(userId, courseIds),
+    ]);
+    const totalsByCourse = new Map<string, number>();
+    for (const [id, ls] of lessons) totalsByCourse.set(id, ls.length);
+    const stats = await this.progress.getStatsForCourses(userId, totalsByCourse);
+    const enriched = courses.map((c) => {
+      const stat = stats.get(c.id) ?? {
+        totalLessons: 0,
+        completedLessons: 0,
+        lastSeenAt: null,
+      };
+      return {
+        ...c,
+        enrolled: true,
+        canUnenroll: state.get(c.id)?.canUnenroll ?? false,
+        progress: {
+          totalLessons: stat.totalLessons,
+          completedLessons: stat.completedLessons,
+          lastSeenAt: stat.lastSeenAt,
+          resumeLessonSlug: this.computeResumeLessonSlug(
+            lessons.get(c.id) ?? [],
+            progressPerCourse.get(c.id) ?? new Map(),
+          ),
+        },
+      };
+    });
+    // Dashboard ordering: most-recently-seen course floats up; never-opened
+    // courses keep their admin `order`. Tie-break by creation order when
+    // both sides have (or lack) a lastSeenAt.
+    enriched.sort((a, b) => {
+      const aSeen = a.progress.lastSeenAt?.getTime() ?? -1;
+      const bSeen = b.progress.lastSeenAt?.getTime() ?? -1;
+      if (aSeen !== bSeen) return bSeen - aSeen;
+      return a.order - b.order;
+    });
+    return enriched;
   }
 
   /**
@@ -131,16 +167,35 @@ export class CoursesService {
       orderBy: [{ order: 'asc' }, { publishedAt: 'desc' }],
       include: { _count: { select: { lessons: { where: { status: 'published' } } } } },
     });
-    const state = await this.computeEnrollmentState(
-      userId,
-      courses.map((c) => c.id),
-    );
+    const courseIds = courses.map((c) => c.id);
+    const [state, lessons, progressPerCourse] = await Promise.all([
+      this.computeEnrollmentState(userId, courseIds),
+      this.fetchPublishedLessonMeta(courseIds),
+      this.fetchUserProgressForCourses(userId, courseIds),
+    ]);
+    const totalsByCourse = new Map<string, number>();
+    for (const [id, ls] of lessons) totalsByCourse.set(id, ls.length);
+    const stats = await this.progress.getStatsForCourses(userId, totalsByCourse);
     return courses.map((c) => {
       const s = state.get(c.id);
+      const stat = stats.get(c.id) ?? {
+        totalLessons: 0,
+        completedLessons: 0,
+        lastSeenAt: null,
+      };
       return {
         ...c,
         enrolled: s?.enrolled ?? false,
         canUnenroll: s?.canUnenroll ?? false,
+        progress: {
+          totalLessons: stat.totalLessons,
+          completedLessons: stat.completedLessons,
+          lastSeenAt: stat.lastSeenAt,
+          resumeLessonSlug: this.computeResumeLessonSlug(
+            lessons.get(c.id) ?? [],
+            progressPerCourse.get(c.id) ?? new Map(),
+          ),
+        },
       };
     });
   }
@@ -180,12 +235,44 @@ export class CoursesService {
       course.visibility === CourseVisibility.public ||
       (await this.userCanRead(userId, course.id));
     if (!canRead) return null;
-    const state = await this.computeEnrollmentState(userId, [course.id]);
+    const publishedLessonMeta = course.lessons.map((l) => ({
+      id: l.id,
+      slug: l.slug,
+    }));
+    const totalsByCourse = new Map<string, number>([
+      [course.id, publishedLessonMeta.length],
+    ]);
+    const [state, stats, userProgress] = await Promise.all([
+      this.computeEnrollmentState(userId, [course.id]),
+      this.progress.getStatsForCourses(userId, totalsByCourse),
+      this.progress.getProgressForCourse(userId, course.id),
+    ]);
     const s = state.get(course.id);
+    const stat = stats.get(course.id) ?? {
+      totalLessons: publishedLessonMeta.length,
+      completedLessons: 0,
+      lastSeenAt: null,
+    };
     return {
       ...course,
       enrolled: s?.enrolled ?? false,
       canUnenroll: s?.canUnenroll ?? false,
+      // Stamp each lesson in the detail response with the per-student
+      // completion flag so the course page can render `Citită ✓` pills
+      // without a second request.
+      lessons: course.lessons.map((l) => ({
+        ...l,
+        completed: !!userProgress.get(l.id)?.completedAt,
+      })),
+      progress: {
+        totalLessons: stat.totalLessons,
+        completedLessons: stat.completedLessons,
+        lastSeenAt: stat.lastSeenAt,
+        resumeLessonSlug: this.computeResumeLessonSlug(
+          publishedLessonMeta,
+          userProgress,
+        ),
+      },
     };
   }
 
@@ -414,5 +501,106 @@ export class CoursesService {
       result.set(id, { enrolled, canUnenroll });
     }
     return result;
+  }
+
+  /**
+   * One query for all published lesson ids + slugs on the requested
+   * courses, grouped by `courseId` and kept in sparse-order so the
+   * resume-lesson selector can walk them in order.
+   */
+  private async fetchPublishedLessonMeta(
+    courseIds: string[],
+  ): Promise<Map<string, Array<{ id: string; slug: string }>>> {
+    const map = new Map<string, Array<{ id: string; slug: string }>>();
+    if (courseIds.length === 0) return map;
+    const rows = await this.prisma.lesson.findMany({
+      where: { courseId: { in: courseIds }, status: 'published' },
+      orderBy: { order: 'asc' },
+      select: { id: true, slug: true, courseId: true },
+    });
+    for (const id of courseIds) map.set(id, []);
+    for (const r of rows) map.get(r.courseId)?.push({ id: r.id, slug: r.slug });
+    return map;
+  }
+
+  /**
+   * The user's `LessonProgress` rows across multiple courses, bucketed
+   * by `courseId` for O(1) lookup in the mapper.
+   */
+  private async fetchUserProgressForCourses(
+    userId: string,
+    courseIds: string[],
+  ): Promise<
+    Map<
+      string,
+      Map<string, { completedAt: Date | null; lastSeenAt: Date }>
+    >
+  > {
+    const buckets = new Map<
+      string,
+      Map<string, { completedAt: Date | null; lastSeenAt: Date }>
+    >();
+    if (courseIds.length === 0) return buckets;
+    for (const id of courseIds) buckets.set(id, new Map());
+    const rows = await this.prisma.lessonProgress.findMany({
+      where: {
+        userId,
+        lesson: { courseId: { in: courseIds }, status: 'published' },
+      },
+      select: {
+        lessonId: true,
+        completedAt: true,
+        lastSeenAt: true,
+        lesson: { select: { courseId: true } },
+      },
+    });
+    for (const r of rows) {
+      buckets.get(r.lesson.courseId)?.set(r.lessonId, {
+        completedAt: r.completedAt,
+        lastSeenAt: r.lastSeenAt,
+      });
+    }
+    return buckets;
+  }
+
+  /**
+   * Picks the lesson the `Continuă` CTA should land on for a single
+   * course. Prefers in-progress lessons (non-null `lastSeenAt` with
+   * null `completedAt`) ordered by most-recent lastSeenAt; falls back
+   * to the first never-opened lesson; falls back to the first lesson
+   * of the course when everything is already completed. Returns null
+   * when the course has no published lessons.
+   */
+  private computeResumeLessonSlug(
+    lessons: Array<{ id: string; slug: string }>,
+    progress: Map<string, { completedAt: Date | null; lastSeenAt: Date }>,
+  ): string | null {
+    if (lessons.length === 0) return null;
+
+    // In-progress: started but not completed. Pick most recent lastSeen.
+    let mostRecentInProgress: {
+      slug: string;
+      lastSeenAt: Date;
+    } | null = null;
+    for (const l of lessons) {
+      const row = progress.get(l.id);
+      if (!row) continue;
+      if (row.completedAt) continue;
+      if (
+        !mostRecentInProgress ||
+        row.lastSeenAt > mostRecentInProgress.lastSeenAt
+      ) {
+        mostRecentInProgress = { slug: l.slug, lastSeenAt: row.lastSeenAt };
+      }
+    }
+    if (mostRecentInProgress) return mostRecentInProgress.slug;
+
+    // First never-opened lesson.
+    for (const l of lessons) {
+      if (!progress.has(l.id)) return l.slug;
+    }
+
+    // Everything's done — start over.
+    return lessons[0].slug;
   }
 }

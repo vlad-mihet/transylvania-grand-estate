@@ -2,6 +2,7 @@ import { NextIntlClientProvider, hasLocale } from "next-intl";
 import { getMessages } from "next-intl/server";
 import { notFound } from "next/navigation";
 import { DM_Sans, Inter } from "next/font/google";
+import { Toaster } from "sonner";
 import { routing } from "@/i18n/routing";
 import "../globals.css";
 
@@ -40,6 +41,7 @@ export default async function LocaleLayout({
           <div className="flex min-h-screen flex-col">
             <main className="flex-1">{children}</main>
           </div>
+          <Toaster position="bottom-center" richColors closeButton />
         </NextIntlClientProvider>
       </body>
     </html>
