@@ -99,11 +99,11 @@
     },
     "course": {
       "lessonsTitle": "Leçons",
-      "readingTime": "~{{count}} min",
-      "videoDuration": "{{minutes}}:{{seconds}}",
+      "readingTime": "~{count} min",
+      "videoDuration": "{minutes}:{seconds}",
       "readingBadge": "Lecture",
       "videoBadge": "Vidéo",
-      "translationPendingBadge": "Disponible en {{locale}}"
+      "translationPendingBadge": "Disponible en {locale}"
     },
     "lesson": {
       "back": "Retour au cours",

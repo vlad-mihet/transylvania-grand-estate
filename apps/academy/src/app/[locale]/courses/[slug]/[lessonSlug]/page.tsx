@@ -61,14 +61,14 @@ export default function LessonPage() {
     return (
       <>
         <AppHeader />
-        <div className="mx-auto max-w-3xl px-6 py-12">…</div>
+        <div className="mx-auto max-w-5xl px-6 py-12">…</div>
       </>
     );
   if (error || !lesson) {
     return (
       <>
         <AppHeader />
-        <div className="mx-auto max-w-3xl px-6 py-12">
+        <div className="mx-auto max-w-5xl px-6 py-12">
           <p className="text-sm text-red-600" role="alert">
             {error ?? t("errors.generic")}
           </p>
@@ -80,7 +80,7 @@ export default function LessonPage() {
   return (
     <>
     <AppHeader />
-    <div className="mx-auto max-w-2xl px-6 py-8">
+    <div className="mx-auto max-w-5xl px-6 py-8">
       <Link
         href={{ pathname: "/courses/[slug]", params: { slug: params.slug } }}
         className="mb-6 inline-block text-sm text-[color:var(--color-muted-foreground)] hover:text-[color:var(--color-primary)]"

@@ -99,11 +99,11 @@
     },
     "course": {
       "lessonsTitle": "Lecții",
-      "readingTime": "~{{count}} min",
-      "videoDuration": "{{minutes}}:{{seconds}}",
+      "readingTime": "~{count} min",
+      "videoDuration": "{minutes}:{seconds}",
       "readingBadge": "Lectură",
       "videoBadge": "Video",
-      "translationPendingBadge": "Disponibil în {{locale}}"
+      "translationPendingBadge": "Disponibil în {locale}"
     },
     "lesson": {
       "back": "Înapoi la curs",
