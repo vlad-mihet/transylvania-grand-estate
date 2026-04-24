@@ -149,7 +149,7 @@ export default function AccountPage() {
     return (
       <>
         <AppHeader />
-        <div className="mx-auto max-w-xl px-6 py-12">
+        <div className="mx-auto max-w-5xl px-6 py-12">
           <p className="text-sm text-red-600" role="alert">
             {error}
           </p>
@@ -161,7 +161,7 @@ export default function AccountPage() {
     return (
       <>
         <AppHeader />
-        <div className="mx-auto max-w-xl px-6 py-12">…</div>
+        <div className="mx-auto max-w-5xl px-6 py-12">…</div>
       </>
     );
   }
@@ -169,7 +169,7 @@ export default function AccountPage() {
   return (
     <>
       <AppHeader />
-      <div className="mx-auto max-w-xl px-6 py-8">
+      <div className="mx-auto max-w-5xl px-6 py-8">
         <h1 className="text-2xl font-semibold">{t("account.title")}</h1>
 
         {!profile.emailVerifiedAt && (
