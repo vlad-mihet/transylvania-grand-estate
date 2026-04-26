@@ -3,8 +3,11 @@
 import { Suspense, useEffect, useRef, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { useTranslations } from "next-intl";
+import { Loader2 } from "lucide-react";
 import { Link, useRouter } from "@/i18n/navigation";
-import { apiFetch, setTokens, ApiError } from "@/lib/api-client";
+import { PublicShell } from "@/components/public-shell";
+import { ApiError } from "@/lib/api-client";
+import { useVerifyEmail } from "@/hooks/mutations";
 
 type Status = "loading" | "success" | "expired" | "invalid";
 
@@ -13,10 +16,11 @@ function VerifyEmailInner() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const token = searchParams.get("token") ?? "";
+  const verify = useVerifyEmail();
   const [status, setStatus] = useState<Status>("loading");
-  // Strict-mode double-invoke guard: one-shot verification must not
-  // fire twice (the second call would always 410 and flip the UI to
-  // "expired" on a perfectly good token).
+  // Strict-mode double-invoke guard: one-shot verification must not fire
+  // twice (the second call would always 410 and flip the UI to "expired"
+  // on a perfectly good token).
   const fired = useRef(false);
 
   useEffect(() => {
@@ -26,20 +30,9 @@ function VerifyEmailInner() {
       setStatus("invalid");
       return;
     }
-    apiFetch<{
-      accessToken: string;
-      refreshToken: string;
-      user: { id: string; email: string; name: string };
-    }>("/academy/auth/verify-email", {
-      method: "POST",
-      body: { token },
-      skipAuth: true,
-    })
-      .then((res) => {
-        setTokens({
-          accessToken: res.accessToken,
-          refreshToken: res.refreshToken,
-        });
+    verify
+      .mutateAsync({ token })
+      .then(() => {
         setStatus("success");
         router.push("/");
       })
@@ -50,15 +43,21 @@ function VerifyEmailInner() {
           setStatus("invalid");
         }
       });
+    // `verify` is stable from react-query; ignore lint's dep-array complaint.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [token, router]);
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-[color:var(--color-muted)] p-6">
+    <PublicShell>
       <div className="w-full max-w-sm rounded-xl bg-white p-8 shadow-sm text-center">
         {status === "loading" && (
-          <p className="text-sm text-[color:var(--color-muted-foreground)]">
+          <div
+            className="inline-flex items-center gap-2 text-sm text-[color:var(--color-muted-foreground)]"
+            aria-busy="true"
+          >
+            <Loader2 className="h-4 w-4 animate-spin" aria-hidden="true" />
             {t("verifying")}
-          </p>
+          </div>
         )}
         {status === "success" && (
           <>
@@ -97,7 +96,7 @@ function VerifyEmailInner() {
           </>
         )}
       </div>
-    </div>
+    </PublicShell>
   );
 }
 

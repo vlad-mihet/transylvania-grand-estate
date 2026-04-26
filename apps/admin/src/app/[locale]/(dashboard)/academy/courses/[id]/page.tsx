@@ -31,7 +31,7 @@ import { DeleteDialog } from "@/components/shared/delete-dialog";
 import { Mono } from "@/components/shared/mono";
 import { PageHeader } from "@/components/shared/page-header";
 import { StatusBadge } from "@/components/shared/status-badge";
-import { LoadingState } from "@/components/shared/states";
+import { LoadingState } from "@tge/ui";
 import { pickTitle } from "@/lib/academy/pick-title";
 
 type Course = {

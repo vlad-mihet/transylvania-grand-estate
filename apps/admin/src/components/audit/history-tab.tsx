@@ -8,7 +8,7 @@ import { apiClient } from "@/lib/api-client";
 import { Mono, MonoTag } from "@/components/shared/mono";
 import { RelativeTime } from "@/components/shared/relative-time";
 import { SectionCard } from "@/components/shared/section-card";
-import { ErrorState, EmptyState } from "@/components/shared/states";
+import { ErrorState, EmptyState } from "@tge/ui";
 
 import { AuditDiff } from "./audit-diff";
 

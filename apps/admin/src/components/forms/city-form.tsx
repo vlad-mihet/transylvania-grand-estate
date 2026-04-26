@@ -4,7 +4,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useQuery } from "@tanstack/react-query";
 import { citySchema, CityFormValues } from "@/lib/validations/city";
-import { useApiFormErrors } from "@/lib/form-error";
+import { useApiFormErrors } from "@tge/hooks";
 import { apiClient } from "@/lib/api-client";
 import { toast } from "@/lib/toast";
 import { BilingualTextarea } from "@/components/shared/bilingual-textarea";

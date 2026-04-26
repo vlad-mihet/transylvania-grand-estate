@@ -10,11 +10,7 @@ import { useLocale, useTranslations } from "next-intl";
 
 import { PageHeader } from "@/components/shared/page-header";
 import { SectionCard } from "@/components/shared/section-card";
-import {
-  EmptyState,
-  ErrorState,
-  LoadingState,
-} from "@/components/shared/states";
+import { EmptyState, ErrorState, LoadingState } from "@tge/ui";
 import { FieldLabel } from "@/components/shared/field-label";
 import { Mono } from "@/components/shared/mono";
 import { RelativeTime } from "@/components/shared/relative-time";

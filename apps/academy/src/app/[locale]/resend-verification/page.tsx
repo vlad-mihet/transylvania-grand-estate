@@ -1,36 +1,35 @@
 "use client";
 
-import { Suspense, useState } from "react";
+import { Suspense } from "react";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
 import { useTranslations } from "next-intl";
+import { SubmitButton } from "@tge/ui";
 import { Link } from "@/i18n/navigation";
-import { apiFetch } from "@/lib/api-client";
+import { PublicShell } from "@/components/public-shell";
+import { useResendVerification } from "@/hooks/mutations";
+
+const schema = z.object({ email: z.string().email() });
+type Values = z.infer<typeof schema>;
 
 function ResendVerificationInner() {
   const t = useTranslations("Academy.resendVerification");
-  const [email, setEmail] = useState("");
-  const [submitted, setSubmitted] = useState(false);
-  const [submitting, setSubmitting] = useState(false);
+  const resend = useResendVerification();
+  const form = useForm<Values>({
+    resolver: zodResolver(schema),
+    defaultValues: { email: "" },
+  });
 
-  async function onSubmit(e: React.FormEvent) {
-    e.preventDefault();
-    setSubmitting(true);
-    // Anti-enumeration: the backend always returns 202, so we treat any
-    // non-network-error outcome as "sent" and display the same copy.
-    try {
-      await apiFetch("/academy/auth/resend-verification", {
-        method: "POST",
-        body: { email },
-        skipAuth: true,
-      });
-    } catch {
-      // Swallow — generic copy below preserves anti-enumeration.
-    }
-    setSubmitted(true);
-    setSubmitting(false);
+  async function onSubmit(values: Values) {
+    // Anti-enumeration: always 202. Swallow errors; show the same copy.
+    await resend.mutateAsync(values).catch(() => undefined);
   }
 
+  const submitted = resend.isSuccess || resend.isError;
+
   return (
-    <div className="flex min-h-screen items-center justify-center bg-[color:var(--color-muted)] p-6">
+    <PublicShell>
       <div className="w-full max-w-sm rounded-xl bg-white p-8 shadow-sm">
         <h1 className="text-2xl font-semibold">{t("title")}</h1>
         <p className="mt-2 text-sm text-[color:var(--color-muted-foreground)]">
@@ -44,25 +43,31 @@ function ResendVerificationInner() {
             {t("sent")}
           </p>
         ) : (
-          <form onSubmit={onSubmit} className="mt-6 flex flex-col gap-4">
+          <form
+            onSubmit={form.handleSubmit(onSubmit)}
+            className="mt-6 flex flex-col gap-4"
+          >
             <label className="text-sm">
               <span className="mb-1 block font-medium">{t("emailLabel")}</span>
               <input
                 type="email"
-                required
                 autoComplete="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
+                {...form.register("email")}
                 className="w-full rounded-md border border-[color:var(--color-border)] px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-[color:var(--color-ring)]"
               />
+              {form.formState.errors.email ? (
+                <p className="mt-1 text-xs text-red-600" role="alert">
+                  {form.formState.errors.email.message}
+                </p>
+              ) : null}
             </label>
-            <button
+            <SubmitButton
               type="submit"
-              disabled={submitting}
-              className="rounded-md bg-[color:var(--color-primary)] px-4 py-2 text-sm font-medium text-white disabled:opacity-60"
+              loading={resend.isPending}
+              loadingLabel={t("submitting")}
             >
-              {submitting ? t("submitting") : t("submit")}
-            </button>
+              {t("submit")}
+            </SubmitButton>
           </form>
         )}
         <p className="mt-6 text-center text-xs">
@@ -74,7 +79,7 @@ function ResendVerificationInner() {
           </Link>
         </p>
       </div>
-    </div>
+    </PublicShell>
   );
 }
 

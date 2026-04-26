@@ -88,7 +88,8 @@
       "emptyBrowseCatalog": "Browse the public catalog →",
       "unenrollAction": "Remove from my list",
       "unenrollConfirm": "Remove “{title}” from your list? The course stays available in the catalog.",
-      "unenrollSuccess": "Course removed from your list."
+      "unenrollSuccess": "Course removed from your list.",
+      "navLink": "My courses"
     },
     "catalog": {
       "title": "Catalog",
@@ -154,7 +155,14 @@
       "verificationSent": "Verification email sent."
     },
     "errors": {
-      "generic": "Something went wrong. Please try again."
+      "generic": "Something went wrong. Please try again.",
+      "retry": "Retry"
+    },
+    "nav": {
+      "openMenu": "Open menu",
+      "menuDescription": "Navigate the platform",
+      "languageLabel": "Language",
+      "userMenuAria": "Account menu"
     }
   }
 }

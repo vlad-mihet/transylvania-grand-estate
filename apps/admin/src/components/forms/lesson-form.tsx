@@ -18,7 +18,7 @@ import { BilingualMarkdownEditor } from "@/components/shared/bilingual-markdown-
 import { SectionCard } from "@/components/shared/section-card";
 import { FormActions } from "@/components/shared/form-actions";
 import { EmbedPreview } from "@/components/forms/embed-preview";
-import { useApiFormErrors } from "@/lib/form-error";
+import { useApiFormErrors } from "@tge/hooks";
 import { useUnsavedChangesWarning } from "@/hooks/use-unsaved-changes-warning";
 import { toast } from "@/lib/toast";
 import {

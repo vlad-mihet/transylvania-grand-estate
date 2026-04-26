@@ -1,139 +1,99 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useTransition } from "react";
 import { useParams } from "next/navigation";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import { useLocale, useTranslations } from "next-intl";
 import { toast } from "sonner";
+import { ErrorState, SubmitButton } from "@tge/ui";
 import { Link, useRouter } from "@/i18n/navigation";
-import { apiFetch, ApiError, getAccessToken, clearTokens } from "@/lib/api-client";
 import { AppHeader } from "@/components/app-header";
 import { LessonVideoPlayer } from "@/components/lesson-video-player";
-
-type LessonNeighbour = { slug: string; localizedTitle: string } | null;
-
-type LessonDetail = {
-  id: string;
-  slug: string;
-  order: number;
-  title: Record<string, string | undefined>;
-  excerpt: Record<string, string | undefined>;
-  type: "text" | "video";
-  readingTimeMinutes: number | null;
-  videoDurationSeconds: number | null;
-  publishedAt: string | null;
-  videoUrl: string | null;
-  content: string;
-  servedLocale: string;
-  localizedTitle: string;
-  localizedExcerpt: string;
-  completed: boolean;
-  completedAt: string | null;
-  prev: LessonNeighbour;
-  next: LessonNeighbour;
-};
+import { LessonSkeleton } from "@/components/skeletons";
+import { useAuthGuard } from "@/hooks/use-auth-guard";
+import { useCourse, useLesson } from "@/hooks/queries";
+import { useCompleteLesson } from "@/hooks/mutations";
 
 export default function LessonPage() {
   const t = useTranslations("Academy");
   const locale = useLocale();
   const params = useParams<{ slug: string; lessonSlug: string }>();
   const router = useRouter();
-  const [lesson, setLesson] = useState<LessonDetail | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-  const [completing, setCompleting] = useState(false);
-  // Course title is shown in the breadcrumb. We don't want a second fetch;
-  // we derive it from `document.referrer` fallback of the course slug if
-  // the user deep-links here, but the common path is a navigation from
-  // course detail which carries the title in the URL path we can decode.
-  // Simpler: fetch the course title lazily when needed.
-  const [courseTitle, setCourseTitle] = useState<string | null>(null);
+  const { isReady } = useAuthGuard();
+  const query = useLesson(params.slug, params.lessonSlug, locale);
+  // Course title for breadcrumb comes from the parent course query — cached
+  // by react-query so the common path (lesson nav from course detail)
+  // reuses the cache, and deep links still work via a background fetch.
+  const courseQuery = useCourse(params.slug, locale);
+  const complete = useCompleteLesson();
+  const [navPending, startTransition] = useTransition();
 
-  useEffect(() => {
-    if (!getAccessToken()) {
-      router.replace("/login");
-      return;
-    }
-    apiFetch<LessonDetail>(
-      `/academy/courses/${encodeURIComponent(params.slug)}/lessons/${encodeURIComponent(params.lessonSlug)}?locale=${locale}`,
-      { locale },
-    )
-      .then(setLesson)
-      .catch((err) => {
-        if (err instanceof ApiError && err.status === 401) {
-          clearTokens();
-          router.replace("/login");
-          return;
-        }
-        setError(err instanceof Error ? err.message : String(err));
-      })
-      .finally(() => setLoading(false));
-    // Best-effort title fetch for the breadcrumb. Failures are silent —
-    // we fall back to rendering the slug.
-    apiFetch<{ localizedTitle: string }>(
-      `/academy/courses/${encodeURIComponent(params.slug)}?locale=${locale}`,
-      { locale },
-    )
-      .then((res) => setCourseTitle(res.localizedTitle))
-      .catch(() => undefined);
-  }, [params.slug, params.lessonSlug, locale, router]);
+  function navigateToLesson(slug: string, lessonSlug: string) {
+    startTransition(() => {
+      router.push({
+        pathname: "/courses/[slug]/[lessonSlug]",
+        params: { slug, lessonSlug },
+      });
+    });
+  }
+
+  function navigateToCourse(slug: string) {
+    startTransition(() => {
+      router.push({ pathname: "/courses/[slug]", params: { slug } });
+    });
+  }
 
   async function onMarkComplete() {
-    if (!lesson || completing) return;
-    setCompleting(true);
+    if (!query.data || complete.isPending) return;
     try {
-      await apiFetch(
-        `/academy/courses/${encodeURIComponent(params.slug)}/lessons/${encodeURIComponent(params.lessonSlug)}/complete`,
-        { method: "POST", locale },
-      );
-      if (lesson.next) {
-        // Next lesson exists — navigate. The toast fires briefly before
-        // the navigation starts.
+      await complete.mutateAsync({
+        slug: params.slug,
+        lessonSlug: params.lessonSlug,
+        locale,
+      });
+      if (query.data.next) {
         toast.success(t("lesson.completeSuccess"));
-        router.push({
-          pathname: "/courses/[slug]/[lessonSlug]",
-          params: { slug: params.slug, lessonSlug: lesson.next.slug },
-        });
+        navigateToLesson(params.slug, query.data.next.slug);
       } else {
-        // Last lesson of the course — celebrate and go back to the TOC.
         toast.success(t("lesson.courseCompletedToast"));
-        router.push({
-          pathname: "/courses/[slug]",
-          params: { slug: params.slug },
-        });
+        navigateToCourse(params.slug);
       }
     } catch (err) {
-      const message = err instanceof Error ? err.message : String(err);
-      toast.error(message);
-    } finally {
-      setCompleting(false);
+      toast.error(err instanceof Error ? err.message : String(err));
     }
   }
 
-  if (loading)
+  if (!isReady || query.isLoading) {
     return (
       <>
-        <AppHeader />
-        <div className="mx-auto max-w-5xl px-6 py-12">…</div>
+        <AppHeader navPending={navPending} />
+        <LessonSkeleton />
       </>
     );
-  if (error || !lesson) {
+  }
+  if (query.error || !query.data) {
     return (
       <>
-        <AppHeader />
+        <AppHeader navPending={navPending} />
         <div className="mx-auto max-w-5xl px-6 py-12">
-          <p className="text-sm text-red-600" role="alert">
-            {error ?? t("errors.generic")}
-          </p>
+          <ErrorState
+            title={t("errors.generic")}
+            description={query.error?.message}
+            onRetry={() => query.refetch()}
+            retryLabel={t("errors.retry")}
+          />
         </div>
       </>
     );
   }
 
+  const lesson = query.data;
+  const courseTitle = courseQuery.data?.localizedTitle ?? params.slug;
+
   return (
     <>
-      <AppHeader />
+      <AppHeader navPending={navPending} />
       <div className="mx-auto max-w-5xl px-6 py-8">
         <nav
           className="mb-4 flex items-center gap-1.5 text-sm text-[color:var(--color-muted-foreground)]"
@@ -147,7 +107,7 @@ export default function LessonPage() {
             href={{ pathname: "/courses/[slug]", params: { slug: params.slug } }}
             className="truncate hover:text-[color:var(--color-primary)]"
           >
-            {courseTitle ?? params.slug}
+            {courseTitle}
           </Link>
           <span aria-hidden="true">/</span>
           <span className="truncate text-foreground">
@@ -157,15 +117,13 @@ export default function LessonPage() {
 
         <div className="mb-6 flex items-center justify-between gap-3 text-sm text-[color:var(--color-muted-foreground)]">
           {lesson.prev ? (
-            <Link
-              href={{
-                pathname: "/courses/[slug]/[lessonSlug]",
-                params: {
-                  slug: params.slug,
-                  lessonSlug: lesson.prev.slug,
-                },
-              }}
-              className="inline-flex items-center gap-1 hover:text-[color:var(--color-primary)]"
+            <button
+              type="button"
+              onClick={() =>
+                lesson.prev && navigateToLesson(params.slug, lesson.prev.slug)
+              }
+              disabled={navPending}
+              className="inline-flex min-h-11 items-center gap-1 rounded-md px-2 py-1 hover:bg-[color:var(--color-muted)] hover:text-[color:var(--color-primary)] disabled:opacity-60"
               aria-label={t("lesson.prevAriaLabel", {
                 title: lesson.prev.localizedTitle,
               })}
@@ -174,20 +132,18 @@ export default function LessonPage() {
               <span className="max-w-[20ch] truncate">
                 {lesson.prev.localizedTitle}
               </span>
-            </Link>
+            </button>
           ) : (
             <span />
           )}
           {lesson.next ? (
-            <Link
-              href={{
-                pathname: "/courses/[slug]/[lessonSlug]",
-                params: {
-                  slug: params.slug,
-                  lessonSlug: lesson.next.slug,
-                },
-              }}
-              className="inline-flex items-center gap-1 hover:text-[color:var(--color-primary)]"
+            <button
+              type="button"
+              onClick={() =>
+                lesson.next && navigateToLesson(params.slug, lesson.next.slug)
+              }
+              disabled={navPending}
+              className="inline-flex min-h-11 items-center gap-1 rounded-md px-2 py-1 hover:bg-[color:var(--color-muted)] hover:text-[color:var(--color-primary)] disabled:opacity-60"
               aria-label={t("lesson.nextAriaLabel", {
                 title: lesson.next.localizedTitle,
               })}
@@ -196,7 +152,7 @@ export default function LessonPage() {
                 {lesson.next.localizedTitle}
               </span>
               <span aria-hidden="true">→</span>
-            </Link>
+            </button>
           ) : (
             <span />
           )}
@@ -221,7 +177,7 @@ export default function LessonPage() {
         {lesson.type === "video" && lesson.videoUrl ? (
           <LessonVideoPlayer src={lesson.videoUrl} title={lesson.localizedTitle} />
         ) : null}
-        <article className="lesson-prose mt-8 prose prose-neutral max-w-none">
+        <article className="lesson-prose mt-8 prose prose-neutral max-w-[72ch] md:max-w-none">
           <ReactMarkdown remarkPlugins={[remarkGfm]}>
             {lesson.content}
           </ReactMarkdown>
@@ -230,58 +186,52 @@ export default function LessonPage() {
         <div className="mt-10 flex flex-col items-stretch gap-4 border-t border-[color:var(--color-border)] pt-6 sm:flex-row sm:items-center sm:justify-between">
           <div className="flex items-center gap-3 text-sm text-[color:var(--color-muted-foreground)]">
             {lesson.prev ? (
-              <Link
-                href={{
-                  pathname: "/courses/[slug]/[lessonSlug]",
-                  params: {
-                    slug: params.slug,
-                    lessonSlug: lesson.prev.slug,
-                  },
-                }}
-                className="inline-flex items-center gap-1 hover:text-[color:var(--color-primary)]"
+              <button
+                type="button"
+                onClick={() =>
+                  lesson.prev && navigateToLesson(params.slug, lesson.prev.slug)
+                }
+                disabled={navPending}
+                className="inline-flex min-h-11 items-center gap-1 rounded-md px-3 py-2 hover:bg-[color:var(--color-muted)] hover:text-[color:var(--color-primary)] disabled:opacity-60"
               >
                 <span aria-hidden="true">←</span>
                 {t("lesson.previous")}
-              </Link>
+              </button>
             ) : null}
           </div>
           <div className="flex items-center gap-3">
             {lesson.completed ? (
               lesson.next ? (
-                <Link
-                  href={{
-                    pathname: "/courses/[slug]/[lessonSlug]",
-                    params: {
-                      slug: params.slug,
-                      lessonSlug: lesson.next.slug,
-                    },
-                  }}
-                  className="rounded-md bg-[color:var(--color-primary)] px-4 py-2 text-sm font-medium text-white transition hover:opacity-90"
+                <button
+                  type="button"
+                  onClick={() =>
+                    lesson.next &&
+                    navigateToLesson(params.slug, lesson.next.slug)
+                  }
+                  disabled={navPending}
+                  className="rounded-md bg-[color:var(--color-primary)] px-4 py-2 text-sm font-medium text-white transition hover:opacity-90 disabled:opacity-60"
                 >
                   {t("lesson.next")} →
-                </Link>
+                </button>
               ) : (
-                <Link
-                  href={{
-                    pathname: "/courses/[slug]",
-                    params: { slug: params.slug },
-                  }}
-                  className="rounded-md border border-[color:var(--color-border)] px-4 py-2 text-sm font-medium text-foreground transition hover:bg-[color:var(--color-muted)]"
+                <button
+                  type="button"
+                  onClick={() => navigateToCourse(params.slug)}
+                  disabled={navPending}
+                  className="rounded-md border border-[color:var(--color-border)] px-4 py-2 text-sm font-medium text-foreground transition hover:bg-[color:var(--color-muted)] disabled:opacity-60"
                 >
                   {t("lesson.backToCourse")}
-                </Link>
+                </button>
               )
             ) : (
-              <button
+              <SubmitButton
                 type="button"
                 onClick={onMarkComplete}
-                disabled={completing}
-                className="rounded-md bg-[color:var(--color-primary)] px-4 py-2 text-sm font-medium text-white transition hover:opacity-90 disabled:opacity-60"
+                loading={complete.isPending || navPending}
+                loadingLabel={t("lesson.completePending")}
               >
-                {completing
-                  ? t("lesson.completePending")
-                  : t("lesson.markDoneAndNext")}
-              </button>
+                {t("lesson.markDoneAndNext")}
+              </SubmitButton>
             )}
           </div>
         </div>

@@ -25,7 +25,7 @@ import {
 import { inviteAcademyUserSchema } from "@tge/types";
 import { apiClient, ApiError } from "@/lib/api-client";
 import { toast } from "@/lib/toast";
-import { useApiFormErrors } from "@/lib/form-error";
+import { useApiFormErrors } from "@tge/hooks";
 import { pickTitle } from "@/lib/academy/pick-title";
 
 type Course = {

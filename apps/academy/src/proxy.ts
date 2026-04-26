@@ -41,7 +41,15 @@ export default function middleware(request: NextRequest) {
     const loginUrl = request.nextUrl.clone();
     const localePrefix = pathname.slice(0, pathname.length - withoutLocale.length);
     loginUrl.pathname = `${localePrefix || "/ro"}/login`;
-    loginUrl.search = "";
+    // Preserve the original path (sans locale) as `returnTo` so the login
+    // page can route the user back to where they started. The frontend
+    // `validateReturnTo` allowlist is the tamper check — this middleware
+    // just forwards what the browser asked for.
+    const returnTo = `${withoutLocale}${request.nextUrl.search}`;
+    loginUrl.search =
+      withoutLocale === "/"
+        ? ""
+        : `?returnTo=${encodeURIComponent(returnTo)}`;
     return NextResponse.redirect(loginUrl);
   }
 

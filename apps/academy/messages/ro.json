@@ -88,7 +88,8 @@
       "emptyBrowseCatalog": "Răsfoiește catalogul public →",
       "unenrollAction": "Elimină din lista mea",
       "unenrollConfirm": "Sigur vrei să elimini „{title}” din lista ta? Cursul rămâne disponibil în catalog.",
-      "unenrollSuccess": "Cursul a fost eliminat din lista ta."
+      "unenrollSuccess": "Cursul a fost eliminat din lista ta.",
+      "navLink": "Cursurile mele"
     },
     "catalog": {
       "title": "Catalog",
@@ -154,7 +155,14 @@
       "verificationSent": "Email-ul de confirmare a fost trimis."
     },
     "errors": {
-      "generic": "A apărut o eroare. Încearcă din nou."
+      "generic": "A apărut o eroare. Încearcă din nou.",
+      "retry": "Reîncearcă"
+    },
+    "nav": {
+      "openMenu": "Deschide meniul",
+      "menuDescription": "Navighează prin platformă",
+      "languageLabel": "Limbă",
+      "userMenuAria": "Meniu cont"
     }
   }
 }

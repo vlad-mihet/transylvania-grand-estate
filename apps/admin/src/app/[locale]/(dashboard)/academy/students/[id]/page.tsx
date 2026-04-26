@@ -25,7 +25,7 @@ import { Mono } from "@/components/shared/mono";
 import { PageHeader } from "@/components/shared/page-header";
 import { RelativeTime } from "@/components/shared/relative-time";
 import { StatusBadge } from "@/components/shared/status-badge";
-import { LoadingState } from "@/components/shared/states";
+import { LoadingState } from "@tge/ui";
 import { useUnsavedChangesWarning } from "@/hooks/use-unsaved-changes-warning";
 import { pickTitle, WILDCARD_COURSE_VALUE } from "@/lib/academy/pick-title";
 

@@ -8,7 +8,7 @@ import { useTranslations } from "next-intl";
 import { cn } from "@tge/utils";
 import { PageHeader } from "@/components/shared/page-header";
 import { SearchInput } from "@/components/shared/search-input";
-import { EmptyState, ErrorState, LoadingState } from "@/components/shared/states";
+import { EmptyState, ErrorState, LoadingState } from "@tge/ui";
 import { Mono } from "@/components/shared/mono";
 import {
   ResourceTable,

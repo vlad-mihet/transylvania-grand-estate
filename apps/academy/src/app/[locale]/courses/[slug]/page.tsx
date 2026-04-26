@@ -1,127 +1,68 @@
 "use client";
 
-import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import { useLocale, useTranslations } from "next-intl";
 import { toast } from "sonner";
+import { ErrorState, SubmitButton } from "@tge/ui";
 import { Link, useRouter } from "@/i18n/navigation";
-import { apiFetch, ApiError, getAccessToken, clearTokens } from "@/lib/api-client";
 import { AppHeader } from "@/components/app-header";
-
-type CourseDetail = {
-  id: string;
-  slug: string;
-  title: Record<string, string | undefined>;
-  description: Record<string, string | undefined>;
-  coverImage: string | null;
-  publishedAt: string | null;
-  visibility: "public" | "enrolled";
-  enrolled: boolean;
-  canUnenroll?: boolean;
-  progress: {
-    totalLessons: number;
-    completedLessons: number;
-    lastSeenAt: string | null;
-    resumeLessonSlug: string | null;
-  };
-  servedLocale: string;
-  localizedTitle: string;
-  localizedDescription: string;
-  lessons: Array<{
-    id: string;
-    slug: string;
-    order: number;
-    title: Record<string, string | undefined>;
-    excerpt: Record<string, string | undefined>;
-    type: "text" | "video";
-    readingTimeMinutes: number | null;
-    videoDurationSeconds: number | null;
-    publishedAt: string | null;
-    completed: boolean;
-  }>;
-};
+import { CourseSkeleton } from "@/components/skeletons";
+import { useAuthGuard } from "@/hooks/use-auth-guard";
+import { useCourse } from "@/hooks/queries";
+import { useEnroll } from "@/hooks/mutations";
 
 export default function CoursePage() {
   const t = useTranslations("Academy");
   const locale = useLocale();
   const params = useParams<{ slug: string }>();
   const router = useRouter();
-  const [course, setCourse] = useState<CourseDetail | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-  const [enrolling, setEnrolling] = useState(false);
-
-  useEffect(() => {
-    if (!getAccessToken()) {
-      router.replace("/login");
-      return;
-    }
-    apiFetch<CourseDetail>(
-      `/academy/courses/${encodeURIComponent(params.slug)}?locale=${locale}`,
-      { locale },
-    )
-      .then(setCourse)
-      .catch((err) => {
-        if (err instanceof ApiError && err.status === 401) {
-          clearTokens();
-          router.replace("/login");
-          return;
-        }
-        setError(err instanceof Error ? err.message : String(err));
-      })
-      .finally(() => setLoading(false));
-  }, [params.slug, locale, router]);
+  const { isReady } = useAuthGuard();
+  const query = useCourse(params.slug, locale);
+  const enroll = useEnroll();
 
   async function onEnroll() {
-    if (!course || enrolling) return;
-    setEnrolling(true);
+    if (!query.data || enroll.isPending) return;
     try {
-      await apiFetch<{ enrolled: boolean }>(
-        `/academy/courses/${encodeURIComponent(params.slug)}/enroll`,
-        { method: "POST", locale },
-      );
+      await enroll.mutateAsync({ slug: params.slug, locale });
       toast.success(t("course.enrollSuccess"));
-      // Post-enrollment redirect: jump straight into the first lesson so
-      // the student starts reading instead of staring at a TOC. Falls
-      // back to the resume slug (should be the first lesson for a brand
-      // new enrollment) or the course's first lesson if neither is set.
+      // Post-enrollment: jump straight into the first lesson so the student
+      // starts reading instead of staring at a TOC.
       const firstLesson =
-        course.progress.resumeLessonSlug ?? course.lessons[0]?.slug ?? null;
+        query.data.progress.resumeLessonSlug ??
+        query.data.lessons[0]?.slug ??
+        null;
       if (firstLesson) {
         router.push({
           pathname: "/courses/[slug]/[lessonSlug]",
           params: { slug: params.slug, lessonSlug: firstLesson },
         });
-        return;
       }
-      // No lessons yet — flip the in-place state so the CTA disappears.
-      setCourse({ ...course, enrolled: true, canUnenroll: true });
     } catch (err) {
       const message =
         err instanceof Error ? err.message : t("course.enrollFailed");
       toast.error(message);
-      setError(message);
-    } finally {
-      setEnrolling(false);
     }
   }
 
-  if (loading) {
+  if (!isReady || query.isLoading) {
     return (
       <>
         <AppHeader />
-        <div className="mx-auto max-w-5xl px-6 py-12">…</div>
+        <CourseSkeleton />
       </>
     );
   }
-  if (error || !course) {
+  if (query.error || !query.data) {
     return (
       <>
         <AppHeader />
         <div className="mx-auto max-w-5xl px-6 py-12">
-          <p className="text-sm text-red-600" role="alert">
-            {error ?? t("errors.generic")}
-          </p>
+          <ErrorState
+            title={t("errors.generic")}
+            description={query.error?.message}
+            onRetry={() => query.refetch()}
+            retryLabel={t("errors.retry")}
+          />
           <Link href="/" className="mt-4 inline-block text-sm underline">
             {t("appName")}
           </Link>
@@ -130,6 +71,7 @@ export default function CoursePage() {
     );
   }
 
+  const course = query.data;
   const canStart = course.enrolled || course.visibility === "public";
   const resumeSlug =
     course.progress.resumeLessonSlug ?? course.lessons[0]?.slug ?? null;
@@ -172,23 +114,21 @@ export default function CoursePage() {
 
         <div className="mt-6 flex flex-wrap items-center gap-3">
           {showEnrollButton ? (
-            <button
+            <SubmitButton
               type="button"
               onClick={onEnroll}
-              disabled={enrolling}
-              className="rounded-md bg-[color:var(--color-primary)] px-4 py-2 text-sm font-medium text-white transition hover:opacity-90 disabled:opacity-60"
+              loading={enroll.isPending}
+              loadingLabel={t("course.enrollPending")}
             >
-              {enrolling
-                ? t("course.enrollPending")
-                : t("course.enrollButton")}
-            </button>
+              {t("course.enrollButton")}
+            </SubmitButton>
           ) : canStart && resumeSlug ? (
             <Link
               href={{
                 pathname: "/courses/[slug]/[lessonSlug]",
                 params: { slug: course.slug, lessonSlug: resumeSlug },
               }}
-              className="rounded-md bg-[color:var(--color-primary)] px-4 py-2 text-sm font-medium text-white transition hover:opacity-90"
+              className="inline-flex h-9 items-center justify-center rounded-md bg-[color:var(--color-primary)] px-4 py-2 text-sm font-medium text-white transition hover:opacity-90"
             >
               {startLabel}
             </Link>

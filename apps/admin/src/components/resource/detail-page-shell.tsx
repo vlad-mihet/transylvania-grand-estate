@@ -3,7 +3,7 @@
 import type { ReactNode } from "react";
 import { useQuery, type QueryKey } from "@tanstack/react-query";
 import { useTranslations } from "next-intl";
-import { EmptyState, ErrorState, LoadingState } from "@/components/shared/states";
+import { EmptyState, ErrorState, LoadingState } from "@tge/ui";
 
 interface DetailPageShellProps<T> {
   queryKey: QueryKey;

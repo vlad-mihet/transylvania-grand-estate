@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 import { DM_Sans, Inter } from "next/font/google";
 import { Toaster } from "sonner";
 import { routing } from "@/i18n/routing";
+import { Providers } from "@/components/providers";
 import "../globals.css";
 
 const dmSans = DM_Sans({
@@ -38,10 +39,12 @@ export default async function LocaleLayout({
     <html lang={locale} className={`${dmSans.variable} ${inter.variable}`} suppressHydrationWarning>
       <body className="font-sans antialiased bg-background text-foreground" suppressHydrationWarning>
         <NextIntlClientProvider messages={messages}>
-          <div className="flex min-h-screen flex-col">
-            <main className="flex-1">{children}</main>
-          </div>
-          <Toaster position="bottom-center" richColors closeButton />
+          <Providers>
+            <div className="flex min-h-screen flex-col">
+              <main className="flex-1">{children}</main>
+            </div>
+            <Toaster position="bottom-center" richColors closeButton />
+          </Providers>
         </NextIntlClientProvider>
       </body>
     </html>

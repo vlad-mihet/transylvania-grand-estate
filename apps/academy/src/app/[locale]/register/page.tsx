@@ -1,46 +1,46 @@
 "use client";
 
-import { Suspense, useState } from "react";
+import { Suspense } from "react";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
 import { useLocale, useTranslations } from "next-intl";
-import { Link, useRouter } from "@/i18n/navigation";
-import { apiFetch, ApiError } from "@/lib/api-client";
+import { toast } from "sonner";
+import { SubmitButton } from "@tge/ui";
+import { useApiFormErrors } from "@tge/hooks";
+import { Link } from "@/i18n/navigation";
+import { PublicShell } from "@/components/public-shell";
 import { PasswordStrength } from "@/components/password-strength";
+import { useRegister } from "@/hooks/mutations";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:3333/api/v1";
+
+const registerSchema = z.object({
+  name: z.string().min(2).max(200),
+  email: z.string().email(),
+  password: z.string().min(12),
+});
+type RegisterValues = z.infer<typeof registerSchema>;
 
 function RegisterInner() {
   const t = useTranslations("Academy.register");
   const locale = useLocale() as "ro" | "en" | "fr" | "de";
-  const router = useRouter();
+  const register = useRegister();
 
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [submitting, setSubmitting] = useState(false);
-  const [submitted, setSubmitted] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const form = useForm<RegisterValues>({
+    resolver: zodResolver(registerSchema),
+    defaultValues: { name: "", email: "", password: "" },
+  });
 
-  async function onSubmit(e: React.FormEvent) {
-    e.preventDefault();
-    setSubmitting(true);
-    setError(null);
+  useApiFormErrors(form, register.error, (err) =>
+    toast.error(err instanceof Error ? err.message : String(err)),
+  );
+
+  async function onSubmit(values: RegisterValues) {
     try {
-      await apiFetch<{ ok: true }>("/academy/auth/register", {
-        method: "POST",
-        body: { name, email, password, locale },
-        skipAuth: true,
-      });
-      // Always flip to the success screen — backend uses anti-enumeration
-      // 202s so we treat every non-error response as "check your inbox".
-      setSubmitted(true);
-    } catch (err) {
-      if (err instanceof ApiError && err.status === 400) {
-        setError(err.message);
-      } else {
-        setError(err instanceof Error ? err.message : String(err));
-      }
-    } finally {
-      setSubmitting(false);
+      await register.mutateAsync({ ...values, locale });
+    } catch {
+      // handled by useApiFormErrors
     }
   }
 
@@ -48,13 +48,15 @@ function RegisterInner() {
     window.location.href = `${API_URL}/academy/auth/google?intent=register`;
   }
 
-  if (submitted) {
+  const password = form.watch("password");
+
+  if (register.isSuccess) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-[color:var(--color-muted)] p-6">
+      <PublicShell>
         <div className="w-full max-w-sm rounded-xl bg-white p-8 shadow-sm">
           <h1 className="text-2xl font-semibold">{t("sentTitle")}</h1>
           <p className="mt-3 text-sm text-[color:var(--color-muted-foreground)]">
-            {t("sentBody", { email })}
+            {t("sentBody", { email: form.getValues("email") })}
           </p>
           <p className="mt-6 text-xs text-[color:var(--color-muted-foreground)]">
             {t("sentFootnote")}{" "}
@@ -66,67 +68,68 @@ function RegisterInner() {
             </Link>
           </p>
         </div>
-      </div>
+      </PublicShell>
     );
   }
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-[color:var(--color-muted)] p-6">
+    <PublicShell>
       <div className="w-full max-w-sm rounded-xl bg-white p-8 shadow-sm">
         <h1 className="text-2xl font-semibold">{t("title")}</h1>
         <p className="mt-2 text-sm text-[color:var(--color-muted-foreground)]">
           {t("subtitle")}
         </p>
-        <form onSubmit={onSubmit} className="mt-6 flex flex-col gap-4">
+        <form onSubmit={form.handleSubmit(onSubmit)} className="mt-6 flex flex-col gap-4">
           <label className="text-sm">
             <span className="mb-1 block font-medium">{t("nameLabel")}</span>
             <input
               type="text"
-              required
-              minLength={2}
-              maxLength={200}
               autoComplete="name"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
+              {...form.register("name")}
               className="w-full rounded-md border border-[color:var(--color-border)] px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-[color:var(--color-ring)]"
             />
+            {form.formState.errors.name ? (
+              <p className="mt-1 text-xs text-red-600" role="alert">
+                {form.formState.errors.name.message}
+              </p>
+            ) : null}
           </label>
           <label className="text-sm">
             <span className="mb-1 block font-medium">{t("emailLabel")}</span>
             <input
               type="email"
-              required
               autoComplete="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
+              {...form.register("email")}
               className="w-full rounded-md border border-[color:var(--color-border)] px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-[color:var(--color-ring)]"
             />
+            {form.formState.errors.email ? (
+              <p className="mt-1 text-xs text-red-600" role="alert">
+                {form.formState.errors.email.message}
+              </p>
+            ) : null}
           </label>
           <label className="text-sm">
             <span className="mb-1 block font-medium">{t("passwordLabel")}</span>
             <input
               type="password"
-              required
-              minLength={12}
               autoComplete="new-password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
+              {...form.register("password")}
               className="w-full rounded-md border border-[color:var(--color-border)] px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-[color:var(--color-ring)]"
             />
-            <PasswordStrength password={password} />
+            <PasswordStrength password={password ?? ""} />
+            {form.formState.errors.password ? (
+              <p className="mt-1 text-xs text-red-600" role="alert">
+                {form.formState.errors.password.message}
+              </p>
+            ) : null}
           </label>
-          {error ? (
-            <p className="text-sm text-red-600" role="alert">
-              {error}
-            </p>
-          ) : null}
-          <button
+          <SubmitButton
             type="submit"
-            disabled={submitting}
-            className="rounded-md bg-[color:var(--color-primary)] px-4 py-2 text-sm font-medium text-white disabled:opacity-60"
+            loading={register.isPending}
+            loadingLabel={t("submitting")}
           >
-            {submitting ? t("submitting") : t("submit")}
-          </button>
+            {t("submit")}
+          </SubmitButton>
         </form>
         <div className="my-6 flex items-center gap-3 text-xs text-[color:var(--color-muted-foreground)]">
           <div className="h-px flex-1 bg-[color:var(--color-border)]" />
@@ -147,7 +150,7 @@ function RegisterInner() {
           </Link>
         </p>
       </div>
-    </div>
+    </PublicShell>
   );
 }
 

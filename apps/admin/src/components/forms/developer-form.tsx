@@ -3,7 +3,7 @@
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { developerSchema, DeveloperFormValues } from "@/lib/validations/developer";
-import { useApiFormErrors } from "@/lib/form-error";
+import { useApiFormErrors } from "@tge/hooks";
 import { toast } from "@/lib/toast";
 import { BilingualInput } from "@/components/shared/bilingual-input";
 import { BilingualTextarea } from "@/components/shared/bilingual-textarea";

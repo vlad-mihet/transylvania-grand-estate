@@ -1,64 +1,71 @@
 "use client";
 
-import { Suspense, useState } from "react";
+import { Suspense } from "react";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
 import { useSearchParams } from "next/navigation";
 import { useTranslations } from "next-intl";
+import { toast } from "sonner";
+import { SubmitButton } from "@tge/ui";
+import { useApiFormErrors } from "@tge/hooks";
 import { Link, useRouter } from "@/i18n/navigation";
-import { apiFetch, setTokens, ApiError } from "@/lib/api-client";
+import { PublicShell } from "@/components/public-shell";
+import { validateReturnTo } from "@/lib/return-to";
+import { useLogin } from "@/hooks/mutations";
+import { ApiError } from "@/lib/api-client";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:3333/api/v1";
+
+const loginSchema = z.object({
+  email: z.string().email(),
+  password: z.string().min(1),
+});
+type LoginValues = z.infer<typeof loginSchema>;
 
 function LoginInner() {
   const t = useTranslations("Academy.login");
   const router = useRouter();
   const searchParams = useSearchParams();
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const login = useLogin();
 
   // When the user lands here after a successful password reset we show
-  // a soft success banner so the redirect doesn't feel silent. Any other
-  // flash message (e.g. `?error=…` from the OAuth callback) also routes
-  // through the search params, keeping the surface minimal.
+  // a soft success banner so the redirect doesn't feel silent.
   const resetSuccess = searchParams.get("reset") === "success";
+  const returnToRaw = searchParams.get("returnTo");
+  const returnTo = validateReturnTo(returnToRaw);
 
-  async function onSubmit(e: React.FormEvent) {
-    e.preventDefault();
-    setLoading(true);
-    setError(null);
+  const form = useForm<LoginValues>({
+    resolver: zodResolver(loginSchema),
+    defaultValues: { email: "", password: "" },
+  });
+
+  useApiFormErrors(form, login.error, (err) => {
+    if (err instanceof ApiError && (err.status === 401 || err.status === 403)) {
+      form.setError("root", { type: "server", message: t("error") });
+      return;
+    }
+    toast.error(err instanceof Error ? err.message : String(err));
+  });
+
+  async function onSubmit(values: LoginValues) {
     try {
-      const result = await apiFetch<{
-        accessToken: string;
-        refreshToken: string;
-        user: { id: string; email: string; name: string };
-      }>("/academy/auth/login", {
-        method: "POST",
-        body: { email, password },
-        skipAuth: true,
-      });
-      setTokens({
-        accessToken: result.accessToken,
-        refreshToken: result.refreshToken,
-      });
-      router.push("/");
-    } catch (err) {
-      if (err instanceof ApiError && (err.status === 401 || err.status === 403)) {
-        setError(t("error"));
-      } else {
-        setError(err instanceof Error ? err.message : String(err));
-      }
-    } finally {
-      setLoading(false);
+      await login.mutateAsync(values);
+      router.push(returnTo ?? "/");
+    } catch {
+      // errors surfaced via useApiFormErrors
     }
   }
 
   function onGoogle() {
-    window.location.href = `${API_URL}/academy/auth/google`;
+    const suffix = returnToRaw
+      ? `?returnTo=${encodeURIComponent(returnToRaw)}`
+      : "";
+    window.location.href = `${API_URL}/academy/auth/google${suffix}`;
   }
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-[color:var(--color-muted)] p-6">
+    <PublicShell>
       <div className="w-full max-w-sm rounded-xl bg-white p-8 shadow-sm">
         <h1 className="mb-6 text-2xl font-semibold">{t("title")}</h1>
         {resetSuccess ? (
@@ -69,41 +76,43 @@ function LoginInner() {
             {t("resetSuccess")}
           </p>
         ) : null}
-        <form onSubmit={onSubmit} className="flex flex-col gap-4">
+        <form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-col gap-4">
           <label className="text-sm">
             <span className="mb-1 block font-medium">{t("emailLabel")}</span>
             <input
               type="email"
-              required
               autoComplete="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
+              {...form.register("email")}
               className="w-full rounded-md border border-[color:var(--color-border)] px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-[color:var(--color-ring)]"
             />
+            {form.formState.errors.email ? (
+              <p className="mt-1 text-xs text-red-600" role="alert">
+                {form.formState.errors.email.message}
+              </p>
+            ) : null}
           </label>
           <label className="text-sm">
             <span className="mb-1 block font-medium">{t("passwordLabel")}</span>
             <input
               type="password"
-              required
               autoComplete="current-password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
+              {...form.register("password")}
               className="w-full rounded-md border border-[color:var(--color-border)] px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-[color:var(--color-ring)]"
             />
+            {form.formState.errors.password ? (
+              <p className="mt-1 text-xs text-red-600" role="alert">
+                {form.formState.errors.password.message}
+              </p>
+            ) : null}
           </label>
-          {error ? (
+          {form.formState.errors.root ? (
             <p className="text-sm text-red-600" role="alert">
-              {error}
+              {form.formState.errors.root.message}
             </p>
           ) : null}
-          <button
-            type="submit"
-            disabled={loading}
-            className="rounded-md bg-[color:var(--color-primary)] px-4 py-2 text-sm font-medium text-white disabled:opacity-60"
-          >
+          <SubmitButton type="submit" loading={login.isPending}>
             {t("submit")}
-          </button>
+          </SubmitButton>
           <Link
             href="/forgot-password"
             className="text-center text-xs text-[color:var(--color-muted-foreground)] hover:underline"
@@ -130,7 +139,7 @@ function LoginInner() {
           </Link>
         </p>
       </div>
-    </div>
+    </PublicShell>
   );
 }
 

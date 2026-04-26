@@ -1,12 +1,23 @@
 "use client";
 
 import { Suspense, useEffect, useState } from "react";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
 import { useSearchParams } from "next/navigation";
 import { useTranslations } from "next-intl";
+import { toast } from "sonner";
+import { SubmitButton } from "@tge/ui";
+import { useApiFormErrors } from "@tge/hooks";
 import { useRouter } from "@/i18n/navigation";
-import { apiFetch, setTokens, ApiError } from "@/lib/api-client";
+import { PublicShell } from "@/components/public-shell";
+import { apiFetch } from "@/lib/api-client";
+import { useAcceptInvite } from "@/hooks/mutations";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:3333/api/v1";
+
+const schema = z.object({ password: z.string().min(12) });
+type Values = z.infer<typeof schema>;
 
 function AcceptInviteInner() {
   const t = useTranslations("Academy.acceptInvite");
@@ -15,9 +26,16 @@ function AcceptInviteInner() {
   const token = searchParams.get("token") ?? "";
   const [email, setEmail] = useState<string | null>(null);
   const [invalid, setInvalid] = useState(false);
-  const [password, setPassword] = useState("");
-  const [error, setError] = useState<string | null>(null);
-  const [submitting, setSubmitting] = useState(false);
+  const accept = useAcceptInvite();
+
+  const form = useForm<Values>({
+    resolver: zodResolver(schema),
+    defaultValues: { password: "" },
+  });
+
+  useApiFormErrors(form, accept.error, (err) =>
+    toast.error(err instanceof Error ? err.message : String(err)),
+  );
 
   useEffect(() => {
     if (!token) {
@@ -32,32 +50,12 @@ function AcceptInviteInner() {
       .catch(() => setInvalid(true));
   }, [token]);
 
-  async function onSubmit(e: React.FormEvent) {
-    e.preventDefault();
-    setSubmitting(true);
-    setError(null);
+  async function onSubmit(values: Values) {
     try {
-      const result = await apiFetch<{
-        accessToken: string;
-        refreshToken: string;
-      }>("/academy/auth/invitations/accept-password", {
-        method: "POST",
-        body: { token, password },
-        skipAuth: true,
-      });
-      setTokens({
-        accessToken: result.accessToken,
-        refreshToken: result.refreshToken,
-      });
+      await accept.mutateAsync({ token, password: values.password });
       router.push("/");
-    } catch (err) {
-      if (err instanceof ApiError && err.status === 400) {
-        setError(err.message);
-      } else {
-        setError(err instanceof Error ? err.message : String(err));
-      }
-    } finally {
-      setSubmitting(false);
+    } catch {
+      // handled by useApiFormErrors
     }
   }
 
@@ -67,16 +65,16 @@ function AcceptInviteInner() {
 
   if (invalid) {
     return (
-      <div className="flex min-h-screen items-center justify-center p-6">
+      <PublicShell>
         <p className="max-w-sm text-center text-sm text-[color:var(--color-muted-foreground)]">
           {t("invalid")}
         </p>
-      </div>
+      </PublicShell>
     );
   }
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-[color:var(--color-muted)] p-6">
+    <PublicShell>
       <div className="w-full max-w-sm rounded-xl bg-white p-8 shadow-sm">
         <h1 className="text-2xl font-semibold">{t("title")}</h1>
         <p className="mt-2 text-sm text-[color:var(--color-muted-foreground)]">
@@ -87,31 +85,31 @@ function AcceptInviteInner() {
             <span className="font-medium">{email}</span>
           </p>
         ) : null}
-        <form onSubmit={onSubmit} className="mt-6 flex flex-col gap-4">
+        <form
+          onSubmit={form.handleSubmit(onSubmit)}
+          className="mt-6 flex flex-col gap-4"
+        >
           <label className="text-sm">
             <span className="mb-1 block font-medium">{t("passwordLabel")}</span>
             <input
               type="password"
-              required
-              minLength={12}
               autoComplete="new-password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
+              {...form.register("password")}
               className="w-full rounded-md border border-[color:var(--color-border)] px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-[color:var(--color-ring)]"
             />
+            {form.formState.errors.password ? (
+              <p className="mt-1 text-xs text-red-600" role="alert">
+                {form.formState.errors.password.message}
+              </p>
+            ) : null}
           </label>
-          {error ? (
-            <p className="text-sm text-red-600" role="alert">
-              {error}
-            </p>
-          ) : null}
-          <button
+          <SubmitButton
             type="submit"
-            disabled={submitting || !email}
-            className="rounded-md bg-[color:var(--color-primary)] px-4 py-2 text-sm font-medium text-white disabled:opacity-60"
+            loading={accept.isPending}
+            disabled={!email}
           >
             {t("submit")}
-          </button>
+          </SubmitButton>
         </form>
         <div className="my-6 flex items-center gap-3 text-xs text-[color:var(--color-muted-foreground)]">
           <div className="h-px flex-1 bg-[color:var(--color-border)]" />
@@ -126,7 +124,7 @@ function AcceptInviteInner() {
           {t("googleButton")}
         </button>
       </div>
-    </div>
+    </PublicShell>
   );
 }
 

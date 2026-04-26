@@ -6,7 +6,7 @@ import {
   propertySchema,
   PropertyFormValues,
 } from "@/lib/validations/property";
-import { useApiFormErrors } from "@/lib/form-error";
+import { useApiFormErrors } from "@tge/hooks";
 import { useUnsavedChangesWarning } from "@/hooks/use-unsaved-changes-warning";
 import { toast } from "@/lib/toast";
 import { BilingualInput } from "@/components/shared/bilingual-input";

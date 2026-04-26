@@ -4,7 +4,7 @@ import { useTranslations } from "next-intl";
 import { Button } from "@tge/ui";
 import { ArrowLeft } from "lucide-react";
 import { Link } from "@/i18n/navigation";
-import { EmptyState } from "@/components/shared/states";
+import { EmptyState } from "@tge/ui";
 
 export default function StudentNotFound() {
   const t = useTranslations("Academy.students");

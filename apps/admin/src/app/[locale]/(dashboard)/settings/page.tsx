@@ -15,7 +15,7 @@ import { Plus, X, Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import { useEffect } from "react";
 import { useTranslations } from "next-intl";
-import { ErrorState } from "@/components/shared/states";
+import { ErrorState } from "@tge/ui";
 import { BilingualInput } from "@/components/shared/bilingual-input";
 import { BilingualTextarea } from "@/components/shared/bilingual-textarea";
 

@@ -2,6 +2,7 @@
 
 import { useTransition } from "react";
 import { useLocale } from "next-intl";
+import { Loader2 } from "lucide-react";
 import { apiFetch, getAccessToken } from "@/lib/api-client";
 
 const LOCALES: readonly { code: "ro" | "en" | "fr" | "de"; label: string }[] = [
@@ -54,24 +55,35 @@ export function LocaleSwitcher() {
     <div
       role="group"
       aria-label="Language"
-      className="inline-flex rounded-md border border-[color:var(--color-border)] bg-white"
+      aria-busy={isPending || undefined}
+      className="relative inline-flex rounded-md border border-[color:var(--color-border)] bg-white"
     >
-      {LOCALES.map((l) => (
-        <button
-          key={l.code}
-          type="button"
-          onClick={() => onChange(l.code)}
-          disabled={isPending}
-          className={`px-2.5 py-1 text-xs font-medium tracking-wider transition ${
-            l.code === locale
-              ? "bg-[color:var(--color-primary)] text-white"
-              : "text-[color:var(--color-muted-foreground)] hover:bg-[color:var(--color-muted)]"
-          }`}
-          aria-pressed={l.code === locale}
-        >
-          {l.label}
-        </button>
-      ))}
+      {LOCALES.map((l) => {
+        const isActive = l.code === locale;
+        const showSpinner = isPending && isActive;
+        return (
+          <button
+            key={l.code}
+            type="button"
+            onClick={() => onChange(l.code)}
+            disabled={isPending}
+            className={`relative inline-flex items-center gap-1 px-2.5 py-1 text-xs font-medium tracking-wider transition ${
+              isActive
+                ? "bg-[color:var(--color-primary)] text-white"
+                : "text-[color:var(--color-muted-foreground)] hover:bg-[color:var(--color-muted)]"
+            } ${isPending ? "cursor-wait" : ""}`}
+            aria-pressed={isActive}
+          >
+            {showSpinner ? (
+              <Loader2
+                className="h-3 w-3 animate-spin"
+                aria-hidden="true"
+              />
+            ) : null}
+            {l.label}
+          </button>
+        );
+      })}
     </div>
   );
 }

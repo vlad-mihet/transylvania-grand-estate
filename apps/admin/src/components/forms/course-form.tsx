@@ -18,7 +18,7 @@ import { BilingualTextarea } from "@/components/shared/bilingual-textarea";
 import { SectionCard } from "@/components/shared/section-card";
 import { FormActions } from "@/components/shared/form-actions";
 import { CoverImageField } from "@/components/academy/cover-image-field";
-import { useApiFormErrors } from "@/lib/form-error";
+import { useApiFormErrors } from "@tge/hooks";
 import { useUnsavedChangesWarning } from "@/hooks/use-unsaved-changes-warning";
 import { toast } from "@/lib/toast";
 import {

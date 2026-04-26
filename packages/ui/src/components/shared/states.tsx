@@ -1,9 +1,9 @@
 "use client";
 
 import type { ReactNode } from "react";
-import { Button } from "@tge/ui";
 import { AlertTriangle, Inbox, Loader2 } from "lucide-react";
 import { cn } from "@tge/utils";
+import { Button } from "../ui/button";
 
 interface EmptyStateProps {
   title: string;

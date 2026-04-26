@@ -6,7 +6,7 @@ import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
 import { apiClient } from "@/lib/api-client";
 import { usePermissions } from "@/components/auth/auth-provider";
-import { ErrorState } from "@/components/shared/states";
+import { ErrorState } from "@tge/ui";
 import { Mono } from "@/components/shared/mono";
 import { RelativeTime } from "@/components/shared/relative-time";
 import { SectionCard } from "@/components/shared/section-card";

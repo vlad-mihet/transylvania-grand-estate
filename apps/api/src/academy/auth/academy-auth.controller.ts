@@ -190,6 +190,7 @@ export class AcademyAuthController {
   async googleAuth(
     @Query('invitation') invitation: string | undefined,
     @Query('intent') intent: string | undefined,
+    @Query('returnTo') returnTo: string | undefined,
     @Req() req: ExpressRequest,
     @Res() res: ExpressResponse,
   ) {
@@ -197,6 +198,7 @@ export class AcademyAuthController {
     const state = this.signOAuthState({
       invitation: invitation ?? null,
       intent: intent === 'register' ? 'register' : null,
+      dest: this.sanitizeReturnTo(returnTo),
     });
     const clientId = this.config.getOrThrow<string>('GOOGLE_CLIENT_ID');
     const callback = this.config.getOrThrow<string>('GOOGLE_ACADEMY_CALLBACK_URL');
@@ -237,11 +239,13 @@ export class AcademyAuthController {
 
     let invitationToken: string | null = null;
     let intent: 'register' | null = null;
+    let dest: string | null = null;
     if (rawState) {
       try {
         const payload = this.verifyOAuthState(rawState);
         invitationToken = payload.invitation ?? null;
         intent = payload.intent === 'register' ? 'register' : null;
+        dest = this.sanitizeReturnTo(payload.dest ?? null);
       } catch {
         return this.redirectWithError(res, academyBase, 'state_invalid');
       }
@@ -282,7 +286,7 @@ export class AcademyAuthController {
 
       const fragment = new URLSearchParams({
         rt: tokens.refreshToken,
-        dest: '/',
+        dest: dest ?? '/',
       }).toString();
       res.redirect(`${academyBase}/auth/complete#${fragment}`);
     } catch (err) {
@@ -315,6 +319,7 @@ export class AcademyAuthController {
   private signOAuthState(payload: {
     invitation: string | null;
     intent: 'register' | null;
+    dest: string | null;
   }): string {
     const secret = this.config.getOrThrow<string>('INVITATION_TOKEN_SECRET');
     return this.jwtService.sign(payload, { secret, expiresIn: '10m' });
@@ -323,12 +328,31 @@ export class AcademyAuthController {
   private verifyOAuthState(state: string): {
     invitation: string | null;
     intent?: 'register' | null;
+    dest?: string | null;
   } {
     const secret = this.config.getOrThrow<string>('INVITATION_TOKEN_SECRET');
     return this.jwtService.verify<{
       invitation: string | null;
       intent?: 'register' | null;
+      dest?: string | null;
     }>(state, { secret });
+  }
+
+  /**
+   * Defense-in-depth path-allowlist. The frontend already validates
+   * `returnTo` before passing it in (see `apps/academy/src/lib/return-to.ts`),
+   * and the state JWT prevents tampering mid-flow — but we re-check here
+   * so a misbehaving client can't steer the OAuth callback at an external
+   * host. Only cheap shape checks; the client does the strict allowlist.
+   */
+  private sanitizeReturnTo(raw: string | null | undefined): string | null {
+    if (!raw) return null;
+    if (typeof raw !== 'string' || raw.length > 256) return null;
+    if (!raw.startsWith('/')) return null;
+    if (raw.startsWith('//') || raw.startsWith('/\\')) return null;
+    // Reject protocol-relative, external URLs, whitespace.
+    if (/[\r\n\s]/.test(raw)) return null;
+    return raw;
   }
 
   private getAcademyBase(): string {

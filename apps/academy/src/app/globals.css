@@ -2,15 +2,42 @@
 @import "tw-animate-css";
 @plugin "@tailwindcss/typography";
 
+/* Scan shared @tge/ui source so Tailwind v4 picks up classes used in
+   components imported from the package (DropdownMenu, Button, Sheet, …).
+   Without this, components render with missing class styles even when
+   the JSX renders correctly. */
+@source "../../../../packages/ui/src";
+
 @theme {
   --font-sans: "DM Sans", ui-sans-serif, system-ui, sans-serif;
+
+  /* Brand */
   --color-primary: #5b21b6;
   --color-primary-foreground: #ffffff;
+
+  /* Surfaces */
   --color-background: #ffffff;
   --color-foreground: #0a0a0a;
+  --color-card: #ffffff;
+  --color-card-foreground: #0a0a0a;
+  --color-popover: #ffffff;
+  --color-popover-foreground: #0a0a0a;
+
+  /* Muted / accent / secondary — all share a quiet neutral family */
   --color-muted: #f4f4f5;
   --color-muted-foreground: #525252;
+  --color-accent: #f4f4f5;
+  --color-accent-foreground: #0a0a0a;
+  --color-secondary: #f4f4f5;
+  --color-secondary-foreground: #0a0a0a;
+
+  /* Feedback */
+  --color-destructive: #b91c1c;
+  --color-destructive-foreground: #ffffff;
+
+  /* Controls */
   --color-border: #e5e7eb;
+  --color-input: #e5e7eb;
   --color-ring: #8b5cf6;
 }
 

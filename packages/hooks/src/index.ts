@@ -8,4 +8,10 @@ export type {
   UseInquirySubmissionOptions,
   InquirySubmissionState,
 } from "./use-inquiry-submission";
+export {
+  useApiFormErrors,
+  applyApiFieldErrors,
+  getApiFields,
+  type ApiFieldIssue,
+} from "./use-api-form-errors";
 export * from "./queries";

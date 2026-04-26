@@ -8,7 +8,7 @@ import { toast } from "@/lib/toast";
 import { Link } from "@/i18n/navigation";
 import { LessonForm } from "@/components/forms/lesson-form";
 import { FormPageShell } from "@/components/resource/form-page-shell";
-import { LoadingState } from "@/components/shared/states";
+import { LoadingState } from "@tge/ui";
 import type { LessonFormValues } from "@/lib/validations/academy";
 
 type Lesson = { id: string };

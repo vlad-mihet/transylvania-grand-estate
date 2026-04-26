@@ -5,11 +5,7 @@ import { useTranslations } from "next-intl";
 import { apiClient } from "@/lib/api-client";
 import { toast } from "@/lib/toast";
 import { PageHeader } from "@/components/shared/page-header";
-import {
-  EmptyState,
-  ErrorState,
-  LoadingState,
-} from "@/components/shared/states";
+import { EmptyState, ErrorState, LoadingState } from "@tge/ui";
 import { Mono } from "@/components/shared/mono";
 import {
   AgentProfileForm,

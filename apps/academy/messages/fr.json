@@ -88,7 +88,8 @@
       "emptyBrowseCatalog": "Parcourir le catalogue public →",
       "unenrollAction": "Retirer de ma liste",
       "unenrollConfirm": "Retirer « {title} » de votre liste ? Le cours reste disponible dans le catalogue.",
-      "unenrollSuccess": "Cours retiré de votre liste."
+      "unenrollSuccess": "Cours retiré de votre liste.",
+      "navLink": "Mes cours"
     },
     "catalog": {
       "title": "Catalogue",
@@ -154,7 +155,14 @@
       "verificationSent": "Email de confirmation envoyé."
     },
     "errors": {
-      "generic": "Une erreur s'est produite. Réessayez."
+      "generic": "Une erreur s'est produite. Réessayez.",
+      "retry": "Réessayer"
+    },
+    "nav": {
+      "openMenu": "Ouvrir le menu",
+      "menuDescription": "Naviguer dans la plateforme",
+      "languageLabel": "Langue",
+      "userMenuAria": "Menu du compte"
     }
   }
 }

@@ -3,7 +3,7 @@
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { bankRateSchema, BankRateFormValues } from "@/lib/validations/bank-rate";
-import { useApiFormErrors } from "@/lib/form-error";
+import { useApiFormErrors } from "@tge/hooks";
 import { toast } from "@/lib/toast";
 import {
   Input,

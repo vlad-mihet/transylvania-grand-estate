@@ -88,7 +88,8 @@
       "emptyBrowseCatalog": "Öffentlichen Katalog durchstöbern →",
       "unenrollAction": "Aus meiner Liste entfernen",
       "unenrollConfirm": "„{title}“ aus Ihrer Liste entfernen? Der Kurs bleibt im Katalog verfügbar.",
-      "unenrollSuccess": "Kurs aus Ihrer Liste entfernt."
+      "unenrollSuccess": "Kurs aus Ihrer Liste entfernt.",
+      "navLink": "Meine Kurse"
     },
     "catalog": {
       "title": "Katalog",
@@ -154,7 +155,14 @@
       "verificationSent": "Bestätigungs-E-Mail gesendet."
     },
     "errors": {
-      "generic": "Etwas ist schiefgegangen. Bitte erneut versuchen."
+      "generic": "Etwas ist schiefgegangen. Bitte erneut versuchen.",
+      "retry": "Erneut versuchen"
+    },
+    "nav": {
+      "openMenu": "Menü öffnen",
+      "menuDescription": "Plattform durchsuchen",
+      "languageLabel": "Sprache",
+      "userMenuAria": "Kontomenü"
     }
   }
 }

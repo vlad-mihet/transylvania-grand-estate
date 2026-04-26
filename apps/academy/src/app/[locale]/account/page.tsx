@@ -1,26 +1,24 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
 import { useTranslations } from "next-intl";
+import { toast } from "sonner";
+import { ErrorState, SubmitButton } from "@tge/ui";
+import { useApiFormErrors } from "@tge/hooks";
 import { useRouter } from "@/i18n/navigation";
-import {
-  apiFetch,
-  ApiError,
-  clearTokens,
-  getAccessToken,
-  getRefreshToken,
-} from "@/lib/api-client";
 import { AppHeader } from "@/components/app-header";
-
-type Profile = {
-  id: string;
-  email: string;
-  name: string;
-  locale: "ro" | "en" | "fr" | "de" | null;
-  emailVerifiedAt: string | null;
-  lastLoginAt: string | null;
-  createdAt: string;
-};
+import { AccountSkeleton } from "@/components/skeletons";
+import { useAuthGuard } from "@/hooks/use-auth-guard";
+import { useSession } from "@/hooks/use-session";
+import {
+  useChangePassword,
+  useLogout,
+  useResendVerification,
+  useUpdateProfile,
+} from "@/hooks/mutations";
 
 const LOCALE_OPTIONS: readonly { code: "ro" | "en" | "fr" | "de"; label: string }[] = [
   { code: "ro", label: "Română" },
@@ -29,139 +27,107 @@ const LOCALE_OPTIONS: readonly { code: "ro" | "en" | "fr" | "de"; label: string 
   { code: "de", label: "Deutsch" },
 ];
 
+const profileSchema = z.object({
+  name: z.string().min(2).max(200),
+  locale: z.enum(["ro", "en", "fr", "de"]),
+});
+type ProfileValues = z.infer<typeof profileSchema>;
+
+const passwordSchema = z.object({
+  currentPassword: z.string().min(1),
+  newPassword: z.string().min(12),
+});
+type PasswordValues = z.infer<typeof passwordSchema>;
+
 export default function AccountPage() {
   const t = useTranslations("Academy");
   const router = useRouter();
-  const [profile, setProfile] = useState<Profile | null>(null);
-  const [error, setError] = useState<string | null>(null);
+  const { isReady } = useAuthGuard();
+  const session = useSession();
+  const updateProfile = useUpdateProfile();
+  const changePassword = useChangePassword();
+  const resendVerification = useResendVerification();
+  const logout = useLogout();
 
-  // Profile form state
-  const [name, setName] = useState("");
-  const [locale, setLocale] = useState<Profile["locale"]>("ro");
-  const [profileSaving, setProfileSaving] = useState(false);
-  const [profileMsg, setProfileMsg] = useState<string | null>(null);
+  const profile = session.profile;
 
-  // Password form state
-  const [currentPwd, setCurrentPwd] = useState("");
-  const [newPwd, setNewPwd] = useState("");
-  const [pwdSaving, setPwdSaving] = useState(false);
-  const [pwdMsg, setPwdMsg] = useState<string | null>(null);
-  const [pwdError, setPwdError] = useState<string | null>(null);
+  const profileForm = useForm<ProfileValues>({
+    resolver: zodResolver(profileSchema),
+    defaultValues: { name: "", locale: "ro" },
+  });
+  useEffect(() => {
+    if (profile) {
+      profileForm.reset({
+        name: profile.name,
+        locale: (profile.locale ?? "ro") as ProfileValues["locale"],
+      });
+    }
+  }, [profile, profileForm]);
 
-  // Verification resend state
-  const [verificationMsg, setVerificationMsg] = useState<string | null>(null);
-  const [verificationSending, setVerificationSending] = useState(false);
+  const passwordForm = useForm<PasswordValues>({
+    resolver: zodResolver(passwordSchema),
+    defaultValues: { currentPassword: "", newPassword: "" },
+  });
+
+  useApiFormErrors(profileForm, updateProfile.error, (err) =>
+    toast.error(err instanceof Error ? err.message : String(err)),
+  );
+  useApiFormErrors(passwordForm, changePassword.error, (err) =>
+    toast.error(err instanceof Error ? err.message : String(err)),
+  );
+
+  async function onSaveProfile(values: ProfileValues) {
+    try {
+      await updateProfile.mutateAsync(values);
+      toast.success(t("account.saved"));
+    } catch {
+      // field errors handled by useApiFormErrors; toast fallback also handled.
+    }
+  }
+
+  async function onChangePassword(values: PasswordValues) {
+    try {
+      await changePassword.mutateAsync(values);
+      passwordForm.reset();
+      toast.success(t("account.passwordChanged"));
+    } catch {
+      // field errors / fallback handled by useApiFormErrors.
+    }
+  }
 
   async function onResendVerification() {
     if (!profile) return;
-    setVerificationSending(true);
-    try {
-      await apiFetch("/academy/auth/resend-verification", {
-        method: "POST",
-        body: { email: profile.email },
-        skipAuth: true,
-      });
-    } catch {
-      // Anti-enumeration: the endpoint always 202s anyway. We
-      // intentionally don't surface failures to the user.
-    }
-    setVerificationMsg(t("account.verificationSent"));
-    setVerificationSending(false);
-  }
-
-  useEffect(() => {
-    if (!getAccessToken()) {
-      router.replace("/login");
-      return;
-    }
-    apiFetch<Profile>("/academy/auth/me")
-      .then((p) => {
-        setProfile(p);
-        setName(p.name);
-        setLocale(p.locale ?? "ro");
-      })
-      .catch((err) => {
-        if (err instanceof ApiError && err.status === 401) {
-          clearTokens();
-          router.replace("/login");
-          return;
-        }
-        setError(err instanceof Error ? err.message : String(err));
-      });
-  }, [router]);
-
-  async function onSaveProfile(e: React.FormEvent) {
-    e.preventDefault();
-    setProfileSaving(true);
-    setProfileMsg(null);
-    try {
-      const updated = await apiFetch<Profile>("/academy/auth/me", {
-        method: "PATCH",
-        body: { name, locale },
-      });
-      setProfile(updated);
-      setProfileMsg(t("account.saved"));
-    } catch (err) {
-      setProfileMsg(err instanceof Error ? err.message : String(err));
-    } finally {
-      setProfileSaving(false);
-    }
-  }
-
-  async function onChangePassword(e: React.FormEvent) {
-    e.preventDefault();
-    setPwdSaving(true);
-    setPwdError(null);
-    setPwdMsg(null);
-    try {
-      await apiFetch<{ ok: boolean }>("/academy/auth/change-password", {
-        method: "POST",
-        body: { currentPassword: currentPwd, newPassword: newPwd },
-      });
-      setCurrentPwd("");
-      setNewPwd("");
-      setPwdMsg(t("account.passwordChanged"));
-    } catch (err) {
-      if (err instanceof ApiError && err.status === 401) {
-        setPwdError(t("login.error"));
-      } else {
-        setPwdError(err instanceof Error ? err.message : String(err));
-      }
-    } finally {
-      setPwdSaving(false);
-    }
+    await resendVerification
+      .mutateAsync({ email: profile.email })
+      .catch(() => undefined);
+    toast.success(t("account.verificationSent"));
   }
 
   async function onLogout() {
-    const refreshToken = getRefreshToken();
-    if (refreshToken) {
-      await apiFetch<{ ok: boolean }>("/academy/auth/logout", {
-        method: "POST",
-        body: { refreshToken },
-        skipAuth: true,
-      }).catch(() => undefined);
-    }
-    clearTokens();
+    await logout.mutateAsync();
     router.replace("/login");
   }
 
-  if (error) {
+  if (!isReady || session.isLoading) {
+    return (
+      <>
+        <AppHeader />
+        <AccountSkeleton />
+      </>
+    );
+  }
+  if (session.error || !profile) {
     return (
       <>
         <AppHeader />
         <div className="mx-auto max-w-5xl px-6 py-12">
-          <p className="text-sm text-red-600" role="alert">
-            {error}
-          </p>
+          <ErrorState
+            title={t("errors.generic")}
+            description={session.error?.message}
+            onRetry={() => session.refetch()}
+            retryLabel={t("errors.retry")}
+          />
         </div>
-      </>
-    );
-  }
-  if (!profile) {
-    return (
-      <>
-        <AppHeader />
-        <div className="mx-auto max-w-5xl px-6 py-12">…</div>
       </>
     );
   }
@@ -180,22 +146,17 @@ export default function AccountPage() {
             <p className="mt-2 text-sm text-amber-800">
               {t("account.verificationBody")}
             </p>
-            <div className="mt-3 flex items-center gap-3">
-              <button
+            <div className="mt-3">
+              <SubmitButton
                 type="button"
+                size="sm"
                 onClick={onResendVerification}
-                disabled={verificationSending}
-                className="rounded-md bg-amber-600 px-3 py-1.5 text-xs font-medium text-white disabled:opacity-60"
+                loading={resendVerification.isPending}
+                loadingLabel={t("account.verificationSending")}
+                className="bg-amber-600 text-white hover:bg-amber-500"
               >
-                {verificationSending
-                  ? t("account.verificationSending")
-                  : t("account.verificationResend")}
-              </button>
-              {verificationMsg ? (
-                <span className="text-xs text-amber-900" role="status">
-                  {verificationMsg}
-                </span>
-              ) : null}
+                {t("account.verificationResend")}
+              </SubmitButton>
             </div>
           </section>
         )}
@@ -204,7 +165,10 @@ export default function AccountPage() {
           <h2 className="text-sm font-semibold uppercase tracking-wider text-[color:var(--color-muted-foreground)]">
             {t("account.profileHeading")}
           </h2>
-          <form onSubmit={onSaveProfile} className="mt-4 flex flex-col gap-4">
+          <form
+            onSubmit={profileForm.handleSubmit(onSaveProfile)}
+            className="mt-4 flex flex-col gap-4"
+          >
             <div>
               <p className="text-xs text-[color:var(--color-muted-foreground)]">
                 {t("account.emailLabel")}
@@ -217,22 +181,22 @@ export default function AccountPage() {
               </span>
               <input
                 type="text"
-                required
-                minLength={2}
-                value={name}
-                onChange={(e) => setName(e.target.value)}
+                autoComplete="name"
+                {...profileForm.register("name")}
                 className="w-full rounded-md border border-[color:var(--color-border)] px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-[color:var(--color-ring)]"
               />
+              {profileForm.formState.errors.name ? (
+                <p className="mt-1 text-xs text-red-600" role="alert">
+                  {profileForm.formState.errors.name.message}
+                </p>
+              ) : null}
             </label>
             <label className="text-sm">
               <span className="mb-1 block font-medium">
                 {t("account.localeLabel")}
               </span>
               <select
-                value={locale ?? "ro"}
-                onChange={(e) =>
-                  setLocale(e.target.value as Profile["locale"])
-                }
+                {...profileForm.register("locale")}
                 className="w-full rounded-md border border-[color:var(--color-border)] px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-[color:var(--color-ring)]"
               >
                 {LOCALE_OPTIONS.map((l) => (
@@ -242,19 +206,13 @@ export default function AccountPage() {
                 ))}
               </select>
             </label>
-            {profileMsg ? (
-              <p className="text-xs text-[color:var(--color-muted-foreground)]">
-                {profileMsg}
-              </p>
-            ) : null}
             <div>
-              <button
+              <SubmitButton
                 type="submit"
-                disabled={profileSaving}
-                className="rounded-md bg-[color:var(--color-primary)] px-4 py-2 text-sm font-medium text-white disabled:opacity-60"
+                loading={updateProfile.isPending}
               >
-                {profileSaving ? "…" : t("account.save")}
-              </button>
+                {t("account.save")}
+              </SubmitButton>
             </div>
           </form>
         </section>
@@ -263,7 +221,10 @@ export default function AccountPage() {
           <h2 className="text-sm font-semibold uppercase tracking-wider text-[color:var(--color-muted-foreground)]">
             {t("account.passwordHeading")}
           </h2>
-          <form onSubmit={onChangePassword} className="mt-4 flex flex-col gap-4">
+          <form
+            onSubmit={passwordForm.handleSubmit(onChangePassword)}
+            className="mt-4 flex flex-col gap-4"
+          >
             {/*
               Hidden username field so browser password managers can associate
               the credential with the logged-in account. Required by the
@@ -286,12 +247,15 @@ export default function AccountPage() {
               </span>
               <input
                 type="password"
-                required
                 autoComplete="current-password"
-                value={currentPwd}
-                onChange={(e) => setCurrentPwd(e.target.value)}
+                {...passwordForm.register("currentPassword")}
                 className="w-full rounded-md border border-[color:var(--color-border)] px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-[color:var(--color-ring)]"
               />
+              {passwordForm.formState.errors.currentPassword ? (
+                <p className="mt-1 text-xs text-red-600" role="alert">
+                  {passwordForm.formState.errors.currentPassword.message}
+                </p>
+              ) : null}
             </label>
             <label className="text-sm">
               <span className="mb-1 block font-medium">
@@ -299,32 +263,23 @@ export default function AccountPage() {
               </span>
               <input
                 type="password"
-                required
-                minLength={12}
                 autoComplete="new-password"
-                value={newPwd}
-                onChange={(e) => setNewPwd(e.target.value)}
+                {...passwordForm.register("newPassword")}
                 className="w-full rounded-md border border-[color:var(--color-border)] px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-[color:var(--color-ring)]"
               />
+              {passwordForm.formState.errors.newPassword ? (
+                <p className="mt-1 text-xs text-red-600" role="alert">
+                  {passwordForm.formState.errors.newPassword.message}
+                </p>
+              ) : null}
             </label>
-            {pwdError ? (
-              <p className="text-sm text-red-600" role="alert">
-                {pwdError}
-              </p>
-            ) : null}
-            {pwdMsg ? (
-              <p className="text-xs text-[color:var(--color-muted-foreground)]">
-                {pwdMsg}
-              </p>
-            ) : null}
             <div>
-              <button
+              <SubmitButton
                 type="submit"
-                disabled={pwdSaving}
-                className="rounded-md bg-[color:var(--color-primary)] px-4 py-2 text-sm font-medium text-white disabled:opacity-60"
+                loading={changePassword.isPending}
               >
-                {pwdSaving ? "…" : t("account.changePassword")}
-              </button>
+                {t("account.changePassword")}
+              </SubmitButton>
             </div>
           </form>
         </section>
@@ -333,7 +288,8 @@ export default function AccountPage() {
           <button
             type="button"
             onClick={onLogout}
-            className="rounded-md border border-[color:var(--color-border)] px-4 py-2 text-sm font-medium hover:bg-[color:var(--color-muted)]"
+            disabled={logout.isPending}
+            className="rounded-md border border-[color:var(--color-border)] px-4 py-2 text-sm font-medium hover:bg-[color:var(--color-muted)] disabled:opacity-60"
           >
             {t("account.logout")}
           </button>

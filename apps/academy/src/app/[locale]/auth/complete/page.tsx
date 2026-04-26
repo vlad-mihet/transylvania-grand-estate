@@ -1,14 +1,18 @@
 "use client";
 
 import { Suspense, useEffect } from "react";
+import { Loader2 } from "lucide-react";
 import { useRouter } from "@/i18n/navigation";
 import { setTokens } from "@/lib/api-client";
+import { validateReturnTo } from "@/lib/return-to";
 
 /**
  * Google OAuth landing page. The API redirects here with the refresh token
  * and (optionally) a `dest` path in the URL fragment — not the query string
  * — so the token never touches the server logs of this app. We swap the
- * refresh for a fresh pair via /academy/auth/refresh, then route to `dest`.
+ * refresh for a fresh pair via /academy/auth/refresh, then route to `dest`
+ * if it passes the allowlist in `validateReturnTo`. Anything unrecognized
+ * falls through to the dashboard.
  */
 function AuthCompleteInner() {
   const router = useRouter();
@@ -19,10 +23,7 @@ function AuthCompleteInner() {
       : window.location.hash;
     const params = new URLSearchParams(fragment);
     const rt = params.get("rt");
-    // `dest` is ignored in v1 — the typed router only accepts declared
-    // pathnames, and the academy app has a single post-login home (`/`).
-    // If deep-linking to an invited lesson comes up later, add a path
-    // allowlist or switch to a `next-intl` dynamic route.
+    const dest = params.get("dest");
     if (!rt) {
       router.replace({ pathname: "/login", query: { error: "missing_token" } });
       return;
@@ -44,11 +45,12 @@ function AuthCompleteInner() {
           accessToken: data.accessToken,
           refreshToken: data.refreshToken ?? rt,
         });
-        // `dest` is a raw path from the API fragment; the typed router
-        // doesn't accept arbitrary strings, so we fall back to `/` when it
-        // doesn't match a declared pathname. Good-enough for v1; a follow-up
-        // could add a path allowlist or use window.location for full URLs.
-        router.replace("/");
+        const validated = validateReturnTo(dest);
+        if (validated) {
+          router.replace(validated);
+        } else {
+          router.replace("/");
+        }
       })
       .catch(() => {
         router.replace({
@@ -60,7 +62,13 @@ function AuthCompleteInner() {
 
   return (
     <div className="flex min-h-screen items-center justify-center p-6">
-      <p className="text-sm text-[color:var(--color-muted-foreground)]">...</p>
+      <div
+        className="inline-flex items-center gap-2 text-sm text-[color:var(--color-muted-foreground)]"
+        aria-busy="true"
+      >
+        <Loader2 className="h-4 w-4 animate-spin" aria-hidden="true" />
+        <span>...</span>
+      </div>
     </div>
   );
 }

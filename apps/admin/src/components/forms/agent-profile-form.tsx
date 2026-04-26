@@ -3,7 +3,7 @@
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { useApiFormErrors } from "@/lib/form-error";
+import { useApiFormErrors } from "@tge/hooks";
 import { toast } from "@/lib/toast";
 import { BilingualTextarea } from "@/components/shared/bilingual-textarea";
 import { ImageUpload } from "@/components/shared/image-upload";

@@ -8,7 +8,7 @@ import { toast } from "@/lib/toast";
 import { Link } from "@/i18n/navigation";
 import { CourseForm } from "@/components/forms/course-form";
 import { FormPageShell } from "@/components/resource/form-page-shell";
-import { LoadingState } from "@/components/shared/states";
+import { LoadingState } from "@tge/ui";
 import type { CourseFormValues } from "@/lib/validations/academy";
 import type { CourseStatus, CourseVisibility } from "@prisma/client";
 

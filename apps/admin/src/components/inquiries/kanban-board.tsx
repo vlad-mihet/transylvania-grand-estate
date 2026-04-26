@@ -17,7 +17,7 @@ import { useTranslations } from "next-intl";
 import { cn } from "@tge/utils";
 import { Mono, MonoTag } from "@/components/shared/mono";
 import { RelativeTime } from "@/components/shared/relative-time";
-import { LoadingState, ErrorState } from "@/components/shared/states";
+import { LoadingState, ErrorState } from "@tge/ui";
 
 export type KanbanStatus = "new" | "read" | "archived";
 

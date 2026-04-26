@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import type {
   FieldPath,
   FieldValues,
@@ -62,15 +62,27 @@ export function applyApiFieldErrors<T extends FieldValues>(
  * the error changes, Zod field errors get applied automatically and
  * non-field errors return via the `onFallback` callback (typically a
  * toast).
+ *
+ * `onFallback` is read through a ref so callers can pass an inline arrow
+ * function without stabilizing it. If we depended on `onFallback` in the
+ * effect deps, a fallback that triggers a re-render (e.g. `form.setError`)
+ * would loop: rerender → new fallback ref → effect re-fires → setError →
+ * rerender. The ref breaks that cycle; the effect only re-runs when
+ * `error` itself changes.
  */
 export function useApiFormErrors<T extends FieldValues>(
   form: UseFormReturn<T>,
   error: unknown,
   onFallback?: (error: unknown) => void,
 ): void {
+  const fallbackRef = useRef(onFallback);
+  fallbackRef.current = onFallback;
   useEffect(() => {
     if (!error) return;
     const applied = applyApiFieldErrors(form, error);
-    if (!applied && onFallback) onFallback(error);
-  }, [error, form, onFallback]);
+    if (!applied && fallbackRef.current) fallbackRef.current(error);
+    // `form` is a stable reference from react-hook-form; omitted from deps
+    // deliberately so the effect keys solely on `error` identity.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [error]);
 }
