@@ -1,11 +1,13 @@
 "use client";
 
+import { useEffect } from "react";
 import { useParams, useRouter, notFound } from "next/navigation";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useLocale, useTranslations } from "next-intl";
 import { apiClient, ApiError } from "@/lib/api-client";
 import { toast } from "@/lib/toast";
 import { Link } from "@/i18n/navigation";
+import { usePermissions } from "@/components/auth/auth-provider";
 import { LessonForm } from "@/components/forms/lesson-form";
 import { FormPageShell } from "@/components/resource/form-page-shell";
 import { LoadingState } from "@tge/ui";
@@ -35,6 +37,11 @@ export default function EditAcademyLessonPage() {
   const tCourse = useTranslations("Academy.courses");
   const tc = useTranslations("Common");
   const tt = useTranslations("Academy.toasts");
+  const { can } = usePermissions();
+
+  useEffect(() => {
+    if (!can("academy.lesson.update")) router.replace(`/${locale}/403`);
+  }, [can, router, locale]);
 
   const lessonQuery = useQuery({
     queryKey: ["academy-lesson", params.lessonId],
@@ -64,6 +71,8 @@ export default function EditAcademyLessonPage() {
       router.push(`/${locale}/academy/courses/${params.id}`);
     },
   });
+
+  if (!can("academy.lesson.update")) return null;
 
   if (lessonQuery.isLoading) {
     return <LoadingState label={tc("loading")} />;

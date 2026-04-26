@@ -1,11 +1,13 @@
 "use client";
 
+import { useEffect } from "react";
 import { useMutation } from "@tanstack/react-query";
 import { useTranslations } from "next-intl";
 
 import { useRouter } from "@/i18n/navigation";
 import { toast } from "@/lib/toast";
 import { apiClient } from "@/lib/api-client";
+import { usePermissions } from "@/components/auth/auth-provider";
 import { DeveloperForm } from "@/components/forms/developer-form";
 import { FormPageShell } from "@/components/resource/form-page-shell";
 import { DeveloperFormValues } from "@/lib/validations/developer";
@@ -13,6 +15,11 @@ import { DeveloperFormValues } from "@/lib/validations/developer";
 export default function NewDeveloperPage() {
   const router = useRouter();
   const t = useTranslations("Developers");
+  const { can } = usePermissions();
+
+  useEffect(() => {
+    if (!can("developer.create")) router.replace("/403");
+  }, [can, router]);
 
   const createMutation = useMutation({
     mutationFn: async ({
@@ -45,6 +52,8 @@ export default function NewDeveloperPage() {
       router.push(`/developers/${dev.id}`);
     },
   });
+
+  if (!can("developer.create")) return null;
 
   return (
     <FormPageShell title={t("newDeveloper")}>

@@ -142,6 +142,7 @@ export default function ArticlesPage() {
         title={t("title")}
         createHref="/articles/new"
         createLabel={t("addArticle")}
+        createAction="article.create"
         list={list}
         columns={columns}
         sortTokens={SORT_TOKENS}

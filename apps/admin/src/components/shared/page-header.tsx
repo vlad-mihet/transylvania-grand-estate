@@ -6,6 +6,8 @@ import { Plus } from "lucide-react";
 import { Link } from "@/i18n/navigation";
 import { useTranslations } from "next-intl";
 import { cn } from "@tge/utils";
+import { Can } from "@/components/shared/can";
+import type { Action } from "@/lib/permissions";
 
 interface PageHeaderProps {
   title: string;
@@ -15,6 +17,14 @@ interface PageHeaderProps {
   /** Primary action — typically a "Create" button linking to a `new` route. */
   createHref?: string;
   createLabel?: string;
+  /**
+   * Permission-gate the Create button. When set, the button only renders if
+   * the signed-in user has this action. Without it, the button always renders
+   * when `createHref` is set — fine for SUPER_ADMIN-only views, but list
+   * pages reused across multiple roles should pass this so EDITOR/AGENT
+   * users don't see a Create button that would 403 on click.
+   */
+  createAction?: Action;
   /** Arbitrary extra actions rendered to the right of the primary action. */
   actions?: ReactNode;
   className?: string;
@@ -26,10 +36,22 @@ export function PageHeader({
   breadcrumb,
   createHref,
   createLabel,
+  createAction,
   actions,
   className,
 }: PageHeaderProps) {
   const t = useTranslations("Common");
+
+  const createButton = createHref ? (
+    <Button asChild size="sm">
+      <Link href={createHref}>
+        <Plus className="h-4 w-4 sm:mr-1.5" />
+        <span className="hidden sm:inline">
+          {createLabel ?? t("createNew")}
+        </span>
+      </Link>
+    </Button>
+  ) : null;
 
   return (
     <div
@@ -55,16 +77,12 @@ export function PageHeader({
       </div>
       <div className="flex items-center gap-2">
         {actions}
-        {createHref && (
-          <Button asChild size="sm">
-            <Link href={createHref}>
-              <Plus className="h-4 w-4 sm:mr-1.5" />
-              <span className="hidden sm:inline">
-                {createLabel ?? t("createNew")}
-              </span>
-            </Link>
-          </Button>
-        )}
+        {createButton &&
+          (createAction ? (
+            <Can action={createAction}>{createButton}</Can>
+          ) : (
+            createButton
+          ))}
       </div>
     </div>
   );

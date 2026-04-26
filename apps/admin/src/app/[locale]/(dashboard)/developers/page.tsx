@@ -172,6 +172,7 @@ export default function DevelopersPage() {
         title={t("title")}
         createHref="/developers/new"
         createLabel={t("addDeveloper")}
+        createAction="developer.create"
         list={list}
         columns={columns}
         sortTokens={SORT_TOKENS}

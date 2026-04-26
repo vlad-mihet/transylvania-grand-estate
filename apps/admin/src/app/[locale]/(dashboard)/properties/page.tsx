@@ -10,6 +10,7 @@ export default function PropertiesPage() {
       title={t("title")}
       createHref="/properties/new"
       createLabel={t("addProperty")}
+      createAction="property.create"
     />
   );
 }

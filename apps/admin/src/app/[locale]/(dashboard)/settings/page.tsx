@@ -18,11 +18,19 @@ import { useTranslations } from "next-intl";
 import { ErrorState } from "@tge/ui";
 import { BilingualInput } from "@/components/shared/bilingual-input";
 import { BilingualTextarea } from "@/components/shared/bilingual-textarea";
+import { useRouter } from "@/i18n/navigation";
+import { usePermissions } from "@/components/auth/auth-provider";
 
 export default function SettingsPage() {
   const queryClient = useQueryClient();
   const t = useTranslations("Settings");
   const tc = useTranslations("Common");
+  const router = useRouter();
+  const { can } = usePermissions();
+
+  useEffect(() => {
+    if (!can("site-config.read")) router.replace("/403");
+  }, [can, router]);
 
   const {
     data: config,
@@ -92,6 +100,8 @@ export default function SettingsPage() {
         <ErrorState onRetry={() => refetch()} />
       </div>
     );
+
+  if (!can("site-config.read")) return null;
 
   return (
     <div className="space-y-5">

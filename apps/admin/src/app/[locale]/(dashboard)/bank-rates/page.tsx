@@ -114,6 +114,7 @@ export default function BankRatesPage() {
         title={t("title")}
         createHref="/bank-rates/new"
         createLabel={t("addBankRate")}
+        createAction="bank-rate.create"
         list={{ ...list, items: filteredItems }}
         columns={columns}
         activeFilters={activeFilterCount}

@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useParams } from "next/navigation";
 import { useTranslations } from "next-intl";
@@ -8,6 +9,7 @@ import type { ApiAgent } from "@tge/types";
 import { useRouter } from "@/i18n/navigation";
 import { toast } from "@/lib/toast";
 import { apiClient } from "@/lib/api-client";
+import { usePermissions } from "@/components/auth/auth-provider";
 import { AgentForm } from "@/components/forms/agent-form";
 import { EntityDeleteButton } from "@/components/shared/entity-delete-button";
 import { DetailPageShell } from "@/components/resource/detail-page-shell";
@@ -19,6 +21,11 @@ export default function EditAgentPage() {
   const router = useRouter();
   const queryClient = useQueryClient();
   const t = useTranslations("Agents");
+  const { can } = usePermissions();
+
+  useEffect(() => {
+    if (!can("agent.update")) router.replace("/403");
+  }, [can, router]);
 
   const updateMutation = useMutation({
     mutationFn: async ({
@@ -49,6 +56,8 @@ export default function EditAgentPage() {
       router.push(`/agents/${id}`);
     },
   });
+
+  if (!can("agent.update")) return null;
 
   return (
     <DetailPageShell<ApiAgent>

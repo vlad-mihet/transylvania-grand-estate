@@ -175,6 +175,7 @@ export default function CitiesPage() {
         title={t("title")}
         createHref="/cities/new"
         createLabel={t("addCity")}
+        createAction="city.create"
         list={list}
         columns={columns}
         sortTokens={SORT_TOKENS}

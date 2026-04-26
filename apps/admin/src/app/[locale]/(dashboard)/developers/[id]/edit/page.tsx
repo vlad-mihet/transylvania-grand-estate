@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useParams } from "next/navigation";
 import { useTranslations } from "next-intl";
@@ -8,6 +9,7 @@ import type { ApiDeveloper } from "@tge/types";
 import { useRouter } from "@/i18n/navigation";
 import { toast } from "@/lib/toast";
 import { apiClient } from "@/lib/api-client";
+import { usePermissions } from "@/components/auth/auth-provider";
 import { DeveloperForm } from "@/components/forms/developer-form";
 import { EntityDeleteButton } from "@/components/shared/entity-delete-button";
 import { DetailPageShell } from "@/components/resource/detail-page-shell";
@@ -19,6 +21,11 @@ export default function EditDeveloperPage() {
   const router = useRouter();
   const queryClient = useQueryClient();
   const t = useTranslations("Developers");
+  const { can } = usePermissions();
+
+  useEffect(() => {
+    if (!can("developer.update")) router.replace("/403");
+  }, [can, router]);
 
   const updateMutation = useMutation({
     mutationFn: async ({
@@ -49,6 +56,8 @@ export default function EditDeveloperPage() {
       router.push(`/developers/${id}`);
     },
   });
+
+  if (!can("developer.update")) return null;
 
   return (
     <DetailPageShell<ApiDeveloper>

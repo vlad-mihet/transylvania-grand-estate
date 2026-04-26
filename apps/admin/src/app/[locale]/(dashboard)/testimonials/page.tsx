@@ -171,6 +171,7 @@ export default function TestimonialsPage() {
         title={t("title")}
         createHref="/testimonials/new"
         createLabel={t("addTestimonial")}
+        createAction="testimonial.create"
         list={list}
         columns={columns}
         sortTokens={SORT_TOKENS}

@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useTranslations } from "next-intl";
 import {
@@ -11,6 +12,7 @@ import {
   UserCircle,
 } from "lucide-react";
 
+import { useRouter } from "@/i18n/navigation";
 import { apiClient } from "@/lib/api-client";
 import { usePermissions } from "@/components/auth/auth-provider";
 import { AuditHealthCard } from "@/components/dashboard/audit-health-card";
@@ -24,7 +26,25 @@ import { PageHeader } from "@/components/shared/page-header";
 
 export default function DashboardPage() {
   const t = useTranslations("Dashboard");
-  const { can } = usePermissions();
+  const { role, can } = usePermissions();
+  const router = useRouter();
+
+  // The shared dashboard's StatTiles + recent-feeds are designed for the
+  // admin perspective (whole-catalog counts, system-wide activity). AGENT
+  // users have no business surface here — bounce them to /my-listings,
+  // which is their authoritative landing page. Login already does this on
+  // the happy path; this catches navigations to / via the home logo or
+  // /403's "back to dashboard" link.
+  useEffect(() => {
+    if (role === "AGENT") {
+      router.replace("/my-listings");
+    }
+  }, [role, router]);
+
+  // Skip render for AGENT until the redirect lands — prevents a flash of
+  // dashboard tiles + the unnecessary StatTile API calls that would fire
+  // before the redirect.
+  const isAgent = role === "AGENT";
 
   // Secondary signal for the Inquiries tile — how many are still unread.
   // Reads `meta.total` from the paginated envelope so the count is exact
@@ -40,6 +60,8 @@ export default function DashboardPage() {
     staleTime: 30_000,
   });
   const newInquiriesCount = newInquiries.data?.meta?.total ?? 0;
+
+  if (isAgent) return null;
 
   return (
     <div className="flex flex-col gap-5">

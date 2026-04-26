@@ -1,11 +1,13 @@
 "use client";
 
+import { useEffect } from "react";
 import { useMutation } from "@tanstack/react-query";
 import { useTranslations } from "next-intl";
 
 import { useRouter } from "@/i18n/navigation";
 import { toast } from "@/lib/toast";
 import { apiClient } from "@/lib/api-client";
+import { usePermissions } from "@/components/auth/auth-provider";
 import { AgentForm } from "@/components/forms/agent-form";
 import { FormPageShell } from "@/components/resource/form-page-shell";
 import { AgentFormValues } from "@/lib/validations/agent";
@@ -13,6 +15,11 @@ import { AgentFormValues } from "@/lib/validations/agent";
 export default function NewAgentPage() {
   const router = useRouter();
   const t = useTranslations("Agents");
+  const { can } = usePermissions();
+
+  useEffect(() => {
+    if (!can("agent.create")) router.replace("/403");
+  }, [can, router]);
 
   const createMutation = useMutation({
     mutationFn: async ({
@@ -45,6 +52,8 @@ export default function NewAgentPage() {
       router.push(`/agents/${agent.id}`);
     },
   });
+
+  if (!can("agent.create")) return null;
 
   return (
     <FormPageShell title={t("newAgent")}>

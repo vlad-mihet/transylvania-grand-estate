@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useParams } from "next/navigation";
 import { useTranslations } from "next-intl";
@@ -8,6 +9,7 @@ import type { ApiProperty, ApiPropertyImage } from "@tge/types";
 import { useRouter } from "@/i18n/navigation";
 import { toast } from "@/lib/toast";
 import { apiClient } from "@/lib/api-client";
+import { usePermissions } from "@/components/auth/auth-provider";
 import { PropertyForm } from "@/components/forms/property-form";
 import { EntityDeleteButton } from "@/components/shared/entity-delete-button";
 import { DetailPageShell } from "@/components/resource/detail-page-shell";
@@ -21,6 +23,11 @@ export default function EditPropertyPage() {
   const router = useRouter();
   const queryClient = useQueryClient();
   const t = useTranslations("Properties");
+  const { can } = usePermissions();
+
+  useEffect(() => {
+    if (!can("property.update")) router.replace("/403");
+  }, [can, router]);
 
   const updateMutation = useMutation({
     mutationFn: async ({
@@ -58,6 +65,8 @@ export default function EditPropertyPage() {
       router.push(`/properties/${id}`);
     },
   });
+
+  if (!can("property.update")) return null;
 
   return (
     <DetailPageShell<ApiProperty>

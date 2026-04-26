@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useParams } from "next/navigation";
 import { useTranslations } from "next-intl";
@@ -7,6 +8,7 @@ import { useTranslations } from "next-intl";
 import { useRouter } from "@/i18n/navigation";
 import { toast } from "@/lib/toast";
 import { apiClient } from "@/lib/api-client";
+import { usePermissions } from "@/components/auth/auth-provider";
 import { BankRateForm } from "@/components/forms/bank-rate-form";
 import { EntityDeleteButton } from "@/components/shared/entity-delete-button";
 import { DetailPageShell } from "@/components/resource/detail-page-shell";
@@ -18,6 +20,11 @@ export default function EditBankRatePage() {
   const router = useRouter();
   const queryClient = useQueryClient();
   const t = useTranslations("BankRates");
+  const { can } = usePermissions();
+
+  useEffect(() => {
+    if (!can("bank-rate.update")) router.replace("/403");
+  }, [can, router]);
 
   const updateMutation = useMutation({
     mutationFn: (data: BankRateFormValues) =>
@@ -32,6 +39,8 @@ export default function EditBankRatePage() {
       router.push(`/bank-rates/${id}`);
     },
   });
+
+  if (!can("bank-rate.update")) return null;
 
   return (
     <DetailPageShell<BankRateFormValues & { id: string }>

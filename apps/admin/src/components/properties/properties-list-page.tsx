@@ -35,6 +35,8 @@ interface PropertiesListPageProps {
    *  the AGENT view where listings are assigned by admins. */
   createHref?: string;
   createLabel?: string;
+  /** Permission gating the Create button (forwarded to PageHeader). */
+  createAction?: "property.create";
 }
 
 /**
@@ -48,6 +50,7 @@ export function PropertiesListPage({
   title,
   createHref,
   createLabel,
+  createAction,
 }: PropertiesListPageProps = {}) {
   const queryClient = useQueryClient();
   const t = useTranslations("Properties");
@@ -224,6 +227,7 @@ export function PropertiesListPage({
         title={title ?? t("title")}
         createHref={createHref}
         createLabel={createLabel}
+        createAction={createAction}
         list={list}
         columns={columns}
         sortTokens={SORT_TOKENS}

@@ -1,10 +1,12 @@
 "use client";
 
+import { useEffect } from "react";
 import { useMutation } from "@tanstack/react-query";
 import { useRouter } from "@/i18n/navigation";
 import { useTranslations } from "next-intl";
 import { apiClient } from "@/lib/api-client";
 import { toast } from "@/lib/toast";
+import { usePermissions } from "@/components/auth/auth-provider";
 import { AgentForm } from "@/components/forms/agent-form";
 import { PageHeader } from "@/components/shared/page-header";
 import type { AgentFormValues } from "@/lib/validations/agent";
@@ -20,6 +22,11 @@ interface InviteResponse {
 export default function InviteAgentPage() {
   const router = useRouter();
   const t = useTranslations("Invitations");
+  const { can } = usePermissions();
+
+  useEffect(() => {
+    if (!can("agent.create")) router.replace("/403");
+  }, [can, router]);
 
   const inviteMutation = useMutation({
     mutationFn: (data: AgentFormValues) =>
@@ -38,6 +45,8 @@ export default function InviteAgentPage() {
       router.push("/agents");
     },
   });
+
+  if (!can("agent.create")) return null;
 
   return (
     <div className="space-y-6">

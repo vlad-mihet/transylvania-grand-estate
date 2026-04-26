@@ -15,12 +15,15 @@ import {
   type ColumnDef,
 } from "@/components/resource/resource-table";
 import type { UseResourceListResult } from "@/hooks/use-resource-list";
+import type { Action } from "@/lib/permissions";
 
 interface ResourceListPageProps<T> {
   title: string;
   description?: string;
   createHref?: string;
   createLabel?: string;
+  /** Forwarded to PageHeader — gates the Create button for the active role. */
+  createAction?: Action;
   headerActions?: ReactNode;
 
   /** Result of `useResourceList<T>()`. */
@@ -62,6 +65,7 @@ export function ResourceListPage<T>({
   description,
   createHref,
   createLabel,
+  createAction,
   headerActions,
   list,
   columns,
@@ -95,6 +99,7 @@ export function ResourceListPage<T>({
         }
         createHref={createHref}
         createLabel={createLabel}
+        createAction={createAction}
         actions={headerActions}
       />
 

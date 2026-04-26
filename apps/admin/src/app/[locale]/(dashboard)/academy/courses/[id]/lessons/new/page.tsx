@@ -1,11 +1,13 @@
 "use client";
 
+import { useEffect } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { useLocale, useTranslations } from "next-intl";
 import { apiClient } from "@/lib/api-client";
 import { toast } from "@/lib/toast";
 import { Link } from "@/i18n/navigation";
+import { usePermissions } from "@/components/auth/auth-provider";
 import { LessonForm } from "@/components/forms/lesson-form";
 import { FormPageShell } from "@/components/resource/form-page-shell";
 import { LoadingState } from "@tge/ui";
@@ -21,6 +23,11 @@ export default function NewAcademyLessonPage() {
   const tCourse = useTranslations("Academy.courses");
   const tc = useTranslations("Common");
   const tt = useTranslations("Academy.toasts");
+  const { can } = usePermissions();
+
+  useEffect(() => {
+    if (!can("academy.lesson.create")) router.replace(`/${locale}/403`);
+  }, [can, router, locale]);
 
   // Pre-fetch the next sparse order so the admin doesn't have to guess.
   const nextOrderQuery = useQuery({
@@ -42,6 +49,8 @@ export default function NewAcademyLessonPage() {
       router.push(`/${locale}/academy/courses/${params.id}`);
     },
   });
+
+  if (!can("academy.lesson.create")) return null;
 
   if (nextOrderQuery.isLoading) {
     return <LoadingState label={tc("loading")} />;

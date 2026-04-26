@@ -108,6 +108,7 @@ export default function AgentsPage() {
         title={t("title")}
         createHref="/agents/invite"
         createLabel={ti("inviteAgent")}
+        createAction="agent.create"
         list={list}
         columns={columns}
         sortTokens={SORT_TOKENS}

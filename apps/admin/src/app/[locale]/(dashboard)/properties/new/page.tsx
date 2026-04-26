@@ -1,11 +1,13 @@
 "use client";
 
+import { useEffect } from "react";
 import { useMutation } from "@tanstack/react-query";
 import { useTranslations } from "next-intl";
 
 import { useRouter } from "@/i18n/navigation";
 import { toast } from "@/lib/toast";
 import { apiClient } from "@/lib/api-client";
+import { usePermissions } from "@/components/auth/auth-provider";
 import { PropertyForm } from "@/components/forms/property-form";
 import { FormPageShell } from "@/components/resource/form-page-shell";
 import { PropertyFormValues } from "@/lib/validations/property";
@@ -15,6 +17,11 @@ import { GalleryImage } from "@/components/shared/image-gallery-manager";
 export default function NewPropertyPage() {
   const router = useRouter();
   const t = useTranslations("Properties");
+  const { can } = usePermissions();
+
+  useEffect(() => {
+    if (!can("property.create")) router.replace("/403");
+  }, [can, router]);
 
   const createMutation = useMutation({
     mutationFn: async ({
@@ -52,6 +59,10 @@ export default function NewPropertyPage() {
       router.push(`/properties/${property.id}`);
     },
   });
+
+  // Skip the JSX until the redirect lands — prevents a flash of the empty
+  // form for users without create permission.
+  if (!can("property.create")) return null;
 
   return (
     <FormPageShell title={t("newProperty")}>
