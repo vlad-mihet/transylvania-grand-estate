@@ -695,6 +695,11 @@ export class InvitationsService {
         status: InvitationStatus.PENDING,
         emailSentAt: { not: null },
         reminderSentAt: null,
+        // Skip soft-bounced invitations — status remains PENDING (only hard
+        // bounces flip to BOUNCED), but a reminder to a known-bouncing
+        // address just produces another bounce. The invitation will expire
+        // naturally; admin can resend if they have a corrected address.
+        bouncedAt: null,
         expiresAt: { gte: windowStart, lte: windowEnd },
       },
       include: { agent: true },

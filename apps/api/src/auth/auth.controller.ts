@@ -61,8 +61,14 @@ export class AuthController {
   @Throttle({ default: { ttl: 60_000, limit: 10 } })
   @UseGuards(AuthGuard('jwt-refresh'))
   @Post('refresh')
-  async refresh(@Request() req: { user: { id: string } }) {
-    return this.authService.refresh(req.user.id);
+  async refresh(
+    @Request() req: { user: { id: string; jti: string | null } },
+  ) {
+    // Rotate the refresh token: revoke the just-used jti before issuing a new
+    // pair so a stolen-and-replayed token can be used at most once. The
+    // refresh strategy already validated that the incoming jti is not in the
+    // denylist; we add it now so the next reuse attempt is rejected.
+    return this.authService.refresh(req.user.id, req.user.jti);
   }
 
   /**

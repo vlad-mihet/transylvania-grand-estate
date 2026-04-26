@@ -75,12 +75,21 @@ export class AuthService {
     return this.generateTokens(this.shape(user));
   }
 
-  async refresh(userId: string) {
+  async refresh(userId: string, previousJti: string | null) {
     const user = await this.prisma.adminUser.findUnique({
       where: { id: userId },
       include: { agent: { select: { id: true } } },
     });
     if (!user) throw new UnauthorizedException('User not found');
+
+    // Single-use rotation: the just-validated jti is added to the denylist
+    // before the new pair is minted. A stolen refresh token can be replayed
+    // at most once before the legitimate user's next refresh kills it (and
+    // vice versa — if the attacker refreshes first, the legitimate user's
+    // next refresh fails, surfacing the compromise).
+    if (previousJti) {
+      await this.revokeRefreshToken(previousJti, user.id, 'forced');
+    }
 
     return this.generateTokens(this.shape(user));
   }
