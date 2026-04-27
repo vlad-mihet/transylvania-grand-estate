@@ -65,8 +65,50 @@
     "navigation": "Navigation",
     "version": "v0.1"
   },
+  "CommandPalette": {
+    "placeholder": "Aller à, créer, exécuter…",
+    "empty": "Aucune correspondance.",
+    "groups": {
+      "navigate": "Navigation",
+      "create": "Créer",
+      "finance": "Finance",
+      "system": "Système"
+    },
+    "actions": {
+      "nav.dashboard": "Tableau de bord",
+      "nav.inquiries": "Demandes",
+      "nav.properties": "Propriétés",
+      "nav.developers": "Promoteurs",
+      "nav.agents": "Agents",
+      "nav.testimonials": "Témoignages",
+      "nav.counties": "Départements",
+      "nav.cities": "Villes",
+      "nav.articles": "Articles",
+      "nav.academy-courses": "Cours Academy",
+      "nav.academy-students": "Étudiants Academy",
+      "nav.academy-invitations": "Invitations Academy",
+      "nav.bank-rates": "Taux",
+      "nav.financial-indicators": "Indicateurs financiers",
+      "nav.settings": "Paramètres du site",
+      "nav.users": "Utilisateurs",
+      "nav.audit-logs": "Journal d'audit",
+      "nav.my-listings": "Mes annonces",
+      "nav.my-inquiries": "Mes demandes",
+      "nav.profile": "Profil",
+      "create.property": "Créer une propriété",
+      "create.developer": "Créer un promoteur",
+      "create.agent": "Créer un agent",
+      "create.city": "Créer une ville",
+      "create.article": "Créer un article",
+      "create.testimonial": "Créer un témoignage",
+      "create.bank-rate": "Créer un taux",
+      "create.academy-course": "Créer un cours Academy",
+      "create.academy-invitation": "Inviter un étudiant Academy"
+    }
+  },
   "Header": {
     "logout": "Déconnexion",
+    "language": "Langue",
     "changePassword": "Changer le mot de passe",
     "menu": "Menu",
     "search": "Rechercher",
@@ -582,7 +624,22 @@
     "deleted": "Demande supprimée",
     "deleteFailed": "Échec de la suppression",
     "viewList": "Liste",
-    "viewKanban": "Kanban"
+    "viewKanban": "Kanban",
+    "typeLabel": {
+      "general": "Général",
+      "property": "Propriété",
+      "developer": "Promoteur"
+    },
+    "sectionLabel": {
+      "type": "Type",
+      "received": "Reçu",
+      "source": "Source",
+      "budget": "Budget",
+      "property": "Propriété",
+      "message": "Message",
+      "sourceUrl": "URL source"
+    },
+    "viewProperty": "Voir la propriété"
   },
   "Counties": {
     "title": "Départements",
@@ -784,6 +841,8 @@
     "title": "Informations sur la ville",
     "name": "Nom",
     "slug": "Slug",
+    "county": "Département",
+    "selectCounty": "Choisir un département",
     "description": "Description",
     "propertyCount": "Nombre de propriétés",
     "cityImage": "Image de la ville"
@@ -799,6 +858,8 @@
   },
   "Common": {
     "cancel": "Annuler",
+    "clear": "Effacer",
+    "filters": "Filtres",
     "save": "Enregistrer",
     "saveFailed": "Échec de l'enregistrement",
     "confirm": "Confirmer",

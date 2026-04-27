@@ -3,8 +3,11 @@
 import { useAuth } from "@/components/auth/auth-provider";
 import { useRouter } from "@/i18n/navigation";
 import { usePathname } from "@/i18n/navigation";
+import { useParams } from "next/navigation";
+import { useLocale } from "next-intl";
 import {
   ChevronRight,
+  Globe,
   KeyRound,
   LogOut,
   Menu,
@@ -33,6 +36,17 @@ import { useTheme } from "next-themes";
 import { ChangePasswordDialog } from "@/components/auth/change-password-dialog";
 import { GlobalSearch } from "@/components/global-search/global-search";
 
+// Autonyms — each locale rendered in its own language. This is the canonical
+// pattern for locale switchers (matches Wikipedia, Google, etc.); it lets a
+// user who's stuck in the wrong locale recognise their target without first
+// having to translate the menu.
+const LOCALE_OPTIONS = [
+  { code: "ro", label: "Română" },
+  { code: "en", label: "English" },
+  { code: "fr", label: "Français" },
+  { code: "de", label: "Deutsch" },
+] as const;
+
 export function AdminHeader() {
   const { user, logout } = useAuth();
   const router = useRouter();
@@ -40,6 +54,8 @@ export function AdminHeader() {
   const t = useTranslations("Header");
   const tc = useTranslations("Common");
   const pathname = usePathname();
+  const locale = useLocale();
+  const params = useParams();
 
   const crumbs = useMemo(() => buildBreadcrumb(pathname), [pathname]);
   const { theme, setTheme, resolvedTheme } = useTheme();
@@ -64,6 +80,18 @@ export function AdminHeader() {
   const handleLogout = async () => {
     await logout();
     router.push("/login");
+  };
+
+  const handleLocaleChange = (next: string) => {
+    if (next === locale) return;
+    router.replace(
+      // @ts-expect-error — next-intl's strict pathname + params pair doesn't
+      // accept a dynamically-typed pathname literal; at runtime it correctly
+      // resolves whichever template the current route matches. Same pattern
+      // used by the auth-shell language-switcher.
+      { pathname, params },
+      { locale: next },
+    );
   };
 
   return (
@@ -145,6 +173,28 @@ export function AdminHeader() {
                       <Monitor className="h-3.5 w-3.5" />
                       {t("themeSystem")}
                     </DropdownMenuRadioItem>
+                  </DropdownMenuRadioGroup>
+                </DropdownMenuSubContent>
+              </DropdownMenuSub>
+              <DropdownMenuSub>
+                <DropdownMenuSubTrigger className="gap-2">
+                  <Globe className="h-3.5 w-3.5" />
+                  {t("language")}
+                </DropdownMenuSubTrigger>
+                <DropdownMenuSubContent>
+                  <DropdownMenuRadioGroup
+                    value={locale}
+                    onValueChange={handleLocaleChange}
+                  >
+                    {LOCALE_OPTIONS.map((l) => (
+                      <DropdownMenuRadioItem
+                        key={l.code}
+                        value={l.code}
+                        className="gap-2"
+                      >
+                        {l.label}
+                      </DropdownMenuRadioItem>
+                    ))}
                   </DropdownMenuRadioGroup>
                 </DropdownMenuSubContent>
               </DropdownMenuSub>

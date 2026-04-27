@@ -120,7 +120,7 @@ export function ResourceListPage<T>({
               >
                 <SlidersHorizontal className="h-3.5 w-3.5 sm:mr-1.5" />
                 <span className="hidden sm:inline">
-                  Filters
+                  {t("filters")}
                   {activeFilters > 0 && (
                     <span className="ml-1.5 mono text-[11px] text-copper">
                       {activeFilters}

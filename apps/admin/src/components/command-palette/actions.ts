@@ -24,8 +24,8 @@ import type { Action as PermissionAction } from "@/lib/permissions";
 export type CommandGroup = "navigate" | "create" | "finance" | "system";
 
 export interface CommandAction {
+  /** Stable id — also the i18n key under `CommandPalette.actions.<id>`. */
   id: string;
-  label: string;
   group: CommandGroup;
   icon: ComponentType<{ className?: string }>;
   href: string;
@@ -47,7 +47,6 @@ export const COMMAND_ACTIONS: CommandAction[] = [
   // Navigate
   {
     id: "nav.dashboard",
-    label: "Dashboard",
     group: "navigate",
     icon: LayoutDashboard,
     href: "/",
@@ -56,7 +55,6 @@ export const COMMAND_ACTIONS: CommandAction[] = [
   },
   {
     id: "nav.inquiries",
-    label: "Inquiries",
     group: "navigate",
     icon: MessageSquareQuote,
     href: "/inquiries",
@@ -66,7 +64,6 @@ export const COMMAND_ACTIONS: CommandAction[] = [
   },
   {
     id: "nav.properties",
-    label: "Properties",
     group: "navigate",
     icon: Building2,
     href: "/properties",
@@ -76,7 +73,6 @@ export const COMMAND_ACTIONS: CommandAction[] = [
   },
   {
     id: "nav.developers",
-    label: "Developers",
     group: "navigate",
     icon: HardHat,
     href: "/developers",
@@ -84,7 +80,6 @@ export const COMMAND_ACTIONS: CommandAction[] = [
   },
   {
     id: "nav.agents",
-    label: "Agents",
     group: "navigate",
     icon: UserCircle,
     href: "/agents",
@@ -93,7 +88,6 @@ export const COMMAND_ACTIONS: CommandAction[] = [
   },
   {
     id: "nav.testimonials",
-    label: "Testimonials",
     group: "navigate",
     icon: MessageSquareQuote,
     href: "/testimonials",
@@ -101,7 +95,6 @@ export const COMMAND_ACTIONS: CommandAction[] = [
   },
   {
     id: "nav.counties",
-    label: "Counties",
     group: "navigate",
     icon: Map,
     href: "/counties",
@@ -110,7 +103,6 @@ export const COMMAND_ACTIONS: CommandAction[] = [
   },
   {
     id: "nav.cities",
-    label: "Cities",
     group: "navigate",
     icon: MapPin,
     href: "/cities",
@@ -118,7 +110,6 @@ export const COMMAND_ACTIONS: CommandAction[] = [
   },
   {
     id: "nav.articles",
-    label: "Articles",
     group: "navigate",
     icon: Newspaper,
     href: "/articles",
@@ -128,7 +119,6 @@ export const COMMAND_ACTIONS: CommandAction[] = [
   },
   {
     id: "nav.academy-courses",
-    label: "Academy Courses",
     group: "navigate",
     icon: GraduationCap,
     href: "/academy/courses",
@@ -137,7 +127,6 @@ export const COMMAND_ACTIONS: CommandAction[] = [
   },
   {
     id: "nav.academy-students",
-    label: "Academy Students",
     group: "navigate",
     icon: Users,
     href: "/academy/students",
@@ -146,7 +135,6 @@ export const COMMAND_ACTIONS: CommandAction[] = [
   },
   {
     id: "nav.academy-invitations",
-    label: "Academy Invitations",
     group: "navigate",
     icon: Mail,
     href: "/academy/invitations",
@@ -155,7 +143,6 @@ export const COMMAND_ACTIONS: CommandAction[] = [
   },
   {
     id: "nav.bank-rates",
-    label: "Bank Rates",
     group: "navigate",
     icon: Landmark,
     href: "/bank-rates",
@@ -164,7 +151,6 @@ export const COMMAND_ACTIONS: CommandAction[] = [
   },
   {
     id: "nav.financial-indicators",
-    label: "Financial Indicators",
     group: "navigate",
     icon: TrendingUp,
     href: "/financial-indicators",
@@ -173,7 +159,6 @@ export const COMMAND_ACTIONS: CommandAction[] = [
   },
   {
     id: "nav.settings",
-    label: "Site Settings",
     group: "navigate",
     icon: Settings,
     href: "/settings",
@@ -182,7 +167,6 @@ export const COMMAND_ACTIONS: CommandAction[] = [
   },
   {
     id: "nav.users",
-    label: "Users",
     group: "navigate",
     icon: Users,
     href: "/users",
@@ -192,7 +176,6 @@ export const COMMAND_ACTIONS: CommandAction[] = [
   },
   {
     id: "nav.audit-logs",
-    label: "Audit log",
     group: "navigate",
     icon: Shield,
     href: "/audit-logs",
@@ -204,7 +187,6 @@ export const COMMAND_ACTIONS: CommandAction[] = [
   // don't see them in the palette (they don't have personal listings).
   {
     id: "nav.my-listings",
-    label: "My Listings",
     group: "navigate",
     icon: Building2,
     href: "/my-listings",
@@ -213,7 +195,6 @@ export const COMMAND_ACTIONS: CommandAction[] = [
   },
   {
     id: "nav.my-inquiries",
-    label: "My Inquiries",
     group: "navigate",
     icon: MessageSquareQuote,
     href: "/my-inquiries",
@@ -222,7 +203,6 @@ export const COMMAND_ACTIONS: CommandAction[] = [
   },
   {
     id: "nav.profile",
-    label: "Profile",
     group: "navigate",
     icon: User,
     href: "/profile",
@@ -233,7 +213,6 @@ export const COMMAND_ACTIONS: CommandAction[] = [
   // Create
   {
     id: "create.property",
-    label: "Create property",
     group: "create",
     icon: Plus,
     href: "/properties/new",
@@ -242,7 +221,6 @@ export const COMMAND_ACTIONS: CommandAction[] = [
   },
   {
     id: "create.developer",
-    label: "Create developer",
     group: "create",
     icon: Plus,
     href: "/developers/new",
@@ -250,7 +228,6 @@ export const COMMAND_ACTIONS: CommandAction[] = [
   },
   {
     id: "create.agent",
-    label: "Create agent",
     group: "create",
     icon: Plus,
     href: "/agents/new",
@@ -258,7 +235,6 @@ export const COMMAND_ACTIONS: CommandAction[] = [
   },
   {
     id: "create.city",
-    label: "Create city",
     group: "create",
     icon: Plus,
     href: "/cities/new",
@@ -266,7 +242,6 @@ export const COMMAND_ACTIONS: CommandAction[] = [
   },
   {
     id: "create.article",
-    label: "Create article",
     group: "create",
     icon: FileText,
     href: "/articles/new",
@@ -275,7 +250,6 @@ export const COMMAND_ACTIONS: CommandAction[] = [
   },
   {
     id: "create.testimonial",
-    label: "Create testimonial",
     group: "create",
     icon: Plus,
     href: "/testimonials/new",
@@ -283,7 +257,6 @@ export const COMMAND_ACTIONS: CommandAction[] = [
   },
   {
     id: "create.bank-rate",
-    label: "Create bank rate",
     group: "create",
     icon: Plus,
     href: "/bank-rates/new",
@@ -291,7 +264,6 @@ export const COMMAND_ACTIONS: CommandAction[] = [
   },
   {
     id: "create.academy-course",
-    label: "Create academy course",
     group: "create",
     icon: Plus,
     href: "/academy/courses/new",
@@ -303,7 +275,6 @@ export const COMMAND_ACTIONS: CommandAction[] = [
     // Invitation creation lives inside the Students page (dialog), so the
     // palette shortcut routes there — dropping the admin directly into the
     // surface where the invite CTA is one click away.
-    label: "Invite academy student",
     group: "create",
     icon: Plus,
     href: "/academy/students",

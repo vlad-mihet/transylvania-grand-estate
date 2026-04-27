@@ -65,8 +65,50 @@
     "navigation": "Navigation",
     "version": "v0.1"
   },
+  "CommandPalette": {
+    "placeholder": "Jump to, create, run…",
+    "empty": "No matches.",
+    "groups": {
+      "navigate": "Navigate",
+      "create": "Create",
+      "finance": "Finance",
+      "system": "System"
+    },
+    "actions": {
+      "nav.dashboard": "Dashboard",
+      "nav.inquiries": "Inquiries",
+      "nav.properties": "Properties",
+      "nav.developers": "Developers",
+      "nav.agents": "Agents",
+      "nav.testimonials": "Testimonials",
+      "nav.counties": "Counties",
+      "nav.cities": "Cities",
+      "nav.articles": "Articles",
+      "nav.academy-courses": "Academy Courses",
+      "nav.academy-students": "Academy Students",
+      "nav.academy-invitations": "Academy Invitations",
+      "nav.bank-rates": "Bank Rates",
+      "nav.financial-indicators": "Financial Indicators",
+      "nav.settings": "Site Settings",
+      "nav.users": "Users",
+      "nav.audit-logs": "Audit log",
+      "nav.my-listings": "My Listings",
+      "nav.my-inquiries": "My Inquiries",
+      "nav.profile": "Profile",
+      "create.property": "Create property",
+      "create.developer": "Create developer",
+      "create.agent": "Create agent",
+      "create.city": "Create city",
+      "create.article": "Create article",
+      "create.testimonial": "Create testimonial",
+      "create.bank-rate": "Create bank rate",
+      "create.academy-course": "Create academy course",
+      "create.academy-invitation": "Invite academy student"
+    }
+  },
   "Header": {
     "logout": "Logout",
+    "language": "Language",
     "changePassword": "Change password",
     "menu": "Menu",
     "search": "Search",
@@ -582,7 +624,22 @@
     "deleted": "Inquiry deleted",
     "deleteFailed": "Failed to delete inquiry",
     "viewList": "List",
-    "viewKanban": "Kanban"
+    "viewKanban": "Kanban",
+    "typeLabel": {
+      "general": "General",
+      "property": "Property",
+      "developer": "Developer"
+    },
+    "sectionLabel": {
+      "type": "Type",
+      "received": "Received",
+      "source": "Source",
+      "budget": "Budget",
+      "property": "Property",
+      "message": "Message",
+      "sourceUrl": "Source URL"
+    },
+    "viewProperty": "View property"
   },
   "Counties": {
     "title": "Counties",
@@ -801,6 +858,8 @@
   },
   "Common": {
     "cancel": "Cancel",
+    "clear": "Clear",
+    "filters": "Filters",
     "save": "Save",
     "saveFailed": "Failed to save",
     "confirm": "Confirm",

@@ -65,8 +65,50 @@
     "navigation": "Navigation",
     "version": "v0.1"
   },
+  "CommandPalette": {
+    "placeholder": "Springe zu, erstellen, ausführen…",
+    "empty": "Keine Treffer.",
+    "groups": {
+      "navigate": "Navigation",
+      "create": "Erstellen",
+      "finance": "Finanzen",
+      "system": "System"
+    },
+    "actions": {
+      "nav.dashboard": "Dashboard",
+      "nav.inquiries": "Anfragen",
+      "nav.properties": "Immobilien",
+      "nav.developers": "Bauträger",
+      "nav.agents": "Makler",
+      "nav.testimonials": "Referenzen",
+      "nav.counties": "Landkreise",
+      "nav.cities": "Städte",
+      "nav.articles": "Artikel",
+      "nav.academy-courses": "Academy-Kurse",
+      "nav.academy-students": "Academy-Studierende",
+      "nav.academy-invitations": "Academy-Einladungen",
+      "nav.bank-rates": "Zinsen",
+      "nav.financial-indicators": "Finanzindikatoren",
+      "nav.settings": "Site-Einstellungen",
+      "nav.users": "Benutzer",
+      "nav.audit-logs": "Audit-Protokoll",
+      "nav.my-listings": "Meine Angebote",
+      "nav.my-inquiries": "Meine Anfragen",
+      "nav.profile": "Profil",
+      "create.property": "Immobilie erstellen",
+      "create.developer": "Bauträger erstellen",
+      "create.agent": "Makler erstellen",
+      "create.city": "Stadt erstellen",
+      "create.article": "Artikel erstellen",
+      "create.testimonial": "Referenz erstellen",
+      "create.bank-rate": "Zinssatz erstellen",
+      "create.academy-course": "Academy-Kurs erstellen",
+      "create.academy-invitation": "Academy-Studierenden einladen"
+    }
+  },
   "Header": {
     "logout": "Abmelden",
+    "language": "Sprache",
     "changePassword": "Passwort ändern",
     "menu": "Menü",
     "search": "Suchen",
@@ -582,7 +624,22 @@
     "deleted": "Anfrage gelöscht",
     "deleteFailed": "Fehler beim Löschen",
     "viewList": "Liste",
-    "viewKanban": "Kanban"
+    "viewKanban": "Kanban",
+    "typeLabel": {
+      "general": "Allgemein",
+      "property": "Immobilie",
+      "developer": "Bauträger"
+    },
+    "sectionLabel": {
+      "type": "Typ",
+      "received": "Empfangen",
+      "source": "Quelle",
+      "budget": "Budget",
+      "property": "Immobilie",
+      "message": "Nachricht",
+      "sourceUrl": "Quell-URL"
+    },
+    "viewProperty": "Immobilie ansehen"
   },
   "Counties": {
     "title": "Landkreise",
@@ -784,6 +841,8 @@
     "title": "Stadt-Informationen",
     "name": "Name",
     "slug": "Slug",
+    "county": "Kreis",
+    "selectCounty": "Kreis auswählen",
     "description": "Beschreibung",
     "propertyCount": "Anzahl Immobilien",
     "cityImage": "Stadtbild"
@@ -799,6 +858,8 @@
   },
   "Common": {
     "cancel": "Abbrechen",
+    "clear": "Löschen",
+    "filters": "Filter",
     "save": "Speichern",
     "saveFailed": "Speichern fehlgeschlagen",
     "confirm": "Bestätigen",

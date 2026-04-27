@@ -65,8 +65,50 @@
     "navigation": "Navigare",
     "version": "v0.1"
   },
+  "CommandPalette": {
+    "placeholder": "Sari la, creează, rulează…",
+    "empty": "Niciun rezultat.",
+    "groups": {
+      "navigate": "Navigare",
+      "create": "Creează",
+      "finance": "Financiar",
+      "system": "Sistem"
+    },
+    "actions": {
+      "nav.dashboard": "Panou principal",
+      "nav.inquiries": "Cereri",
+      "nav.properties": "Proprietăți",
+      "nav.developers": "Dezvoltatori",
+      "nav.agents": "Agenți",
+      "nav.testimonials": "Testimoniale",
+      "nav.counties": "Județe",
+      "nav.cities": "Orașe",
+      "nav.articles": "Articole",
+      "nav.academy-courses": "Cursuri Academy",
+      "nav.academy-students": "Studenți Academy",
+      "nav.academy-invitations": "Invitații Academy",
+      "nav.bank-rates": "Dobânzi",
+      "nav.financial-indicators": "Indicatori financiari",
+      "nav.settings": "Setări site",
+      "nav.users": "Utilizatori",
+      "nav.audit-logs": "Jurnal audit",
+      "nav.my-listings": "Anunțurile mele",
+      "nav.my-inquiries": "Cererile mele",
+      "nav.profile": "Profil",
+      "create.property": "Creează proprietate",
+      "create.developer": "Creează dezvoltator",
+      "create.agent": "Creează agent",
+      "create.city": "Creează oraș",
+      "create.article": "Creează articol",
+      "create.testimonial": "Creează testimonial",
+      "create.bank-rate": "Creează dobândă",
+      "create.academy-course": "Creează curs Academy",
+      "create.academy-invitation": "Invită student Academy"
+    }
+  },
   "Header": {
     "logout": "Deconectare",
+    "language": "Limbă",
     "changePassword": "Schimbă parola",
     "menu": "Meniu",
     "search": "Caută",
@@ -582,7 +624,22 @@
     "deleted": "Cerere ștearsă",
     "deleteFailed": "Eroare la ștergerea cererii",
     "viewList": "Listă",
-    "viewKanban": "Kanban"
+    "viewKanban": "Kanban",
+    "typeLabel": {
+      "general": "General",
+      "property": "Proprietate",
+      "developer": "Dezvoltator"
+    },
+    "sectionLabel": {
+      "type": "Tip",
+      "received": "Primit",
+      "source": "Sursă",
+      "budget": "Buget",
+      "property": "Proprietate",
+      "message": "Mesaj",
+      "sourceUrl": "URL sursă"
+    },
+    "viewProperty": "Vezi proprietatea"
   },
   "Counties": {
     "title": "Județe",
@@ -801,6 +858,8 @@
   },
   "Common": {
     "cancel": "Anulează",
+    "clear": "Șterge",
+    "filters": "Filtre",
     "save": "Salvează",
     "saveFailed": "Salvarea a eșuat",
     "confirm": "Confirmă",

@@ -1,6 +1,7 @@
 "use client";
 
 import type { ReactNode } from "react";
+import { useTranslations } from "next-intl";
 import { cn } from "@tge/utils";
 import { X } from "lucide-react";
 
@@ -22,6 +23,7 @@ export function FilterRail({
   activeCount = 0,
   className,
 }: FilterRailProps) {
+  const t = useTranslations("Common");
   return (
     <aside
       className={cn(
@@ -31,7 +33,7 @@ export function FilterRail({
     >
       <div className="flex items-center justify-between">
         <span className="text-[10px] font-semibold uppercase tracking-[0.08em] text-muted-foreground">
-          Filters
+          {t("filters")}
         </span>
         {activeCount > 0 && onClear && (
           <button
@@ -40,7 +42,7 @@ export function FilterRail({
             className="flex items-center gap-1 text-[11px] text-muted-foreground transition-colors hover:text-foreground"
           >
             <X className="h-3 w-3" />
-            Clear ({activeCount})
+            {t("clear")} ({activeCount})
           </button>
         )}
       </div>
