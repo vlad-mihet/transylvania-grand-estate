@@ -12,13 +12,17 @@ export interface ApiPropertyImage {
   sortOrder?: number;
 }
 
+/**
+ * Public agent embed on /properties responses. Email is intentionally
+ * absent — public consumers reach agents through the inquiry form, which
+ * routes server-side via property.agentId.
+ */
 export interface ApiAgentSummary {
   id: string;
   slug: string;
   firstName: string;
   lastName: string;
   photo?: string | null;
-  email?: string | null;
   phone?: string | null;
 }
 
@@ -163,16 +167,29 @@ export interface ApiAgentInvitationSummary {
   emailSentAt?: string | null;
 }
 
-export interface ApiAgent {
+/**
+ * Public agent shape returned to anonymous and AGENT-role callers on
+ * `/agents`, `/agents/:slug`, `/agents/id/:id`. No email, no admin fields.
+ */
+export interface ApiAgentPublic {
   id: string;
   slug: string;
   firstName: string;
   lastName: string;
-  email: string;
   phone: string;
   photo?: string | null;
   bio: LocalizedString;
   active: boolean;
+  properties?: ApiProperty[];
+}
+
+/**
+ * Admin agent shape — adds email, adminUserId, invitation pill, timestamps.
+ * Returned only when the caller is ADMIN / SUPER_ADMIN / EDITOR, or when
+ * the AGENT is reading their own row via /agents/me.
+ */
+export interface ApiAgent extends ApiAgentPublic {
+  email: string;
   /** Present on admin list responses when the agent has been invited. */
   invitation?: ApiAgentInvitationSummary | null;
   /**
@@ -180,7 +197,8 @@ export interface ApiAgent {
    * public-profile-only agents. Only surfaced by admin endpoints.
    */
   adminUserId?: string | null;
-  properties?: ApiProperty[];
+  createdAt?: string;
+  updatedAt?: string;
 }
 
 export interface ApiMapPin {

@@ -55,7 +55,6 @@ export async function generateMetadata({
 interface PropertyAgent {
   firstName: string;
   lastName: string;
-  email: string;
   phone: string;
   photo?: string;
 }
@@ -82,12 +81,11 @@ export default async function PropertyDetailPage({
       notFound();
     }
     property = mapApiProperty(raw);
-    if (raw.agent && raw.agent.email && raw.agent.phone) {
+    if (raw.agent && raw.agent.phone) {
       agent = {
         firstName: raw.agent.firstName,
         lastName: raw.agent.lastName,
         phone: raw.agent.phone,
-        email: raw.agent.email,
         photo: raw.agent.photo ?? undefined,
       };
     }

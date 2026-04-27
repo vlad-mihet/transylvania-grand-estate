@@ -344,7 +344,8 @@
       "title": "Agentul tău",
       "callAgent": "Sună agentul",
       "emailAgent": "Trimite email agentului"
-    }
+    },
+    "viewPhone": "Vezi numărul"
   },
   "AboutPage": {
     "hero": {

@@ -469,6 +469,7 @@
       "subtitle": "Cunoaște experții locali care cunosc piața imobiliară din Transilvania în profunzime."
     },
     "viewProfile": "Vezi Profil",
+    "viewPhone": "Vezi numărul",
     "propertiesManaged": "{count} proprietăți"
   },
   "AgentDetailPage": {
@@ -477,6 +478,7 @@
     "contactAgent": "Contactează Agentul",
     "callAgent": "Sună",
     "emailAgent": "Email",
+    "viewPhone": "Vezi numărul",
     "cta": {
       "title": "Lucrează cu {name}",
       "subtitle": "Primește recomandări personalizate de proprietăți și sfaturi experte.",
@@ -762,7 +764,8 @@
     "resourceLinks": {
       "faq": "Întrebări Frecvente",
       "contact": "Contactează-ne",
-      "tools": "Instrumente Utile"
+      "tools": "Instrumente Utile",
+      "courses": "Cursuri"
     },
     "contact": "Contact",
     "followUs": "Urmărește-ne",

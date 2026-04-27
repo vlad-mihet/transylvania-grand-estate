@@ -3,8 +3,9 @@
 import { useState } from "react";
 import Image from "next/image";
 import { useTranslations } from "next-intl";
-import { Phone, Loader2, Check } from "lucide-react";
+import { Loader2, Check } from "lucide-react";
 import {
+  AgentPhone,
   Button,
   Card,
   CardContent,
@@ -19,7 +20,6 @@ interface AgentSummary {
   firstName: string;
   lastName: string;
   phone: string;
-  email: string;
   photo?: string;
 }
 
@@ -28,12 +28,6 @@ interface PropertyContactCardProps {
   propertyTitle: string;
   propertySlug: string;
   defaultMessage: string;
-}
-
-function maskPhone(phone: string): string {
-  const trimmed = phone.trim();
-  if (trimmed.length <= 4) return "••• ••• •••";
-  return `${trimmed.slice(0, 4)} ••• •••`;
 }
 
 function RequiredLabel({
@@ -59,7 +53,6 @@ export function PropertyContactCard({
 }: PropertyContactCardProps) {
   const t = useTranslations("PropertyDetail");
 
-  const [phoneRevealed, setPhoneRevealed] = useState(false);
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
@@ -123,32 +116,11 @@ export function PropertyContactCard({
 
         {/* Phone row with reveal */}
         {agent && (
-          <div className="mt-4 flex items-center gap-3">
-            <span className="w-9 h-9 rounded-full border border-border flex items-center justify-center shrink-0">
-              <Phone className="h-4 w-4 text-primary" />
-            </span>
-            {phoneRevealed ? (
-              <a
-                href={`tel:${agent.phone}`}
-                className="text-foreground font-semibold tracking-wide hover:text-primary transition-colors"
-              >
-                {agent.phone}
-              </a>
-            ) : (
-              <button
-                type="button"
-                onClick={() => setPhoneRevealed(true)}
-                className="flex flex-col items-start text-left"
-              >
-                <span className="text-foreground font-semibold tracking-wide">
-                  {maskPhone(agent.phone)}
-                </span>
-                <span className="text-xs text-primary hover:underline">
-                  {t("viewPhone")}
-                </span>
-              </button>
-            )}
-          </div>
+          <AgentPhone
+            phone={agent.phone}
+            revealLabel={t("viewPhone")}
+            className="mt-4"
+          />
         )}
 
         {/* Inline form */}

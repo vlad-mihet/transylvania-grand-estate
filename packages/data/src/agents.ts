@@ -1,6 +1,12 @@
 import { Agent } from "@tge/types";
 
+/**
+ * Seed-data shape — adds the columns that aren't on the public Agent type
+ * (email is admin-only on the API but required to populate the DB) plus a
+ * helper `city` slug consumed by the city-keyed seeders.
+ */
 export interface AgentWithCity extends Agent {
+  email: string;
   city: string;
 }
 

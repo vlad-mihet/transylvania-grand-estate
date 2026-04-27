@@ -6,12 +6,11 @@ import { mapApiProperties } from "@tge/api-client";
 import { fetchPropertiesByAgent } from "@/lib/properties";
 import type { Agent, Locale } from "@tge/types";
 import { localize } from "@tge/utils";
-import { Button } from "@tge/ui";
+import { AgentPhone } from "@tge/ui";
 import { Container } from "@/components/layout/container";
 import { Breadcrumb } from "@/components/layout/breadcrumb";
 import { PropertyGrid } from "@/components/property/property-grid";
 import { CTABanner } from "@/components/sections/cta-banner";
-import { Phone, Mail } from "lucide-react";
 import { createMetadata } from "@/lib/seo";
 import { JsonLd } from "@/components/seo/json-ld";
 import { personSchema } from "@/lib/jsonld";
@@ -93,18 +92,10 @@ export default async function AgentDetailPage({ params }: { params: Promise<Para
                 {localize(agent.bio, locale)}
               </p>
               <div className="flex flex-wrap gap-3">
-                <a href={`tel:${agent.phone}`}>
-                  <Button variant="outline" size="sm">
-                    <Phone className="h-4 w-4 mr-1.5" />
-                    {t("callAgent")}
-                  </Button>
-                </a>
-                <a href={`mailto:${agent.email}`}>
-                  <Button variant="outline" size="sm">
-                    <Mail className="h-4 w-4 mr-1.5" />
-                    {t("emailAgent")}
-                  </Button>
-                </a>
+                <AgentPhone
+                  phone={agent.phone}
+                  revealLabel={t("viewPhone")}
+                />
               </div>
             </div>
           </div>

@@ -469,6 +469,7 @@
       "subtitle": "Meet our local experts who know Transylvania's property market inside and out."
     },
     "viewProfile": "View Profile",
+    "viewPhone": "View phone number",
     "propertiesManaged": "{count} properties"
   },
   "AgentDetailPage": {
@@ -477,6 +478,7 @@
     "contactAgent": "Contact Agent",
     "callAgent": "Call",
     "emailAgent": "Email",
+    "viewPhone": "View phone number",
     "cta": {
       "title": "Work with {name}",
       "subtitle": "Get personalized property recommendations and expert advice.",
@@ -762,7 +764,8 @@
     "resourceLinks": {
       "faq": "FAQ",
       "contact": "Contact Us",
-      "tools": "Useful Tools"
+      "tools": "Useful Tools",
+      "courses": "Courses"
     },
     "contact": "Contact",
     "followUs": "Follow Us",

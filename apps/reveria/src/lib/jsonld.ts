@@ -159,13 +159,15 @@ export function articleSchema(article: Article, locale: Locale): JsonLdSchema {
 
 export function personSchema(agent: Agent, locale: Locale): JsonLdSchema {
   const name = `${agent.firstName} ${agent.lastName}`;
+  // email + telephone intentionally omitted — schema.org Person allows them
+  // but they get indexed by search engines and harvested by scrapers. The
+  // public agent profile carries no contact PII; users reach the agent via
+  // the inquiry form on the page, which routes server-side.
   return {
     "@context": "https://schema.org",
     "@type": "Person",
     name,
     jobTitle: "Real Estate Agent",
-    email: agent.email,
-    telephone: agent.phone,
     ...(agent.photo ? { image: agent.photo } : {}),
     description: localize(agent.bio, locale),
     url: localizedUrl(`/agents/${agent.slug}`, locale),

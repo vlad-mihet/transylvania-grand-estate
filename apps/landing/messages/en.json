@@ -344,7 +344,8 @@
       "title": "Your Agent",
       "callAgent": "Call Agent",
       "emailAgent": "Email Agent"
-    }
+    },
+    "viewPhone": "View phone number"
   },
   "AboutPage": {
     "hero": {

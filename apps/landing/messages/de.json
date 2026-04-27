@@ -344,7 +344,8 @@
       "title": "Ihr Makler",
       "callAgent": "Makler anrufen",
       "emailAgent": "E-Mail an Makler"
-    }
+    },
+    "viewPhone": "Telefonnummer anzeigen"
   },
   "AboutPage": {
     "hero": {

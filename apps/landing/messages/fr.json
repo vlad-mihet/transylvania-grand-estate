@@ -344,7 +344,8 @@
       "title": "Votre agent",
       "callAgent": "Appeler l'agent",
       "emailAgent": "Envoyer un e-mail à l'agent"
-    }
+    },
+    "viewPhone": "Afficher le numéro"
   },
   "AboutPage": {
     "hero": {

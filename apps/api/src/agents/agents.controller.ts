@@ -62,6 +62,7 @@ export class AgentsController {
   @Get()
   async findAll(
     @CurrentSite() site: SiteContext,
+    @CurrentUser() user: CurrentUserPayload | null,
     @Query('active') active?: boolean,
     @Query('search') search?: string,
     @Query('sort') sort?: string,
@@ -79,13 +80,16 @@ export class AgentsController {
         unlinked,
       },
       site,
+      user,
     );
   }
 
   /**
    * Returns the sales-agent record linked to the current AGENT user, or 404
    * if the account hasn't been linked yet. Admin roles can call this too —
-   * they just won't get a hit unless they're also linked.
+   * they just won't get a hit unless they're also linked. Always returns the
+   * admin projection (incl. email) since the caller is reading their own
+   * profile.
    */
   @Roles(AdminRole.AGENT, AdminRole.ADMIN, AdminRole.SUPER_ADMIN)
   @Get('me')
@@ -96,7 +100,7 @@ export class AgentsController {
     if (!user.agentId) {
       throw new NotFoundException('No linked agent');
     }
-    return this.agentsService.findById(user.agentId, site);
+    return this.agentsService.findById(user.agentId, site, user, true);
   }
 
   @Public()
@@ -104,8 +108,9 @@ export class AgentsController {
   async findById(
     @Param('id', ParseUUIDPipe) id: string,
     @CurrentSite() site: SiteContext,
+    @CurrentUser() user: CurrentUserPayload | null,
   ) {
-    return this.agentsService.findById(id, site);
+    return this.agentsService.findById(id, site, user);
   }
 
   @Public()
@@ -113,8 +118,9 @@ export class AgentsController {
   async findBySlug(
     @Param('slug') slug: string,
     @CurrentSite() site: SiteContext,
+    @CurrentUser() user: CurrentUserPayload | null,
   ) {
-    return this.agentsService.findBySlug(slug, site);
+    return this.agentsService.findBySlug(slug, site, user);
   }
 
   @Roles(AdminRole.ADMIN, AdminRole.SUPER_ADMIN)

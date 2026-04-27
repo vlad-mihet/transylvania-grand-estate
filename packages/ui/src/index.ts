@@ -41,6 +41,12 @@ export {
   PropertyFeatures,
   type PropertyFeaturesTone,
 } from "./components/property/property-features";
+export {
+  AgentPhone,
+  maskPhone,
+  type AgentPhoneProps,
+  type AgentPhoneVariant,
+} from "./components/property/agent-phone";
 
 // Inquiry Modal
 export {

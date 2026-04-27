@@ -13,6 +13,7 @@ import { SimilarProperties } from "@/components/property/similar-properties";
 import { CTABanner } from "@/components/sections/cta-banner";
 import {
   AccentButton,
+  AgentPhone,
   Badge,
   PropertyFeatures,
   PropertySpecs,
@@ -50,16 +51,15 @@ export default async function PropertyDetailPage({
   const { slug } = await params;
 
   let property;
-  let agent: { firstName: string; lastName: string; phone: string; email: string; photo?: string } | null = null;
+  let agent: { firstName: string; lastName: string; phone: string; photo?: string } | null = null;
   try {
     const raw = await fetchApi<ApiProperty>(`/properties/${slug}`);
     property = mapApiProperty(raw);
-    if (raw.agent && raw.agent.email && raw.agent.phone) {
+    if (raw.agent && raw.agent.phone) {
       agent = {
         firstName: raw.agent.firstName,
         lastName: raw.agent.lastName,
         phone: raw.agent.phone,
-        email: raw.agent.email,
         photo: raw.agent.photo ?? undefined,
       };
     }
@@ -183,16 +183,17 @@ export default async function PropertyDetailPage({
                           {agent.firstName[0]}
                         </div>
                       )}
-                      <div>
+                      <div className="min-w-0">
                         <p className="text-cream font-medium text-sm">
                           {agent.firstName}
                         </p>
-                        <a
-                          href={`tel:${agent.phone}`}
-                          className="text-copper text-xs hover:underline"
-                        >
-                          {agent.phone}
-                        </a>
+                        <AgentPhone
+                          phone={agent.phone}
+                          revealLabel={t("viewPhone")}
+                          variant="landing"
+                          hideIcon
+                          className="mt-0.5"
+                        />
                       </div>
                     </div>
                     <Separator className="bg-copper/10 mb-5" />

@@ -21,6 +21,7 @@ import {
 } from '../common/site';
 import { SiteConfigService } from '../site-config/site-config.service';
 import type { CurrentUserPayload } from '../common/decorators/user.decorator';
+import { adminAgentSelect, selectForCaller } from '../agents/agents.select';
 import { amenityFlagsSchema } from '@tge/types/schemas/_primitives';
 
 /**
@@ -471,7 +472,7 @@ export class PropertiesService {
             include: {
               images: { orderBy: { sortOrder: 'asc' } },
               developer: true,
-              agent: true,
+              agent: { select: selectForCaller(user) },
             },
           })
         : [];
@@ -503,7 +504,7 @@ export class PropertiesService {
           include: {
             images: { orderBy: { sortOrder: 'asc' } },
             developer: true,
-            agent: true,
+            agent: { select: selectForCaller(user) },
           },
         }),
       () => this.prisma.property.count({ where }),
@@ -581,7 +582,7 @@ export class PropertiesService {
         include: {
           images: { orderBy: { sortOrder: 'asc' } },
           developer: true,
-          agent: true,
+          agent: { select: selectForCaller(user) },
           cityRef: { include: { county: true } },
         },
       }),
@@ -607,7 +608,7 @@ export class PropertiesService {
         include: {
           images: { orderBy: { sortOrder: 'asc' } },
           developer: true,
-          agent: true,
+          agent: { select: selectForCaller(user) },
           cityRef: { include: { county: true } },
         },
       }),
@@ -721,7 +722,7 @@ export class PropertiesService {
       include: {
         images: { orderBy: { sortOrder: 'asc' } },
         developer: true,
-        agent: true,
+        agent: { select: adminAgentSelect },
       },
     });
 
@@ -805,7 +806,7 @@ export class PropertiesService {
       include: {
         images: { orderBy: { sortOrder: 'asc' } },
         developer: true,
-        agent: true,
+        agent: { select: selectForCaller(user) },
       },
     });
 
