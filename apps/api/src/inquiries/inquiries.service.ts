@@ -57,6 +57,12 @@ export class InquiriesService {
       }
     }
 
+    // Include the linked Property's title so the admin UI can show a
+    // human-readable reference (e.g. "Vilă în Brașov") instead of the raw
+    // slug. Cheap join — Inquiry has at most one linked Property via the
+    // unique propertySlug FK. Tier-scoping the include isn't required here:
+    // admin/super_admin are unrestricted, and AGENT is already constrained
+    // by the where-clause on `property.agentId` above.
     return paginate(
       (skip, take) =>
         this.prisma.inquiry.findMany({
@@ -64,6 +70,9 @@ export class InquiriesService {
           orderBy: { createdAt: 'desc' },
           skip,
           take,
+          include: {
+            property: { select: { id: true, slug: true, title: true } },
+          },
         }),
       () => this.prisma.inquiry.count({ where }),
       page,
@@ -73,7 +82,10 @@ export class InquiriesService {
 
   async findById(id: string) {
     return ensureFound(
-      this.prisma.inquiry.findUnique({ where: { id } }),
+      this.prisma.inquiry.findUnique({
+        where: { id },
+        include: { property: { select: { id: true, slug: true, title: true } } },
+      }),
       'Inquiry',
     );
   }

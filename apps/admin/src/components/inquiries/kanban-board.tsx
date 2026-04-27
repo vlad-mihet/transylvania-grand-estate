@@ -199,6 +199,7 @@ function InquiryCard({
   const { attributes, listeners, setNodeRef, isDragging } = useDraggable({
     id: inquiry.id,
   });
+  const t = useTranslations("Inquiries");
 
   return (
     <div
@@ -238,7 +239,7 @@ function InquiryCard({
             {inquiry.email}
           </Mono>
         </button>
-        <MonoTag className="shrink-0">{inquiry.type}</MonoTag>
+        <MonoTag className="shrink-0">{t(`typeLabel.${inquiry.type}`)}</MonoTag>
       </div>
       <p className="mt-1.5 line-clamp-2 cursor-grab text-[12px] leading-snug text-muted-foreground active:cursor-grabbing">
         {inquiry.message}
