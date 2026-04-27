@@ -131,7 +131,11 @@ export function DeveloperForm({
           <div className="grid gap-4 sm:grid-cols-2 sm:items-end">
             <div className="space-y-1.5">
               <Label>{t("projectCount")}</Label>
-              <Input type="number" {...form.register("projectCount")} className="mono" />
+              <Input
+                type="number"
+                {...form.register("projectCount", { valueAsNumber: true })}
+                className="mono"
+              />
             </div>
             <label className="flex items-center gap-2 text-sm">
               <Switch

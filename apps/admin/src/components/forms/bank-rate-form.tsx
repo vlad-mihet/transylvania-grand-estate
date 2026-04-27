@@ -39,6 +39,18 @@ export function BankRateForm({
   const t = useTranslations("BankRateForm");
   const tc = useTranslations("Common");
 
+  // <input type="number"> emits string values; the form schema declares
+  // `z.number()` (no coerce — by design after the v4 upgrade so useForm<T>
+  // infers `number`, not `unknown`). Without coercion here, submit silently
+  // fails Zod and `shouldFocusError` bounces focus on the first invalid
+  // field. `requiredNumber` for non-null fields, `optionalNullableNumber`
+  // for the .nullable().optional() ones.
+  const requiredNumber = { valueAsNumber: true } as const;
+  const optionalNullableNumber = {
+    setValueAs: (v: unknown) =>
+      v === "" || v === null || v === undefined ? null : Number(v),
+  } as const;
+
   const form = useForm<BankRateFormValues>({
     resolver: zodResolver(bankRateSchema),
     defaultValues: {
@@ -79,7 +91,7 @@ export function BankRateForm({
               <Input
                 type="number"
                 step="0.01"
-                {...form.register("rate")}
+                {...form.register("rate", requiredNumber)}
                 className="mono"
               />
             </div>
@@ -115,7 +127,7 @@ export function BankRateForm({
               <Input
                 type="number"
                 step="1"
-                {...form.register("sortOrder")}
+                {...form.register("sortOrder", requiredNumber)}
                 className="mono"
               />
             </div>
@@ -131,7 +143,7 @@ export function BankRateForm({
               <Input
                 type="number"
                 step="0.01"
-                {...form.register("maxLtv")}
+                {...form.register("maxLtv", optionalNullableNumber)}
                 className="mono"
               />
               <p className="text-[11px] text-muted-foreground">
@@ -143,7 +155,7 @@ export function BankRateForm({
               <Input
                 type="number"
                 step="1"
-                {...form.register("maxTermYears")}
+                {...form.register("maxTermYears", optionalNullableNumber)}
                 className="mono"
               />
             </div>
@@ -154,7 +166,7 @@ export function BankRateForm({
               <Input
                 type="number"
                 step="0.01"
-                {...form.register("processingFee")}
+                {...form.register("processingFee", optionalNullableNumber)}
                 className="mono"
               />
               <p className="text-[11px] text-muted-foreground">
@@ -166,7 +178,7 @@ export function BankRateForm({
               <Input
                 type="number"
                 step="0.01"
-                {...form.register("insuranceRate")}
+                {...form.register("insuranceRate", optionalNullableNumber)}
                 className="mono"
               />
               <p className="text-[11px] text-muted-foreground">

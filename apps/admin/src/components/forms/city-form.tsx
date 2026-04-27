@@ -151,7 +151,7 @@ export function CityForm({ defaultValues, imageUrl, onSubmit, loading, submissio
             <Label>{t("propertyCount")}</Label>
             <Input
               type="number"
-              {...form.register("propertyCount")}
+              {...form.register("propertyCount", { valueAsNumber: true })}
               className="mono max-w-[200px]"
             />
           </div>

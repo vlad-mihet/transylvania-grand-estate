@@ -68,8 +68,11 @@ export const createPropertySchema = amenityFlagsSchema
     features: z.array(localizedStringSchema).optional(),
     featured: z.boolean().optional(),
     isNew: z.boolean().optional(),
-    developerId: z.string().uuid().optional(),
-    agentId: z.string().uuid().optional(),
+    // Nullable + optional: `null` is the explicit "detach this relation"
+    // signal from the admin form's "None" option; `undefined` is "leave
+    // untouched". The Prisma layer treats `null` as a column reset on update.
+    developerId: z.string().uuid().nullable().optional(),
+    agentId: z.string().uuid().nullable().optional(),
   })
   .strict();
 

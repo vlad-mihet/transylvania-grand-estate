@@ -34,6 +34,24 @@ import { apiClient } from "@/lib/api-client";
 import type { ApiAgent, ApiCity, ApiDeveloper } from "@tge/types";
 import { useTranslations } from "next-intl";
 
+// react-hook-form's <input type="number"> still emits string values; without
+// a converter, the form state holds "275000" while the Zod schema expects
+// `z.number()`. Submit then fails silently and `shouldFocusError` bounces
+// focus back to the field on every click. These helpers map the empty
+// string to `null`/`undefined` (so optional/nullable schemas accept it) and
+// otherwise coerce to Number. Required fields get the simpler `valueAsNumber`
+// builtin which produces NaN on empty — fine, since required fields can't be
+// empty at submit time.
+const requiredNumber = { valueAsNumber: true } as const;
+const optionalNullableNumber = {
+  setValueAs: (v: unknown) =>
+    v === "" || v === null || v === undefined ? null : Number(v),
+} as const;
+const optionalNumber = {
+  setValueAs: (v: unknown) =>
+    v === "" || v === null || v === undefined ? undefined : Number(v),
+} as const;
+
 const PROPERTY_TYPE_VALUES = [
   "apartment", "house", "villa", "terrain", "penthouse", "estate", "chalet", "mansion", "palace",
 ] as const;
@@ -307,7 +325,7 @@ export function PropertyForm({
           <div className="grid gap-4 sm:grid-cols-3">
             <div className="space-y-2">
               <Label>{t("price")}</Label>
-              <Input type="number" {...form.register("price")} />
+              <Input type="number" {...form.register("price", requiredNumber)} />
             </div>
             <div className="space-y-2">
               <Label>{t("currency")}</Label>
@@ -387,11 +405,11 @@ export function PropertyForm({
           <div className="grid gap-4 sm:grid-cols-2">
             <div className="space-y-2">
               <Label>{t("latitude")}</Label>
-              <Input type="number" step="any" {...form.register("latitude")} />
+              <Input type="number" step="any" {...form.register("latitude", optionalNumber)} />
             </div>
             <div className="space-y-2">
               <Label>{t("longitude")}</Label>
-              <Input type="number" step="any" {...form.register("longitude")} />
+              <Input type="number" step="any" {...form.register("longitude", optionalNumber)} />
             </div>
           </div>
         </div>
@@ -404,39 +422,39 @@ export function PropertyForm({
             {!isTerrain && (
               <div className="space-y-2">
                 <Label>{t("bedrooms")}</Label>
-                <Input type="number" {...form.register("bedrooms")} />
+                <Input type="number" {...form.register("bedrooms", requiredNumber)} />
               </div>
             )}
             {!isTerrain && (
               <div className="space-y-2">
                 <Label>{t("bathrooms")}</Label>
-                <Input type="number" {...form.register("bathrooms")} />
+                <Input type="number" {...form.register("bathrooms", requiredNumber)} />
               </div>
             )}
             <div className="space-y-2">
               <Label>{t("area")}</Label>
-              <Input type="number" {...form.register("area")} />
+              <Input type="number" {...form.register("area", requiredNumber)} />
             </div>
             <div className="space-y-2">
               <Label>{t("landArea")}</Label>
-              <Input type="number" {...form.register("landArea")} />
+              <Input type="number" {...form.register("landArea", optionalNullableNumber)} />
             </div>
             {!isTerrain && (
               <div className="space-y-2">
                 <Label>{t("floors")}</Label>
-                <Input type="number" {...form.register("floors")} />
+                <Input type="number" {...form.register("floors", requiredNumber)} />
               </div>
             )}
             {!isTerrain && (
               <div className="space-y-2">
                 <Label>{t("yearBuilt")}</Label>
-                <Input type="number" {...form.register("yearBuilt")} />
+                <Input type="number" {...form.register("yearBuilt", requiredNumber)} />
               </div>
             )}
             {!isTerrain && (
               <div className="space-y-2">
                 <Label>{t("garageSpots")}</Label>
-                <Input type="number" {...form.register("garage")} />
+                <Input type="number" {...form.register("garage", optionalNullableNumber)} />
               </div>
             )}
             <label className="flex items-center gap-2 pt-7 text-sm">

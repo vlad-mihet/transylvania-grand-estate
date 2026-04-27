@@ -49,6 +49,45 @@ interface AuthContextType {
 
 const AuthContext = createContext<AuthContextType | null>(null);
 
+/**
+ * Module-level dedupe for `/api/auth/refresh`. React StrictMode in dev
+ * mounts every component twice (mount → unmount → mount), so without this
+ * lock both effects fire `restore()` in parallel. With Wave-1's single-use
+ * RT rotation (auth.service.ts:78-95), the first call rotates the jti and
+ * the second call sees the revoked jti → 401 → the BFF route deletes the
+ * cookie → AuthGuard sees `!user` → bounces to /login. Sharing the
+ * in-flight Promise across mounts collapses the race to one network call.
+ */
+let inflightRestore: Promise<{
+  accessToken: string;
+  user: AuthUser;
+} | null> | null = null;
+
+async function restoreSession(): Promise<{
+  accessToken: string;
+  user: AuthUser;
+} | null> {
+  if (inflightRestore) return inflightRestore;
+  inflightRestore = (async () => {
+    try {
+      const res = await fetch("/api/auth/refresh", { method: "POST" });
+      if (!res.ok) return null;
+      return (await res.json()) as { accessToken: string; user: AuthUser };
+    } catch (err) {
+      console.error("Session restore failed:", err);
+      return null;
+    } finally {
+      // Release the lock on the next tick so a quick StrictMode remount
+      // still hits the cached result, but a genuine later refresh (e.g.
+      // post-401 retry from the api-client) issues a fresh call.
+      setTimeout(() => {
+        inflightRestore = null;
+      }, 0);
+    }
+  })();
+  return inflightRestore;
+}
+
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const isLoginRoute = pathname?.endsWith("/login") ?? false;
@@ -57,21 +96,18 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   useEffect(() => {
     if (isLoginRoute) return;
-    const restore = async () => {
-      try {
-        const res = await fetch("/api/auth/refresh", { method: "POST" });
-        if (res.ok) {
-          const data = await res.json();
-          setAccessToken(data.accessToken);
-          setUser(data.user);
-        }
-      } catch (err) {
-        console.error("Session restore failed:", err);
-      } finally {
-        setIsLoading(false);
+    let cancelled = false;
+    restoreSession().then((data) => {
+      if (cancelled) return;
+      if (data) {
+        setAccessToken(data.accessToken);
+        setUser(data.user);
       }
+      setIsLoading(false);
+    });
+    return () => {
+      cancelled = true;
     };
-    restore();
   }, [isLoginRoute]);
 
   const login = useCallback(
