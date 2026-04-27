@@ -21,14 +21,25 @@ import {
 } from "lucide-react";
 import type { Action as PermissionAction } from "@/lib/permissions";
 
-export type CommandGroup = "navigate" | "create" | "finance" | "system";
+export type CommandGroup =
+  | "context"
+  | "navigate"
+  | "create"
+  | "finance"
+  | "system";
 
 export interface CommandAction {
-  /** Stable id — also the i18n key under `CommandPalette.actions.<id>`. */
+  /** Stable id — also the i18n key under `CommandPalette.actions.<id>` unless `label` is provided. */
   id: string;
   group: CommandGroup;
   icon: ComponentType<{ className?: string }>;
   href: string;
+  /**
+   * Inline label that takes precedence over the i18n lookup. Used by
+   * dynamic, data-driven entries (e.g. course lessons) where the label
+   * comes from the database rather than translation files.
+   */
+  label?: string;
   /** Extra keywords fed to cmdk's fuzzy search. */
   keywords?: string[];
   /** Capability gate — action hidden unless the subject has this. */

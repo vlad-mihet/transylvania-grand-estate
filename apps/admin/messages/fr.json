@@ -69,6 +69,7 @@
     "placeholder": "Aller à, créer, exécuter…",
     "empty": "Aucune correspondance.",
     "groups": {
+      "context": "Sur cette page",
       "navigate": "Navigation",
       "create": "Créer",
       "finance": "Finance",
@@ -1075,7 +1076,18 @@
       "videoDuration": "{minutes}:{seconds}",
       "durationNone": "—",
       "deleteTitle": "Supprimer cette leçon ?",
-      "deleteDescription": "La leçon est supprimée définitivement. Les étudiants perdent l'accès immédiatement."
+      "deleteDescription": "La leçon est supprimée définitivement. Les étudiants perdent l'accès immédiatement.",
+      "previousLesson": "Précédente",
+      "nextLesson": "Suivante",
+      "lessonOf": "Leçon {position} sur {total}",
+      "prevLessonAria": "Leçon précédente : {title}",
+      "nextLessonAria": "Leçon suivante : {title}",
+      "searchPlaceholder": "Rechercher une leçon…",
+      "searchEmpty": "Aucune leçon ne correspond à votre recherche.",
+      "reorderDisabledHint": "La réorganisation est désactivée pendant le filtrage.",
+      "railHeading": "Leçons",
+      "saveAndNext": "Enregistrer et suivante",
+      "lastLessonReached": "Vous êtes sur la dernière leçon."
     },
     "lessonForm": {
       "createTitle": "Nouvelle leçon",

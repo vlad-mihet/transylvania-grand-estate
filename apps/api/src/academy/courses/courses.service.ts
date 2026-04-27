@@ -154,20 +154,53 @@ export class CoursesService {
    * by the academy `/catalog` page so new signups (and admin-invited users
    * with narrow grants) can discover freely readable content.
    *
-   * Each row carries an `enrolled` flag so the UI can surface an `Înscris`
-   * badge and hide the enroll button for courses already on the user's
-   * dashboard. A wildcard enrollment counts as enrolled for every course.
+   * Paginated `{ data, meta }` envelope so the catalog can render with a
+   * page-numbered nav. Optional `search` matches localized title (ro/en)
+   * and slug; case-insensitive on slug, JSON path-contains on title.
    */
-  async findAllPublic(userId: string) {
-    const courses = await this.prisma.course.findMany({
-      where: {
-        status: CourseStatus.published,
-        visibility: CourseVisibility.public,
-      },
-      orderBy: [{ order: 'asc' }, { publishedAt: 'desc' }],
-      include: { _count: { select: { lessons: { where: { status: 'published' } } } } },
-    });
-    const courseIds = courses.map((c) => c.id);
+  async findAllPublic(args: {
+    userId: string;
+    page: number;
+    limit: number;
+    search?: string;
+  }) {
+    const { userId, page, limit, search } = args;
+    const where: Prisma.CourseWhereInput = {
+      status: CourseStatus.published,
+      visibility: CourseVisibility.public,
+    };
+    if (search) {
+      where.OR = [
+        { title: { path: ['ro'], string_contains: search } },
+        { title: { path: ['en'], string_contains: search } },
+        { slug: { contains: search, mode: 'insensitive' } },
+      ];
+    }
+    const orderBy: Prisma.CourseOrderByWithRelationInput[] = [
+      { order: 'asc' },
+      { publishedAt: 'desc' },
+    ];
+
+    // Run paginate() to get the page slice + total. Enrollment / progress
+    // enrichment then happens for just the visible slice — never for the
+    // full course set.
+    const paginated = await paginate(
+      (skip, take) =>
+        this.prisma.course.findMany({
+          where,
+          orderBy,
+          skip,
+          take,
+          include: {
+            _count: { select: { lessons: { where: { status: 'published' } } } },
+          },
+        }),
+      () => this.prisma.course.count({ where }),
+      page,
+      limit,
+    );
+
+    const courseIds = paginated.data.map((c) => c.id);
     const [state, lessons, progressPerCourse] = await Promise.all([
       this.computeEnrollmentState(userId, courseIds),
       this.fetchPublishedLessonMeta(courseIds),
@@ -176,7 +209,7 @@ export class CoursesService {
     const totalsByCourse = new Map<string, number>();
     for (const [id, ls] of lessons) totalsByCourse.set(id, ls.length);
     const stats = await this.progress.getStatsForCourses(userId, totalsByCourse);
-    return courses.map((c) => {
+    const enriched = paginated.data.map((c) => {
       const s = state.get(c.id);
       const stat = stats.get(c.id) ?? {
         totalLessons: 0,
@@ -198,30 +231,22 @@ export class CoursesService {
         },
       };
     });
+    return { data: enriched, meta: paginated.meta };
   }
 
   async findBySlugForStudent(userId: string, slug: string) {
     const course = await this.prisma.course.findUnique({
       where: { slug },
+      // Lessons used to be embedded inline; the academy page now uses the
+      // dedicated paginated `/academy/courses/:slug/lessons` endpoint to
+      // render the TOC. We still need the published lesson list here to
+      // compute `progress.resumeLessonPosition` + `firstLessonSlug`, but
+      // only id+slug — content/title/etc. stay out of this response.
       include: {
         lessons: {
           where: { status: 'published' },
           orderBy: { order: 'asc' },
-          select: {
-            id: true,
-            slug: true,
-            order: true,
-            title: true,
-            excerpt: true,
-            // content is needed to compute readingTimeMinutes at serve
-            // time. It's also lesson markdown for the same user, so the
-            // cost-vs-value trade is already settled by the lesson-detail
-            // read — pulling it on the list view adds a few KB per course.
-            content: true,
-            type: true,
-            videoDurationSeconds: true,
-            publishedAt: true,
-          },
+          select: { id: true, slug: true },
         },
       },
     });
@@ -253,25 +278,28 @@ export class CoursesService {
       completedLessons: 0,
       lastSeenAt: null,
     };
+    const resumeLessonSlug = this.computeResumeLessonSlug(
+      publishedLessonMeta,
+      userProgress,
+    );
+    // 1-based position of the resume lesson in the published-ordered list.
+    // Lets the academy page auto-jump to the page containing the student's
+    // current lesson without rendering the full TOC client-side.
+    const resumeLessonPosition = resumeLessonSlug
+      ? publishedLessonMeta.findIndex((l) => l.slug === resumeLessonSlug) + 1 ||
+        null
+      : null;
     return {
       ...course,
       enrolled: s?.enrolled ?? false,
       canUnenroll: s?.canUnenroll ?? false,
-      // Stamp each lesson in the detail response with the per-student
-      // completion flag so the course page can render `Citită ✓` pills
-      // without a second request.
-      lessons: course.lessons.map((l) => ({
-        ...l,
-        completed: !!userProgress.get(l.id)?.completedAt,
-      })),
+      firstLessonSlug: publishedLessonMeta[0]?.slug ?? null,
       progress: {
         totalLessons: stat.totalLessons,
         completedLessons: stat.completedLessons,
         lastSeenAt: stat.lastSeenAt,
-        resumeLessonSlug: this.computeResumeLessonSlug(
-          publishedLessonMeta,
-          userProgress,
-        ),
+        resumeLessonSlug,
+        resumeLessonPosition,
       },
     };
   }

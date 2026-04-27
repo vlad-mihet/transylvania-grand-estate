@@ -26,27 +26,56 @@ export type CourseDetail = {
   visibility: "public" | "enrolled";
   enrolled: boolean;
   canUnenroll?: boolean;
+  // Slug of the first published lesson — fallback when no resume exists.
+  firstLessonSlug: string | null;
   progress: {
     totalLessons: number;
     completedLessons: number;
     lastSeenAt: string | null;
     resumeLessonSlug: string | null;
+    // 1-based position of the resume lesson in the published list.
+    // Used to auto-jump the TOC to the page containing the lesson.
+    resumeLessonPosition: number | null;
   };
   servedLocale: string;
   localizedTitle: string;
   localizedDescription: string;
-  lessons: Array<{
-    id: string;
-    slug: string;
-    order: number;
-    title: Record<string, string | undefined>;
-    excerpt: Record<string, string | undefined>;
-    type: "text" | "video";
-    readingTimeMinutes: number | null;
-    videoDurationSeconds: number | null;
-    publishedAt: string | null;
-    completed: boolean;
-  }>;
+};
+
+export type CourseLessonRow = {
+  id: string;
+  slug: string;
+  order: number;
+  position: number;
+  title: Record<string, string | undefined>;
+  excerpt: Record<string, string | undefined>;
+  type: "text" | "video";
+  readingTimeMinutes: number | null;
+  videoDurationSeconds: number | null;
+  publishedAt: string | null;
+  completed: boolean;
+  servedLocale: string;
+  localizedTitle: string;
+};
+
+export type PaginationMeta = {
+  total: number;
+  page: number;
+  limit: number;
+  totalPages: number;
+};
+
+export type Paginated<T> = {
+  data: T[];
+  meta: PaginationMeta;
+};
+
+export type CourseLessonsPage = {
+  data: CourseLessonRow[];
+  meta: PaginationMeta & {
+    // Total published lessons in the course regardless of search filter.
+    coursePublishedTotal: number;
+  };
 };
 
 type LessonNeighbour = { slug: string; localizedTitle: string } | null;
@@ -104,13 +133,22 @@ export function useMyCourses(locale: string) {
   });
 }
 
-export function useCatalog(locale: string) {
+export function useCatalog(locale: string, page: number, search: string) {
   const isClient = useIsClient();
+  const params = new URLSearchParams();
+  params.set("page", String(page));
+  if (search) params.set("search", search);
   return useQuery({
-    queryKey: qk.catalog(locale),
+    queryKey: qk.catalog(locale, page, search),
     queryFn: () =>
-      apiFetch<CourseSummary[]>("/academy/courses/catalog", { locale }),
+      apiFetch<Paginated<CourseSummary>>(
+        `/academy/courses/catalog?${params.toString()}`,
+        { locale },
+      ),
     enabled: isClient && !!getAccessToken(),
+    // Keep the previous page visible while the next page loads — no
+    // jarring loading flash between page numbers.
+    placeholderData: (prev) => prev,
   });
 }
 
@@ -124,6 +162,31 @@ export function useCourse(slug: string, locale: string) {
         { locale },
       ),
     enabled: isClient && !!getAccessToken() && !!slug,
+  });
+}
+
+export function useCourseLessons(
+  slug: string,
+  locale: string,
+  page: number,
+  search: string,
+  limit = 20,
+) {
+  const isClient = useIsClient();
+  const params = new URLSearchParams();
+  params.set("page", String(page));
+  params.set("limit", String(limit));
+  if (search) params.set("search", search);
+  params.set("locale", locale);
+  return useQuery({
+    queryKey: qk.courseLessons(slug, locale, page, search),
+    queryFn: () =>
+      apiFetch<CourseLessonsPage>(
+        `/academy/courses/${encodeURIComponent(slug)}/lessons?${params.toString()}`,
+        { locale },
+      ),
+    enabled: isClient && !!getAccessToken() && !!slug,
+    placeholderData: (prev) => prev,
   });
 }
 

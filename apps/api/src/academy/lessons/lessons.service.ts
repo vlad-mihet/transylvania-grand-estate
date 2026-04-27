@@ -1,5 +1,9 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
-import { LessonStatus, Prisma } from '@prisma/client';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
+import { CourseStatus, CourseVisibility, LessonStatus, Prisma } from '@prisma/client';
 import { PrismaService } from '../../prisma/prisma.service';
 import { MetricsService } from '../../metrics/metrics.service';
 import { EnrollmentsService } from '../enrollments/enrollments.service';
@@ -47,6 +51,149 @@ export class LessonsService {
       this.prisma.lesson.findUnique({ where: { id } }),
       'Lesson',
     );
+  }
+
+  /**
+   * Admin read with prev/next pointers for in-editor navigation. Mirrors the
+   * student `findForStudent` sibling slice but ignores status — admin sees
+   * draft and archived lessons too. Throws when the lesson exists but does
+   * not belong to the supplied course (cross-course access via crafted URL).
+   */
+  async findByIdForAdminWithSiblings(courseId: string, id: string) {
+    const lessons = await this.prisma.lesson.findMany({
+      where: { courseId },
+      orderBy: { order: 'asc' },
+    });
+    const idx = lessons.findIndex((l) => l.id === id);
+    if (idx < 0) throw new NotFoundException('Lesson not found');
+    const lesson = lessons[idx];
+    const prev = idx > 0 ? lessons[idx - 1] : null;
+    const next = idx < lessons.length - 1 ? lessons[idx + 1] : null;
+    return {
+      ...lesson,
+      position: idx + 1,
+      total: lessons.length,
+      prev: prev
+        ? { id: prev.id, slug: prev.slug, title: prev.title }
+        : null,
+      next: next
+        ? { id: next.id, slug: next.slug, title: next.title }
+        : null,
+    };
+  }
+
+  /**
+   * Paginated lesson list for a student's TOC view. Used by the academy
+   * `/courses/:slug` page to render a 20-per-page TOC with optional
+   * client-driven search. Same access rules as `findForStudent`: public
+   * courses bypass enrollment; `enrolled` courses require an active grant.
+   *
+   * Returns `{ data, meta }` plus `total` of *published* lessons in the
+   * course (so the academy page can derive the total page count and
+   * the resume-lesson page even when a search filter is active). Each
+   * lesson row carries its 1-based `position` in the unfiltered ordered
+   * list, plus a `completed` flag from the user's progress rows.
+   */
+  async findAllForStudent(args: {
+    userId: string;
+    courseSlug: string;
+    page: number;
+    limit: number;
+    search?: string;
+  }) {
+    const { userId, courseSlug, page, limit, search } = args;
+    const course = await this.prisma.course.findUnique({
+      where: { slug: courseSlug },
+      select: { id: true, status: true, visibility: true },
+    });
+    if (!course || course.status !== CourseStatus.published) return null;
+
+    const canRead =
+      course.visibility === CourseVisibility.public ||
+      (await this.userCanRead(userId, course.id));
+    if (!canRead) return null;
+
+    // Pull every published lesson once. Position is stable to the
+    // ordered list regardless of filter, so a search hit still says
+    // "lesson 47 of 180". 180-lesson courses fit comfortably in memory
+    // here (~10 KB) and avoid a second count() round-trip.
+    const allLessons = await this.prisma.lesson.findMany({
+      where: { courseId: course.id, status: LessonStatus.published },
+      orderBy: { order: 'asc' },
+      select: {
+        id: true,
+        slug: true,
+        order: true,
+        title: true,
+        excerpt: true,
+        type: true,
+        videoDurationSeconds: true,
+        publishedAt: true,
+        // content is needed for reading-time on text lessons. The cost
+        // here is per-course (not per-page-render) and the typed select
+        // keeps the wire payload small downstream.
+        content: true,
+      },
+    });
+
+    const filterMatch = (
+      lesson: (typeof allLessons)[number],
+      query: string,
+    ): boolean => {
+      const q = query.toLowerCase();
+      if (lesson.slug.toLowerCase().includes(q)) return true;
+      const title = lesson.title as Record<string, string | undefined>;
+      for (const value of Object.values(title)) {
+        if (value && value.toLowerCase().includes(q)) return true;
+      }
+      return false;
+    };
+
+    const filtered =
+      search && search.trim()
+        ? allLessons.filter((l) => filterMatch(l, search.trim()))
+        : allLessons;
+
+    const total = filtered.length;
+    const skip = (page - 1) * limit;
+    const slice = filtered.slice(skip, skip + limit);
+
+    const userProgress = await this.progress.getProgressForCourse(
+      userId,
+      course.id,
+    );
+
+    // Index map: id → 1-based position in the unfiltered ordered list.
+    // Computed once and reused per row so the position stays consistent
+    // when the filter is active (lesson 47 stays "47" even on page 1
+    // of search results).
+    const positionById = new Map<string, number>();
+    allLessons.forEach((l, idx) => positionById.set(l.id, idx + 1));
+
+    return {
+      data: slice.map((l) => ({
+        id: l.id,
+        slug: l.slug,
+        order: l.order,
+        position: positionById.get(l.id) ?? 0,
+        title: l.title,
+        excerpt: l.excerpt,
+        type: l.type,
+        videoDurationSeconds: l.videoDurationSeconds,
+        publishedAt: l.publishedAt,
+        content: l.content,
+        completed: !!userProgress.get(l.id)?.completedAt,
+      })),
+      meta: {
+        total,
+        page,
+        limit,
+        totalPages: Math.max(1, Math.ceil(total / limit)),
+        // Total published lessons in the course regardless of search.
+        // Lets the UI render "showing 5 of 180 (3 matched)" correctly.
+        coursePublishedTotal: allLessons.length,
+      },
+    };
   }
 
   /**

@@ -130,7 +130,23 @@
       "reviewButton": "Recitește →",
       "progressLabel": "{completed} din {total} lecții",
       "lessonCompletedBadge": "Citită",
-      "allCompletedBadge": "Completat"
+      "allCompletedBadge": "Completat",
+      "searchLessonsPlaceholder": "Caută o lecție…",
+      "searchEmpty": "Nicio lecție nu se potrivește cu „{query}”.",
+      "lessonsEmpty": "Acest curs nu are încă lecții.",
+      "jumpToResumeMessage": "Ești la lecția {position}.",
+      "jumpToResumeAction": "Mergi acolo"
+    },
+    "pagination": {
+      "ariaLabel": "Paginare",
+      "previous": "Anterioară",
+      "next": "Următoarea",
+      "previousAria": "Pagina anterioară",
+      "nextAria": "Pagina următoare",
+      "pageAria": "Mergi la pagina {page}",
+      "rangeSummary": "Afișezi {start}–{end} din {total}",
+      "singlePageSummary": "{total, plural, =1 {# rezultat} other {# rezultate}}",
+      "emptySummary": "Niciun rezultat"
     },
     "lesson": {
       "back": "Înapoi la curs",

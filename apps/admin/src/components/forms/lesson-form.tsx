@@ -32,6 +32,13 @@ interface LessonFormProps {
   mode: "create" | "edit";
   defaultValues?: Partial<LessonFormValues>;
   onSubmit: (data: LessonFormValues) => void;
+  /**
+   * Optional secondary submit handler — when provided, renders a "Save & next"
+   * button alongside the regular Save. Useful for sequential editing when
+   * a next lesson exists in the course. Validation still flows through the
+   * same Zod resolver as `onSubmit`.
+   */
+  onSubmitAndNext?: (data: LessonFormValues) => void;
   loading?: boolean;
   submissionError?: unknown;
   cancelHref: string;
@@ -53,11 +60,13 @@ export function LessonForm({
   mode,
   defaultValues,
   onSubmit,
+  onSubmitAndNext,
   loading,
   submissionError,
   cancelHref,
 }: LessonFormProps) {
   const t = useTranslations("Academy.lessonForm");
+  const tLessons = useTranslations("Academy.lessons");
   const tStatus = useTranslations("Academy.statuses");
   const tType = useTranslations("Academy.lessonTypes");
   const form = useForm<LessonFormValues>({
@@ -73,12 +82,16 @@ export function LessonForm({
 
   const type = form.watch("type") ?? "text";
 
-  const submit = form.handleSubmit((values) => {
-    // Text lessons never carry a videoUrl or videoDurationSeconds;
-    // reading time is derived from content on the server. Strip both
-    // here so a stale value from toggling type to video and back never
-    // makes it over the wire (the service rejects them anyway, but we
-    // surface a clean form payload regardless).
+  // Cleans payload before invoking either submit handler. Text lessons
+  // never carry a videoUrl or videoDurationSeconds; reading time is
+  // derived from content on the server. Strip both here so a stale value
+  // from toggling type to video and back never makes it over the wire
+  // (the service rejects them anyway, but we surface a clean form
+  // payload regardless). On create, also drop `status` — newly created
+  // lessons start in `draft` server-side.
+  const buildPayload = (
+    values: LessonFormValues,
+  ): LessonFormValues => {
     const cleaned: LessonFormValues =
       values.type === "video"
         ? values
@@ -86,11 +99,15 @@ export function LessonForm({
     if (mode === "create") {
       const { status: _status, ...rest } = cleaned;
       void _status;
-      onSubmit(rest);
-      return;
+      return rest as LessonFormValues;
     }
-    onSubmit(cleaned);
-  });
+    return cleaned;
+  };
+
+  const submit = form.handleSubmit((values) => onSubmit(buildPayload(values)));
+  const submitAndNext = onSubmitAndNext
+    ? form.handleSubmit((values) => onSubmitAndNext(buildPayload(values)))
+    : null;
 
   return (
     <form onSubmit={submit} className="flex flex-col gap-5">
@@ -303,6 +320,14 @@ export function LessonForm({
         loading={loading}
         dirty={form.formState.isDirty}
         submitLabel={mode === "create" ? t("submitCreate") : t("submitEdit")}
+        secondarySubmit={
+          submitAndNext
+            ? {
+                label: tLessons("saveAndNext"),
+                onClick: () => void submitAndNext(),
+              }
+            : undefined
+        }
       />
     </form>
   );

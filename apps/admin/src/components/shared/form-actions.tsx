@@ -16,6 +16,17 @@ interface FormActionsProps {
   dirty?: boolean;
   submitLabel?: string;
   cancelLabel?: string;
+  /**
+   * Optional secondary submit. Renders an extra primary button to the
+   * left of Save (e.g. "Save & next" for the lesson editor). The handler
+   * is invoked instead of the regular submit when this button is clicked;
+   * the parent form is responsible for routing it through `form.handleSubmit`
+   * so validation still applies.
+   */
+  secondarySubmit?: {
+    label: string;
+    onClick: () => void;
+  };
 }
 
 /**
@@ -30,6 +41,7 @@ export function FormActions({
   dirty = false,
   submitLabel,
   cancelLabel,
+  secondarySubmit,
 }: FormActionsProps) {
   const tc = useTranslations("Common");
   const router = useRouter();
@@ -60,6 +72,17 @@ export function FormActions({
         >
           {cancelLabel ?? tc("cancel")}
         </Button>
+        {secondarySubmit ? (
+          <Button
+            type="button"
+            variant="outline"
+            size="sm"
+            disabled={loading}
+            onClick={secondarySubmit.onClick}
+          >
+            {secondarySubmit.label}
+          </Button>
+        ) : null}
         <Button
           type="submit"
           size="sm"

@@ -69,6 +69,7 @@
     "placeholder": "Sari la, creează, rulează…",
     "empty": "Niciun rezultat.",
     "groups": {
+      "context": "Pe această pagină",
       "navigate": "Navigare",
       "create": "Creează",
       "finance": "Financiar",
@@ -1075,7 +1076,18 @@
       "videoDuration": "{minutes}:{seconds}",
       "durationNone": "—",
       "deleteTitle": "Ștergi această lecție?",
-      "deleteDescription": "Lecția e eliminată permanent. Studenții pierd accesul imediat."
+      "deleteDescription": "Lecția e eliminată permanent. Studenții pierd accesul imediat.",
+      "previousLesson": "Anterioară",
+      "nextLesson": "Următoarea",
+      "lessonOf": "Lecția {position} din {total}",
+      "prevLessonAria": "Lecția anterioară: {title}",
+      "nextLessonAria": "Lecția următoare: {title}",
+      "searchPlaceholder": "Caută o lecție…",
+      "searchEmpty": "Nicio lecție nu se potrivește căutării.",
+      "reorderDisabledHint": "Reordonarea e dezactivată cât timp filtrezi.",
+      "railHeading": "Lecții",
+      "saveAndNext": "Salvează și mergi la următoarea",
+      "lastLessonReached": "Ești pe ultima lecție."
     },
     "lessonForm": {
       "createTitle": "Lecție nouă",

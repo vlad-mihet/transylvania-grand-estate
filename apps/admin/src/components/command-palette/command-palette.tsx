@@ -20,6 +20,10 @@ import {
   type CommandAction,
   type CommandGroup,
 } from "@/components/command-palette/actions";
+import {
+  DynamicActionsProvider,
+  useDynamicActions,
+} from "@/components/command-palette/dynamic-actions-context";
 import { Kbd } from "@/components/shared/mono";
 import { cn } from "@tge/utils";
 
@@ -43,8 +47,10 @@ export function CommandPaletteProvider({ children }: { children: ReactNode }) {
   );
   return (
     <PaletteContext.Provider value={value}>
-      {children}
-      <CommandPalette />
+      <DynamicActionsProvider>
+        {children}
+        <CommandPalette />
+      </DynamicActionsProvider>
     </PaletteContext.Provider>
   );
 }
@@ -56,7 +62,13 @@ export function useCommandPalette(): PaletteContextValue {
   return ctx;
 }
 
-const GROUP_ORDER: CommandGroup[] = ["navigate", "create", "finance", "system"];
+const GROUP_ORDER: CommandGroup[] = [
+  "context",
+  "navigate",
+  "create",
+  "finance",
+  "system",
+];
 
 function CommandPalette() {
   const { open, setOpen } = useCommandPalette();
@@ -82,8 +94,13 @@ function CommandPalette() {
     return () => window.removeEventListener("keydown", onKey);
   }, [open, setOpen]);
 
+  const dynamic = useDynamicActions();
+
   const actions = useMemo<CommandAction[]>(() => {
-    return COMMAND_ACTIONS.filter((a) => {
+    // Static actions come first in the merged list, then dynamic. The
+    // GROUP_ORDER below floats the `context` group to the top regardless,
+    // so contextual entries (e.g. lessons of the current course) lead.
+    return [...COMMAND_ACTIONS, ...dynamic].filter((a) => {
       // Permission gate.
       if (a.requires && !can(a.requires)) return false;
       // Reachability gate for AGENT — read perms (e.g. `inquiry.read`,
@@ -96,7 +113,7 @@ function CommandPalette() {
       if (role === "AGENT" && !isPathAllowedForAgent(a.href)) return false;
       return true;
     });
-  }, [can, role]);
+  }, [can, role, dynamic]);
 
   const grouped = useMemo(() => {
     const map = new Map<CommandGroup, CommandAction[]>();
@@ -157,7 +174,9 @@ function CommandPalette() {
           >
             {items.map((action) => {
               const Icon = action.icon;
-              const label = t(`actions.${action.id}`);
+              // Inline `label` wins for dynamic, data-driven entries (lesson
+              // titles, etc.); fall back to the i18n registry for static actions.
+              const label = action.label ?? t(`actions.${action.id}`);
               return (
                 <Command.Item
                   key={action.id}

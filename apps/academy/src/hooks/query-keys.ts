@@ -7,9 +7,16 @@
 export const qk = {
   me: () => ["academy", "me"] as const,
   myCourses: (locale: string) => ["academy", "my-courses", locale] as const,
-  catalog: (locale: string) => ["academy", "catalog", locale] as const,
+  catalog: (locale: string, page: number, search: string) =>
+    ["academy", "catalog", locale, page, search] as const,
   course: (slug: string, locale: string) =>
     ["academy", "course", slug, locale] as const,
+  courseLessons: (
+    slug: string,
+    locale: string,
+    page: number,
+    search: string,
+  ) => ["academy", "course-lessons", slug, locale, page, search] as const,
   lesson: (slug: string, lessonSlug: string, locale: string) =>
     ["academy", "lesson", slug, lessonSlug, locale] as const,
 };

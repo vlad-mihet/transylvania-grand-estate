@@ -102,7 +102,34 @@ export const updateLessonSchema = createLessonSchema
   })
   .strict();
 
+/**
+ * Student-facing catalog query. Paginated list of public-visibility courses.
+ * Optional search hits the localized title + slug. Default page size mirrors
+ * the global pagination default (12) and renders well in the 2-column card grid.
+ */
+export const studentCatalogQuerySchema = paginationSchema.extend({
+  search: z.string().max(200).optional(),
+});
+export type StudentCatalogQueryInput = z.infer<typeof studentCatalogQuerySchema>;
+
+/**
+ * Student-facing course lessons query. Default page size 20 fits the
+ * "smart paginated TOC" UX (page numbers + auto-jump to the resume page).
+ * `search` filters by lesson title (any locale) or slug.
+ */
+export const studentLessonsQuerySchema = paginationSchema.extend({
+  limit: z.coerce.number().int().min(1).max(100).default(20),
+  search: z.string().max(200).optional(),
+});
+export type StudentLessonsQueryInput = z.infer<typeof studentLessonsQuerySchema>;
+
 export const queryLessonSchema = paginationSchema.extend({
+  // Override the global pagination cap of 100. The admin course-detail page
+  // needs the FULL lesson list in one shot — drag-and-drop reorder posts
+  // every lesson id back to the server, and the reorder endpoint rejects
+  // any payload that doesn't cover the course exactly. Soft cap matches
+  // reorderLessonsSchema's 500.
+  limit: z.coerce.number().int().min(1).max(500).default(12),
   status: z.nativeEnum(LessonStatus).optional(),
   type: lessonTypeSchema.optional(),
   sort: z.enum(["order", "newest", "oldest"]).optional(),

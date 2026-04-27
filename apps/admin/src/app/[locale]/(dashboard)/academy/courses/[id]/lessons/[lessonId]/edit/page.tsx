@@ -10,9 +10,16 @@ import { Link } from "@/i18n/navigation";
 import { usePermissions } from "@/components/auth/auth-provider";
 import { LessonForm } from "@/components/forms/lesson-form";
 import { FormPageShell } from "@/components/resource/form-page-shell";
+import { LessonPrevNext } from "@/components/academy/lesson-prev-next";
 import { LoadingState } from "@tge/ui";
 import type { LessonFormValues } from "@/lib/validations/academy";
 import type { LessonStatus, LessonType } from "@prisma/client";
+
+type LessonSibling = {
+  id: string;
+  slug: string;
+  title: Record<string, string | undefined>;
+};
 
 type Lesson = {
   id: string;
@@ -26,6 +33,10 @@ type Lesson = {
   videoUrl: string | null;
   videoDurationSeconds: number | null;
   status: LessonStatus;
+  position: number;
+  total: number;
+  prev: LessonSibling | null;
+  next: LessonSibling | null;
 };
 
 export default function EditAcademyLessonPage() {
@@ -52,15 +63,15 @@ export default function EditAcademyLessonPage() {
   });
 
   const updateMutation = useMutation({
-    mutationFn: (input: LessonFormValues) =>
+    mutationFn: (vars: { input: LessonFormValues; advanceTo: string | null }) =>
       apiClient<Lesson>(
         `/admin/academy/courses/${params.id}/lessons/${params.lessonId}`,
         {
           method: "PATCH",
-          body: input,
+          body: vars.input,
         },
-      ),
-    onSuccess: () => {
+      ).then((res) => ({ res, advanceTo: vars.advanceTo })),
+    onSuccess: ({ advanceTo }) => {
       queryClient.invalidateQueries({
         queryKey: ["academy-lesson", params.lessonId],
       });
@@ -68,7 +79,13 @@ export default function EditAcademyLessonPage() {
         queryKey: ["academy-lessons", params.id],
       });
       toast.success(tt("lessonSaved"));
-      router.push(`/${locale}/academy/courses/${params.id}`);
+      if (advanceTo) {
+        router.push(
+          `/${locale}/academy/courses/${params.id}/lessons/${advanceTo}/edit`,
+        );
+      } else {
+        router.push(`/${locale}/academy/courses/${params.id}`);
+      }
     },
   });
 
@@ -126,10 +143,28 @@ export default function EditAcademyLessonPage() {
         </Link>
       }
     >
+      <LessonPrevNext
+        courseId={params.id}
+        position={lesson.position}
+        total={lesson.total}
+        prev={lesson.prev}
+        next={lesson.next}
+      />
       <LessonForm
         mode="edit"
         defaultValues={defaults}
-        onSubmit={(values) => updateMutation.mutate(values)}
+        onSubmit={(values) =>
+          updateMutation.mutate({ input: values, advanceTo: null })
+        }
+        onSubmitAndNext={
+          lesson.next
+            ? (values) =>
+                updateMutation.mutate({
+                  input: values,
+                  advanceTo: lesson.next!.id,
+                })
+            : undefined
+        }
         loading={updateMutation.isPending}
         submissionError={updateMutation.error}
         cancelHref={`/academy/courses/${params.id}`}

@@ -69,6 +69,7 @@
     "placeholder": "Jump to, create, run…",
     "empty": "No matches.",
     "groups": {
+      "context": "On this page",
       "navigate": "Navigate",
       "create": "Create",
       "finance": "Finance",
@@ -1075,7 +1076,18 @@
       "videoDuration": "{minutes}:{seconds}",
       "durationNone": "—",
       "deleteTitle": "Delete this lesson?",
-      "deleteDescription": "This removes the lesson permanently. Students lose access immediately."
+      "deleteDescription": "This removes the lesson permanently. Students lose access immediately.",
+      "previousLesson": "Previous",
+      "nextLesson": "Next",
+      "lessonOf": "Lesson {position} of {total}",
+      "prevLessonAria": "Previous lesson: {title}",
+      "nextLessonAria": "Next lesson: {title}",
+      "searchPlaceholder": "Search lessons…",
+      "searchEmpty": "No lessons match your search.",
+      "reorderDisabledHint": "Reordering is disabled while filtering.",
+      "railHeading": "Lessons",
+      "saveAndNext": "Save & next",
+      "lastLessonReached": "You're on the last lesson."
     },
     "lessonForm": {
       "createTitle": "New lesson",

@@ -69,6 +69,7 @@
     "placeholder": "Springe zu, erstellen, ausführen…",
     "empty": "Keine Treffer.",
     "groups": {
+      "context": "Auf dieser Seite",
       "navigate": "Navigation",
       "create": "Erstellen",
       "finance": "Finanzen",
@@ -1075,7 +1076,18 @@
       "videoDuration": "{minutes}:{seconds}",
       "durationNone": "—",
       "deleteTitle": "Diese Lektion löschen?",
-      "deleteDescription": "Die Lektion wird dauerhaft entfernt. Studierende verlieren sofort den Zugriff."
+      "deleteDescription": "Die Lektion wird dauerhaft entfernt. Studierende verlieren sofort den Zugriff.",
+      "previousLesson": "Vorherige",
+      "nextLesson": "Nächste",
+      "lessonOf": "Lektion {position} von {total}",
+      "prevLessonAria": "Vorherige Lektion: {title}",
+      "nextLessonAria": "Nächste Lektion: {title}",
+      "searchPlaceholder": "Lektion suchen…",
+      "searchEmpty": "Keine Lektion entspricht der Suche.",
+      "reorderDisabledHint": "Neuanordnung ist während des Filterns deaktiviert.",
+      "railHeading": "Lektionen",
+      "saveAndNext": "Speichern und weiter",
+      "lastLessonReached": "Sie sind bei der letzten Lektion."
     },
     "lessonForm": {
       "createTitle": "Neue Lektion",

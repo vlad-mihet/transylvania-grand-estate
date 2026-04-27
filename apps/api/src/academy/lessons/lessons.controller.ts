@@ -21,6 +21,7 @@ import {
   CreateLessonDto,
   UpdateLessonDto,
   QueryLessonDto,
+  StudentLessonsQueryDto,
 } from './dto/lessons.dto';
 import { ReorderLessonsDto } from './dto/reorder-lessons.dto';
 import { Roles } from '../../common/decorators/roles.decorator';
@@ -72,8 +73,11 @@ export class AdminLessonsController {
 
   @Roles(AdminRole.EDITOR, AdminRole.ADMIN, AdminRole.SUPER_ADMIN)
   @Get(':id')
-  async findOne(@Param('id', ParseUUIDPipe) id: string) {
-    return this.lessonsService.findByIdForAdmin(id);
+  async findOne(
+    @Param('courseId', ParseUUIDPipe) courseId: string,
+    @Param('id', ParseUUIDPipe) id: string,
+  ) {
+    return this.lessonsService.findByIdForAdminWithSiblings(courseId, id);
   }
 
   @Roles(AdminRole.EDITOR, AdminRole.ADMIN, AdminRole.SUPER_ADMIN)
@@ -110,6 +114,62 @@ export class StudentLessonsController {
     private readonly lessonsService: LessonsService,
     private readonly metrics: MetricsService,
   ) {}
+
+  /**
+   * Paginated lesson list for a student's TOC view. Default 20 per page —
+   * tuned for the "smart paginated" UX where the academy page auto-jumps
+   * to the page containing the resume lesson on first load.
+   */
+  @Get()
+  async findAll(
+    @CurrentAcademyUser() user: AcademyUserPayload,
+    @Param('courseSlug') courseSlug: string,
+    @Query() query: StudentLessonsQueryDto,
+    @Query('locale') localeRaw?: string,
+  ) {
+    const { page = 1, limit = 20, search } = query;
+    const result = await this.lessonsService.findAllForStudent({
+      userId: user.id,
+      courseSlug,
+      page,
+      limit,
+      search,
+    });
+    if (!result) throw new NotFoundException('Course not found');
+    const locale = normalizeLocale(localeRaw);
+    return {
+      data: result.data.map((l) => {
+        const title = pickLocalized(
+          l.title as Record<string, string | undefined>,
+          locale,
+        );
+        const content = pickLocalized(
+          l.content as Record<string, string | undefined>,
+          locale,
+        );
+        return {
+          id: l.id,
+          slug: l.slug,
+          order: l.order,
+          position: l.position,
+          title: l.title,
+          excerpt: l.excerpt,
+          type: l.type,
+          readingTimeMinutes:
+            l.type === 'text'
+              ? computeReadingTimeMinutes(content.text)
+              : null,
+          videoDurationSeconds:
+            l.type === 'video' ? l.videoDurationSeconds : null,
+          publishedAt: l.publishedAt?.toISOString() ?? null,
+          completed: l.completed,
+          servedLocale: title.servedLocale,
+          localizedTitle: title.text,
+        };
+      }),
+      meta: result.meta,
+    };
+  }
 
   @Get(':lessonSlug')
   async findOne(

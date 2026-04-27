@@ -130,7 +130,23 @@
       "allCompletedBadge": "Completed",
       "readingBadge": "Reading",
       "videoBadge": "Video",
-      "translationPendingBadge": "Available in {locale}"
+      "translationPendingBadge": "Available in {locale}",
+      "searchLessonsPlaceholder": "Search lessons…",
+      "searchEmpty": "No lessons match “{query}”.",
+      "lessonsEmpty": "This course has no lessons yet.",
+      "jumpToResumeMessage": "You're currently on lesson {position}.",
+      "jumpToResumeAction": "Jump there"
+    },
+    "pagination": {
+      "ariaLabel": "Pagination",
+      "previous": "Previous",
+      "next": "Next",
+      "previousAria": "Previous page",
+      "nextAria": "Next page",
+      "pageAria": "Go to page {page}",
+      "rangeSummary": "Showing {start}–{end} of {total}",
+      "singlePageSummary": "{total, plural, =1 {# result} other {# results}}",
+      "emptySummary": "No results"
     },
     "lesson": {
       "back": "Back to course",

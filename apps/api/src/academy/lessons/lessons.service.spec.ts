@@ -93,6 +93,142 @@ describe('LessonsService.reorder', () => {
     expect(tx).not.toHaveBeenCalled();
   });
 
+  it('returns prev/next siblings for admin in-editor navigation regardless of status', async () => {
+    // The admin sibling chain must include drafts and archived lessons —
+    // the editor is the surface used to publish them, so they have to be
+    // reachable via prev/next. Order is by `order` ASC.
+    const A = { id: LESSON_A, courseId: COURSE_ID, slug: 'a', order: 10, status: 'archived', title: { ro: 'Unu' } };
+    const B = { id: LESSON_B, courseId: COURSE_ID, slug: 'b', order: 20, status: 'draft', title: { ro: 'Doi' } };
+    const C = { id: LESSON_C, courseId: COURSE_ID, slug: 'c', order: 30, status: 'published', title: { ro: 'Trei' } };
+    const prisma = {
+      lesson: {
+        findMany: jest.fn().mockResolvedValue([A, B, C]),
+      },
+    } as unknown as PrismaService;
+    const service = new LessonsService(prisma, makeMetrics(), makeEnrollments(), makeProgress());
+
+    const first = await service.findByIdForAdminWithSiblings(COURSE_ID, LESSON_A);
+    expect(first.position).toBe(1);
+    expect(first.total).toBe(3);
+    expect(first.prev).toBeNull();
+    expect(first.next).toEqual({ id: LESSON_B, slug: 'b', title: { ro: 'Doi' } });
+
+    const middle = await service.findByIdForAdminWithSiblings(COURSE_ID, LESSON_B);
+    expect(middle.position).toBe(2);
+    expect(middle.prev).toEqual({ id: LESSON_A, slug: 'a', title: { ro: 'Unu' } });
+    expect(middle.next).toEqual({ id: LESSON_C, slug: 'c', title: { ro: 'Trei' } });
+
+    const last = await service.findByIdForAdminWithSiblings(COURSE_ID, LESSON_C);
+    expect(last.position).toBe(3);
+    expect(last.prev).toEqual({ id: LESSON_B, slug: 'b', title: { ro: 'Doi' } });
+    expect(last.next).toBeNull();
+  });
+
+  it('paginates the student TOC and preserves position when filtered', async () => {
+    // 5 published lessons. Page 2 of 2 (limit 2) → returns lessons 3-4
+    // with position 3 + 4 (NOT 1 + 2). When filtered to lessons whose
+    // slug includes "two", only lesson 2 returns — but its position
+    // remains 2, not 1.
+    const lessons = Array.from({ length: 5 }, (_, i) => ({
+      id: `00000000-0000-0000-0000-000000000${(i + 1).toString().padStart(3, '0')}`,
+      slug: ['one', 'two', 'three', 'four', 'five'][i],
+      order: (i + 1) * 10,
+      title: { ro: ['Unu', 'Doi', 'Trei', 'Patru', 'Cinci'][i] },
+      excerpt: { ro: '' },
+      content: { ro: 'continut' },
+      type: 'text',
+      videoDurationSeconds: null,
+      publishedAt: new Date('2026-04-20'),
+    }));
+    const prisma = {
+      course: {
+        findUnique: jest.fn().mockResolvedValue({
+          id: COURSE_ID,
+          status: 'published',
+          visibility: 'public',
+        }),
+      },
+      lesson: {
+        findMany: jest.fn().mockResolvedValue(lessons),
+      },
+      academyEnrollment: {
+        findFirst: jest.fn().mockResolvedValue(null),
+      },
+    } as unknown as PrismaService;
+    const service = new LessonsService(
+      prisma,
+      makeMetrics(),
+      makeEnrollments(),
+      makeProgress(),
+    );
+
+    const page2 = await service.findAllForStudent({
+      userId: 'user-1',
+      courseSlug: 'demo',
+      page: 2,
+      limit: 2,
+    });
+    expect(page2).not.toBeNull();
+    expect(page2!.data).toHaveLength(2);
+    expect(page2!.data[0].position).toBe(3);
+    expect(page2!.data[1].position).toBe(4);
+    expect(page2!.meta.total).toBe(5);
+    expect(page2!.meta.totalPages).toBe(3);
+    expect(page2!.meta.coursePublishedTotal).toBe(5);
+
+    const filtered = await service.findAllForStudent({
+      userId: 'user-1',
+      courseSlug: 'demo',
+      page: 1,
+      limit: 20,
+      search: 'two',
+    });
+    expect(filtered!.data).toHaveLength(1);
+    expect(filtered!.data[0].position).toBe(2);
+    expect(filtered!.meta.total).toBe(1);
+    expect(filtered!.meta.coursePublishedTotal).toBe(5);
+  });
+
+  it('returns null when the course is not published or accessible', async () => {
+    // Draft course -> not visible to students.
+    const prisma = {
+      course: {
+        findUnique: jest.fn().mockResolvedValue({
+          id: COURSE_ID,
+          status: 'draft',
+          visibility: 'public',
+        }),
+      },
+    } as unknown as PrismaService;
+    const service = new LessonsService(
+      prisma,
+      makeMetrics(),
+      makeEnrollments(),
+      makeProgress(),
+    );
+    const result = await service.findAllForStudent({
+      userId: 'user-1',
+      courseSlug: 'demo',
+      page: 1,
+      limit: 20,
+    });
+    expect(result).toBeNull();
+  });
+
+  it('throws NotFoundException when the lesson does not belong to the course', async () => {
+    const prisma = {
+      lesson: {
+        findMany: jest.fn().mockResolvedValue([
+          { id: LESSON_A, courseId: COURSE_ID, slug: 'a', order: 10, title: {} },
+        ]),
+      },
+    } as unknown as PrismaService;
+    const service = new LessonsService(prisma, makeMetrics(), makeEnrollments(), makeProgress());
+    await expect(
+      service.findByIdForAdminWithSiblings(COURSE_ID, FOREIGN_LESSON),
+    ).rejects.toThrow(NotFoundException);
+  });
+
   it('writes sparse orders (10/20/30…) in a single transaction on the happy path', async () => {
     const { prisma, tx } = makePrisma([LESSON_A, LESSON_B, LESSON_C]);
     const metrics = makeMetrics();

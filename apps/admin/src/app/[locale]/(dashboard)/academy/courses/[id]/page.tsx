@@ -4,8 +4,8 @@ import { useEffect, useState } from "react";
 import { useParams, notFound } from "next/navigation";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useLocale, useTranslations } from "next-intl";
-import { Button } from "@tge/ui";
-import { GripVertical, Plus, Trash2 } from "lucide-react";
+import { Button, Input } from "@tge/ui";
+import { GripVertical, Plus, Search, Trash2 } from "lucide-react";
 import {
   DndContext,
   KeyboardSensor,
@@ -80,7 +80,11 @@ export default function AcademyCourseDetailPage() {
     queryKey: ["academy-lessons", params.id],
     queryFn: () =>
       apiClient<LessonList>(
-        `/admin/academy/courses/${params.id}/lessons?limit=100&sort=order`,
+        // limit=500 matches queryLessonSchema's cap; the reorder endpoint
+        // requires the entire course's lesson list in one shot, so any
+        // pagination here would silently break drag-and-drop on large
+        // courses (e.g. real-estate-fundamentals at 180+ lessons).
+        `/admin/academy/courses/${params.id}/lessons?limit=500&sort=order`,
         { envelope: true },
       ),
   });
@@ -89,6 +93,19 @@ export default function AcademyCourseDetailPage() {
   useEffect(() => {
     if (lessonsQuery.data) setOrderedLessons(lessonsQuery.data.data);
   }, [lessonsQuery.data]);
+
+  const [searchQuery, setSearchQuery] = useState("");
+  const trimmedQuery = searchQuery.trim().toLowerCase();
+  const isFiltered = trimmedQuery.length > 0;
+  const visibleLessons = isFiltered
+    ? orderedLessons.filter((lesson) => {
+        if (lesson.slug.toLowerCase().includes(trimmedQuery)) return true;
+        for (const value of Object.values(lesson.title)) {
+          if (value && value.toLowerCase().includes(trimmedQuery)) return true;
+        }
+        return false;
+      })
+    : orderedLessons;
 
   const publishMutation = useMutation({
     mutationFn: () =>
@@ -240,6 +257,25 @@ export default function AcademyCourseDetailPage() {
 
       <p className="-mt-4 text-xs text-muted-foreground">{tLessons("hint")}</p>
 
+      <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+        <div className="relative w-full sm:max-w-sm">
+          <Search className="pointer-events-none absolute left-2.5 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-muted-foreground" />
+          <Input
+            type="search"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            placeholder={tLessons("searchPlaceholder")}
+            className="h-8 pl-8 text-sm"
+            aria-label={tLessons("searchPlaceholder")}
+          />
+        </div>
+        {isFiltered ? (
+          <p className="text-xs text-muted-foreground">
+            {tLessons("reorderDisabledHint")}
+          </p>
+        ) : null}
+      </div>
+
       {/*
         DnD context sits OUTSIDE the table element. @dnd-kit renders a
         hidden <div> accessibility live region as a child of DndContext;
@@ -253,14 +289,24 @@ export default function AcademyCourseDetailPage() {
         onDragEnd={onDragEnd}
       >
         <SortableContext
-          items={orderedLessons.map((l) => l.id)}
+          items={visibleLessons.map((l) => l.id)}
           strategy={verticalListSortingStrategy}
+          // Disable sortable while a search filter is active — the filtered
+          // view doesn't represent the real order, so a drag would yield
+          // nonsense. The reorder endpoint also requires the full lesson
+          // sequence; partial reordering would 400.
+          disabled={isFiltered}
         >
           <div className="overflow-hidden rounded-md border border-border">
             <table className="w-full text-sm">
               <thead className="bg-muted text-left text-xs uppercase tracking-wider text-muted-foreground">
                 <tr>
-                  <th className="w-10 px-2 py-3" aria-label={tLessons("dragHandleAria")} />
+                  {!isFiltered ? (
+                    <th
+                      className="w-10 px-2 py-3"
+                      aria-label={tLessons("dragHandleAria")}
+                    />
+                  ) : null}
                   <th className="w-12 px-4 py-3">{tLessons("columnPosition")}</th>
                   <th className="px-4 py-3">{tLessons("columnTitle")}</th>
                   <th className="px-4 py-3">{tLessons("columnType")}</th>
@@ -270,26 +316,35 @@ export default function AcademyCourseDetailPage() {
                 </tr>
               </thead>
               <tbody>
-                {orderedLessons.length === 0 ? (
+                {visibleLessons.length === 0 ? (
                   <tr>
                     <td
-                      colSpan={7}
+                      colSpan={isFiltered ? 6 : 7}
                       className="px-4 py-6 text-center text-sm text-muted-foreground"
                     >
-                      {tLessons("empty")}
+                      {isFiltered ? tLessons("searchEmpty") : tLessons("empty")}
                     </td>
                   </tr>
                 ) : (
-                  orderedLessons.map((lesson, idx) => (
-                    <SortableLessonRow
-                      key={lesson.id}
-                      lesson={lesson}
-                      index={idx}
-                      locale={locale}
-                      courseId={course.id}
-                      onDelete={() => setDeleteLessonId(lesson.id)}
-                    />
-                  ))
+                  visibleLessons.map((lesson) => {
+                    // Position is the lesson's place in the FULL ordered
+                    // list, not the filtered view — so a search result
+                    // still shows "lesson 47" rather than reshuffled "1, 2, 3".
+                    const idx = orderedLessons.findIndex(
+                      (l) => l.id === lesson.id,
+                    );
+                    return (
+                      <SortableLessonRow
+                        key={lesson.id}
+                        lesson={lesson}
+                        index={idx}
+                        locale={locale}
+                        courseId={course.id}
+                        onDelete={() => setDeleteLessonId(lesson.id)}
+                        showDragHandle={!isFiltered}
+                      />
+                    );
+                  })
                 )}
               </tbody>
             </table>
@@ -317,12 +372,14 @@ function SortableLessonRow({
   locale,
   courseId,
   onDelete,
+  showDragHandle,
 }: {
   lesson: Lesson;
   index: number;
   locale: string;
   courseId: string;
   onDelete: () => void;
+  showDragHandle: boolean;
 }) {
   const tLessons = useTranslations("Academy.lessons");
   const tType = useTranslations("Academy.lessonTypes");
@@ -353,16 +410,18 @@ function SortableLessonRow({
       className="border-t border-border"
       {...attributes}
     >
-      <td className="w-10 cursor-grab px-2 py-3 text-muted-foreground active:cursor-grabbing">
-        <button
-          type="button"
-          className="inline-flex h-6 w-6 items-center justify-center rounded hover:bg-muted"
-          aria-label={tLessons("dragRowAria", { position: index + 1 })}
-          {...listeners}
-        >
-          <GripVertical className="h-4 w-4" />
-        </button>
-      </td>
+      {showDragHandle ? (
+        <td className="w-10 cursor-grab px-2 py-3 text-muted-foreground active:cursor-grabbing">
+          <button
+            type="button"
+            className="inline-flex h-6 w-6 items-center justify-center rounded hover:bg-muted"
+            aria-label={tLessons("dragRowAria", { position: index + 1 })}
+            {...listeners}
+          >
+            <GripVertical className="h-4 w-4" />
+          </button>
+        </td>
+      ) : null}
       <td className="px-4 py-3">
         <Mono className="text-muted-foreground">
           {String(index + 1).padStart(2, "0")}
