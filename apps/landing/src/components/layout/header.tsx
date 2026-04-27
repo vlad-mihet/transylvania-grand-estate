@@ -113,7 +113,7 @@ export function Header({ developers }: HeaderProps) {
             </div>
 
             {/* Right: language switcher */}
-            <LanguageSwitcher variant="inline" />
+            <LanguageSwitcher />
           </div>
         </Container>
       </div>

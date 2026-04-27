@@ -5,6 +5,7 @@ import { useRouter } from "@/i18n/navigation";
 import { usePathname } from "@/i18n/navigation";
 import { useParams } from "next/navigation";
 import { useLocale } from "next-intl";
+import { locales, localeAutonyms } from "@tge/i18n";
 import {
   ChevronRight,
   Globe,
@@ -35,17 +36,6 @@ import { useEffect, useMemo, useState } from "react";
 import { useTheme } from "next-themes";
 import { ChangePasswordDialog } from "@/components/auth/change-password-dialog";
 import { GlobalSearch } from "@/components/global-search/global-search";
-
-// Autonyms — each locale rendered in its own language. This is the canonical
-// pattern for locale switchers (matches Wikipedia, Google, etc.); it lets a
-// user who's stuck in the wrong locale recognise their target without first
-// having to translate the menu.
-const LOCALE_OPTIONS = [
-  { code: "ro", label: "Română" },
-  { code: "en", label: "English" },
-  { code: "fr", label: "Français" },
-  { code: "de", label: "Deutsch" },
-] as const;
 
 export function AdminHeader() {
   const { user, logout } = useAuth();
@@ -186,13 +176,13 @@ export function AdminHeader() {
                     value={locale}
                     onValueChange={handleLocaleChange}
                   >
-                    {LOCALE_OPTIONS.map((l) => (
+                    {locales.map((code) => (
                       <DropdownMenuRadioItem
-                        key={l.code}
-                        value={l.code}
+                        key={code}
+                        value={code}
                         className="gap-2"
                       >
-                        {l.label}
+                        {localeAutonyms[code]}
                       </DropdownMenuRadioItem>
                     ))}
                   </DropdownMenuRadioGroup>

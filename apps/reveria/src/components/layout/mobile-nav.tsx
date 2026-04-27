@@ -76,7 +76,7 @@ export function MobileNav() {
           </nav>
 
           <div className="px-6 py-6 border-t border-border space-y-4">
-            <LanguageSwitcher variant="inline" />
+            <LanguageSwitcher />
             <InquiryTrigger context={{ type: "general" }} onClick={() => setOpen(false)}>
               <Button className="w-full h-11 bg-primary text-primary-foreground hover:bg-primary/90">
                 {t("scheduleViewing")}

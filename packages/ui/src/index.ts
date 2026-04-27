@@ -31,6 +31,7 @@ export { ScrollReveal } from "./components/shared/scroll-reveal";
 export { SectionHeading } from "./components/shared/section-heading";
 export { EmptyState, ErrorState, LoadingState } from "./components/shared/states";
 export { SubmitButton } from "./components/shared/submit-button";
+export { LanguageSwitcher, type LanguageSwitcherProps } from "./components/shared/language-switcher";
 
 // Property Components
 export {

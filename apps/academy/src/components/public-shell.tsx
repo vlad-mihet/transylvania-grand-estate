@@ -77,7 +77,7 @@ export function PublicShell({ children }: { children: React.ReactNode }) {
           <span className="text-sm font-semibold tracking-wide text-[color:var(--color-primary)] lg:hidden">
             {t("appName")}
           </span>
-          <LocaleSwitcher />
+          <LocaleSwitcher variant="compact" />
         </header>
 
         <div className="flex flex-1 items-center justify-center px-6 pb-12 sm:px-10">

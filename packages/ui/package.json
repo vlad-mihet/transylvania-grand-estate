@@ -20,6 +20,7 @@
     "@tge/utils": "workspace:*",
     "@tge/hooks": "workspace:*",
     "@tge/types": "workspace:*",
+    "@tge/i18n": "workspace:*",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "lucide-react": "^0.575.0",

@@ -224,7 +224,7 @@ export function MobileNav() {
           {/* Bottom section */}
           <div className="px-6 py-6 border-t border-copper/10 space-y-5">
             {/* Language switcher */}
-            <LanguageSwitcher variant="inline" />
+            <LanguageSwitcher />
 
             {/* Contact info */}
             <div className="flex flex-col gap-2 text-sm text-cream-muted/70">

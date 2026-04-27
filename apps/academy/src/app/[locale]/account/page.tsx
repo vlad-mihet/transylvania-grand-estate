@@ -8,6 +8,7 @@ import { useTranslations } from "next-intl";
 import { toast } from "sonner";
 import { ErrorState, SubmitButton } from "@tge/ui";
 import { useApiFormErrors } from "@tge/hooks";
+import { locales, localeAutonyms } from "@tge/i18n";
 import { useRouter } from "@/i18n/navigation";
 import { AppHeader } from "@/components/app-header";
 import { AccountSkeleton } from "@/components/skeletons";
@@ -19,13 +20,6 @@ import {
   useResendVerification,
   useUpdateProfile,
 } from "@/hooks/mutations";
-
-const LOCALE_OPTIONS: readonly { code: "ro" | "en" | "fr" | "de"; label: string }[] = [
-  { code: "ro", label: "Română" },
-  { code: "en", label: "English" },
-  { code: "fr", label: "Français" },
-  { code: "de", label: "Deutsch" },
-];
 
 const profileSchema = z.object({
   name: z.string().min(2).max(200),
@@ -199,9 +193,9 @@ export default function AccountPage() {
                 {...profileForm.register("locale")}
                 className="w-full rounded-md border border-[color:var(--color-border)] px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-[color:var(--color-ring)]"
               >
-                {LOCALE_OPTIONS.map((l) => (
-                  <option key={l.code} value={l.code}>
-                    {l.label}
+                {locales.map((code) => (
+                  <option key={code} value={code}>
+                    {localeAutonyms[code]}
                   </option>
                 ))}
               </select>
