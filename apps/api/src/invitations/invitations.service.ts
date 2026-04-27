@@ -364,8 +364,6 @@ export class InvitationsService {
       throw new ConflictException('Invitation is missing its linked Agent');
     }
 
-    await this.ensureEmailNotTaken(invitation.email);
-
     const passwordHash = await bcrypt.hash(dto.password, BCRYPT_COST);
     const fullName = `${invitation.agent.firstName} ${invitation.agent.lastName}`.trim();
 
@@ -389,6 +387,11 @@ export class InvitationsService {
       if (claim.count === 0) {
         throw new ConflictException('Invitation was already claimed');
       }
+      // Email uniqueness check runs inside the transaction so it serialises
+      // behind the atomic claim's row locks. Without this, two parallel
+      // accepts could pass an out-of-tx findUnique and surface a raw P2002
+      // on AdminUser create instead of the polished EMAIL_TAKEN response.
+      await this.ensureEmailNotTaken(tx, invitation.email);
       const user = await tx.adminUser.create({
         data: {
           email: invitation.email,
@@ -435,8 +438,6 @@ export class InvitationsService {
       });
     }
 
-    await this.ensureEmailNotTaken(invitation.email);
-
     const fullName =
       `${invitation.agent.firstName} ${invitation.agent.lastName}`.trim();
 
@@ -455,6 +456,7 @@ export class InvitationsService {
       if (claim.count === 0) {
         throw new ConflictException('Invitation was already claimed');
       }
+      await this.ensureEmailNotTaken(tx, invitation.email);
       const user = await tx.adminUser.create({
         data: {
           email: invitation.email,
@@ -814,8 +816,19 @@ export class InvitationsService {
     );
   }
 
-  private async ensureEmailNotTaken(email: string) {
-    const existing = await this.prisma.adminUser.findUnique({
+  /**
+   * Email uniqueness check used during invitation acceptance. Accepts a
+   * Prisma client OR a transaction client so the caller can run it inside the
+   * `$transaction` that flips PENDING→ACCEPTED. Inside the transaction it
+   * shares the row locks acquired by the atomic claim, eliminating the
+   * window where two concurrent accepts pass the check and one then trips
+   * the AdminUser.email unique constraint with a raw P2002.
+   */
+  private async ensureEmailNotTaken(
+    client: PrismaService | Prisma.TransactionClient,
+    email: string,
+  ) {
+    const existing = await client.adminUser.findUnique({
       where: { email },
       select: { id: true },
     });
