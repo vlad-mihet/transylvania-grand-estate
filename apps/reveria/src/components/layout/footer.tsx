@@ -1,6 +1,6 @@
 "use client";
 
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
 import { Container } from "./container";
 import { Instagram, Facebook, Linkedin, Youtube, Phone, Mail } from "lucide-react";
@@ -20,6 +20,8 @@ const contact = {
 export function Footer() {
   const t = useTranslations("Footer");
   const tNav = useTranslations("Navigation");
+  const locale = useLocale();
+  const academyHref = `${process.env.NEXT_PUBLIC_ACADEMY_URL ?? "http://localhost:3053"}/${locale}/catalog`;
 
   return (
     <footer className="bg-background border-t border-border">
@@ -102,6 +104,14 @@ export function Footer() {
                   {t(`resourceLinks.${label}`)}
                 </Link>
               ))}
+              <a
+                href={academyHref}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-muted-foreground text-sm hover:text-primary transition-colors"
+              >
+                {t("resourceLinks.courses")}
+              </a>
             </nav>
           </div>
 
