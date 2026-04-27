@@ -19,7 +19,7 @@
   "HomePage": {
     "hero": {
       "title": "Find Your Perfect Home",
-      "subtitle": "Quality properties across Transylvania — from cozy apartments to family houses, all within your reach.",
+      "subtitle": "Quality properties across Romania — from cozy apartments to family houses, all within your reach.",
       "cta": "Browse Properties",
       "propertyCount": "{count} properties available",
       "searchForm": {
@@ -113,11 +113,11 @@
       "items": {
         "0": {
           "question": "What is Reveria and how can it help me?",
-          "answer": "Reveria is a real estate platform focused on affordable, quality properties across Transylvania. We help buyers find carefully curated homes priced up to €999,999, with transparent listings and expert agent support throughout the process."
+          "answer": "Reveria is a real estate platform focused on affordable, quality properties across Romania. We help buyers find carefully curated homes priced up to €999,999, with transparent listings and expert agent support throughout the process."
         },
         "1": {
           "question": "What types of properties can I find on Reveria?",
-          "answer": "You can find apartments, houses, villas, terrains, penthouses, and more. We cover a wide range of property types across multiple cities in Transylvania, all within the affordable price segment."
+          "answer": "You can find apartments, houses, villas, terrains, penthouses, and more. We cover a wide range of property types across multiple cities in Romania, all within the affordable price segment."
         },
         "2": {
           "question": "In which cities are properties available?",
@@ -150,7 +150,7 @@
   "PropertiesPage": {
     "hero": {
       "title": "Properties",
-      "subtitle": "Browse Quality Homes Across Transylvania"
+      "subtitle": "Browse Quality Homes Across Romania"
     },
     "contextual": {
       "propertiesInCity": "Properties in {city}",
@@ -430,7 +430,7 @@
   "CitiesPage": {
     "hero": {
       "title": "Explore Cities",
-      "subtitle": "Discover Transylvania's most vibrant cities and find your ideal neighborhood."
+      "subtitle": "Discover Romania's most vibrant cities and find your ideal neighborhood."
     },
     "viewProperties": "View Properties",
     "propertyCount": "{count} properties"
@@ -448,7 +448,7 @@
   "DevelopersPage": {
     "hero": {
       "title": "Developers",
-      "subtitle": "Trusted developers building quality homes across Transylvania."
+      "subtitle": "Trusted developers building quality homes across Romania."
     },
     "viewProjects": "View Projects",
     "projectCount": "{count} projects"
@@ -467,7 +467,7 @@
   "AgentsPage": {
     "hero": {
       "title": "Our Agents",
-      "subtitle": "Meet our local experts who know Transylvania's property market inside and out."
+      "subtitle": "Meet our local experts who know Romania's property market inside and out."
     },
     "viewProfile": "View Profile",
     "viewPhone": "Afficher le numéro",
@@ -494,11 +494,11 @@
     "items": {
       "0": {
         "question": "What is Reveria and how can it help me?",
-        "answer": "Reveria is a real estate platform focused on affordable, quality properties across Transylvania. We help buyers find carefully curated homes priced up to €999,999, with transparent listings and expert agent support throughout the process."
+        "answer": "Reveria is a real estate platform focused on affordable, quality properties across Romania. We help buyers find carefully curated homes priced up to €999,999, with transparent listings and expert agent support throughout the process."
       },
       "1": {
         "question": "What types of properties can I find on Reveria?",
-        "answer": "You can find apartments, houses, villas, terrains, penthouses, and more. We cover a wide range of property types across multiple cities in Transylvania, all within the affordable price segment."
+        "answer": "You can find apartments, houses, villas, terrains, penthouses, and more. We cover a wide range of property types across multiple cities in Romania, all within the affordable price segment."
       },
       "2": {
         "question": "In which cities are properties available?",
@@ -542,7 +542,7 @@
   "BlogPage": {
     "hero": {
       "title": "Blog",
-      "subtitle": "Insights, guides, and market updates for homebuyers in Transylvania."
+      "subtitle": "Insights, guides, and market updates for homebuyers in Romania."
     },
     "readMore": "Read More",
     "minRead": "{count} min read",
@@ -571,15 +571,15 @@
   "AboutPage": {
     "hero": {
       "badge": "About Us",
-      "title": "Building the Path to Your Home in Transylvania",
-      "description": "Reveria connects you with quality, affordable properties across Transylvania's most vibrant cities. No inflated prices, no hidden fees — just honest real estate for real people."
+      "title": "Building the Path to Your Home in Romania",
+      "description": "Reveria connects you with quality, affordable properties across Romania's most vibrant cities. No inflated prices, no hidden fees — just honest real estate for real people."
     },
     "story": {
       "badge": "Our Story",
       "title": "Why We Started Reveria",
-      "paragraph1": "We saw a problem that too many families in Transylvania were facing: a housing market full of overpriced listings, misleading photos, and agents who cared more about commission than finding the right fit. Good homes existed, but finding them felt like searching for a needle in a haystack.",
+      "paragraph1": "We saw a problem that too many families in Romania were facing: a housing market full of overpriced listings, misleading photos, and agents who cared more about commission than finding the right fit. Good homes existed, but finding them felt like searching for a needle in a haystack.",
       "paragraph2": "Reveria was born from a simple idea — what if there was a platform that only listed quality properties at fair prices, backed by agents who actually know the neighborhoods? We started in Cluj-Napoca and grew to cover Brașov, Sibiu, Oradea, and Timișoara. Every property on Reveria is reviewed before it goes live, because we believe you deserve to trust what you see.",
-      "imageAlt": "A charming neighborhood in Transylvania"
+      "imageAlt": "A charming neighborhood in Romania"
     },
     "stats": {
       "cities": {
@@ -641,7 +641,7 @@
     },
     "cities": {
       "badge": "Where We Operate",
-      "title": "Across Transylvania",
+      "title": "Across Romania",
       "subtitle": "From university hubs to historic gems, we cover the cities where life is good and property makes sense.",
       "items": {
         "clujNapoca": "Cluj-Napoca",
@@ -752,7 +752,7 @@
     "borrowingCapacity": "Capacité d'Emprunt"
   },
   "Footer": {
-    "tagline": "Quality Homes Across Transylvania",
+    "tagline": "Quality Homes Across Romania",
     "quickLinks": "Quick Links",
     "explore": "Explore",
     "exploreLinks": {
@@ -801,7 +801,7 @@
   "ToolsPage": {
     "meta": {
       "title": "Outils Utiles — Calculateurs Immobiliers",
-      "description": "Calculateurs gratuits pour mensualités hypothécaires, coûts d'acquisition, rendement locatif et capacité d'emprunt. Planifiez votre investissement immobilier en Transylvanie."
+      "description": "Calculateurs gratuits pour mensualités hypothécaires, coûts d'acquisition, rendement locatif et capacité d'emprunt. Planifiez votre investissement immobilier en Roumanie."
     },
     "hero": {
       "title": "Outils Utiles",
@@ -896,7 +896,7 @@
         "description": "Calculez le rendement brut et net, le flux de trésorerie mensuel et la période de récupération pour les biens d'investissement en Roumanie."
       },
       "title": "Calculateur de Rendement Locatif",
-      "subtitle": "Estimez le rendement de votre investissement dans les biens locatifs en Transylvanie.",
+      "subtitle": "Estimez le rendement de votre investissement dans les biens locatifs en Roumanie.",
       "purchasePrice": "Prix d'Achat",
       "monthlyRent": "Loyer Mensuel Estimé",
       "annualExpenses": "Dépenses Annuelles",

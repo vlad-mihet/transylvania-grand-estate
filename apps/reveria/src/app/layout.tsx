@@ -8,7 +8,7 @@ export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
   title: {
     template: `%s | ${brand.name}`,
-    default: `${brand.name} | Find Your Perfect Home in Transylvania`,
+    default: `${brand.name} | Find Your Perfect Home in Romania`,
   },
   description: brand.tagline,
   applicationName: brand.name,

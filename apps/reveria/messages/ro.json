@@ -19,7 +19,7 @@
   "HomePage": {
     "hero": {
       "title": "Găsește Casa Perfectă",
-      "subtitle": "Proprietăți de calitate în toată Transilvania — de la apartamente confortabile la case de familie, toate la îndemâna ta.",
+      "subtitle": "Proprietăți de calitate în toată România — de la apartamente confortabile la case de familie, toate la îndemâna ta.",
       "cta": "Răsfoiește Proprietăți",
       "propertyCount": "{count} proprietăți disponibile",
       "searchForm": {
@@ -113,11 +113,11 @@
       "items": {
         "0": {
           "question": "Ce este Reveria și cum mă poate ajuta?",
-          "answer": "Reveria este o platformă imobiliară focalizată pe proprietăți accesibile și de calitate din Transilvania. Ajutăm cumpărătorii să găsească case atent selectate cu prețuri până la €999.999, cu anunțuri transparente și suport expert din partea agenților."
+          "answer": "Reveria este o platformă imobiliară focalizată pe proprietăți accesibile și de calitate din România. Ajutăm cumpărătorii să găsească case atent selectate cu prețuri până la €999.999, cu anunțuri transparente și suport expert din partea agenților."
         },
         "1": {
           "question": "Ce tipuri de proprietăți pot găsi pe Reveria?",
-          "answer": "Poți găsi apartamente, case, vile, terenuri, penthouse-uri și altele. Acoperim o gamă largă de tipuri de proprietăți în mai multe orașe din Transilvania, toate în segmentul de preț accesibil."
+          "answer": "Poți găsi apartamente, case, vile, terenuri, penthouse-uri și altele. Acoperim o gamă largă de tipuri de proprietăți în mai multe orașe din România, toate în segmentul de preț accesibil."
         },
         "2": {
           "question": "În ce orașe sunt disponibile proprietăți?",
@@ -150,7 +150,7 @@
   "PropertiesPage": {
     "hero": {
       "title": "Proprietăți",
-      "subtitle": "Descoperă Case de Calitate în Toată Transilvania"
+      "subtitle": "Descoperă Case de Calitate în Toată România"
     },
     "contextual": {
       "propertiesInCity": "Proprietăți în {city}",
@@ -430,7 +430,7 @@
   "CitiesPage": {
     "hero": {
       "title": "Explorează Orașele",
-      "subtitle": "Descoperă cele mai vibrante orașe din Transilvania și găsește cartierul ideal."
+      "subtitle": "Descoperă cele mai vibrante orașe din România și găsește cartierul ideal."
     },
     "viewProperties": "Vezi Proprietăți",
     "propertyCount": "{count} proprietăți"
@@ -448,7 +448,7 @@
   "DevelopersPage": {
     "hero": {
       "title": "Dezvoltatori",
-      "subtitle": "Dezvoltatori de încredere care construiesc case de calitate în Transilvania."
+      "subtitle": "Dezvoltatori de încredere care construiesc case de calitate în România."
     },
     "viewProjects": "Vezi Proiecte",
     "projectCount": "{count} proiecte"
@@ -467,7 +467,7 @@
   "AgentsPage": {
     "hero": {
       "title": "Agenții Noștri",
-      "subtitle": "Cunoaște experții locali care cunosc piața imobiliară din Transilvania în profunzime."
+      "subtitle": "Cunoaște experții locali care cunosc piața imobiliară din România în profunzime."
     },
     "viewProfile": "Vezi Profil",
     "viewPhone": "Vezi numărul",
@@ -494,11 +494,11 @@
     "items": {
       "0": {
         "question": "Ce este Reveria și cum mă poate ajuta?",
-        "answer": "Reveria este o platformă imobiliară focalizată pe proprietăți accesibile și de calitate din Transilvania. Ajutăm cumpărătorii să găsească case atent selectate cu prețuri până la €999.999, cu anunțuri transparente și suport expert din partea agenților."
+        "answer": "Reveria este o platformă imobiliară focalizată pe proprietăți accesibile și de calitate din România. Ajutăm cumpărătorii să găsească case atent selectate cu prețuri până la €999.999, cu anunțuri transparente și suport expert din partea agenților."
       },
       "1": {
         "question": "Ce tipuri de proprietăți pot găsi pe Reveria?",
-        "answer": "Poți găsi apartamente, case, vile, terenuri, penthouse-uri și altele. Acoperim o gamă largă de tipuri de proprietăți în mai multe orașe din Transilvania, toate în segmentul de preț accesibil."
+        "answer": "Poți găsi apartamente, case, vile, terenuri, penthouse-uri și altele. Acoperim o gamă largă de tipuri de proprietăți în mai multe orașe din România, toate în segmentul de preț accesibil."
       },
       "2": {
         "question": "În ce orașe sunt disponibile proprietăți?",
@@ -542,7 +542,7 @@
   "BlogPage": {
     "hero": {
       "title": "Blog",
-      "subtitle": "Informații, ghiduri și actualizări de piață pentru cumpărătorii de case din Transilvania."
+      "subtitle": "Informații, ghiduri și actualizări de piață pentru cumpărătorii de case din România."
     },
     "readMore": "Citește Mai Mult",
     "minRead": "{count} min citire",
@@ -571,15 +571,15 @@
   "AboutPage": {
     "hero": {
       "badge": "Despre Noi",
-      "title": "Construim Drumul Către Casa Ta din Transilvania",
-      "description": "Reveria te conectează cu proprietăți de calitate și accesibile din cele mai vibrante orașe ale Transilvaniei. Fără prețuri umflate, fără taxe ascunse — doar imobiliare oneste pentru oameni reali."
+      "title": "Construim Drumul Către Casa Ta din România",
+      "description": "Reveria te conectează cu proprietăți de calitate și accesibile din cele mai vibrante orașe ale României. Fără prețuri umflate, fără taxe ascunse — doar imobiliare oneste pentru oameni reali."
     },
     "story": {
       "badge": "Povestea Noastră",
       "title": "De Ce Am Creat Reveria",
-      "paragraph1": "Am văzut o problemă cu care se confruntau prea multe familii din Transilvania: o piață imobiliară plină de anunțuri supraevaluate, fotografii înșelătoare și agenți cărora le păsa mai mult de comision decât de a găsi potrivirea perfectă. Casele bune existau, dar a le găsi era ca și cum ai căuta un ac într-un car de fân.",
+      "paragraph1": "Am văzut o problemă cu care se confruntau prea multe familii din România: o piață imobiliară plină de anunțuri supraevaluate, fotografii înșelătoare și agenți cărora le păsa mai mult de comision decât de a găsi potrivirea perfectă. Casele bune existau, dar a le găsi era ca și cum ai căuta un ac într-un car de fân.",
       "paragraph2": "Reveria s-a născut dintr-o idee simplă — ce-ar fi dacă ar exista o platformă care listează doar proprietăți de calitate la prețuri corecte, susținută de agenți care chiar cunosc cartierele? Am început în Cluj-Napoca și am crescut pentru a acoperi Brașovul, Sibiul, Oradea și Timișoara. Fiecare proprietate de pe Reveria este verificată înainte de publicare, pentru că noi credem că meriți să ai încredere în ceea ce vezi.",
-      "imageAlt": "Un cartier fermecător din Transilvania"
+      "imageAlt": "Un cartier fermecător din România"
     },
     "stats": {
       "cities": {
@@ -641,7 +641,7 @@
     },
     "cities": {
       "badge": "Unde Activăm",
-      "title": "Prin Transilvania",
+      "title": "Prin România",
       "subtitle": "De la centre universitare la bijuterii istorice, acoperim orașele unde viața este bună și investiția imobiliară are sens.",
       "items": {
         "clujNapoca": "Cluj-Napoca",
@@ -752,7 +752,7 @@
     "borrowingCapacity": "Capacitate de Împrumut"
   },
   "Footer": {
-    "tagline": "Case de Calitate în Toată Transilvania",
+    "tagline": "Case de Calitate în Toată România",
     "quickLinks": "Linkuri Rapide",
     "explore": "Explorează",
     "exploreLinks": {
@@ -801,7 +801,7 @@
   "ToolsPage": {
     "meta": {
       "title": "Instrumente Utile — Calculatoare Imobiliare",
-      "description": "Calculatoare gratuite pentru rate ipotecare, costuri de achiziție, randament la închiriere și capacitate de împrumut. Planifică-ți investiția imobiliară în Transilvania."
+      "description": "Calculatoare gratuite pentru rate ipotecare, costuri de achiziție, randament la închiriere și capacitate de împrumut. Planifică-ți investiția imobiliară în România."
     },
     "hero": {
       "title": "Instrumente Utile",
@@ -896,7 +896,7 @@
         "description": "Calculează randamentul brut și net, fluxul de numerar lunar și perioada de recuperare pentru proprietăți de investiție în România."
       },
       "title": "Calculator Randament Închiriere",
-      "subtitle": "Estimează randamentul investiției tale în proprietăți de închiriat din Transilvania.",
+      "subtitle": "Estimează randamentul investiției tale în proprietăți de închiriat din România.",
       "purchasePrice": "Prețul de Achiziție",
       "monthlyRent": "Chiria Lunară Estimată",
       "annualExpenses": "Cheltuieli Anuale",
