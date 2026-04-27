@@ -10,4 +10,6 @@ export {
   cityGeoWhere,
   propertyGeoWhere,
   isCountyInScope,
+  isCityVisible,
 } from './geo-scope.util';
+export type { GeoScope } from './geo-scope.util';

@@ -659,6 +659,12 @@ model SiteConfig {
   // wipe doesn't silently show the whole country.
   tgeCountyScope String[] @default([]) @map("tge_county_scope")
 
+  // City-slug denylist applied to the TGE_LUXURY site only. Lets the admin
+  // hide a single city without dropping its whole county from `tgeCountyScope`
+  // (e.g. keep Mureș but drop Târnăveni). Reveria and Admin ignore this list,
+  // so the city stays visible on the affordable site.
+  tgeHiddenCities String[] @default([]) @map("tge_hidden_cities")
+
   updatedAt DateTime @updatedAt @map("updated_at")
 
   @@map("site_config")

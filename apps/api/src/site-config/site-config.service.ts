@@ -73,6 +73,9 @@ export class SiteConfigService {
     if (dto.tgeCountyScope !== undefined) {
       await this.assertCountiesExist(dto.tgeCountyScope);
     }
+    if (dto.tgeHiddenCities !== undefined) {
+      await this.assertCitiesExist(dto.tgeHiddenCities);
+    }
 
     const data: Prisma.SiteConfigUpdateInput = {};
     if (dto.name !== undefined) data.name = dto.name;
@@ -84,6 +87,8 @@ export class SiteConfigService {
       data.socialLinks = toJson(dto.socialLinks);
     if (dto.tgeCountyScope !== undefined)
       data.tgeCountyScope = this.dedupeSorted(dto.tgeCountyScope);
+    if (dto.tgeHiddenCities !== undefined)
+      data.tgeHiddenCities = this.dedupeSorted(dto.tgeHiddenCities);
 
     const updated = await this.prisma.siteConfig.update({
       where: { id: 'singleton' },
@@ -163,6 +168,34 @@ export class SiteConfigService {
     }
   }
 
+  /**
+   * City-slug denylist applied to the TGE landing site only. Same caching
+   * strategy as `getTgeCountyScope` but the absence of a "default" makes
+   * fallback cheaper: if the row is missing or the column is empty, no
+   * cities are hidden — that's the correct behaviour for an unseeded env.
+   * On a DB error we degrade to "hide nothing" rather than crash the page,
+   * matching the resilience contract of the county-scope getter.
+   */
+  async getTgeHiddenCities(): Promise<readonly string[]> {
+    const cached = this.readCache();
+    if (cached) return cached.tgeHiddenCities;
+    try {
+      const config = await this.prisma.siteConfig.findUnique({
+        where: { id: 'singleton' },
+      });
+      if (!config) return [];
+      this.writeCache(config);
+      return config.tgeHiddenCities;
+    } catch (err) {
+      this.logger.warn(
+        `Falling back to empty TGE hidden-cities list: ${
+          err instanceof Error ? err.message : String(err)
+        }`,
+      );
+      return [];
+    }
+  }
+
   // ── internals ──────────────────────────────────────────────────────────
 
   private readCache(): SiteConfig | null {
@@ -218,6 +251,28 @@ export class SiteConfigService {
     if (missing.length > 0) {
       throw new BadRequestException({
         message: 'Unknown county slugs',
+        unknownSlugs: missing,
+      });
+    }
+  }
+
+  /**
+   * Sister check to `assertCountiesExist` for the city-slug denylist.
+   * Same single-query shape; bail with a 400 listing the missing slugs so
+   * the admin UI can flag them inline.
+   */
+  private async assertCitiesExist(slugs: string[]): Promise<void> {
+    if (slugs.length === 0) return;
+    const unique = Array.from(new Set(slugs));
+    const rows = await this.prisma.city.findMany({
+      where: { slug: { in: unique } },
+      select: { slug: true },
+    });
+    const known = new Set(rows.map((r) => r.slug));
+    const missing = unique.filter((s) => !known.has(s));
+    if (missing.length > 0) {
+      throw new BadRequestException({
+        message: 'Unknown city slugs',
         unknownSlugs: missing,
       });
     }

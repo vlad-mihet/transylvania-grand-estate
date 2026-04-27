@@ -14,6 +14,7 @@ import { toJson } from '../common/utils/prisma-json';
 import {
   SITE_TIER_SCOPE,
   SiteContext,
+  isCityVisible,
   isCountyInScope,
   propertyGeoWhere,
   resolveGeoScope,
@@ -589,8 +590,9 @@ export class PropertiesService {
       'Property',
     );
     this.assertTierInScope(property.tier, site);
-    await this.assertCountyInScope(
+    await this.assertGeoInScope(
       property.cityRef?.county.slug ?? null,
+      property.cityRef?.slug ?? null,
       site,
     );
     this.assertAgentOwns(property.agentId, user);
@@ -615,8 +617,9 @@ export class PropertiesService {
       'Property',
     );
     this.assertTierInScope(property.tier, site);
-    await this.assertCountyInScope(
+    await this.assertGeoInScope(
       property.cityRef?.county.slug ?? null,
+      property.cityRef?.slug ?? null,
       site,
     );
     this.assertAgentOwns(property.agentId, user);
@@ -624,17 +627,19 @@ export class PropertiesService {
   }
 
   /**
-   * 404 when the property's county falls outside the caller's brand geo
-   * scope (e.g. a Constanța villa on TGE). 404 rather than 403 for the same
-   * reason as `assertTierInScope`: don't leak the existence of rows outside
-   * the brand's advertised reach.
+   * 404 when the property's location is gated out of the caller's brand —
+   * either the county isn't on the allowlist (e.g. a Constanța villa on TGE)
+   * or the city is on the per-brand hidden list (e.g. Târnăveni on TGE).
+   * 404 rather than 403 for the same reason as `assertTierInScope`: don't
+   * leak existence of rows outside the brand's advertised reach.
    */
-  private async assertCountyInScope(
+  private async assertGeoInScope(
     countySlug: string | null,
+    citySlug: string | null,
     site: SiteContext,
   ): Promise<void> {
     const scope = await resolveGeoScope(site, this.siteConfig);
-    if (!isCountyInScope(countySlug, scope)) {
+    if (!isCountyInScope(countySlug, scope) || !isCityVisible(citySlug, scope)) {
       throw new NotFoundException('Property not found');
     }
   }

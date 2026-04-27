@@ -5,6 +5,7 @@ import { UploadsService } from '../uploads/uploads.service';
 import { SiteConfigService } from '../site-config/site-config.service';
 import {
   cityGeoWhere,
+  isCityVisible,
   isCountyInScope,
   resolveGeoScope,
   SiteContext,
@@ -128,7 +129,7 @@ export class CitiesService {
       }),
       'City',
     );
-    await this.assertInScope(city.county.slug, site);
+    await this.assertInScope(city.slug, city.county.slug, site);
     return city;
   }
 
@@ -140,7 +141,7 @@ export class CitiesService {
       }),
       'City',
     );
-    await this.assertInScope(city.county.slug, site);
+    await this.assertInScope(city.slug, city.county.slug, site);
     return city;
   }
 
@@ -214,16 +215,19 @@ export class CitiesService {
   }
 
   /**
-   * 404 when a single-row lookup falls outside the caller's brand geo scope.
-   * Same rationale as assertTierInScope: 404 (not 403) avoids leaking the
-   * existence of out-of-scope rows to the Transylvania Grand Estate site.
+   * 404 when a single-row lookup falls outside the caller's brand geo scope —
+   * either by county allowlist or by the per-brand hidden-city denylist
+   * (e.g. Târnăveni on TGE). Same rationale as assertTierInScope: 404 (not
+   * 403) avoids leaking the existence of out-of-scope rows to the
+   * Transylvania Grand Estate site.
    */
   private async assertInScope(
+    citySlug: string,
     countySlug: string,
     site: SiteContext,
   ): Promise<void> {
     const scope = await resolveGeoScope(site, this.siteConfig);
-    if (!isCountyInScope(countySlug, scope)) {
+    if (!isCountyInScope(countySlug, scope) || !isCityVisible(citySlug, scope)) {
       throw new NotFoundException('City not found');
     }
   }
