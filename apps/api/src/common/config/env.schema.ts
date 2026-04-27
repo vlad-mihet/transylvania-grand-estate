@@ -71,6 +71,11 @@ const baseSchema = z.object({
   // path keeps writing rows but loses cross-request actor correlation.
   // Required in prod (see productionSchema below).
   AUDIT_IP_PEPPER: z.string().min(16).optional(),
+
+  // Dev escape hatch: bypass ThrottlerGuard globally so a long QA pass
+  // doesn't get killed by the 5/min auth bucket. Strictly dev-only — the
+  // production schema below rejects the value entirely so it can't ship.
+  DEV_AUTH_THROTTLE_DISABLED: z.enum(['0', '1']).optional(),
 });
 
 const productionSchema = baseSchema.extend({
@@ -143,6 +148,15 @@ export function validateEnv(
   }
 
   if (isProd && parsed.data.NODE_ENV === 'production') {
+    // Defense in depth — if someone copy-pastes the dev `.env` into prod,
+    // refuse to boot rather than silently disable rate limiting on auth.
+    if (
+      (config.DEV_AUTH_THROTTLE_DISABLED as string | undefined) === '1'
+    ) {
+      throw new Error(
+        'DEV_AUTH_THROTTLE_DISABLED=1 is a dev-only escape hatch and must not be set in production.',
+      );
+    }
     const d = parsed.data as z.infer<typeof productionSchema>;
     if (d.STORAGE_TYPE === 'r2') {
       const missing = (

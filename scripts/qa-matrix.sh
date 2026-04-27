@@ -13,6 +13,16 @@ login() {
     "$API/auth/login" | jq -r '.data.accessToken'
 }
 
+# Same as login() but returns the full {accessToken, refreshToken} pair so
+# downstream phases can exercise both without spending another /auth/login
+# slot against the 5-per-60s throttler.
+login_pair() {
+  local email="$1"
+  curl -s -X POST -H "Content-Type: application/json" -H "X-Site: ADMIN" \
+    -d "{\"email\":\"$email\",\"password\":\"$PASS\"}" \
+    "$API/auth/login"
+}
+
 ST() {
   # Hit endpoint; print method + path + role + X-Site + status
   local role="$1" token="$2" site="$3" method="$4" path="$5" body="${6:-}"
@@ -26,7 +36,10 @@ ST() {
 }
 
 echo "=== Phase 1: minting tokens ==="
-T_SUPER=$(login admin@tge.ro)
+# Mint super_admin via the pair-fetcher so Phase 14 can reuse the RT.
+SUPER_PAIR=$(login_pair admin@tge.ro)
+T_SUPER=$(echo "$SUPER_PAIR" | jq -r '.data.accessToken')
+T_SUPER_RT=$(echo "$SUPER_PAIR" | jq -r '.data.refreshToken')
 T_ADMIN=$(login manager@tge.ro)
 T_EDIT=$(login editor@tge.ro)
 T_AGENT=$(login agent@tge.ro)
@@ -179,6 +192,67 @@ for role_token in "SUPER_ADMIN:$T_SUPER" "ADMIN:$T_ADMIN" "EDITOR:$T_EDIT" "AGEN
     "$API/audit-logs?limit=1" | jq -r '.meta.total // 0')
   printf "  %-12s sees %s audit events\n" "$role" "$total"
 done
+
+echo ""
+echo "=== Phase 14: logout invalidates the refresh token ==="
+# Reuses the SUPER admin's RT captured at Phase 1 — keeps total /auth/login
+# calls per matrix run at 4 (under the 5-per-60s throttle). Logout the RT,
+# then replay it against /auth/refresh: expect 401 from the denylist.
+if [[ -z "$T_SUPER_RT" || "$T_SUPER_RT" == "null" ]]; then
+  echo "  WARN: no refreshToken captured at Phase 1 — skipping phase 14"
+else
+  LOGOUT_CODE=$(curl -s -o /dev/null -w "%{http_code}" -X POST -H "Content-Type: application/json" \
+    -H "X-Site: ADMIN" -d "{\"refreshToken\":\"$T_SUPER_RT\"}" "$API/auth/logout")
+  printf "  POST /auth/logout (expect 201)               -> %s\n" "$LOGOUT_CODE"
+  REPLAY_CODE=$(curl -s -o /dev/null -w "%{http_code}" -X POST -H "Content-Type: application/json" \
+    -H "X-Site: ADMIN" -d "{\"refreshToken\":\"$T_SUPER_RT\"}" "$API/auth/refresh")
+  printf "  POST /auth/refresh w/ revoked RT (expect 401)-> %s\n" "$REPLAY_CODE"
+fi
+
+echo ""
+echo "=== Phase 15: file upload guards (MIME + magic-byte) ==="
+# Two-layer guard from validate-upload.interceptor.ts:
+#   - MIME regex blocks non-image content-types up front.
+#   - Magic-byte sniff catches mis-labeled files.
+# We lean on `curl --form` to reach the multer handler. Property images are
+# the canonical surface. Real bytes assert magic-byte; a text file with image
+# MIME asserts the second-layer check. SVG is rejected by name.
+#
+# Path normalization: native curl on Windows (git-bash, MSYS) doesn't read
+# unix-style /tmp paths from -F. `to_path` converts via cygpath when present
+# (no-op on Linux/macOS) so the same script works on both.
+TMP=$(mktemp -d)
+to_path() { command -v cygpath >/dev/null 2>&1 && cygpath -w "$1" || echo "$1"; }
+PROP_ID=$(curl -s -H "Authorization: Bearer $T_SUPER" -H "X-Site: ADMIN" \
+  "$API/properties?limit=1" | jq -r '.data[0].id // empty')
+if [[ -z "$PROP_ID" ]]; then
+  echo "  WARN: no property to attach images to — skipping phase 15"
+else
+  # (a) plain text masquerading as image/jpeg → reject (magic byte fails)
+  printf 'not-a-jpeg-just-some-text-pretending-to-be' > "$TMP/fake.jpg"
+  CODE_TEXT=$(curl -s -o /dev/null -w "%{http_code}" -X POST \
+    -H "Authorization: Bearer $T_SUPER" -H "X-Site: ADMIN" \
+    -F "images=@$(to_path "$TMP/fake.jpg");type=image/jpeg" \
+    "$API/properties/$PROP_ID/images")
+  printf "  POST /properties/:id/images text-as-jpeg (expect 400)-> %s\n" "$CODE_TEXT"
+
+  # (b) SVG payload — explicit deny per validate-upload.interceptor.ts:66-85
+  printf '<svg xmlns="http://www.w3.org/2000/svg"></svg>' > "$TMP/file.svg"
+  CODE_SVG=$(curl -s -o /dev/null -w "%{http_code}" -X POST \
+    -H "Authorization: Bearer $T_SUPER" -H "X-Site: ADMIN" \
+    -F "images=@$(to_path "$TMP/file.svg");type=image/svg+xml" \
+    "$API/properties/$PROP_ID/images")
+  printf "  POST /properties/:id/images svg            (expect 400)-> %s\n" "$CODE_SVG"
+
+  # (c) real JPEG bytes → success.  SOI marker FFD8FF + minimal trailer FFD9.
+  printf '\xff\xd8\xff\xe0\x00\x10JFIF\x00\x01\x01\x00\x00\x01\x00\x01\x00\x00\xff\xd9' > "$TMP/real.jpg"
+  CODE_REAL=$(curl -s -o /dev/null -w "%{http_code}" -X POST \
+    -H "Authorization: Bearer $T_SUPER" -H "X-Site: ADMIN" \
+    -F "images=@$(to_path "$TMP/real.jpg");type=image/jpeg" \
+    "$API/properties/$PROP_ID/images")
+  printf "  POST /properties/:id/images real jpeg      (expect 201)-> %s\n" "$CODE_REAL"
+fi
+rm -rf "$TMP"
 
 echo ""
 echo "Done."

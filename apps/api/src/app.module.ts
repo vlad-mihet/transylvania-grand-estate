@@ -120,7 +120,19 @@ const serveStaticModules =
     ScheduleModule.forRoot(),
     // Global baseline: 60 requests / minute / IP. Per-endpoint decorators
     // (e.g. @Throttle on auth/login, inquiries) can tighten this further.
-    ThrottlerModule.forRoot([{ ttl: 60_000, limit: 60 }]),
+    //
+    // Dev-only escape hatch: set `DEV_AUTH_THROTTLE_DISABLED=1` in `.env` to
+    // bypass *all* throttling (global + per-route @Throttle). Used during
+    // long QA passes where the 5-per-60s login limit gets hit on the very
+    // first round. Off by default; production must NEVER set this — fails
+    // fast in `validateEnv` if `NODE_ENV=production` and the flag is on.
+    ThrottlerModule.forRootAsync({
+      inject: [ConfigService],
+      useFactory: (cfg: ConfigService) => ({
+        throttlers: [{ ttl: 60_000, limit: 60 }],
+        skipIf: () => cfg.get<string>('DEV_AUTH_THROTTLE_DISABLED') === '1',
+      }),
+    }),
     ...serveStaticModules,
     // RequestContextModule mounts AsyncLocalStorage as the very first
     // middleware so every downstream provider (interceptors, services,
