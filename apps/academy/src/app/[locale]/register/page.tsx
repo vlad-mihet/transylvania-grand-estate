@@ -13,7 +13,7 @@ import { PublicShell } from "@/components/public-shell";
 import { PasswordStrength } from "@/components/password-strength";
 import { useRegister } from "@/hooks/mutations";
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:3333/api/v1";
+const API_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:4000/api/v1";
 
 const registerSchema = z.object({
   name: z.string().min(2).max(200),
@@ -53,7 +53,7 @@ function RegisterInner() {
   if (register.isSuccess) {
     return (
       <PublicShell>
-        <div className="w-full max-w-sm rounded-xl bg-white p-8 shadow-sm">
+        <div className="w-full max-w-sm">
           <h1 className="text-2xl font-semibold">{t("sentTitle")}</h1>
           <p className="mt-3 text-sm text-[color:var(--color-muted-foreground)]">
             {t("sentBody", { email: form.getValues("email") })}
@@ -74,7 +74,7 @@ function RegisterInner() {
 
   return (
     <PublicShell>
-      <div className="w-full max-w-sm rounded-xl bg-white p-8 shadow-sm">
+      <div className="w-full max-w-sm">
         <h1 className="text-2xl font-semibold">{t("title")}</h1>
         <p className="mt-2 text-sm text-[color:var(--color-muted-foreground)]">
           {t("subtitle")}
@@ -85,6 +85,7 @@ function RegisterInner() {
             <input
               type="text"
               autoComplete="name"
+              autoFocus
               {...form.register("name")}
               className="w-full rounded-md border border-[color:var(--color-border)] px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-[color:var(--color-ring)]"
             />

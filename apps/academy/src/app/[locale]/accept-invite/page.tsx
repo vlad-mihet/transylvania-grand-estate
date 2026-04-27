@@ -14,7 +14,7 @@ import { PublicShell } from "@/components/public-shell";
 import { apiFetch } from "@/lib/api-client";
 import { useAcceptInvite } from "@/hooks/mutations";
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:3333/api/v1";
+const API_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:4000/api/v1";
 
 const schema = z.object({ password: z.string().min(12) });
 type Values = z.infer<typeof schema>;
@@ -75,7 +75,7 @@ function AcceptInviteInner() {
 
   return (
     <PublicShell>
-      <div className="w-full max-w-sm rounded-xl bg-white p-8 shadow-sm">
+      <div className="w-full max-w-sm">
         <h1 className="text-2xl font-semibold">{t("title")}</h1>
         <p className="mt-2 text-sm text-[color:var(--color-muted-foreground)]">
           {t("subtitle")}
@@ -94,6 +94,7 @@ function AcceptInviteInner() {
             <input
               type="password"
               autoComplete="new-password"
+              autoFocus
               {...form.register("password")}
               className="w-full rounded-md border border-[color:var(--color-border)] px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-[color:var(--color-ring)]"
             />

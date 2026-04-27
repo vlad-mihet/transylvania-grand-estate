@@ -28,7 +28,7 @@ function AuthCompleteInner() {
       router.replace({ pathname: "/login", query: { error: "missing_token" } });
       return;
     }
-    const apiUrl = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:3333/api/v1";
+    const apiUrl = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:4000/api/v1";
     fetch(`${apiUrl}/academy/auth/refresh`, {
       method: "POST",
       headers: { "Content-Type": "application/json", "X-Site": "ACADEMY" },

@@ -2,7 +2,9 @@
 
 import { useTransition } from "react";
 import { useLocale } from "next-intl";
+import { useParams, useSearchParams } from "next/navigation";
 import { Loader2 } from "lucide-react";
+import { usePathname, useRouter } from "@/i18n/navigation";
 import { apiFetch, getAccessToken } from "@/lib/api-client";
 
 const LOCALES: readonly { code: "ro" | "en" | "fr" | "de"; label: string }[] = [
@@ -12,42 +14,45 @@ const LOCALES: readonly { code: "ro" | "en" | "fr" | "de"; label: string }[] = [
   { code: "de", label: "DE" },
 ];
 
-const LOCALE_CODES = new Set(LOCALES.map((l) => l.code));
-
 /**
- * Compact language picker. Swaps the first path segment (current locale)
- * for the new one and triggers a full-page navigation — full reload is
- * acceptable on a locale switch because all server-rendered messages
- * change anyway, and dodging the typed-router's requirement to
- * reconstruct dynamic-segment params (`{ pathname, params }`) for routes
- * like `/courses/[slug]` keeps this component trivial.
+ * Compact language picker. Uses next-intl's typed router so the swap is a
+ * soft Next.js navigation — react-hook-form values, scroll position, and
+ * any other client state survive the locale change. Mirrors the pattern
+ * already in use by apps/admin and apps/reveria.
+ *
+ * The `@ts-expect-error` is unavoidable: the typed router can't narrow
+ * `params` to the specific shape required by each pathname at compile
+ * time, but `useParams()` already carries whatever the current route
+ * needs, so it resolves correctly at runtime.
  *
  * When the student is signed in, the choice is also persisted to the
  * AcademyUser record so their next login lands in the same language.
  */
 export function LocaleSwitcher() {
   const locale = useLocale();
+  const router = useRouter();
+  const pathname = usePathname();
+  const params = useParams();
+  const searchParams = useSearchParams();
   const [isPending, startTransition] = useTransition();
 
   const onChange = (next: "ro" | "en" | "fr" | "de") => {
     if (next === locale) return;
     startTransition(() => {
       if (getAccessToken()) {
-        // Fire-and-forget — UI already navigates below; a failed server
-        // write leaves the DB locale stale, which the next login fixes.
+        // Fire-and-forget — the navigation below doesn't wait, and a failed
+        // server write leaves the DB locale stale, which the next login fixes.
         apiFetch("/academy/auth/me", {
           method: "PATCH",
           body: { locale: next },
         }).catch(() => undefined);
       }
-      const parts = window.location.pathname.split("/").filter(Boolean);
-      const first = parts[0] as "ro" | "en" | "fr" | "de" | undefined;
-      if (first && LOCALE_CODES.has(first)) {
-        parts[0] = next;
-      } else {
-        parts.unshift(next);
-      }
-      window.location.href = `/${parts.join("/")}${window.location.search}`;
+      const query = Object.fromEntries(searchParams.entries());
+      router.replace(
+        // @ts-expect-error -- typed router can't narrow params per pathname; safe at runtime
+        { pathname, params, query },
+        { locale: next, scroll: false },
+      );
     });
   };
 

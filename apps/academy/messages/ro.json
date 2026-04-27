@@ -2,6 +2,17 @@
   "Academy": {
     "appName": "TGE Academy",
     "tagline": "Platformă de studiu pentru agenți imobiliari",
+    "publicShell": {
+      "brand": {
+        "headline": "Agenții pregătiți încheie tranzacții mai bune.",
+        "feature1Title": "Cursuri în ritmul tău",
+        "feature1Description": "Lecții scurte, ușor de încadrat între vizionări.",
+        "feature2Title": "Construit pentru piața din România",
+        "feature2Description": "Prețuri, acte, cartiere — practic și local.",
+        "feature3Title": "Urmărește fiecare pas",
+        "feature3Description": "Vezi ce ai învățat și obține certificate pe parcurs."
+      }
+    },
     "login": {
       "title": "Autentificare",
       "emailLabel": "Email",
@@ -31,6 +42,7 @@
       "sentResendLink": "Retrimite confirmarea"
     },
     "verifyEmail": {
+      "title": "Verificare email",
       "verifying": "Îți verificăm adresa de email…",
       "successTitle": "Gata",
       "successBody": "Te redirecționăm către cursurile tale…",

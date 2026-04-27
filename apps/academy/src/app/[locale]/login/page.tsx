@@ -15,7 +15,7 @@ import { validateReturnTo } from "@/lib/return-to";
 import { useLogin } from "@/hooks/mutations";
 import { ApiError } from "@/lib/api-client";
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:3333/api/v1";
+const API_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:4000/api/v1";
 
 const loginSchema = z.object({
   email: z.string().email(),
@@ -66,7 +66,7 @@ function LoginInner() {
 
   return (
     <PublicShell>
-      <div className="w-full max-w-sm rounded-xl bg-white p-8 shadow-sm">
+      <div className="w-full max-w-sm">
         <h1 className="mb-6 text-2xl font-semibold">{t("title")}</h1>
         {resetSuccess ? (
           <p
@@ -82,6 +82,7 @@ function LoginInner() {
             <input
               type="email"
               autoComplete="email"
+              autoFocus
               {...form.register("email")}
               className="w-full rounded-md border border-[color:var(--color-border)] px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-[color:var(--color-ring)]"
             />

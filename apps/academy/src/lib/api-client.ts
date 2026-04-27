@@ -5,7 +5,7 @@
  * admin app, scoped to the academy realm.
  */
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:3333/api/v1";
+const API_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:4000/api/v1";
 const SITE = process.env.NEXT_PUBLIC_SITE ?? "ACADEMY";
 
 const ACCESS_TOKEN_KEY = "academy.accessToken";

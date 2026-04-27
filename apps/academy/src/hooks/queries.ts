@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { apiFetch, getAccessToken } from "@/lib/api-client";
 import { qk } from "./query-keys";
@@ -71,32 +72,50 @@ export type LessonDetail = {
   next: LessonNeighbour;
 };
 
+/**
+ * Returns `false` on the server and during the first client render, then
+ * flips to `true` after mount. Used as the SSR-safe gate on queries whose
+ * `enabled` predicate would otherwise read `localStorage` (token presence)
+ * and produce a different `isLoading` between SSR and hydration — which
+ * blows up any component that bakes `isLoading` into a className or other
+ * hydration-relevant attribute (e.g. AppHeader's avatar `animate-pulse`).
+ */
+function useIsClient(): boolean {
+  const [isClient, setIsClient] = useState(false);
+  useEffect(() => setIsClient(true), []);
+  return isClient;
+}
+
 export function useMe() {
+  const isClient = useIsClient();
   return useQuery({
     queryKey: qk.me(),
     queryFn: () => apiFetch<Profile>("/academy/auth/me"),
-    enabled: typeof window !== "undefined" && !!getAccessToken(),
+    enabled: isClient && !!getAccessToken(),
   });
 }
 
 export function useMyCourses(locale: string) {
+  const isClient = useIsClient();
   return useQuery({
     queryKey: qk.myCourses(locale),
     queryFn: () => apiFetch<CourseSummary[]>("/academy/courses", { locale }),
-    enabled: typeof window !== "undefined" && !!getAccessToken(),
+    enabled: isClient && !!getAccessToken(),
   });
 }
 
 export function useCatalog(locale: string) {
+  const isClient = useIsClient();
   return useQuery({
     queryKey: qk.catalog(locale),
     queryFn: () =>
       apiFetch<CourseSummary[]>("/academy/courses/catalog", { locale }),
-    enabled: typeof window !== "undefined" && !!getAccessToken(),
+    enabled: isClient && !!getAccessToken(),
   });
 }
 
 export function useCourse(slug: string, locale: string) {
+  const isClient = useIsClient();
   return useQuery({
     queryKey: qk.course(slug, locale),
     queryFn: () =>
@@ -104,12 +123,12 @@ export function useCourse(slug: string, locale: string) {
         `/academy/courses/${encodeURIComponent(slug)}?locale=${locale}`,
         { locale },
       ),
-    enabled:
-      typeof window !== "undefined" && !!getAccessToken() && !!slug,
+    enabled: isClient && !!getAccessToken() && !!slug,
   });
 }
 
 export function useLesson(slug: string, lessonSlug: string, locale: string) {
+  const isClient = useIsClient();
   return useQuery({
     queryKey: qk.lesson(slug, lessonSlug, locale),
     queryFn: () =>
@@ -117,10 +136,6 @@ export function useLesson(slug: string, lessonSlug: string, locale: string) {
         `/academy/courses/${encodeURIComponent(slug)}/lessons/${encodeURIComponent(lessonSlug)}?locale=${locale}`,
         { locale },
       ),
-    enabled:
-      typeof window !== "undefined" &&
-      !!getAccessToken() &&
-      !!slug &&
-      !!lessonSlug,
+    enabled: isClient && !!getAccessToken() && !!slug && !!lessonSlug,
   });
 }

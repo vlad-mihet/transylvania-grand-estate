@@ -2,6 +2,17 @@
   "Academy": {
     "appName": "TGE Academy",
     "tagline": "Plateforme d'apprentissage pour agents immobiliers",
+    "publicShell": {
+      "brand": {
+        "headline": "Des agents mieux formés concluent de meilleures affaires.",
+        "feature1Title": "Cours à votre rythme",
+        "feature1Description": "Des leçons courtes à intégrer entre deux visites.",
+        "feature2Title": "Conçu pour le marché roumain",
+        "feature2Description": "Prix, documents, quartiers — pratique et local.",
+        "feature3Title": "Suivez chaque étape",
+        "feature3Description": "Voyez vos progrès et obtenez des certificats au fil de l'eau."
+      }
+    },
     "login": {
       "title": "Connexion",
       "emailLabel": "Email",
@@ -31,6 +42,7 @@
       "sentResendLink": "Renvoyer la confirmation"
     },
     "verifyEmail": {
+      "title": "Vérification de l'email",
       "verifying": "Vérification de votre email…",
       "successTitle": "C'est bon",
       "successBody": "Redirection vers vos cours…",

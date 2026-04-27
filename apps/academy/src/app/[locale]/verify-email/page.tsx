@@ -49,7 +49,7 @@ function VerifyEmailInner() {
 
   return (
     <PublicShell>
-      <div className="w-full max-w-sm rounded-xl bg-white p-8 shadow-sm text-center">
+      <div className="w-full max-w-sm text-center">
         {status === "loading" && (
           <div
             className="inline-flex items-center gap-2 text-sm text-[color:var(--color-muted-foreground)]"

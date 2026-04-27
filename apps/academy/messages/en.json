@@ -2,6 +2,17 @@
   "Academy": {
     "appName": "TGE Academy",
     "tagline": "Study platform for real-estate agents",
+    "publicShell": {
+      "brand": {
+        "headline": "Sharper agents close better deals.",
+        "feature1Title": "Self-paced courses",
+        "feature1Description": "Bite-sized lessons you fit between viewings.",
+        "feature2Title": "Built for the Romanian market",
+        "feature2Description": "Pricing, paperwork, neighborhoods — practical and local.",
+        "feature3Title": "Track every step",
+        "feature3Description": "See what you've learned and earn certificates as you go."
+      }
+    },
     "login": {
       "title": "Sign in",
       "emailLabel": "Email",
@@ -31,6 +42,7 @@
       "sentResendLink": "Resend verification"
     },
     "verifyEmail": {
+      "title": "Email verification",
       "verifying": "Verifying your email…",
       "successTitle": "You’re in",
       "successBody": "Redirecting you to your courses…",

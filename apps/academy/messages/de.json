@@ -2,6 +2,17 @@
   "Academy": {
     "appName": "TGE Academy",
     "tagline": "Lernplattform für Immobilienmakler",
+    "publicShell": {
+      "brand": {
+        "headline": "Gut ausgebildete Makler schließen bessere Geschäfte ab.",
+        "feature1Title": "Kurse in deinem Tempo",
+        "feature1Description": "Kurze Lektionen, die zwischen Besichtigungen passen.",
+        "feature2Title": "Für den rumänischen Markt entwickelt",
+        "feature2Description": "Preise, Unterlagen, Stadtteile — praxisnah und lokal.",
+        "feature3Title": "Verfolge jeden Schritt",
+        "feature3Description": "Sieh deine Fortschritte und erhalte Zertifikate."
+      }
+    },
     "login": {
       "title": "Anmelden",
       "emailLabel": "E-Mail",
@@ -31,6 +42,7 @@
       "sentResendLink": "Bestätigung erneut senden"
     },
     "verifyEmail": {
+      "title": "E-Mail-Verifizierung",
       "verifying": "E-Mail wird verifiziert…",
       "successTitle": "Geschafft",
       "successBody": "Wir leiten Sie zu Ihren Kursen weiter…",
