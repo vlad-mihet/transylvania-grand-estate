@@ -13,6 +13,7 @@ import { useRouter } from "@/i18n/navigation";
 import { PublicShell } from "@/components/public-shell";
 import { apiFetch } from "@/lib/api-client";
 import { useAcceptInvite } from "@/hooks/mutations";
+import { flags } from "@/lib/flags";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:4000/api/v1";
 
@@ -112,18 +113,22 @@ function AcceptInviteInner() {
             {t("submit")}
           </SubmitButton>
         </form>
-        <div className="my-6 flex items-center gap-3 text-xs text-[color:var(--color-muted-foreground)]">
-          <div className="h-px flex-1 bg-[color:var(--color-border)]" />
-          <span>OR</span>
-          <div className="h-px flex-1 bg-[color:var(--color-border)]" />
-        </div>
-        <button
-          type="button"
-          onClick={onGoogle}
-          className="w-full rounded-md border border-[color:var(--color-border)] bg-white px-4 py-2 text-sm font-medium hover:bg-[color:var(--color-muted)]"
-        >
-          {t("googleButton")}
-        </button>
+        {!flags.googleAuthDisabled && (
+          <>
+            <div className="my-6 flex items-center gap-3 text-xs text-[color:var(--color-muted-foreground)]">
+              <div className="h-px flex-1 bg-[color:var(--color-border)]" />
+              <span>OR</span>
+              <div className="h-px flex-1 bg-[color:var(--color-border)]" />
+            </div>
+            <button
+              type="button"
+              onClick={onGoogle}
+              className="w-full rounded-md border border-[color:var(--color-border)] bg-white px-4 py-2 text-sm font-medium hover:bg-[color:var(--color-muted)]"
+            >
+              {t("googleButton")}
+            </button>
+          </>
+        )}
       </div>
     </PublicShell>
   );

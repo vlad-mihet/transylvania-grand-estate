@@ -28,6 +28,13 @@ COPY . .
 
 ARG NEXT_PUBLIC_API_URL
 ENV NEXT_PUBLIC_API_URL=$NEXT_PUBLIC_API_URL
+# Permanent feature flags. Empty default = feature on; pass "true" via the
+# Fly deploy --build-arg to disable. The values must be present at `next
+# build` time because they're baked into the client bundle.
+ARG NEXT_PUBLIC_EMAIL_VERIFICATION_DISABLED=
+ENV NEXT_PUBLIC_EMAIL_VERIFICATION_DISABLED=$NEXT_PUBLIC_EMAIL_VERIFICATION_DISABLED
+ARG NEXT_PUBLIC_GOOGLE_AUTH_DISABLED=
+ENV NEXT_PUBLIC_GOOGLE_AUTH_DISABLED=$NEXT_PUBLIC_GOOGLE_AUTH_DISABLED
 
 # @tge/types re-exports Prisma enum values, so the client must be generated
 # before admin's Next.js build can resolve the enum imports.

@@ -15,6 +15,8 @@ import { PrismaService } from '../../prisma/prisma.service';
 import { EmailService } from '../../email/email.service';
 import { MetricsService } from '../../metrics/metrics.service';
 import { AuditService } from '../../audit/audit.service';
+import { FeatureFlagsService } from '../../common/config/feature-flags.service';
+import type { AcademyRegisterResponse } from '@tge/types/schemas/academy';
 import { AcademyLoginDto } from './dto/login.dto';
 import { AcademyChangePasswordDto } from './dto/change-password.dto';
 import type {
@@ -51,6 +53,7 @@ export class AcademyAuthService {
     private readonly emailService: EmailService,
     private readonly metrics: MetricsService,
     private readonly auditService: AuditService,
+    private readonly flags: FeatureFlagsService,
   ) {}
 
   async login(dto: AcademyLoginDto) {
@@ -394,8 +397,9 @@ export class AcademyAuthService {
    * without a working inbox. If scraping ever becomes a problem, add
    * hCaptcha on the frontend — don't weaken the silent-202 pattern.
    */
-  async register(dto: AcademyRegisterDto): Promise<{ ok: true }> {
+  async register(dto: AcademyRegisterDto): Promise<AcademyRegisterResponse> {
     const normalizedEmail = dto.email.toLowerCase();
+    const bypassVerification = this.flags.emailVerificationDisabled;
     const existing = await this.prisma.academyUser.findUnique({
       where: { email: normalizedEmail },
       select: {
@@ -413,7 +417,13 @@ export class AcademyAuthService {
         event: 'academy.register.email_taken_verified',
         toDomain: emailDomain(normalizedEmail),
       });
-      return { ok: true };
+      // Anti-enumeration: always emit the "verification pending" shape so
+      // the response is indistinguishable from a fresh signup. With the
+      // bypass flag on we still don't auto-login the caller — we can't
+      // mint tokens without a password match, and doing so would let
+      // anyone who knows an email impersonate the owner. A legitimate
+      // re-registrant should sign in via /login instead.
+      return { ok: true, verificationRequired: true };
     }
 
     const passwordHash = await bcrypt.hash(dto.password, 12);
@@ -425,9 +435,18 @@ export class AcademyAuthService {
       // Unverified retry — update password + name so the most-recent
       // register attempt wins, then rotate the verification token. This
       // gracefully handles "I typed my password wrong in the form".
+      // When the bypass flag is on we also stamp emailVerifiedAt so the
+      // caller is treated as fully onboarded on the very next request.
       await this.prisma.academyUser.update({
         where: { id: existing.id },
-        data: { passwordHash, name: dto.name, locale },
+        data: {
+          passwordHash,
+          name: dto.name,
+          locale,
+          ...(bypassVerification
+            ? { emailVerifiedAt: new Date(), lastLoginAt: new Date() }
+            : {}),
+        },
       });
       userId = existing.id;
       name = dto.name;
@@ -438,6 +457,9 @@ export class AcademyAuthService {
           passwordHash,
           name: dto.name,
           locale,
+          ...(bypassVerification
+            ? { emailVerifiedAt: new Date(), lastLoginAt: new Date() }
+            : {}),
         },
         select: { id: true, name: true },
       });
@@ -445,20 +467,39 @@ export class AcademyAuthService {
       name = created.name;
     }
 
-    await this.issueVerificationToken(userId, normalizedEmail, name, locale);
-    this.metrics.academyRegistrations.inc({ outcome: 'requested' });
-    // Self-attributed audit entry — the registrant is both actor and
-    // subject. A separate `academy-user.verify-email` row lands when the
-    // token is consumed, so the audit trail captures both halves of the
-    // flow (and reveals abandoned verifications as "register without a
-    // matching verify").
     void this.auditService.record({
       actorId: userId,
       action: 'academy-user.self-register',
       resource: 'AcademyUser',
       resourceId: userId,
     });
-    return { ok: true };
+
+    if (bypassVerification) {
+      // EMAIL_VERIFICATION_DISABLED branch: skip token issuance, mint
+      // tokens directly so the caller lands on the dashboard in one
+      // round-trip. The audit pair (`self-register` + `verify-email-bypass`)
+      // mirrors the normal pair (`self-register` + `verify-email`) so trail
+      // analytics ("registered but never verified") keep working.
+      this.metrics.academyRegistrations.inc({ outcome: 'verified' });
+      void this.auditService.record({
+        actorId: userId,
+        action: 'academy-user.verify-email-bypass',
+        resource: 'AcademyUser',
+        resourceId: userId,
+      });
+      const tokens = this.generateTokens(
+        this.shape({ id: userId, email: normalizedEmail, name }),
+      );
+      return {
+        ok: true,
+        verificationRequired: false,
+        ...tokens,
+      };
+    }
+
+    await this.issueVerificationToken(userId, normalizedEmail, name, locale);
+    this.metrics.academyRegistrations.inc({ outcome: 'requested' });
+    return { ok: true, verificationRequired: true };
   }
 
   /**
@@ -537,6 +578,17 @@ export class AcademyAuthService {
     dto: AcademyResendVerificationDto,
   ): Promise<{ ok: true }> {
     const normalizedEmail = dto.email.toLowerCase();
+    if (this.flags.emailVerificationDisabled) {
+      // Bypass flag is on — no verification ever happens, so this endpoint
+      // is meaningless. Preserve the silent-202 contract so existing
+      // clients (and any cached UI) keep working without a special case.
+      this.logger.debug({
+        event: 'academy.resend_verification.noop',
+        toDomain: emailDomain(normalizedEmail),
+        reason: 'verification_disabled',
+      });
+      return { ok: true };
+    }
     const user = await this.prisma.academyUser.findUnique({
       where: { email: normalizedEmail },
       select: {

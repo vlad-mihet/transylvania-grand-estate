@@ -16,6 +16,21 @@ type AuthTokens = {
   user?: { id: string; email: string; name: string };
 };
 
+/**
+ * Mirrors the API's `academyRegisterResponseSchema` discriminated union.
+ * `verificationRequired: false` only happens when the API was started with
+ * EMAIL_VERIFICATION_DISABLED=1; in that branch the caller is auto-logged-in.
+ */
+type RegisterResponse =
+  | { ok: true; verificationRequired: true }
+  | {
+      ok: true;
+      verificationRequired: false;
+      accessToken: string;
+      refreshToken: string;
+      user: { id: string; email: string; name: string };
+    };
+
 /* ───── Auth ───── */
 
 export function useLogin() {
@@ -42,11 +57,22 @@ export function useRegister() {
       password: string;
       locale: "ro" | "en" | "fr" | "de";
     }) =>
-      apiFetch<{ ok: true }>("/academy/auth/register", {
+      apiFetch<RegisterResponse>("/academy/auth/register", {
         method: "POST",
         body,
         skipAuth: true,
       }),
+    onSuccess: (data) => {
+      // Auto-login branch (API runs with EMAIL_VERIFICATION_DISABLED=1).
+      // Branching on the response shape rather than a frontend env var
+      // keeps the two sides from drifting.
+      if (data.verificationRequired === false) {
+        setTokens({
+          accessToken: data.accessToken,
+          refreshToken: data.refreshToken,
+        });
+      }
+    },
   });
 }
 

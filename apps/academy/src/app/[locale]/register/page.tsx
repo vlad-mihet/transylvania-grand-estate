@@ -8,10 +8,11 @@ import { useLocale, useTranslations } from "next-intl";
 import { toast } from "sonner";
 import { SubmitButton } from "@tge/ui";
 import { useApiFormErrors } from "@tge/hooks";
-import { Link } from "@/i18n/navigation";
+import { Link, useRouter } from "@/i18n/navigation";
 import { PublicShell } from "@/components/public-shell";
 import { PasswordStrength } from "@/components/password-strength";
 import { useRegister } from "@/hooks/mutations";
+import { flags } from "@/lib/flags";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:4000/api/v1";
 
@@ -25,6 +26,7 @@ type RegisterValues = z.infer<typeof registerSchema>;
 function RegisterInner() {
   const t = useTranslations("Academy.register");
   const locale = useLocale() as "ro" | "en" | "fr" | "de";
+  const router = useRouter();
   const register = useRegister();
 
   const form = useForm<RegisterValues>({
@@ -38,7 +40,12 @@ function RegisterInner() {
 
   async function onSubmit(values: RegisterValues) {
     try {
-      await register.mutateAsync({ ...values, locale });
+      const result = await register.mutateAsync({ ...values, locale });
+      // EMAIL_VERIFICATION_DISABLED branch: tokens already stored by the
+      // mutation's onSuccess; jump straight to the dashboard.
+      if (result.verificationRequired === false) {
+        router.push("/");
+      }
     } catch {
       // handled by useApiFormErrors
     }
@@ -50,7 +57,15 @@ function RegisterInner() {
 
   const password = form.watch("password");
 
-  if (register.isSuccess) {
+  // Only render the "check your inbox" success screen when verification is
+  // actually required. The auto-login branch redirects via onSubmit, so by
+  // the time isSuccess flips we've already navigated away — but during the
+  // microtask between mutate-success and router.push we'd briefly flash this
+  // screen. Branching on the response shape avoids the flash.
+  if (
+    register.isSuccess &&
+    register.data?.verificationRequired === true
+  ) {
     return (
       <PublicShell>
         <div className="w-full max-w-sm">
@@ -132,18 +147,22 @@ function RegisterInner() {
             {t("submit")}
           </SubmitButton>
         </form>
-        <div className="my-6 flex items-center gap-3 text-xs text-[color:var(--color-muted-foreground)]">
-          <div className="h-px flex-1 bg-[color:var(--color-border)]" />
-          <span>OR</span>
-          <div className="h-px flex-1 bg-[color:var(--color-border)]" />
-        </div>
-        <button
-          type="button"
-          onClick={onGoogle}
-          className="w-full rounded-md border border-[color:var(--color-border)] bg-white px-4 py-2 text-sm font-medium hover:bg-[color:var(--color-muted)]"
-        >
-          {t("googleButton")}
-        </button>
+        {!flags.googleAuthDisabled && (
+          <>
+            <div className="my-6 flex items-center gap-3 text-xs text-[color:var(--color-muted-foreground)]">
+              <div className="h-px flex-1 bg-[color:var(--color-border)]" />
+              <span>OR</span>
+              <div className="h-px flex-1 bg-[color:var(--color-border)]" />
+            </div>
+            <button
+              type="button"
+              onClick={onGoogle}
+              className="w-full rounded-md border border-[color:var(--color-border)] bg-white px-4 py-2 text-sm font-medium hover:bg-[color:var(--color-muted)]"
+            >
+              {t("googleButton")}
+            </button>
+          </>
+        )}
         <p className="mt-6 text-center text-xs text-[color:var(--color-muted-foreground)]">
           {t("haveAccount")}{" "}
           <Link href="/login" className="underline hover:no-underline">

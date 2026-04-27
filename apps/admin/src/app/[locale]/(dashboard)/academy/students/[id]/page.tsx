@@ -28,6 +28,7 @@ import { StatusBadge } from "@/components/shared/status-badge";
 import { LoadingState } from "@tge/ui";
 import { useUnsavedChangesWarning } from "@/hooks/use-unsaved-changes-warning";
 import { pickTitle, WILDCARD_COURSE_VALUE } from "@/lib/academy/pick-title";
+import { flags } from "@/lib/flags";
 
 type Enrollment = {
   id: string;
@@ -300,16 +301,18 @@ export default function AcademyStudentDetailPage() {
       <div className="mx-auto flex w-full max-w-3xl flex-col gap-5">
         <div className="-mt-3 flex flex-wrap items-center gap-2 text-xs">
           <Mono className="text-muted-foreground">{student.email}</Mono>
-          <StatusBadge
-            status={student.emailVerifiedAt ? "verified" : "unverified"}
-            tone={student.emailVerifiedAt ? "success" : "warning"}
-          />
+          {!flags.emailVerificationDisabled && (
+            <StatusBadge
+              status={student.emailVerifiedAt ? "verified" : "unverified"}
+              tone={student.emailVerifiedAt ? "success" : "warning"}
+            />
+          )}
           <span className="rounded-full border border-border px-2 py-0.5 text-[10px] uppercase tracking-[0.06em] text-muted-foreground">
             {t(`origin_${origin}`)}
           </span>
         </div>
 
-        {!student.emailVerifiedAt && (
+        {!flags.emailVerificationDisabled && !student.emailVerifiedAt && (
           <SectionCard title={t("verificationTitle")}>
             <p className="text-sm text-muted-foreground">
               {t("verificationDescription")}

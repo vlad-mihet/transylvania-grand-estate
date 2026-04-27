@@ -19,6 +19,7 @@ import { ResourceListPage } from "@/components/resource/resource-list-page";
 import { type ColumnDef } from "@/components/resource/resource-table";
 import { useResourceList } from "@/hooks/use-resource-list";
 import { InviteStudentDialog } from "./_components/invite-student-dialog";
+import { flags } from "@/lib/flags";
 
 type Student = {
   id: string;
@@ -50,9 +51,11 @@ export default function AcademyStudentsPage() {
 
   // Server accepts `verified=true|false`; only pipe it through when
   // exactly one filter chip is active. Both selected (or neither) means
-  // "no filter" so we omit the param.
+  // "no filter" so we omit the param. When EMAIL_VERIFICATION_DISABLED is
+  // on every student is auto-verified at signup, so the filter would just
+  // produce "all" or "none" — we hide it (and the column) entirely.
   const verifiedParam =
-    verifiedFilters.size === 1
+    !flags.emailVerificationDisabled && verifiedFilters.size === 1
       ? verifiedFilters.has("verified")
         ? "true"
         : "false"
@@ -107,16 +110,22 @@ export default function AcademyStudentsPage() {
         </span>
       ),
     },
-    {
-      id: "verified",
-      header: t("columnVerified"),
-      cell: ({ row }) => (
-        <StatusBadge
-          status={row.original.emailVerifiedAt ? "verified" : "unverified"}
-          tone={row.original.emailVerifiedAt ? "success" : "warning"}
-        />
-      ),
-    },
+    ...(flags.emailVerificationDisabled
+      ? []
+      : [
+          {
+            id: "verified",
+            header: t("columnVerified"),
+            cell: ({ row }) => (
+              <StatusBadge
+                status={
+                  row.original.emailVerifiedAt ? "verified" : "unverified"
+                }
+                tone={row.original.emailVerifiedAt ? "success" : "warning"}
+              />
+            ),
+          } as ColumnDef<Student, unknown>,
+        ]),
     {
       id: "enrollments",
       header: t("columnEnrollments"),
@@ -149,37 +158,39 @@ export default function AcademyStudentsPage() {
           { value: "oldest", label: tc("sortOldest") },
         ]}
         filterRail={
-          <FilterRail
-            activeCount={verifiedFilters.size}
-            onClear={() => setVerifiedFilters(new Set())}
-          >
-            <FilterGroup title={t("filterVerifiedTitle")}>
-              <FilterCheckbox
-                label={t("verifiedYes")}
-                checked={verifiedFilters.has("verified")}
-                onChange={(checked) =>
-                  setVerifiedFilters((prev) => {
-                    const next = new Set(prev);
-                    if (checked) next.add("verified");
-                    else next.delete("verified");
-                    return next;
-                  })
-                }
-              />
-              <FilterCheckbox
-                label={t("verifiedNo")}
-                checked={verifiedFilters.has("unverified")}
-                onChange={(checked) =>
-                  setVerifiedFilters((prev) => {
-                    const next = new Set(prev);
-                    if (checked) next.add("unverified");
-                    else next.delete("unverified");
-                    return next;
-                  })
-                }
-              />
-            </FilterGroup>
-          </FilterRail>
+          flags.emailVerificationDisabled ? undefined : (
+            <FilterRail
+              activeCount={verifiedFilters.size}
+              onClear={() => setVerifiedFilters(new Set())}
+            >
+              <FilterGroup title={t("filterVerifiedTitle")}>
+                <FilterCheckbox
+                  label={t("verifiedYes")}
+                  checked={verifiedFilters.has("verified")}
+                  onChange={(checked) =>
+                    setVerifiedFilters((prev) => {
+                      const next = new Set(prev);
+                      if (checked) next.add("verified");
+                      else next.delete("verified");
+                      return next;
+                    })
+                  }
+                />
+                <FilterCheckbox
+                  label={t("verifiedNo")}
+                  checked={verifiedFilters.has("unverified")}
+                  onChange={(checked) =>
+                    setVerifiedFilters((prev) => {
+                      const next = new Set(prev);
+                      if (checked) next.add("unverified");
+                      else next.delete("unverified");
+                      return next;
+                    })
+                  }
+                />
+              </FilterGroup>
+            </FilterRail>
+          )
         }
         emptyTitle={t("emptyTitle")}
         emptyDescription={t("emptyDescription")}

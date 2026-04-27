@@ -9,6 +9,7 @@ import { AlertCircle, Loader2 } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { PasswordField } from "./password-field";
 import { GoogleSsoButton } from "./google-sso-button";
+import { flags } from "@/lib/flags";
 
 /**
  * Map OAuth-callback error codes (set by the API when it redirects back to
@@ -42,8 +43,7 @@ export function LoginForm() {
   const router = useRouter();
   const t = useTranslations("Login");
   const searchParams = useSearchParams();
-  const googleEnabled =
-    process.env.NEXT_PUBLIC_SSO_GOOGLE_ENABLED === "true";
+  const googleEnabled = !flags.googleAuthDisabled;
 
   // Surface OAuth-callback errors (redirected here with ?error=<code>) on
   // first paint. Local form errors override it on next submission. We don't

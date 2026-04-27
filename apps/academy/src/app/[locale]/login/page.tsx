@@ -14,6 +14,7 @@ import { PublicShell } from "@/components/public-shell";
 import { validateReturnTo } from "@/lib/return-to";
 import { useLogin } from "@/hooks/mutations";
 import { ApiError } from "@/lib/api-client";
+import { flags } from "@/lib/flags";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:4000/api/v1";
 
@@ -121,18 +122,22 @@ function LoginInner() {
             {t("forgotPassword")}
           </Link>
         </form>
-        <div className="my-6 flex items-center gap-3 text-xs text-[color:var(--color-muted-foreground)]">
-          <div className="h-px flex-1 bg-[color:var(--color-border)]" />
-          <span>OR</span>
-          <div className="h-px flex-1 bg-[color:var(--color-border)]" />
-        </div>
-        <button
-          type="button"
-          onClick={onGoogle}
-          className="w-full rounded-md border border-[color:var(--color-border)] bg-white px-4 py-2 text-sm font-medium hover:bg-[color:var(--color-muted)]"
-        >
-          {t("googleButton")}
-        </button>
+        {!flags.googleAuthDisabled && (
+          <>
+            <div className="my-6 flex items-center gap-3 text-xs text-[color:var(--color-muted-foreground)]">
+              <div className="h-px flex-1 bg-[color:var(--color-border)]" />
+              <span>OR</span>
+              <div className="h-px flex-1 bg-[color:var(--color-border)]" />
+            </div>
+            <button
+              type="button"
+              onClick={onGoogle}
+              className="w-full rounded-md border border-[color:var(--color-border)] bg-white px-4 py-2 text-sm font-medium hover:bg-[color:var(--color-muted)]"
+            >
+              {t("googleButton")}
+            </button>
+          </>
+        )}
         <p className="mt-6 text-center text-xs text-[color:var(--color-muted-foreground)]">
           {t("noAccount")}{" "}
           <Link href="/register" className="underline hover:no-underline">

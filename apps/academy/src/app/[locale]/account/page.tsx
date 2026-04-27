@@ -20,6 +20,7 @@ import {
   useResendVerification,
   useUpdateProfile,
 } from "@/hooks/mutations";
+import { flags } from "@/lib/flags";
 
 const profileSchema = z.object({
   name: z.string().min(2).max(200),
@@ -132,7 +133,7 @@ export default function AccountPage() {
       <div className="mx-auto max-w-5xl px-6 py-8">
         <h1 className="text-2xl font-semibold">{t("account.title")}</h1>
 
-        {!profile.emailVerifiedAt && (
+        {!flags.emailVerificationDisabled && !profile.emailVerifiedAt && (
           <section className="mt-6 rounded-lg border border-amber-200 bg-amber-50 p-5">
             <h2 className="text-sm font-semibold text-amber-900">
               {t("account.verificationTitle")}

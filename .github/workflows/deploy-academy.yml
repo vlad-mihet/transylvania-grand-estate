@@ -22,7 +22,14 @@ jobs:
       - run: |
           flyctl deploy --config apps/academy/fly.toml --remote-only \
             --build-arg NEXT_PUBLIC_API_URL="${NEXT_PUBLIC_API_URL}" \
-            --build-arg NEXT_PUBLIC_SITE="ACADEMY"
+            --build-arg NEXT_PUBLIC_SITE="ACADEMY" \
+            --build-arg NEXT_PUBLIC_EMAIL_VERIFICATION_DISABLED="${NEXT_PUBLIC_EMAIL_VERIFICATION_DISABLED}" \
+            --build-arg NEXT_PUBLIC_GOOGLE_AUTH_DISABLED="${NEXT_PUBLIC_GOOGLE_AUTH_DISABLED}"
         env:
           FLY_API_TOKEN: ${{ secrets.FLY_DEPLOY_TOKEN_ACADEMY }}
           NEXT_PUBLIC_API_URL: https://tge-api.fly.dev/api/v1
+          # Permanent feature flags — kept in sync with the API-side
+          # secrets (EMAIL_VERIFICATION_DISABLED / GOOGLE_AUTH_DISABLED).
+          # Edit this file + push to main (or workflow_dispatch) to flip them.
+          NEXT_PUBLIC_EMAIL_VERIFICATION_DISABLED: 'true'
+          NEXT_PUBLIC_GOOGLE_AUTH_DISABLED: 'true'

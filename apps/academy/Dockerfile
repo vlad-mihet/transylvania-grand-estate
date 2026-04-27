@@ -30,6 +30,13 @@ ARG NEXT_PUBLIC_API_URL
 ENV NEXT_PUBLIC_API_URL=$NEXT_PUBLIC_API_URL
 ARG NEXT_PUBLIC_SITE=ACADEMY
 ENV NEXT_PUBLIC_SITE=$NEXT_PUBLIC_SITE
+# Permanent feature flags. Empty default = feature on; pass "true" via the
+# Fly deploy --build-arg to disable. The values must be present at `next
+# build` time because they're baked into the client bundle.
+ARG NEXT_PUBLIC_EMAIL_VERIFICATION_DISABLED=
+ENV NEXT_PUBLIC_EMAIL_VERIFICATION_DISABLED=$NEXT_PUBLIC_EMAIL_VERIFICATION_DISABLED
+ARG NEXT_PUBLIC_GOOGLE_AUTH_DISABLED=
+ENV NEXT_PUBLIC_GOOGLE_AUTH_DISABLED=$NEXT_PUBLIC_GOOGLE_AUTH_DISABLED
 
 # @tge/types re-exports Prisma enum values (CourseStatus, LessonType…) so
 # the client must be generated before academy's Next.js build resolves them.

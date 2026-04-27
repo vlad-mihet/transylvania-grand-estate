@@ -13,6 +13,7 @@ import { PasswordField } from "@/components/auth/password-field";
 import { GoogleSsoButton } from "@/components/auth/google-sso-button";
 import { PasswordStrength } from "@/components/shared/password-strength";
 import { BRAND, supportMailto } from "@/lib/config/brand";
+import { flags } from "@/lib/flags";
 import {
   buildPasswordSchema,
   type PasswordFormValues,
@@ -210,8 +211,7 @@ function AcceptForm({
   const tErrors = useTranslations("PasswordStrength.errors");
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const googleEnabled =
-    process.env.NEXT_PUBLIC_SSO_GOOGLE_ENABLED === "true";
+  const googleEnabled = !flags.googleAuthDisabled;
 
   const schema = useMemo(
     () =>

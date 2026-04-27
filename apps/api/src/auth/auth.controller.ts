@@ -36,6 +36,7 @@ import { Roles } from '../common/decorators/roles.decorator';
 import { InvitationsService } from '../invitations/invitations.service';
 import { MetricsService } from '../metrics/metrics.service';
 import { AuditService } from '../audit/audit.service';
+import { FeatureFlagsService } from '../common/config/feature-flags.service';
 
 @ApiTags('Auth')
 @Controller('auth')
@@ -48,6 +49,7 @@ export class AuthController {
     private invitationsService: InvitationsService,
     private metrics: MetricsService,
     private audit: AuditService,
+    private flags: FeatureFlagsService,
   ) {}
 
   @Public()
@@ -279,6 +281,19 @@ export class AuthController {
   }
 
   private ensureGoogleConfigured(): void {
+    if (this.flags.googleAuthDisabled) {
+      // Hard kill-switch — checked before credentials so the response is
+      // identical regardless of whether the deployment has Google secrets.
+      // Both the admin login form and accept-invite page key off this 501
+      // (via their flag read) to hide the Google button.
+      throw new HttpException(
+        {
+          message: 'Google sign-in is disabled on this deployment',
+          code: 'GOOGLE_AUTH_DISABLED',
+        },
+        HttpStatus.NOT_IMPLEMENTED,
+      );
+    }
     const id = this.config.get<string>('GOOGLE_CLIENT_ID');
     const secret = this.config.get<string>('GOOGLE_CLIENT_SECRET');
     const cb = this.config.get<string>('GOOGLE_CALLBACK_URL');

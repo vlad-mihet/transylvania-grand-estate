@@ -337,6 +337,49 @@ export const academyResendVerificationSchema = z
   })
   .strict();
 
+/**
+ * Shared user shape carried on every auth-token response (login, refresh,
+ * verify-email, accept-invite, register-with-verification-disabled).
+ * Mirrors AcademyAuthService.shape() — three fields, no PII beyond the
+ * email already in the JWT claims.
+ */
+export const academyAuthUserSchema = z.object({
+  id: z.string().uuid(),
+  email: z.string().email(),
+  name: z.string(),
+});
+
+/**
+ * Discriminated response for `POST /academy/auth/register`. When the
+ * EMAIL_VERIFICATION_DISABLED flag is on, the API auto-verifies the new
+ * account and returns tokens directly (`verificationRequired: false`) so
+ * the client can land the user on the dashboard. With the flag off, the
+ * response carries no tokens and the client renders the "check your inbox"
+ * screen — matching the historical behavior. The discriminator lets the
+ * client branch without reading any frontend env var.
+ */
+export const academyRegisterResponseSchema = z.discriminatedUnion(
+  "verificationRequired",
+  [
+    z.object({
+      ok: z.literal(true),
+      verificationRequired: z.literal(true),
+    }),
+    z.object({
+      ok: z.literal(true),
+      verificationRequired: z.literal(false),
+      accessToken: z.string(),
+      refreshToken: z.string(),
+      user: academyAuthUserSchema,
+    }),
+  ],
+);
+
+export type AcademyAuthUser = z.infer<typeof academyAuthUserSchema>;
+export type AcademyRegisterResponse = z.infer<
+  typeof academyRegisterResponseSchema
+>;
+
 export type AcademyRegisterInput = z.infer<typeof academyRegisterSchema>;
 export type AcademyVerifyEmailInput = z.infer<typeof academyVerifyEmailSchema>;
 export type AcademyResendVerificationInput = z.infer<

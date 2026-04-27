@@ -40,6 +40,7 @@ import { WebhooksModule } from './webhooks/webhooks.module';
 import { MetricsModule } from './metrics/metrics.module';
 import { SiteModule, SiteMiddleware } from './common/site';
 import { RequestContextModule } from './common/cls/request-context.module';
+import { FeatureFlagsModule } from './common/config/feature-flags.module';
 
 // Local dev serves uploaded images from disk; production proxies R2 directly.
 // rootPath must match wherever LocalStorageService writes — resolveUploadsDir
@@ -139,6 +140,7 @@ const serveStaticModules =
     // background jobs spawned from a request) shares the same audit
     // forensics context (requestId, ipHash, brand, method, url, UA).
     RequestContextModule,
+    FeatureFlagsModule,
     SiteModule,
     PrismaModule,
     AuditModule,

@@ -76,6 +76,16 @@ const baseSchema = z.object({
   // doesn't get killed by the 5/min auth bucket. Strictly dev-only — the
   // production schema below rejects the value entirely so it can't ship.
   DEV_AUTH_THROTTLE_DISABLED: z.enum(['0', '1']).optional(),
+
+  // Permanent feature flags. Default unset = feature behaves normally.
+  // EMAIL_VERIFICATION_DISABLED=1 makes Academy self-service signup auto-
+  // verify the new account and return tokens directly (no inbox round-trip).
+  // GOOGLE_AUTH_DISABLED=1 makes /auth/google* and /academy/auth/google*
+  // return 501 regardless of whether GOOGLE_CLIENT_ID is configured.
+  // Both flags read through FeatureFlagsService — never via ConfigService
+  // directly — so the parsing and naming live in one place.
+  EMAIL_VERIFICATION_DISABLED: z.enum(['0', '1']).optional(),
+  GOOGLE_AUTH_DISABLED: z.enum(['0', '1']).optional(),
 });
 
 const productionSchema = baseSchema.extend({

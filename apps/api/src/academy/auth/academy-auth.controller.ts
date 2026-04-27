@@ -43,6 +43,7 @@ import { JwtAcademyAuthGuard } from './guards/jwt-academy-auth.guard';
 import { GoogleAcademyAuthGuard } from './guards/google-academy-auth.guard';
 import type { GoogleVerifiedProfile } from '../../auth/strategies/google.strategy';
 import { AcademyInvitationsService } from '../invitations/academy-invitations.service';
+import { FeatureFlagsService } from '../../common/config/feature-flags.service';
 
 /**
  * Academy-realm auth surface. Mounted under `/academy/auth` so every route
@@ -62,6 +63,7 @@ export class AcademyAuthController {
     private readonly jwtService: JwtService,
     @Inject(forwardRef(() => AcademyInvitationsService))
     private readonly invitationsService: AcademyInvitationsService,
+    private readonly flags: FeatureFlagsService,
   ) {}
 
   @Public()
@@ -302,6 +304,16 @@ export class AcademyAuthController {
   }
 
   private ensureGoogleConfigured(): void {
+    if (this.flags.googleAuthDisabled) {
+      // Hard kill-switch — see AuthController for the rationale.
+      throw new HttpException(
+        {
+          message: 'Google sign-in is disabled on this deployment',
+          code: 'GOOGLE_AUTH_DISABLED',
+        },
+        HttpStatus.NOT_IMPLEMENTED,
+      );
+    }
     const id = this.config.get<string>('GOOGLE_CLIENT_ID');
     const secret = this.config.get<string>('GOOGLE_CLIENT_SECRET');
     const cb = this.config.get<string>('GOOGLE_ACADEMY_CALLBACK_URL');
