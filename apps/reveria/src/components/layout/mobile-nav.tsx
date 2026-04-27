@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import { Link, usePathname } from "@/i18n/navigation";
 import { Sheet, SheetContent, SheetDescription, SheetTitle, SheetTrigger } from "@tge/ui";
 import { Button } from "@tge/ui";
@@ -10,6 +10,10 @@ import { LanguageSwitcher } from "./language-switcher";
 import { Menu, X } from "lucide-react";
 import { cn } from "@tge/utils";
 
+// Internal site routes only — the academy link below is external (different
+// origin) and the Contact entry stays out of the array so the external link
+// renders cleanly between the two groups. Keep `as const` so next-intl's
+// Link accepts the literal-route hrefs.
 const navLinks = [
   { key: "properties", href: "/properties" },
   { key: "cities", href: "/cities" },
@@ -18,13 +22,14 @@ const navLinks = [
   { key: "blog", href: "/blog" },
   { key: "tools", href: "/instrumente" },
   { key: "about", href: "/about" },
-  { key: "contact", href: "/contact" },
 ] as const;
 
 export function MobileNav() {
   const [open, setOpen] = useState(false);
   const t = useTranslations("Navigation");
   const pathname = usePathname();
+  const locale = useLocale();
+  const academyHref = `${process.env.NEXT_PUBLIC_ACADEMY_URL ?? "http://localhost:3053"}/${locale}/catalog`;
 
   return (
     <Sheet open={open} onOpenChange={setOpen}>
@@ -72,6 +77,35 @@ export function MobileNav() {
                   </Link>
                 );
               })}
+              <a
+                href={academyHref}
+                target="_blank"
+                rel="noopener noreferrer"
+                onClick={() => setOpen(false)}
+                className={cn(
+                  "px-3 py-3 text-base font-medium rounded-lg transition-colors",
+                  "text-foreground hover:bg-muted"
+                )}
+              >
+                {t("courses")}
+              </a>
+              <Link
+                href="/contact"
+                onClick={() => setOpen(false)}
+                aria-current={
+                  pathname === "/contact" || pathname.startsWith("/contact/")
+                    ? "page"
+                    : undefined
+                }
+                className={cn(
+                  "px-3 py-3 text-base font-medium rounded-lg transition-colors",
+                  pathname === "/contact" || pathname.startsWith("/contact/")
+                    ? "text-primary bg-accent"
+                    : "text-foreground hover:bg-muted"
+                )}
+              >
+                {t("contact")}
+              </Link>
             </div>
           </nav>
 
