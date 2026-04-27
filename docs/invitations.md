@@ -192,6 +192,26 @@ All invitation + auth events use structured payloads: `event`, `invitationId`, `
 
 ---
 
+## 6.5 Token rotation behavior — what to tell support
+
+The accept-invite token rotates **on every send**: the initial invite, every resend, every reminder cron run, and every email-retry cron run all generate a fresh plaintext token and overwrite the stored `tokenHash`. The plaintext that arrived in the email is the only place the token exists in cleartext — once the next send goes out, the previous email's link is dead.
+
+**What support sees in the inbox of a confused invitee:**
+
+1. The original invite email arrived 3 days ago.
+2. An admin clicked **Resend** yesterday → a second email arrived.
+3. The reminder cron fired at the 23-25h-from-expiry mark → a third email arrived.
+4. The invitee clicks the link in **email #1** → 404 "Invitation not found" (the hash for that plaintext is no longer in the DB).
+5. The invitee clicks the link in **email #3** → success.
+
+**What to tell the invitee:** "Always use the most recent email link. Older links from the same address stop working as soon as we send a follow-up." If they've already deleted the recent emails, the admin can resend (which generates yet another fresh token and email).
+
+**Why we rotate** (so support can answer "why doesn't the old link work?"): each rotation resets the consumption window so a leaked-and-stale plaintext from an inbox archive can't be replayed against an active invitation. Trade-off is the inbox-clutter UX above; we picked the security side.
+
+**This is intentional, not a bug** — see the per-rotation comment in `apps/api/src/invitations/invitations.service.ts` (search for `regenerateToken`).
+
+---
+
 ## 7. Known limitations
 
 - **JWT lifetime on revoke:** Deleted or revoked AdminUsers can use existing access tokens for up to 15 minutes. Refresh tokens are reusable for 7 days until cleared. A JWT denylist (P3.1 in the Phase-2 plan) would close this; not blocking today.
