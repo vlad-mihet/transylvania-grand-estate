@@ -5,7 +5,22 @@
  * admin app, scoped to the academy realm.
  */
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:4000/api/v1";
+// Empty string and undefined both count as "unset" — `??` alone would let an
+// empty build-arg through, which collapses `${API_URL}${path}` to a relative
+// URL at runtime and 404s against the academy's own origin. In production we
+// throw on first call so misbuilds fail loudly instead of silently. Mirrors
+// packages/api-client/src/client.ts getApiBase().
+const RAW_API_URL = process.env.NEXT_PUBLIC_API_URL;
+const API_URL =
+  RAW_API_URL && RAW_API_URL.length > 0
+    ? RAW_API_URL
+    : process.env.NODE_ENV === "production"
+      ? (() => {
+          throw new Error(
+            "NEXT_PUBLIC_API_URL must be set for production builds",
+          );
+        })()
+      : "http://localhost:4000/api/v1";
 const SITE = process.env.NEXT_PUBLIC_SITE ?? "ACADEMY";
 
 const ACCESS_TOKEN_KEY = "academy.accessToken";
