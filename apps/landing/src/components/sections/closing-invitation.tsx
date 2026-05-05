@@ -5,6 +5,7 @@ import Image from "next/image";
 import { AccentButton } from "@tge/ui";
 import { ScrollReveal } from "@tge/ui";
 import { InquiryTrigger } from "@tge/ui";
+import { CONTACT_PHONE } from "@/lib/contact";
 
 export function ClosingInvitation() {
   const t = useTranslations("TransylvaniaPage.closing");
@@ -51,7 +52,7 @@ export function ClosingInvitation() {
 
         <ScrollReveal delay={500}>
           <div className="mt-8 flex flex-col sm:flex-row items-center justify-center gap-4 text-cream-muted/40 text-xs tracking-[0.15em]">
-            <span>+40 264 123 456</span>
+            <span>{CONTACT_PHONE.display}</span>
             <span className="hidden sm:inline">&middot;</span>
             <span>contact@tge.ro</span>
           </div>

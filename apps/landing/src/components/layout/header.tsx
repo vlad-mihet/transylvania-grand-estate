@@ -13,6 +13,7 @@ import { InquiryTrigger } from "@tge/ui";
 import { cn } from "@tge/utils";
 import { ChevronDown, Phone, Mail } from "lucide-react";
 import { DiamondSvg } from "./floating-diamond";
+import { CONTACT_PHONE } from "@/lib/contact";
 
 const propertyTypes = [
   { key: "apartment", slug: "apartment" },
@@ -96,11 +97,11 @@ export function Header({ developers }: HeaderProps) {
             {/* Left: contact info */}
             <div className="flex items-center gap-6">
               <a
-                href="tel:+40264123456"
+                href={`tel:${CONTACT_PHONE.tel}`}
                 className="flex items-center gap-1.5 text-[11px] text-cream-muted hover:text-copper tracking-[0.1em] uppercase transition-colors duration-500 ease-luxury"
               >
                 <Phone className="h-3 w-3" />
-                +40 264 123 456
+                {CONTACT_PHONE.display}
               </a>
               <span className="w-px h-3 bg-copper/15" />
               <a

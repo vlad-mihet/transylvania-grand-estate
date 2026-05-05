@@ -10,6 +10,7 @@ import { InquiryTrigger } from "@tge/ui";
 import { LanguageSwitcher } from "./language-switcher";
 import { Menu, X, ChevronDown, Phone, Mail } from "lucide-react";
 import { cn } from "@tge/utils";
+import { CONTACT_PHONE } from "@/lib/contact";
 
 const propertyTypes = [
   { key: "apartment", slug: "apartment" },
@@ -229,11 +230,11 @@ export function MobileNav() {
             {/* Contact info */}
             <div className="flex flex-col gap-2 text-sm text-cream-muted/70">
               <a
-                href="tel:+40264123456"
+                href={`tel:${CONTACT_PHONE.tel}`}
                 className="flex items-center gap-2 hover:text-copper transition-colors"
               >
                 <Phone className="h-3.5 w-3.5" />
-                +40 264 123 456
+                {CONTACT_PHONE.display}
               </a>
               <a
                 href="mailto:contact@tge.ro"

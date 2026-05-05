@@ -5,6 +5,7 @@ import { Container } from "@/components/layout/container";
 import { SectionHeading } from "@tge/ui";
 import { ScrollReveal } from "@tge/ui";
 import { MapPin, Phone, Mail, Clock } from "lucide-react";
+import { CONTACT_PHONE } from "@/lib/contact";
 
 const offices = [
   {
@@ -15,7 +16,8 @@ const offices = [
       fr: "Boulevard Eroilor 21, Cluj-Napoca 400129, Département de Cluj",
       de: "Eroilor Boulevard 21, Cluj-Napoca 400129, Kreis Cluj",
     },
-    phone: "+40 264 123 456",
+    phone: CONTACT_PHONE.display,
+    tel: CONTACT_PHONE.tel,
     email: "cluj@tge.ro",
     hours: {
       en: "Mon-Fri: 9:00 - 18:00 | Sat: 10:00 - 14:00",
@@ -32,7 +34,8 @@ const offices = [
       fr: "Rue Republicii 15, Brasov 500030, Département de Brasov",
       de: "Republicii Straße 15, Brasov 500030, Kreis Brasov",
     },
-    phone: "+40 268 123 456",
+    phone: CONTACT_PHONE.display,
+    tel: CONTACT_PHONE.tel,
     email: "brasov@tge.ro",
     hours: {
       en: "Mon-Fri: 9:00 - 18:00 | Sat: 10:00 - 14:00",
@@ -49,7 +52,8 @@ const offices = [
       fr: "Place Victoriei 8, Timisoara 300006, Département de Timis",
       de: "Victoriei Platz 8, Timisoara 300006, Kreis Timis",
     },
-    phone: "+40 256 123 456",
+    phone: CONTACT_PHONE.display,
+    tel: CONTACT_PHONE.tel,
     email: "timisoara@tge.ro",
     hours: {
       en: "Mon-Fri: 9:00 - 18:00 | Sat: 10:00 - 14:00",
@@ -83,7 +87,7 @@ export function OfficeLocations() {
                   <div className="flex items-center gap-2">
                     <Phone className="h-4 w-4 text-copper flex-shrink-0" />
                     <a
-                      href={`tel:${office.phone}`}
+                      href={`tel:${office.tel}`}
                       className="hover:text-copper transition-colors"
                     >
                       {office.phone}

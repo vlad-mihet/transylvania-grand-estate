@@ -5,6 +5,7 @@ import { Link } from "@tge/i18n/navigation";
 import { Container } from "./container";
 import { Locale } from "@tge/types";
 import { Instagram, Facebook, Linkedin, Youtube, Phone, Mail } from "lucide-react";
+import { CONTACT_PHONE } from "@/lib/contact";
 
 const socialIcons = {
   instagram: Instagram,
@@ -14,7 +15,8 @@ const socialIcons = {
 } as const;
 
 const contact = {
-  phone: "+40 264 123 456",
+  phone: CONTACT_PHONE.display,
+  tel: CONTACT_PHONE.tel,
   email: "contact@tge.ro",
 };
 
@@ -85,7 +87,7 @@ export function Footer() {
             </h3>
             <div className="flex flex-col gap-3 text-sm text-cream-muted">
               <a
-                href={`tel:${contact.phone}`}
+                href={`tel:${contact.tel}`}
                 className="flex items-center gap-2 hover:text-copper transition-colors"
               >
                 <Phone className="h-4 w-4 text-copper" />
