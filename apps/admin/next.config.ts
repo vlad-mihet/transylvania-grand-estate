@@ -17,6 +17,10 @@ const nextConfig: NextConfig = {
         protocol: "https",
         hostname: process.env.API_HOSTNAME || "localhost",
       },
+      {
+        protocol: "https",
+        hostname: "pub-ffcea7bef1c14bf998dfbe374ebf1240.r2.dev",
+      },
     ],
   },
   transpilePackages: [
