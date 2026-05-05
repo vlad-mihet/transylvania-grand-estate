@@ -2,8 +2,7 @@
 
 import { useTransition } from "react";
 import { useParams } from "next/navigation";
-import ReactMarkdown from "react-markdown";
-import remarkGfm from "remark-gfm";
+import { LessonMarkdown } from "@/components/lesson-markdown";
 import { useLocale, useTranslations } from "next-intl";
 import { toast } from "sonner";
 import { ErrorState, SubmitButton } from "@tge/ui";
@@ -178,9 +177,7 @@ export default function LessonPage() {
           <LessonVideoPlayer src={lesson.videoUrl} title={lesson.localizedTitle} />
         ) : null}
         <article className="lesson-prose mt-8 prose prose-neutral max-w-[72ch] md:max-w-none">
-          <ReactMarkdown remarkPlugins={[remarkGfm]}>
-            {lesson.content}
-          </ReactMarkdown>
+          <LessonMarkdown>{lesson.content}</LessonMarkdown>
         </article>
 
         <div className="mt-10 flex flex-col items-stretch gap-4 border-t border-[color:var(--color-border)] pt-6 sm:flex-row sm:items-center sm:justify-between">
