@@ -74,8 +74,10 @@ Create the following files before running the apps:
 
 ```env
 DATABASE_URL="postgresql://postgres:password@localhost:5432/tge_dev?schema=public"
-JWT_ACCESS_SECRET="dev-access-secret-change-in-production"
-JWT_REFRESH_SECRET="dev-refresh-secret-change-in-production"
+JWT_ADMIN_ACCESS_SECRET="dev-admin-access-secret-change-in-production"
+JWT_ADMIN_REFRESH_SECRET="dev-admin-refresh-secret-change-in-production"
+JWT_ACADEMY_ACCESS_SECRET="dev-academy-access-secret-change-in-production"
+JWT_ACADEMY_REFRESH_SECRET="dev-academy-refresh-secret-change-in-production"
 JWT_ACCESS_EXPIRATION="15m"
 JWT_REFRESH_EXPIRATION="7d"
 PORT=3333

@@ -24,7 +24,7 @@
 <!-- Appended as phases run -->
 
 ### Phase A — Setup & Migration Safety
-- `apps/api/.env` present with expected keys (DATABASE_URL, CORS_ORIGINS, JWT_ACCESS_SECRET, JWT_REFRESH_SECRET, STORAGE_TYPE, API_URL, NEXT_PUBLIC_API_URL, MAX_FILE_SIZE). No `SITE_TIER_SCOPE` env var — it's a static compile-time constant in `apps/api/src/common/site/site.types.ts`, not env-driven.
+- `apps/api/.env` present with expected keys (DATABASE_URL, CORS_ORIGINS, JWT_ADMIN_ACCESS_SECRET, JWT_ADMIN_REFRESH_SECRET, JWT_ACADEMY_ACCESS_SECRET, JWT_ACADEMY_REFRESH_SECRET, STORAGE_TYPE, API_URL, NEXT_PUBLIC_API_URL, MAX_FILE_SIZE). No `SITE_TIER_SCOPE` env var — it's a static compile-time constant in `apps/api/src/common/site/site.types.ts`, not env-driven.
 - Postgres: docker container `tge-postgres-1` (postgres:16-alpine) on 5435 → 5432, db `tge_dev`. Used by local API.
 - `prisma migrate status` → "Database schema is up to date" against 18 migrations total (6 from main + 12 new on this branch, more than the initial audit count of 9).
 - Migrations listed on disk include all the high-risk ones: `drop_price_history_and_view_count`, `add_property_location_fks`, `make_city_county_required`, `add_property_tier`, `add_inquiry_source`. No fresh-DB dry-run executed against a scratch DB because the user's local DB already has schema applied — **gap noted**: I have not verified migrations apply top-to-bottom against an EMPTY db on this branch. Recommend that validation before production deploy.

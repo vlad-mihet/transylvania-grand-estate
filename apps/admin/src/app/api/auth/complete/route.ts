@@ -8,8 +8,8 @@ import { NextRequest, NextResponse } from "next/server";
  * password-login user.
  *
  * We don't verify the token here — a forged JWT couldn't survive the
- * upstream /auth/refresh verification (which checks JWT_REFRESH_SECRET), so
- * handing it a junk cookie just breaks the attacker's own session.
+ * upstream /auth/refresh verification (which checks JWT_ADMIN_REFRESH_SECRET),
+ * so handing it a junk cookie just breaks the attacker's own session.
  */
 export async function POST(req: NextRequest) {
   const { refreshToken } = (await req.json().catch(() => ({}))) as {

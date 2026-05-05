@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { apiFetch, getAccessToken } from "@/lib/api-client";
+import { apiFetch, useAccessToken } from "@/lib/api-client";
 import { qk } from "./query-keys";
 import type { CourseSummary } from "@/components/course-card";
 
@@ -117,24 +117,27 @@ function useIsClient(): boolean {
 
 export function useMe() {
   const isClient = useIsClient();
+  const accessToken = useAccessToken();
   return useQuery({
     queryKey: qk.me(),
     queryFn: () => apiFetch<Profile>("/academy/auth/me"),
-    enabled: isClient && !!getAccessToken(),
+    enabled: isClient && !!accessToken,
   });
 }
 
 export function useMyCourses(locale: string) {
   const isClient = useIsClient();
+  const accessToken = useAccessToken();
   return useQuery({
     queryKey: qk.myCourses(locale),
     queryFn: () => apiFetch<CourseSummary[]>("/academy/courses", { locale }),
-    enabled: isClient && !!getAccessToken(),
+    enabled: isClient && !!accessToken,
   });
 }
 
 export function useCatalog(locale: string, page: number, search: string) {
   const isClient = useIsClient();
+  const accessToken = useAccessToken();
   const params = new URLSearchParams();
   params.set("page", String(page));
   if (search) params.set("search", search);
@@ -145,7 +148,7 @@ export function useCatalog(locale: string, page: number, search: string) {
         `/academy/courses/catalog?${params.toString()}`,
         { locale },
       ),
-    enabled: isClient && !!getAccessToken(),
+    enabled: isClient && !!accessToken,
     // Keep the previous page visible while the next page loads — no
     // jarring loading flash between page numbers.
     placeholderData: (prev) => prev,
@@ -154,6 +157,7 @@ export function useCatalog(locale: string, page: number, search: string) {
 
 export function useCourse(slug: string, locale: string) {
   const isClient = useIsClient();
+  const accessToken = useAccessToken();
   return useQuery({
     queryKey: qk.course(slug, locale),
     queryFn: () =>
@@ -161,7 +165,7 @@ export function useCourse(slug: string, locale: string) {
         `/academy/courses/${encodeURIComponent(slug)}?locale=${locale}`,
         { locale },
       ),
-    enabled: isClient && !!getAccessToken() && !!slug,
+    enabled: isClient && !!accessToken && !!slug,
   });
 }
 
@@ -173,6 +177,7 @@ export function useCourseLessons(
   limit = 20,
 ) {
   const isClient = useIsClient();
+  const accessToken = useAccessToken();
   const params = new URLSearchParams();
   params.set("page", String(page));
   params.set("limit", String(limit));
@@ -185,13 +190,14 @@ export function useCourseLessons(
         `/academy/courses/${encodeURIComponent(slug)}/lessons?${params.toString()}`,
         { locale },
       ),
-    enabled: isClient && !!getAccessToken() && !!slug,
+    enabled: isClient && !!accessToken && !!slug,
     placeholderData: (prev) => prev,
   });
 }
 
 export function useLesson(slug: string, lessonSlug: string, locale: string) {
   const isClient = useIsClient();
+  const accessToken = useAccessToken();
   return useQuery({
     queryKey: qk.lesson(slug, lessonSlug, locale),
     queryFn: () =>
@@ -199,6 +205,6 @@ export function useLesson(slug: string, lessonSlug: string, locale: string) {
         `/academy/courses/${encodeURIComponent(slug)}/lessons/${encodeURIComponent(lessonSlug)}?locale=${locale}`,
         { locale },
       ),
-    enabled: isClient && !!getAccessToken() && !!slug && !!lessonSlug,
+    enabled: isClient && !!accessToken && !!slug && !!lessonSlug,
   });
 }

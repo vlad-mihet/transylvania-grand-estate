@@ -13,10 +13,22 @@ const baseSchema = z.object({
   NODE_ENV: z.enum(['development', 'test', 'production']).default('development'),
   PORT: z.coerce.number().int().positive().default(3333),
   DATABASE_URL: z.string().url(),
-  JWT_ACCESS_SECRET: z.string().min(32, 'JWT_ACCESS_SECRET must be ≥32 chars'),
-  JWT_REFRESH_SECRET: z
+  // Per-realm signing secrets. Cryptographic separation between admin and
+  // academy: a leak of one realm's secret does not let an attacker forge
+  // tokens for the other. Realm matching at the strategy layer is now a
+  // belt-and-suspenders check on top of signature mismatch.
+  JWT_ADMIN_ACCESS_SECRET: z
     .string()
-    .min(32, 'JWT_REFRESH_SECRET must be ≥32 chars'),
+    .min(32, 'JWT_ADMIN_ACCESS_SECRET must be ≥32 chars'),
+  JWT_ADMIN_REFRESH_SECRET: z
+    .string()
+    .min(32, 'JWT_ADMIN_REFRESH_SECRET must be ≥32 chars'),
+  JWT_ACADEMY_ACCESS_SECRET: z
+    .string()
+    .min(32, 'JWT_ACADEMY_ACCESS_SECRET must be ≥32 chars'),
+  JWT_ACADEMY_REFRESH_SECRET: z
+    .string()
+    .min(32, 'JWT_ACADEMY_REFRESH_SECRET must be ≥32 chars'),
   JWT_ACCESS_EXPIRATION: z.string().default('15m'),
   JWT_REFRESH_EXPIRATION: z.string().default('7d'),
   LOG_LEVEL: z

@@ -181,7 +181,7 @@ All invitation + auth events use structured payloads: `event`, `invitationId`, `
 | Incident | Response |
 |----------|----------|
 | Compromised invitation token (link leaked) | Invitations page → **Revoke**. Issue a fresh invitation if needed. |
-| Compromised AdminUser session (JWT leaked) | Rotate both `JWT_ACCESS_SECRET` and `JWT_REFRESH_SECRET` in Fly secrets + redeploy. All users re-login. (Granular revocation is a Phase-3 item.) |
+| Compromised AdminUser session (JWT leaked) | Rotate `JWT_ADMIN_ACCESS_SECRET` and `JWT_ADMIN_REFRESH_SECRET` in Fly secrets + redeploy. All admin users re-login; academy sessions are unaffected (per-realm secrets). |
 | Compromised Google OAuth client secret | GCP console → credentials → delete + recreate client; update `GOOGLE_CLIENT_SECRET` in Fly secrets; redeploy. In-flight sign-ins fail; users restart. |
 | Compromised `INVITATION_TOKEN_SECRET` | Rotate; all in-flight OAuth state JWTs invalidate. Users mid-flow see `state_invalid` error and restart. |
 | Compromised `RESEND_WEBHOOK_SECRET` | Regenerate in Resend dashboard; update in Fly secrets. In-flight bounce events may be missed during the rotation window; admin may need to manually mark BOUNCED via Prisma Studio for affected rows. |

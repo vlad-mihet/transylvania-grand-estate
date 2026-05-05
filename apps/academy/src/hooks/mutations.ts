@@ -1,25 +1,20 @@
 "use client";
 
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import {
-  apiFetch,
-  clearTokens,
-  getRefreshToken,
-  setTokens,
-} from "@/lib/api-client";
+import { apiFetch, setAccessToken } from "@/lib/api-client";
 import { qk } from "./query-keys";
 import type { Profile } from "./queries";
 
-type AuthTokens = {
+type AuthSession = {
   accessToken: string;
-  refreshToken: string;
-  user?: { id: string; email: string; name: string };
+  user: { id: string; email: string; name: string };
 };
 
 /**
- * Mirrors the API's `academyRegisterResponseSchema` discriminated union.
- * `verificationRequired: false` only happens when the API was started with
- * EMAIL_VERIFICATION_DISABLED=1; in that branch the caller is auto-logged-in.
+ * Mirrors the API's `academyRegisterResponseSchema` after the BFF strips
+ * the refresh token (which is set as an httpOnly cookie). Auto-login branch
+ * appears only when the upstream API was started with
+ * `EMAIL_VERIFICATION_DISABLED=1`.
  */
 type RegisterResponse =
   | { ok: true; verificationRequired: true }
@@ -27,68 +22,88 @@ type RegisterResponse =
       ok: true;
       verificationRequired: false;
       accessToken: string;
-      refreshToken: string;
       user: { id: string; email: string; name: string };
     };
+
+/**
+ * BFF helper. The auth endpoints that mint or rotate sessions all live
+ * behind Next route handlers under `/api/auth/*` so the refresh token can
+ * be set as an httpOnly cookie on the academy origin. Direct calls to the
+ * upstream API would leave the refresh token in the response body and
+ * force the client to put it in localStorage — which is exactly what this
+ * migration replaces.
+ */
+async function bffFetch<T>(
+  path: string,
+  body?: unknown,
+): Promise<T> {
+  const res = await fetch(path, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: body !== undefined ? JSON.stringify(body) : undefined,
+  });
+  const data = await res.json().catch(() => ({}));
+  if (!res.ok) {
+    const message =
+      (data as { error?: { message?: string }; message?: string })?.error
+        ?.message ??
+      (data as { message?: string })?.message ??
+      `Request failed: ${res.status}`;
+    throw new BffError(message, res.status);
+  }
+  return data as T;
+}
+
+class BffError extends Error {
+  constructor(message: string, public readonly status: number) {
+    super(message);
+  }
+}
 
 /* ───── Auth ───── */
 
 export function useLogin() {
+  const qc = useQueryClient();
   return useMutation({
     mutationFn: (body: { email: string; password: string }) =>
-      apiFetch<AuthTokens>("/academy/auth/login", {
-        method: "POST",
-        body,
-        skipAuth: true,
-      }),
-    onSuccess: (data) =>
-      setTokens({
-        accessToken: data.accessToken,
-        refreshToken: data.refreshToken,
-      }),
+      bffFetch<AuthSession>("/api/auth/login", body),
+    onSuccess: (data) => {
+      setAccessToken(data.accessToken);
+      qc.setQueryData(qk.me(), data.user as unknown as Profile);
+    },
   });
 }
 
 export function useRegister() {
+  const qc = useQueryClient();
   return useMutation({
     mutationFn: (body: {
       name: string;
       email: string;
       password: string;
       locale: "ro" | "en" | "fr" | "de";
-    }) =>
-      apiFetch<RegisterResponse>("/academy/auth/register", {
-        method: "POST",
-        body,
-        skipAuth: true,
-      }),
+    }) => bffFetch<RegisterResponse>("/api/auth/register", body),
     onSuccess: (data) => {
       // Auto-login branch (API runs with EMAIL_VERIFICATION_DISABLED=1).
       // Branching on the response shape rather than a frontend env var
       // keeps the two sides from drifting.
       if (data.verificationRequired === false) {
-        setTokens({
-          accessToken: data.accessToken,
-          refreshToken: data.refreshToken,
-        });
+        setAccessToken(data.accessToken);
+        qc.setQueryData(qk.me(), data.user as unknown as Profile);
       }
     },
   });
 }
 
 export function useVerifyEmail() {
+  const qc = useQueryClient();
   return useMutation({
     mutationFn: (body: { token: string }) =>
-      apiFetch<AuthTokens>("/academy/auth/verify-email", {
-        method: "POST",
-        body,
-        skipAuth: true,
-      }),
-    onSuccess: (data) =>
-      setTokens({
-        accessToken: data.accessToken,
-        refreshToken: data.refreshToken,
-      }),
+      bffFetch<AuthSession>("/api/auth/verify-email", body),
+    onSuccess: (data) => {
+      setAccessToken(data.accessToken);
+      qc.setQueryData(qk.me(), data.user as unknown as Profile);
+    },
   });
 }
 
@@ -126,18 +141,14 @@ export function useResendVerification() {
 }
 
 export function useAcceptInvite() {
+  const qc = useQueryClient();
   return useMutation({
     mutationFn: (body: { token: string; password: string }) =>
-      apiFetch<AuthTokens>("/academy/auth/invitations/accept-password", {
-        method: "POST",
-        body,
-        skipAuth: true,
-      }),
-    onSuccess: (data) =>
-      setTokens({
-        accessToken: data.accessToken,
-        refreshToken: data.refreshToken,
-      }),
+      bffFetch<AuthSession>("/api/auth/accept-invite", body),
+    onSuccess: (data) => {
+      setAccessToken(data.accessToken);
+      qc.setQueryData(qk.me(), data.user as unknown as Profile);
+    },
   });
 }
 
@@ -145,15 +156,13 @@ export function useLogout() {
   const qc = useQueryClient();
   return useMutation({
     mutationFn: async () => {
-      const refreshToken = getRefreshToken();
-      if (refreshToken) {
-        await apiFetch<{ ok: boolean }>("/academy/auth/logout", {
-          method: "POST",
-          body: { refreshToken },
-          skipAuth: true,
-        }).catch(() => undefined);
-      }
-      clearTokens();
+      // Best-effort upstream revocation happens inside the BFF route. The
+      // cookie is cleared regardless so a network blip can't strand the
+      // user in a half-logged-out state.
+      await bffFetch<{ ok: boolean }>("/api/auth/logout").catch(
+        () => undefined,
+      );
+      setAccessToken(null);
     },
     onSuccess: () => {
       qc.clear();

@@ -33,7 +33,7 @@ export async function seedSuperAdminAndAccessToken(
       agentId: null,
     },
     {
-      secret: process.env.JWT_ACCESS_SECRET,
+      secret: process.env.JWT_ADMIN_ACCESS_SECRET,
       expiresIn: '15m',
     },
   );

@@ -451,14 +451,13 @@ export class AuthService {
         email: user.email,
         role: user.role,
         agentId: user.agentId,
-        // Explicit realm lets the academy surface reject admin tokens (and
-        // vice versa) without inspecting role or email. Legacy tokens minted
-        // before this rollout carry no realm and default to 'admin' on the
-        // consuming side.
+        // Realm claim is a belt-and-suspenders check on top of cryptographic
+        // separation: admin and academy tokens are now signed with distinct
+        // secrets, so a cross-realm token would already fail signature.
         realm: 'admin' as const,
       },
       {
-        secret: this.configService.get('JWT_ACCESS_SECRET'),
+        secret: this.configService.get('JWT_ADMIN_ACCESS_SECRET'),
         expiresIn: this.configService.get('JWT_ACCESS_EXPIRATION', '15m'),
       },
     );
@@ -467,9 +466,9 @@ export class AuthService {
     // refresh strategy rejects any token whose jti is in the denylist.
     const jti = randomUUID();
     const refreshToken = this.jwtService.sign(
-      { sub: user.id, type: 'refresh', jti },
+      { sub: user.id, type: 'refresh', jti, realm: 'admin' as const },
       {
-        secret: this.configService.get('JWT_REFRESH_SECRET'),
+        secret: this.configService.get('JWT_ADMIN_REFRESH_SECRET'),
         expiresIn: this.configService.get('JWT_REFRESH_EXPIRATION', '7d'),
       },
     );

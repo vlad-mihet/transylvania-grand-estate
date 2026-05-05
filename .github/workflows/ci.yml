@@ -95,7 +95,9 @@ jobs:
         env:
           # Testcontainers provides DATABASE_URL at runtime; these only need
           # to satisfy env validation at Nest bootstrap time.
-          JWT_ACCESS_SECRET: ci_access_secret_ge_32_chars_xxxxxxxxx
-          JWT_REFRESH_SECRET: ci_refresh_secret_ge_32_chars_xxxxxxxx
+          JWT_ADMIN_ACCESS_SECRET: ci_admin_access_secret_ge_32_chars_xxx
+          JWT_ADMIN_REFRESH_SECRET: ci_admin_refresh_secret_ge_32_chars_xx
+          JWT_ACADEMY_ACCESS_SECRET: ci_academy_access_secret_ge_32_chars_x
+          JWT_ACADEMY_REFRESH_SECRET: ci_academy_refresh_secret_ge_32_chars
           INVITATION_TOKEN_SECRET: ci_invitation_secret_ge_32_chars_xxxxxx
           ADMIN_PUBLIC_URL: http://admin.ci

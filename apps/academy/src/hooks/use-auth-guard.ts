@@ -1,28 +1,30 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { getAccessToken } from "@/lib/api-client";
+import { useEffect } from "react";
+import { useAccessToken } from "@/lib/api-client";
+import { useSessionRestoring } from "@/components/providers";
 
 /**
  * Client-side auth gate. Replaces the per-page
  * `if (!getAccessToken()) router.replace("/login")` pattern. Captures the
  * current path + query string (sans locale) and stamps it as `returnTo` so
  * the user lands back where they started after login. Returns
- * `isReady: true` once the synchronous token check passes; pages should
- * render their skeleton/loading state until `isReady` flips.
+ * `isReady: true` once the SessionRestorer has finished its on-mount
+ * refresh — pages should render their skeleton until then so a logged-in
+ * user doesn't briefly see the redirect to /login.
  *
  * Token presence is not a security boundary — the real check happens on
  * the API when queries fire. If the stored token is stale, the central
  * 401 handler in `providers.tsx` redirects with the same `returnTo`.
  */
 export function useAuthGuard(): { isReady: boolean } {
-  const [isReady, setIsReady] = useState(false);
+  const accessToken = useAccessToken();
+  const isRestoring = useSessionRestoring();
 
   useEffect(() => {
-    if (getAccessToken()) {
-      setIsReady(true);
-      return;
-    }
+    if (isRestoring) return;
+    if (accessToken) return;
+
     const { pathname, search } = window.location;
     const segments = pathname.split("/").filter(Boolean);
     const locale =
@@ -45,13 +47,12 @@ export function useAuthGuard(): { isReady: boolean } {
       pathWithoutLocale === "/accept-invite" ||
       pathWithoutLocale === "/auth/complete"
     ) {
-      setIsReady(true);
       return;
     }
     window.location.replace(
       `/${locale}/login?returnTo=${encodeURIComponent(current)}`,
     );
-  }, []);
+  }, [accessToken, isRestoring]);
 
-  return { isReady };
+  return { isReady: !isRestoring };
 }

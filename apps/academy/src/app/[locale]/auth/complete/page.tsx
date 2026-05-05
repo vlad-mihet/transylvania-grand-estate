@@ -2,20 +2,25 @@
 
 import { Suspense, useEffect } from "react";
 import { Loader2 } from "lucide-react";
+import { useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "@/i18n/navigation";
-import { setTokens } from "@/lib/api-client";
+import { setAccessToken } from "@/lib/api-client";
+import { qk } from "@/hooks/query-keys";
 import { validateReturnTo } from "@/lib/return-to";
+import type { Profile } from "@/hooks/queries";
 
 /**
  * Google OAuth landing page. The API redirects here with the refresh token
  * and (optionally) a `dest` path in the URL fragment — not the query string
- * — so the token never touches the server logs of this app. We swap the
- * refresh for a fresh pair via /academy/auth/refresh, then route to `dest`
- * if it passes the allowlist in `validateReturnTo`. Anything unrecognized
- * falls through to the dashboard.
+ * — so the token never touches the server logs of this app. We hand the
+ * token to the local BFF route at `/api/auth/complete`, which exchanges it
+ * upstream (rotating the jti) and lands the new refresh token as the
+ * httpOnly `academy_refresh` cookie. Anything that fails the returnTo
+ * allowlist falls through to the dashboard.
  */
 function AuthCompleteInner() {
   const router = useRouter();
+  const qc = useQueryClient();
 
   useEffect(() => {
     const fragment = window.location.hash.startsWith("#")
@@ -28,23 +33,20 @@ function AuthCompleteInner() {
       router.replace({ pathname: "/login", query: { error: "missing_token" } });
       return;
     }
-    const apiUrl = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:4000/api/v1";
-    fetch(`${apiUrl}/academy/auth/refresh`, {
+
+    fetch("/api/auth/complete", {
       method: "POST",
-      headers: { "Content-Type": "application/json", "X-Site": "ACADEMY" },
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ refreshToken: rt }),
     })
-      .then((res) => {
-        if (!res.ok) throw new Error(`refresh failed: ${res.status}`);
-        return res.json();
+      .then(async (res) => {
+        if (!res.ok) throw new Error(`complete failed: ${res.status}`);
+        return (await res.json()) as { accessToken: string; user: Profile };
       })
-      .then((payload) => {
-        const data = payload?.data ?? payload;
-        if (!data?.accessToken) throw new Error("no access token in refresh response");
-        setTokens({
-          accessToken: data.accessToken,
-          refreshToken: data.refreshToken ?? rt,
-        });
+      .then((data) => {
+        if (!data?.accessToken) throw new Error("no access token in response");
+        setAccessToken(data.accessToken);
+        qc.setQueryData(qk.me(), data.user);
         const validated = validateReturnTo(dest);
         if (validated) {
           router.replace(validated);
@@ -58,7 +60,7 @@ function AuthCompleteInner() {
           query: { error: "refresh_failed" },
         });
       });
-  }, [router]);
+  }, [router, qc]);
 
   return (
     <div className="flex min-h-screen items-center justify-center p-6">

@@ -18,15 +18,15 @@ const PUBLIC_PATHS = new Set([
   "/auth/complete",
 ]);
 
-const AUTH_HINT_COOKIE = "academy_auth";
+const REFRESH_COOKIE = "academy_refresh";
 
 /**
  * Composite middleware: next-intl handles locale prefix rewriting, then we
- * layer a best-effort auth gate on top. The real tokens live in localStorage
- * (middleware can't read them), so the `academy_auth` hint cookie — set by
- * `setTokens()` and cleared by `clearTokens()` — is the signal. Client-side
- * guards remain the authoritative enforcement; this redirect just spares
- * unauthenticated users a flash of protected UI before they bounce.
+ * layer a best-effort auth gate on top. The httpOnly `academy_refresh`
+ * cookie set by the BFF route handlers is the signal — its presence means
+ * the session was at least valid at last write. Client-side guards remain
+ * the authoritative enforcement; this redirect just spares unauthenticated
+ * users a flash of protected UI before they bounce.
  */
 export default function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
@@ -37,7 +37,7 @@ export default function middleware(request: NextRequest) {
   const withoutLocale = stripLocale(pathname);
   const isPublic = PUBLIC_PATHS.has(withoutLocale);
 
-  if (!isPublic && !request.cookies.get(AUTH_HINT_COOKIE)) {
+  if (!isPublic && !request.cookies.get(REFRESH_COOKIE)) {
     const loginUrl = request.nextUrl.clone();
     const localePrefix = pathname.slice(0, pathname.length - withoutLocale.length);
     loginUrl.pathname = `${localePrefix || "/ro"}/login`;

@@ -1,15 +1,22 @@
 /**
  * Academy API client. Thin fetch wrapper that stamps every request with
- * `X-Site: ACADEMY` + the student's Bearer token when one is stored in
- * `localStorage`. Matches the auth-and-site-routing pattern used by the
- * admin app, scoped to the academy realm.
+ * `X-Site: ACADEMY` + the student's Bearer token from an in-memory store.
+ *
+ * Tokens were previously held in localStorage with a non-httpOnly hint
+ * cookie. They now live in:
+ *   - In-memory access token (this module) — survives SPA navigation, lost
+ *     on full page reload. Restored via `/api/auth/refresh` on mount.
+ *   - HttpOnly `academy_refresh` cookie set by the Next route handlers under
+ *     `/api/auth/*`. JS can't read it, so XSS can no longer lift the session.
+ *
+ * Mutations that change the cookie (login, register, refresh, logout,
+ * verify-email, accept-invite, complete) go through Next route handlers;
+ * read-only mutations (forgot-password, reset-password, resend-verification)
+ * still go straight to the API since they don't touch the session cookie.
  */
 
-// Empty string and undefined both count as "unset" — `??` alone would let an
-// empty build-arg through, which collapses `${API_URL}${path}` to a relative
-// URL at runtime and 404s against the academy's own origin. In production we
-// throw on first call so misbuilds fail loudly instead of silently. Mirrors
-// packages/api-client/src/client.ts getApiBase().
+import { useSyncExternalStore } from "react";
+
 const RAW_API_URL = process.env.NEXT_PUBLIC_API_URL;
 const API_URL =
   RAW_API_URL && RAW_API_URL.length > 0
@@ -23,49 +30,78 @@ const API_URL =
       : "http://localhost:4000/api/v1";
 const SITE = process.env.NEXT_PUBLIC_SITE ?? "ACADEMY";
 
-const ACCESS_TOKEN_KEY = "academy.accessToken";
-const REFRESH_TOKEN_KEY = "academy.refreshToken";
-// Non-HTTPOnly "I am logged in" hint cookie. The real tokens still live
-// in localStorage (middleware can't read those); this cookie lets the
-// Next.js middleware short-circuit to /login on protected routes without
-// a full client-side bounce. NOT a security boundary — client-side guards
-// remain authoritative. Migrating to HTTPOnly refresh cookies is a
-// separate hardening pass.
-const AUTH_HINT_COOKIE = "academy_auth";
-const AUTH_HINT_MAX_AGE_SECONDS = 7 * 24 * 60 * 60; // 7 days
+/* ───── In-memory access token with pub/sub ───── */
 
-function setAuthHintCookie(): void {
-  if (typeof document === "undefined") return;
-  document.cookie = `${AUTH_HINT_COOKIE}=1; path=/; max-age=${AUTH_HINT_MAX_AGE_SECONDS}; samesite=lax`;
-}
+let accessTokenValue: string | null = null;
+const subscribers = new Set<() => void>();
 
-function clearAuthHintCookie(): void {
-  if (typeof document === "undefined") return;
-  document.cookie = `${AUTH_HINT_COOKIE}=; path=/; max-age=0; samesite=lax`;
-}
-
-export function setTokens(tokens: { accessToken: string; refreshToken: string }) {
-  if (typeof window === "undefined") return;
-  localStorage.setItem(ACCESS_TOKEN_KEY, tokens.accessToken);
-  localStorage.setItem(REFRESH_TOKEN_KEY, tokens.refreshToken);
-  setAuthHintCookie();
+export function setAccessToken(token: string | null): void {
+  accessTokenValue = token;
+  subscribers.forEach((fn) => fn());
 }
 
 export function getAccessToken(): string | null {
-  if (typeof window === "undefined") return null;
-  return localStorage.getItem(ACCESS_TOKEN_KEY);
+  return accessTokenValue;
 }
 
-export function getRefreshToken(): string | null {
-  if (typeof window === "undefined") return null;
-  return localStorage.getItem(REFRESH_TOKEN_KEY);
+function subscribe(fn: () => void): () => void {
+  subscribers.add(fn);
+  return () => {
+    subscribers.delete(fn);
+  };
 }
 
-export function clearTokens() {
-  if (typeof window === "undefined") return;
-  localStorage.removeItem(ACCESS_TOKEN_KEY);
-  localStorage.removeItem(REFRESH_TOKEN_KEY);
-  clearAuthHintCookie();
+/**
+ * React hook for reactively reading the access token. Use this in `useQuery`
+ * `enabled` predicates and any UI that needs to re-render when the token
+ * appears (post-restore) or disappears (post-logout).
+ */
+export function useAccessToken(): string | null {
+  return useSyncExternalStore(
+    subscribe,
+    () => accessTokenValue,
+    () => null,
+  );
+}
+
+/* ───── Refresh-on-401 with dedup lock ─────
+ *
+ * The Next /api/auth/refresh handler reads the httpOnly cookie and proxies
+ * to the upstream, which enforces single-use rotation (jti denylist). React
+ * StrictMode mounts components twice in dev; without this lock both effects
+ * fire `restore()` in parallel, the first rotates the jti, the second sees
+ * the revoked jti and 401s — kicking the user out. Sharing the in-flight
+ * promise across mounts collapses the race to one network call.
+ */
+let inflightRefresh: Promise<string | null> | null = null;
+
+async function refreshAccessToken(): Promise<string | null> {
+  if (inflightRefresh) return inflightRefresh;
+  inflightRefresh = (async () => {
+    try {
+      const res = await fetch("/api/auth/refresh", { method: "POST" });
+      if (!res.ok) {
+        setAccessToken(null);
+        return null;
+      }
+      const data = (await res.json()) as { accessToken?: string };
+      if (data.accessToken) {
+        setAccessToken(data.accessToken);
+        return data.accessToken;
+      }
+      return null;
+    } catch {
+      setAccessToken(null);
+      return null;
+    } finally {
+      // Release on next tick so a quick StrictMode remount hits the cached
+      // promise but a genuine later refresh issues a fresh call.
+      setTimeout(() => {
+        inflightRefresh = null;
+      }, 0);
+    }
+  })();
+  return inflightRefresh;
 }
 
 export interface ApiFetchOptions {
@@ -74,39 +110,6 @@ export interface ApiFetchOptions {
   headers?: Record<string, string>;
   skipAuth?: boolean;
   locale?: string;
-}
-
-async function refreshTokens(): Promise<boolean> {
-  const refreshToken = getRefreshToken();
-  if (!refreshToken) return false;
-  const res = await fetch(`${API_URL}/academy/auth/refresh`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      "X-Site": SITE,
-    },
-    body: JSON.stringify({ refreshToken }),
-  });
-  if (!res.ok) {
-    clearTokens();
-    return false;
-  }
-  // Nest's TransformInterceptor wraps the handler return as
-  // `{ success, data: { accessToken, refreshToken, user } }`. Read through
-  // `json.data` (with a raw fallback) — the previous direct-read of
-  // `json.accessToken` always returned undefined, so refresh silently
-  // failed and the next 401 logged the user out, masquerading as a
-  // "have-to-log-in-after-every-deploy" symptom.
-  const json = await res.json();
-  const payload = json?.data ?? json;
-  if (payload?.accessToken && payload?.refreshToken) {
-    setTokens({
-      accessToken: payload.accessToken,
-      refreshToken: payload.refreshToken,
-    });
-    return true;
-  }
-  return false;
 }
 
 export async function apiFetch<T>(
@@ -133,11 +136,9 @@ export async function apiFetch<T>(
 
   let res = await fetch(url, init);
   if (res.status === 401 && !options.skipAuth) {
-    const ok = await refreshTokens();
-    if (ok) {
-      const retryHeaders = { ...headers };
-      const token = getAccessToken();
-      if (token) retryHeaders.Authorization = `Bearer ${token}`;
+    const newToken = await refreshAccessToken();
+    if (newToken) {
+      const retryHeaders = { ...headers, Authorization: `Bearer ${newToken}` };
       res = await fetch(url, { ...init, headers: retryHeaders });
     } else {
       throw new ApiError("Unauthorized", 401);

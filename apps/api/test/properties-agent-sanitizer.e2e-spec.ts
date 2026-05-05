@@ -120,7 +120,7 @@ describe('Properties — AGENT field sanitizer (e2e)', () => {
         agentId: agent.id,
       },
       {
-        secret: process.env.JWT_ACCESS_SECRET,
+        secret: process.env.JWT_ADMIN_ACCESS_SECRET,
         expiresIn: '15m',
       },
     );

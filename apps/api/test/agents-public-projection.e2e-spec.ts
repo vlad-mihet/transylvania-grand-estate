@@ -151,7 +151,7 @@ describe('Agents — public projection (e2e)', () => {
         role: agentUser.role,
         agentId: agent.id,
       },
-      { secret: process.env.JWT_ACCESS_SECRET, expiresIn: '15m' },
+      { secret: process.env.JWT_ADMIN_ACCESS_SECRET, expiresIn: '15m' },
     );
     editorToken = jwt.sign(
       {
@@ -160,7 +160,7 @@ describe('Agents — public projection (e2e)', () => {
         role: editorUser.role,
         agentId: null,
       },
-      { secret: process.env.JWT_ACCESS_SECRET, expiresIn: '15m' },
+      { secret: process.env.JWT_ADMIN_ACCESS_SECRET, expiresIn: '15m' },
     );
   });
 

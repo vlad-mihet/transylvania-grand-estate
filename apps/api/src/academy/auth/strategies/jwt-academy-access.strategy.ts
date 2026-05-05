@@ -5,10 +5,10 @@ import { ExtractJwt, Strategy } from 'passport-jwt';
 import type { AuthRealm } from '../../../common/auth/realm';
 
 /**
- * Academy-realm access-token strategy. Rejects tokens where `realm !==
- * 'academy'`. Shares the JWT_ACCESS_SECRET with the admin strategy because
- * the signing key is an infrastructure concern, not a per-surface one —
- * realm separation is enforced via claim matching, not a separate secret.
+ * Academy-realm access-token strategy. Verifies tokens with
+ * `JWT_ACADEMY_ACCESS_SECRET` — distinct from the admin secret so a leak of
+ * one realm cannot forge tokens for the other. The realm-claim check below
+ * is defense-in-depth on top of signature mismatch.
  */
 @Injectable()
 export class JwtAcademyAccessStrategy extends PassportStrategy(
@@ -19,7 +19,7 @@ export class JwtAcademyAccessStrategy extends PassportStrategy(
     super({
       jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
       ignoreExpiration: false,
-      secretOrKey: configService.getOrThrow<string>('JWT_ACCESS_SECRET'),
+      secretOrKey: configService.getOrThrow<string>('JWT_ACADEMY_ACCESS_SECRET'),
     });
   }
 

@@ -72,7 +72,7 @@ describe('Catalog — EDITOR read-only enforcement (e2e)', () => {
         role: editor.role,
         agentId: null,
       },
-      { secret: process.env.JWT_ACCESS_SECRET, expiresIn: '15m' },
+      { secret: process.env.JWT_ADMIN_ACCESS_SECRET, expiresIn: '15m' },
     );
     agentToken = jwt.sign(
       {
@@ -81,7 +81,7 @@ describe('Catalog — EDITOR read-only enforcement (e2e)', () => {
         role: agentUser.role,
         agentId: agent.id,
       },
-      { secret: process.env.JWT_ACCESS_SECRET, expiresIn: '15m' },
+      { secret: process.env.JWT_ADMIN_ACCESS_SECRET, expiresIn: '15m' },
     );
   });
 

@@ -64,7 +64,7 @@ describe('Permissions — page-guard parity at API contract level (e2e)', () => 
         role: agentUser.role,
         agentId: agent.id,
       },
-      { secret: process.env.JWT_ACCESS_SECRET, expiresIn: '15m' },
+      { secret: process.env.JWT_ADMIN_ACCESS_SECRET, expiresIn: '15m' },
     );
 
     // Need a course id to exercise the nested lessons create endpoint.

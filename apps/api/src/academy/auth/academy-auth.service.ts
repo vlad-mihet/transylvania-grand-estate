@@ -813,7 +813,7 @@ export class AcademyAuthService {
         realm: 'academy' as const,
       },
       {
-        secret: this.configService.get('JWT_ACCESS_SECRET'),
+        secret: this.configService.get('JWT_ACADEMY_ACCESS_SECRET'),
         expiresIn: this.configService.get('JWT_ACCESS_EXPIRATION', '15m'),
       },
     );
@@ -821,7 +821,7 @@ export class AcademyAuthService {
     const refreshToken = this.jwtService.sign(
       { sub: user.id, type: 'refresh', jti, realm: 'academy' as const },
       {
-        secret: this.configService.get('JWT_REFRESH_SECRET'),
+        secret: this.configService.get('JWT_ACADEMY_REFRESH_SECRET'),
         expiresIn: this.configService.get('JWT_REFRESH_EXPIRATION', '7d'),
       },
     );

@@ -6,9 +6,11 @@ import { AdminRole } from '@prisma/client';
 import type { AuthRealm } from '../../common/auth/realm';
 
 /**
- * Admin-realm JWT strategy. Rejects tokens where `realm === 'academy'`; a
- * parallel `JwtAcademyAccessStrategy` handles those. Legacy tokens (minted
- * before the realm rollout) have no realm claim and are treated as admin.
+ * Admin-realm JWT strategy. Verifies tokens with `JWT_ADMIN_ACCESS_SECRET`,
+ * which is distinct from the academy secret — cross-realm tokens fail
+ * signature verification before any claim check. The realm-claim check below
+ * is defense-in-depth and also lets pre-split tokens (no realm) be accepted
+ * as admin until they expire.
  */
 @Injectable()
 export class JwtAccessStrategy extends PassportStrategy(Strategy, 'jwt-access') {
@@ -16,7 +18,7 @@ export class JwtAccessStrategy extends PassportStrategy(Strategy, 'jwt-access') 
     super({
       jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
       ignoreExpiration: false,
-      secretOrKey: configService.getOrThrow<string>('JWT_ACCESS_SECRET'),
+      secretOrKey: configService.getOrThrow<string>('JWT_ADMIN_ACCESS_SECRET'),
     });
   }
 

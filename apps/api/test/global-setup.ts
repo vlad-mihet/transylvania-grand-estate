@@ -30,11 +30,20 @@ export default async function globalSetup(): Promise<void> {
   process.env.DATABASE_URL = url;
   process.env.NODE_ENV = 'test';
   // Minimum-viable env values so env validation passes and auth services
-  // can sign/verify JWTs during tests.
-  process.env.JWT_ACCESS_SECRET =
-    process.env.JWT_ACCESS_SECRET ?? 'test_access_secret_ge_32_chars_xxxxxxxxx';
-  process.env.JWT_REFRESH_SECRET =
-    process.env.JWT_REFRESH_SECRET ?? 'test_refresh_secret_ge_32_chars_xxxxxxxx';
+  // can sign/verify JWTs during tests. Per-realm secrets must differ so
+  // realm-leakage tests can confirm signature mismatch.
+  process.env.JWT_ADMIN_ACCESS_SECRET =
+    process.env.JWT_ADMIN_ACCESS_SECRET ??
+    'test_admin_access_secret_ge_32_xxxxxxx';
+  process.env.JWT_ADMIN_REFRESH_SECRET =
+    process.env.JWT_ADMIN_REFRESH_SECRET ??
+    'test_admin_refresh_secret_ge_32_xxxxxx';
+  process.env.JWT_ACADEMY_ACCESS_SECRET =
+    process.env.JWT_ACADEMY_ACCESS_SECRET ??
+    'test_academy_access_secret_ge_32_xxxxx';
+  process.env.JWT_ACADEMY_REFRESH_SECRET =
+    process.env.JWT_ACADEMY_REFRESH_SECRET ??
+    'test_academy_refresh_secret_ge_32_xxxx';
   process.env.INVITATION_TOKEN_SECRET =
     process.env.INVITATION_TOKEN_SECRET ??
     'test_invitation_secret_ge_32_chars_xxxxxxx';

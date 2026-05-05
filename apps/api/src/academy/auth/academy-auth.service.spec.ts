@@ -62,8 +62,8 @@ describe('AcademyAuthService.register', () => {
     } as unknown as JwtService;
     const configService = {
       get: jest.fn((k: string) => {
-        if (k === 'JWT_ACCESS_SECRET') return 'a'.repeat(32);
-        if (k === 'JWT_REFRESH_SECRET') return 'r'.repeat(32);
+        if (k === 'JWT_ACADEMY_ACCESS_SECRET') return 'a'.repeat(32);
+        if (k === 'JWT_ACADEMY_REFRESH_SECRET') return 'r'.repeat(32);
         if (k === 'JWT_ACCESS_EXPIRATION') return '15m';
         if (k === 'JWT_REFRESH_EXPIRATION') return '7d';
         if (k === 'ACADEMY_PUBLIC_URL') return 'http://localhost:3053';

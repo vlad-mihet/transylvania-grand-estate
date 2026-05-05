@@ -159,7 +159,7 @@ describe('Academy (e2e)', () => {
           realm: 'academy',
         },
         {
-          secret: process.env.JWT_ACCESS_SECRET,
+          secret: process.env.JWT_ACADEMY_ACCESS_SECRET,
           expiresIn: '15m',
         },
       );
@@ -494,7 +494,7 @@ describe('Academy (e2e)', () => {
           realm: 'academy',
         },
         {
-          secret: process.env.JWT_ACCESS_SECRET,
+          secret: process.env.JWT_ACADEMY_ACCESS_SECRET,
           expiresIn: '15m',
         },
       );
@@ -625,7 +625,7 @@ describe('Academy (e2e)', () => {
           realm: 'academy',
         },
         {
-          secret: process.env.JWT_ACCESS_SECRET,
+          secret: process.env.JWT_ACADEMY_ACCESS_SECRET,
           expiresIn: '15m',
         },
       );
@@ -906,7 +906,7 @@ describe('Academy (e2e)', () => {
           realm: 'academy',
         },
         {
-          secret: process.env.JWT_ACCESS_SECRET,
+          secret: process.env.JWT_ACADEMY_ACCESS_SECRET,
           expiresIn: '15m',
         },
       );
