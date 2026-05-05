@@ -55,4 +55,13 @@ apps/api/uploads/
 packages/types/src/**/*.js
 packages/types/src/**/*.js.map
 
-.vercel
+# Local data sources for the academy import scripts (lessons*.txt are
+# WhatsApp chat exports — contain sender names + timestamps, treat as
+# local-only). Request from the team if you need to re-run the imports.
+/lessons*.txt
+
+# Local exploration & session-scoped notes
+/context.txt
+/scratch_*.js
+/scratch_*.mjs
+/scratch_*.ts
