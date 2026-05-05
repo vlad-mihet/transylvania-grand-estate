@@ -22,7 +22,7 @@ set -uo pipefail
 API="${QA_API_URL:-http://localhost:3333/api/v1}"
 ADMIN="${QA_ADMIN_URL:-http://localhost:3001}"
 LANDING="${QA_LANDING_URL:-http://localhost:3000}"
-REVERIA="${QA_REVERIA_URL:-http://localhost:3002}"
+REVERY="${QA_REVERY_URL:-http://localhost:3002}"
 PG_CONTAINER="${QA_PG_CONTAINER:-tge-postgres-1}"
 PG_DB="${QA_PG_DB:-tge_dev}"
 PG_USER="${QA_PG_USER:-postgres}"
@@ -121,7 +121,7 @@ probe_until_ready() {
     fi
     if [[ $i -lt $attempts ]]; then sleep "$delay"; fi
   done
-  fail "$label unreachable (last code $code) — start with: pnpm --filter @tge/api dev / @tge/admin dev / @tge/landing dev / @tge/reveria dev"
+  fail "$label unreachable (last code $code) — start with: pnpm --filter @tge/api dev / @tge/admin dev / @tge/landing dev / @tge/revery dev"
   return 1
 }
 preflight() {
@@ -132,7 +132,7 @@ preflight() {
   # route so the compile is useful work (not a 404 probe).
   probe_until_ready "$ADMIN/en/login" "ADMIN" || true
   probe_until_ready "$LANDING/en" "LANDING" || true
-  probe_until_ready "$REVERIA/en" "REVERIA" || true
+  probe_until_ready "$REVERY/en" "REVERY" || true
   if [[ $api_ok -eq 0 ]]; then
     printf -- "\n${C_RED}API unreachable — cannot continue. Aborting.${C_RESET}\n"
     exit 1
@@ -181,7 +181,7 @@ auth_setup() {
 # ─── Phase B — API ─────────────────────────────────────────────────
 b1_brand_isolation() {
   section "B.1 Brand isolation (X-Site header)"
-  for site in "REVERIA:affordable:15" "TGE_LUXURY:luxury:24" "ADMIN:*:39" "UNKNOWN:none:0" "HAX0R:none:0" "MISSING:none:0"; do
+  for site in "REVERY:affordable:15" "TGE_LUXURY:luxury:24" "ADMIN:*:39" "UNKNOWN:none:0" "HAX0R:none:0" "MISSING:none:0"; do
     IFS=':' read -r s expected_tier expected_count <<<"$site"
     if [[ "$s" == "MISSING" ]]; then
       resp=$(curl -s "$API/properties?limit=100")
@@ -191,10 +191,10 @@ b1_brand_isolation() {
     count=$(echo "$resp" | json_data_len)
     tiers=$(echo "$resp" | json_tiers_of_data)
     case "$s" in
-      REVERIA)
+      REVERY)
         [[ "$tiers" == '{"affordable":'* && ! "$tiers" == *'luxury'* ]] \
-          && ok "REVERIA → only affordable ($count rows, tiers=$tiers)" \
-          || fail "REVERIA leaked non-affordable rows (tiers=$tiers)"
+          && ok "REVERY → only affordable ($count rows, tiers=$tiers)" \
+          || fail "REVERY leaked non-affordable rows (tiers=$tiers)"
         ;;
       TGE_LUXURY)
         [[ "$tiers" == '{"luxury":'* && ! "$tiers" == *'affordable'* ]] \
@@ -217,35 +217,35 @@ b1_brand_isolation() {
 
 b2_tier_tampering() {
   section "B.2 Brand-isolation tampering attempts"
-  # Query-string tier override under Reveria. The assertion is "no luxury rows
+  # Query-string tier override under Revery. The assertion is "no luxury rows
   # leaked" — an empty response (rate-limited) is inconclusive, not a bug.
-  resp=$(curl -s "$API/properties?limit=100&tier=luxury" -H "X-Site: REVERIA")
+  resp=$(curl -s "$API/properties?limit=100&tier=luxury" -H "X-Site: REVERY")
   status=$(echo "$resp" | json_get "error.statusCode")
   if [[ "$status" == "429" ]]; then
     warn "?tier=luxury tampering test inconclusive — got 429 (global throttle burned). Rerun the suite after 60s."
   else
     tiers=$(echo "$resp" | json_tiers_of_data)
     if [[ "$tiers" == *'luxury'* ]]; then
-      fail "?tier=luxury LEAKED luxury to Reveria (tiers=$tiers)"
+      fail "?tier=luxury LEAKED luxury to Revery (tiers=$tiers)"
     else
-      ok "?tier=luxury + X-Site=REVERIA → no luxury rows (tiers=$tiers)"
+      ok "?tier=luxury + X-Site=REVERY → no luxury rows (tiers=$tiers)"
     fi
   fi
   # Price override
-  resp=$(curl -s "$API/properties?limit=100&maxPrice=50000000" -H "X-Site: REVERIA")
+  resp=$(curl -s "$API/properties?limit=100&maxPrice=50000000" -H "X-Site: REVERY")
   status=$(echo "$resp" | json_get "error.statusCode")
   if [[ "$status" == "429" ]]; then
     warn "?maxPrice tampering test inconclusive — got 429"
   else
     max=$(echo "$resp" | max_of_prices)
     if [[ "$max" -lt 1000000 ]]; then
-      ok "?maxPrice=50000000 + X-Site=REVERIA → no >999k leak (max=$max)"
+      ok "?maxPrice=50000000 + X-Site=REVERY → no >999k leak (max=$max)"
     else
-      fail "Reveria LEAKED price>=1M (max=$max)"
+      fail "Revery LEAKED price>=1M (max=$max)"
     fi
   fi
   # SQL-ish tier injection — we want 400 Zod rejection, not 429
-  resp=$(curl -s "$API/properties?tier=%27%3BDROP" -H "X-Site: REVERIA")
+  resp=$(curl -s "$API/properties?tier=%27%3BDROP" -H "X-Site: REVERY")
   status=$(echo "$resp" | json_get "error.statusCode")
   case "$status" in
     400) ok "Garbage tier value rejected (400)" ;;
@@ -330,7 +330,7 @@ b5_rate_limit() {
   local created=()
   got_429=0
   for i in 1 2 3 4 5 6; do
-    resp=$(curl -s -X POST "$API/inquiries" -H "Content-Type: application/json" -H "X-Site: REVERIA" \
+    resp=$(curl -s -X POST "$API/inquiries" -H "Content-Type: application/json" -H "X-Site: REVERY" \
       -d "{\"name\":\"RLTest$i\",\"email\":\"rl$i@qa.test\",\"phone\":\"+40700000000\",\"message\":\"Rate-limit probe $i; autodelete.\",\"source\":\"qa-smoke\"}")
     code=$(echo "$resp" | json_get "error.statusCode")
     id=$(echo "$resp" | json_get "data.id")
@@ -415,9 +415,9 @@ b7_property_filters() {
   count=$(curl -s "$API/properties?lat=45.5&lng=25.5&radius=50" -H "X-Site: TGE_LUXURY" | json_data_len)
   [[ "$count" -gt 0 ]] && ok "radius filter returns $count rows in 50km of Brasov" || warn "radius returned 0"
   # map-pins lightweight endpoint
-  resp=$(curl -s "$API/properties/map-pins" -H "X-Site: REVERIA")
+  resp=$(curl -s "$API/properties/map-pins" -H "X-Site: REVERY")
   n=$(echo "$resp" | node -e "let d='';process.stdin.on('data',c=>d+=c).on('end',()=>{try{const j=JSON.parse(d);const a=j.data||j;console.log(Array.isArray(a)?a.length:-1)}catch(e){console.log(-2)}})")
-  [[ "$n" -gt 0 ]] && ok "/properties/map-pins (REVERIA) returns $n pins" || fail "map-pins returned $n"
+  [[ "$n" -gt 0 ]] && ok "/properties/map-pins (REVERY) returns $n pins" || fail "map-pins returned $n"
   # map-pins UNKNOWN → empty
   n=$(curl -s "$API/properties/map-pins" -H "X-Site: UNKNOWN" | node -e "let d='';process.stdin.on('data',c=>d+=c).on('end',()=>{try{const j=JSON.parse(d);const a=j.data||j;console.log(Array.isArray(a)?a.length:-1)}catch(e){console.log(-2)}})")
   [[ "$n" -eq 0 ]] && ok "/properties/map-pins (UNKNOWN) returns 0" || fail "map-pins UNKNOWN returned $n"
@@ -495,8 +495,8 @@ b9_cors_swagger() {
 
 b10_inquiry_source() {
   section "B.10 Inquiry source persistence (KNOWN Critical #4)"
-  resp=$(curl -s -X POST "$API/inquiries" -H "Content-Type: application/json" -H "X-Site: REVERIA" \
-    -d '{"name":"SrcTest","email":"src@qa.test","phone":"+40700000000","message":"Source probe; autodelete.","source":"qa-smoke-reveria"}')
+  resp=$(curl -s -X POST "$API/inquiries" -H "Content-Type: application/json" -H "X-Site: REVERY" \
+    -d '{"name":"SrcTest","email":"src@qa.test","phone":"+40700000000","message":"Source probe; autodelete.","source":"qa-smoke-revery"}')
   id=$(echo "$resp" | json_get "data.id")
   if [[ -z "$id" ]]; then
     warn "Skipping — could not create inquiry (rate limit likely in effect from B.5)"
@@ -522,10 +522,10 @@ check_url() {
     ok "$label → $code"
     return 0
   fi
-  # Only annotate a 200-on-expected-404 as Blocker #2 when it's a Reveria route
+  # Only annotate a 200-on-expected-404 as Blocker #2 when it's a Revery route
   # — landing handles notFound() correctly, so a 200 there is a genuine bug.
-  if [[ "$expected_code" == "404" && "$code" == "200" && "$url" == *"$REVERIA"* ]]; then
-    warn "$label → 200 (expected 404 — KNOWN Blocker #2, Reveria [locale]/error.tsx intercepts notFound)"
+  if [[ "$expected_code" == "404" && "$code" == "200" && "$url" == *"$REVERY"* ]]; then
+    warn "$label → 200 (expected 404 — KNOWN Blocker #2, Revery [locale]/error.tsx intercepts notFound)"
     return 0
   fi
   # Only annotate a 500 on landing /properties as Blocker #1 — other 500s are
@@ -560,9 +560,9 @@ page_smoke() {
   for path in "/en" "/en/properties" "/en/cities" "/en/developers" "/en/about" "/en/contact" "/en/transylvania"; do
     check_url "$LANDING$path" 200 "landing $path"
   done
-  section "E. Reveria pages (smoke)"
+  section "E. Revery pages (smoke)"
   for path in "/en" "/ro" "/en/properties" "/en/properties?view=map" "/en/cities" "/en/developers" "/en/agents" "/en/blog" "/en/faq" "/en/about" "/en/contact" "/ro/instrumente" "/ro/instrumente/calculator-ipotecar" "/ro/instrumente/capacitate-imprumut" "/ro/instrumente/costuri-achizitie" "/ro/instrumente/randament-inchiriere"; do
-    check_url "$REVERIA$path" 200 "reveria $path"
+    check_url "$REVERY$path" 200 "revery $path"
   done
 }
 
@@ -572,9 +572,9 @@ not_found_status() {
   for path in "/en/properties/does-not-exist-zzz" "/en/cities/does-not-exist-zzz" "/en/developers/does-not-exist-zzz"; do
     check_url "$LANDING$path" 404 "landing $path"
   done
-  # Reveria — KNOWN Blocker #2: returns 200 instead of 404
+  # Revery — KNOWN Blocker #2: returns 200 instead of 404
   for path in "/en/properties/does-not-exist-zzz" "/en/cities/does-not-exist-zzz" "/en/developers/does-not-exist-zzz" "/en/agents/does-not-exist-zzz" "/en/blog/does-not-exist-zzz"; do
-    check_url "$REVERIA$path" 404 "reveria $path"
+    check_url "$REVERY$path" 404 "revery $path"
   done
 }
 
@@ -583,16 +583,16 @@ tier_cross_leak() {
   # Grab one luxury slug + one affordable slug from the API
   luxury_slug=$(curl -s "$API/properties?limit=1" -H "X-Site: TGE_LUXURY" | json_get "data.0.slug" 2>/dev/null || \
     curl -s "$API/properties?limit=1" -H "X-Site: TGE_LUXURY" | node -e "let d='';process.stdin.on('data',c=>d+=c).on('end',()=>{try{const j=JSON.parse(d);console.log(j.data?.[0]?.slug||'')}catch(e){console.log('')}})")
-  affordable_slug=$(curl -s "$API/properties?limit=1" -H "X-Site: REVERIA" | node -e "let d='';process.stdin.on('data',c=>d+=c).on('end',()=>{try{const j=JSON.parse(d);console.log(j.data?.[0]?.slug||'')}catch(e){console.log('')}})")
+  affordable_slug=$(curl -s "$API/properties?limit=1" -H "X-Site: REVERY" | node -e "let d='';process.stdin.on('data',c=>d+=c).on('end',()=>{try{const j=JSON.parse(d);console.log(j.data?.[0]?.slug||'')}catch(e){console.log('')}})")
   if [[ -z "$luxury_slug" || -z "$affordable_slug" ]]; then warn "Missing sample slugs — skipping"; return; fi
   # Landing with affordable slug → 404
-  check_url "$LANDING/en/properties/$affordable_slug" 404 "landing + Reveria slug ($affordable_slug)"
-  # Reveria with luxury slug → 404 (BUT KNOWN Blocker #2 masks this as 200)
-  check_url "$REVERIA/en/properties/$luxury_slug" 404 "reveria + luxury slug ($luxury_slug)"
+  check_url "$LANDING/en/properties/$affordable_slug" 404 "landing + Revery slug ($affordable_slug)"
+  # Revery with luxury slug → 404 (BUT KNOWN Blocker #2 masks this as 200)
+  check_url "$REVERY/en/properties/$luxury_slug" 404 "revery + luxury slug ($luxury_slug)"
   # Landing with luxury slug → 200
   check_url "$LANDING/en/properties/$luxury_slug" 200 "landing + luxury slug ($luxury_slug)"
-  # Reveria with affordable slug → 200
-  check_url "$REVERIA/en/properties/$affordable_slug" 200 "reveria + affordable slug ($affordable_slug)"
+  # Revery with affordable slug → 200
+  check_url "$REVERY/en/properties/$affordable_slug" 200 "revery + affordable slug ($affordable_slug)"
 }
 
 # ─── Orchestrator ──────────────────────────────────────────────────

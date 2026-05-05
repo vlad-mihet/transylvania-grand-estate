@@ -1,0 +1,523 @@
+[
+  {
+    "slug": "real-estate-fundamentals",
+    "title": {
+      "en": "Real Estate Fundamentals",
+      "ro": "Fundamentele imobiliarelor"
+    },
+    "description": {
+      "en": "Foundational course for real-estate agents: mindset, habits, lead generation, phone outreach, and market positioning.",
+      "ro": "Curs introductiv pentru agenții imobiliari: atitudine, obiceiuri, prospectare, abordare telefonică și poziționare în piață."
+    },
+    "coverImage": null,
+    "status": "published",
+    "order": 10,
+    "publishedAt": "2026-04-22T14:32:03.070Z",
+    "lessons": [
+      {
+        "slug": "01-atitudinea-face-diferenta",
+        "order": 10,
+        "title": {
+          "en": "",
+          "ro": "Atitudinea face diferența"
+        },
+        "excerpt": {
+          "en": "",
+          "ro": "Cred că majoritatea oamenilor din vânzări știu următorul banc:"
+        },
+        "content": {
+          "en": "",
+          "ro": "Cred că majoritatea oamenilor din vânzări știu următorul banc: \n\nDoi vânzători merg în deșert pentru a vinde pantofi. Primul vânzător se întoarce la sediul companiei și spune: *„Aici nimeni nu poartă pantofi, e imposibil să vindem ceva.”* Al doilea vânzător se întoarce și el la sediu și spune: *„Pregătiți stocurile, aici nimeni nu are pantofi, o să facem o mulțime de vânzări!”*\n\nCam asta poate face atitudinea. Îți las câteva idei valoroase din cartea *Atitudinea este totul*, de Jeff Keller. \n\n**Diferența dintre o atitudine pozitivă și una negativă:**\n* Persoana cu o atitudine negativă gândește **nu pot**. Persoana cu o atitudine pozitivă gândește **pot**.\n* Persoana cu o atitudine negativă **stăruie asupra problemelor**. Persoana cu o atitudine pozitivă **se concentrează asupra soluțiilor**.\n* Persoana cu o atitudine negativă **le găsește celorlalți defecte**. Persoana cu o atitudine pozitivă **caută aspectele pozitive ale celorlalți**.\n* Persoana cu o atitudine negativă se concentrează pe **ceea ce îi lipsește**. Persoana cu o atitudine pozitivă este **recunoscătoare pentru lucrurile cu care a fost înzestrată**.\n* Persoana cu o atitudine negativă **vede limitările**. Persoana cu o atitudine pozitivă **vede oportunitățile**."
+        },
+        "type": "text",
+        "videoUrl": null,
+        "videoDurationSeconds": null,
+        "status": "published",
+        "publishedAt": "2026-04-22T14:32:03.214Z"
+      },
+      {
+        "slug": "02-cele-4-competente-ale-oamenilor-care-fac-bani",
+        "order": 20,
+        "title": {
+          "en": "",
+          "ro": "Cele 4 competențe ale oamenilor care fac bani"
+        },
+        "excerpt": {
+          "en": "",
+          "ro": "Oamenii care fac bani mulți au patru competențe de bază: vânzări, marketing, produse/servicii și personal branding. Este imposibil să nu faci bani dacă le stăpânești."
+        },
+        "content": {
+          "en": "",
+          "ro": "Oamenii care fac bani mulți au patru competențe de bază: **vânzări, marketing, produse/servicii și personal branding**. Este imposibil să nu faci bani dacă le stăpânești. \n\nVânzările sunt abilitatea nr. 1 a oamenilor bogați. Însă, deși oamenilor nu le place să li se vândă, le place enorm să cumpere. \n\n**Când cumpără oamenii?**\n* Când se simt ajutați.\n* Când înțelegi situația în care se află.\n* Când le arăți care sunt blocajele.\n* Când au încredere în tine.\n* Când simt că primesc mai multă valoare decât banii pe care îi achită.\n\n**Cum se traduc celelalte competențe?**\n* **Marketingul** înseamnă să oferi constant informații de valoare pentru publicul tău țintă.\n* **Competența pe produse/servicii** presupune să creezi oferte care rezolvă probleme reale, aduc plus valoare și îmbunătățesc viața clientului.\n* **Brandul tău personal** reprezintă reputația ta și este construit în jurul valorilor și viziunii tale."
+        },
+        "type": "text",
+        "videoUrl": null,
+        "videoDurationSeconds": null,
+        "status": "published",
+        "publishedAt": "2026-04-22T14:32:03.226Z"
+      },
+      {
+        "slug": "03-obiceiurile-care-iti-sustin-performanta",
+        "order": 30,
+        "title": {
+          "en": "",
+          "ro": "Obiceiurile care îți susțin performanța"
+        },
+        "excerpt": {
+          "en": "",
+          "ro": "Una dintre diferențele majore dintre oamenii de succes și cei care nu duc o viață împlinită constă în obiceiurile lor de zi cu zi."
+        },
+        "content": {
+          "en": "",
+          "ro": "Una dintre diferențele majore dintre oamenii de succes și cei care nu duc o viață împlinită constă în obiceiurile lor de zi cu zi.\n\nFrederick Matthias Alexander are un citat care rezumă perfect acest lucru: \n> *„Oamenii nu își decid viitorul, ei își decid obiceiurile, iar obiceiurile le decid viitorul.”*\n\nObiceiurile tale îți determină rezultatele. Ele nu sunt necesare doar pentru o viață sănătoasă, ci reprezintă un adevărat principiu al prosperității. Obiceiurile te vor ajuta să îți atingi obiectivele sau, din contră, îți vor sabota încercările. De asemenea, ele sunt pârghii pentru succesul tău și surse esențiale de energie spirituală, fizică, emoțională, mentală și de business.\n\nAșa cum am mai zis, în acest domeniu au succes persoanele active, care pun energie și pasiune în ceea ce fac. Nu poți avea succes dacă rutina ta zilnică nu te susține. Din experiența mea, obiceiurile sunt vitale pentru capacitatea ta de a-ți menține concentrarea la un nivel ridicat."
+        },
+        "type": "text",
+        "videoUrl": null,
+        "videoDurationSeconds": null,
+        "status": "published",
+        "publishedAt": "2026-04-22T14:32:03.232Z"
+      },
+      {
+        "slug": "04-13-obiceiuri-pentru-sanatate-si-spiritualitate",
+        "order": 40,
+        "title": {
+          "en": "",
+          "ro": "13 Obiceiuri pentru sănătate și spiritualitate"
+        },
+        "excerpt": {
+          "en": "",
+          "ro": "Succesul profesional este direct legat de energia ta personală. Iată o listă de obiceiuri care te pot ajuta să fii la potențial maxim:"
+        },
+        "content": {
+          "en": "",
+          "ro": "Succesul profesional este direct legat de energia ta personală. Iată o listă de obiceiuri care te pot ajuta să fii la potențial maxim:\n\n**Obiceiuri pentru sănătate:**\n1.  Bea apă (2 pahare imediat după trezire și minim 2 litri pe zi).\n2.  Dormi 7-9 ore pe noapte.\n3.  Mănâncă sănătos.\n4.  Consumă alcool moderat.\n5.  Elimină pe cât posibil zahărul.\n6.  Fă mișcare, fă exerciții fizice.\n7.  Ține post negru 2-3 zile din când în când (și îți spune asta o persoană care nu e neapărat religioasă).\n8.  Mergi la saună.\n9.  Fă dușuri reci.\n\n**Obiceiuri spirituale și de echilibru:**\n10. Meditează (sau roagă-te, dacă ești credincios).\n11. Îmbrățișează, sărută și râzi cu persoanele dragi.\n12. Elimină toxicitatea (știri negative, TV, hateri).\n13. Petrece mult timp cu familia și prietenii.\n\nTu cu ce obiceiuri ai completa această listă?"
+        },
+        "type": "text",
+        "videoUrl": null,
+        "videoDurationSeconds": null,
+        "status": "published",
+        "publishedAt": "2026-04-22T14:32:03.237Z"
+      },
+      {
+        "slug": "05-10-obiceiuri-de-business-pentru-agentii-imobiliari",
+        "order": 50,
+        "title": {
+          "en": "",
+          "ro": "10 Obiceiuri de business pentru agenții imobiliari"
+        },
+        "excerpt": {
+          "en": "",
+          "ro": "Dacă vrei performanță în imobiliare, disciplina este cheia. Iată 10 obiceiuri pe care trebuie să le integrezi în activitatea ta:"
+        },
+        "content": {
+          "en": "",
+          "ro": "Dacă vrei performanță în imobiliare, disciplina este cheia. Iată 10 obiceiuri pe care trebuie să le integrezi în activitatea ta:\n\n1.  Protejează-ți timpul zilnic pentru generarea de leaduri.\n2.  Promovează-ți continuu afacerea și portofoliul.\n3.  Economisește.\n4.  Donează.\n5.  Fă investiții.\n6.  Citește 30 de minute pe zi.\n7.  Măsoară și monitorizează-ți cifrele.\n8.  Sună cel puțin 10 clienți pe zi.\n9.  Focusează-te să ai în fiecare zi minim o întâlnire.\n10. Fii punctual.\n\nÎmi place foarte mult cum rezumă Gary Keller acest aspect: \n> *„A avea energia necesară pentru obiective mărețe înseamnă două obiceiuri esențiale: obiceiul de a-ți începe ziua cu energie și obiceiul de a te înnoi constant prin învățare.”*"
+        },
+        "type": "text",
+        "videoUrl": null,
+        "videoDurationSeconds": null,
+        "status": "published",
+        "publishedAt": "2026-04-22T14:32:03.242Z"
+      },
+      {
+        "slug": "06-adopta-pozitia-de-forta-in-fata-clientului",
+        "order": 60,
+        "title": {
+          "en": "",
+          "ro": "Adoptă poziția de „forță” în fața clientului"
+        },
+        "excerpt": {
+          "en": "",
+          "ro": "Ca agent imobiliar, ai nevoie să arăți clientului că ești pe o poziție de „forță”. Dar ce înseamnă mai exact această atitudine într-o întâlnire?"
+        },
+        "content": {
+          "en": "",
+          "ro": "Ca agent imobiliar, ai nevoie să arăți clientului că ești pe o poziție de „forță”. Dar ce înseamnă mai exact această atitudine într-o întâlnire?\n\nÎn niciun caz nu înseamnă să fii arogant, să te crezi deținătorul adevărului absolut sau să te lauzi. Dar nu înseamnă nici să adopți „poziția ghiocelului”.\n\nÎnseamnă să te poziționezi ca un expert în domeniu, ca o autoritate, **fără să fie nevoie să o spui explicit**. Să-l faci pe client să simtă că ești stăpân pe ceea ce faci: să arăți că știi piața, că știi cum să-i promovezi imobilul, că știi să gestionezi negocierea. Totul pleacă din încrederea în tine.\n\nAceastă poziție de forță apare natural și atunci când arăți că vrei să îl ajuți pe client, dar nu ai nevoie disperată de imobilul lui în portofoliul tău. Nu depinzi de o singură tranzacție, nu ești disperat."
+        },
+        "type": "text",
+        "videoUrl": null,
+        "videoDurationSeconds": null,
+        "status": "published",
+        "publishedAt": "2026-04-22T14:32:03.247Z"
+      },
+      {
+        "slug": "07-fa-din-generarea-de-leaduri-un-ritual-zilnic",
+        "order": 70,
+        "title": {
+          "en": "",
+          "ro": "Fă din generarea de leaduri un ritual zilnic"
+        },
+        "excerpt": {
+          "en": "",
+          "ro": "Generarea de leaduri este una dintre pietrele de temelie ale afacerii imobiliare. Cealaltă piatră de temelie? Întâlnirile cu proprietarii (listările). Nu se poate reuși în vânzări fără clienți și fără portofoliu."
+        },
+        "content": {
+          "en": "",
+          "ro": "Generarea de leaduri este una dintre pietrele de temelie ale afacerii imobiliare. Cealaltă piatră de temelie? Întâlnirile cu proprietarii (listările). Nu se poate reuși în vânzări fără clienți și fără portofoliu. \n\nRelația este simplă: \n* Nu poți face bani dacă nu ai vânzări. \n* Nu poți să faci vânzări dacă nu ai întâlniri cu clienți. \n* Nu poți avea întâlniri dacă prospectarea nu este o prioritate pentru tine.\n\nVânzătorii extraordinari fac din generarea de leaduri un ritual zilnic. Își blochează timp în calendar și în agendă strict pentru a aduce noi contacte care se vor transforma în întâlniri și vânzări.\n\nFă din generarea de leaduri **primul lucru cu care începi ziua**. Și nu amâna! Pe cât de constant este acest proces, pe atât de constante vor fi și vânzările tale."
+        },
+        "type": "text",
+        "videoUrl": null,
+        "videoDurationSeconds": null,
+        "status": "published",
+        "publishedAt": "2026-04-22T14:32:03.253Z"
+      },
+      {
+        "slug": "08-castiga-batalia-pozitionarii",
+        "order": 80,
+        "title": {
+          "en": "",
+          "ro": "Câștigă bătălia poziționării"
+        },
+        "excerpt": {
+          "en": "",
+          "ro": "Te poți găsi pe primele poziții în mintea clienților doar printr-un efort sistematic de generare de leaduri și de muncă la brandingul tău personal."
+        },
+        "content": {
+          "en": "",
+          "ro": "Te poți găsi pe primele poziții în mintea clienților doar printr-un efort sistematic de generare de leaduri și de muncă la brandingul tău personal.\n\nIată câteva date extrase dintr-un studiu realizat de *National Association of Realtors* în SUA (cifre care, probabil, nu sunt foarte departe nici de realitatea din România):\n* **81%** dintre vânzători au contactat un singur agent înainte să-l aleagă pe cel cu care vor vinde.\n* **65%** au găsit agentul printr-o referință (prieten, vecin) sau colaboraseră cu el în trecut.\n* **46%** au apelat la același agent pentru a le găsi o altă casă.\n* **75%** dintre vânzători au raportat că ei au plătit comisionul agentului.\n* Majoritatea vânzătorilor au recomandat agentul cu care au colaborat cel puțin o dată (20% l-au recomandat de peste patru ori).\n* **87%** au spus că vor recomanda cu siguranță sau probabil agentul lor pe viitor.\n\nFii acel singur agent pe care clientul îl sună!"
+        },
+        "type": "text",
+        "videoUrl": null,
+        "videoDurationSeconds": null,
+        "status": "published",
+        "publishedAt": "2026-04-22T14:32:03.259Z"
+      },
+      {
+        "slug": "09-urmareste-ti-cifrele",
+        "order": 90,
+        "title": {
+          "en": "",
+          "ro": "Urmărește-ți cifrele!"
+        },
+        "excerpt": {
+          "en": "",
+          "ro": "Nu poți îmbunătăți o cifră pe care nu o cunoști. Nu poți progresa dacă nu știi unde te afli exact. Așa cum spunea Peter Drucker, părintele managementului: „Ceea ce nu poate fi măsurat, nu poate fi administrat.”"
+        },
+        "content": {
+          "en": "",
+          "ro": "Nu poți îmbunătăți o cifră pe care nu o cunoști. Nu poți progresa dacă nu știi unde te afli exact. Așa cum spunea Peter Drucker, părintele managementului: *„Ceea ce nu poate fi măsurat, nu poate fi administrat.”*\n\nÎn imobiliare, leadurile nu sunt niciodată de ajuns. Oricât de multe contacte, clienți sau vânzări ai avea, fluxul de noi prospecți trebuie menținut dacă vrei să performezi la nivel înalt.\n\nDezvoltă-ți continuu abilitățile de abordare:\n* Adaptează-te la fiecare tip de personalitate.\n* Fii proactiv și citește constant.\n* Fii receptiv la critici constructive.\n\nNu pune pe pauză generarea de leaduri. Eficiența cu care atragi noi clienți dictează direct rezultatele finale (vânzările și comisioanele încasate)."
+        },
+        "type": "text",
+        "videoUrl": null,
+        "videoDurationSeconds": null,
+        "status": "published",
+        "publishedAt": "2026-04-22T14:32:03.264Z"
+      },
+      {
+        "slug": "10-10-surse-esentiale-de-generare-de-leaduri",
+        "order": 100,
+        "title": {
+          "en": "",
+          "ro": "10 Surse esențiale de generare de leaduri"
+        },
+        "excerpt": {
+          "en": "",
+          "ro": "Iată zece surse pe care le folosesc personal și care, utilizate la un nivel profesionist, îți pot aduce un flux constant de clienți:"
+        },
+        "content": {
+          "en": "",
+          "ro": "Iată zece surse pe care le folosesc personal și care, utilizate la un nivel profesionist, îți pot aduce un flux constant de clienți:\n\n1.  Prospectarea anunțurilor de la proprietari.\n2.  Cercul de cunoștințe (Sfera de influență).\n3.  Recomandările.\n4.  Personal branding-ul.\n5.  Marketingul susținut pentru portofoliul existent.\n6.  Networking-ul.\n7.  Follow-up-ul constant.\n8.  Fidelizarea și retenția clienților.\n9.  Colaborările în cadrul propriei echipe.\n10. Colaborările cu alți agenți imobiliari din piață."
+        },
+        "type": "text",
+        "videoUrl": null,
+        "videoDurationSeconds": null,
+        "status": "published",
+        "publishedAt": "2026-04-22T14:32:03.269Z"
+      },
+      {
+        "slug": "11-nu-vorbi-la-telefon-despre-contract-si-comisioane",
+        "order": 110,
+        "title": {
+          "en": "",
+          "ro": "Nu vorbi la telefon despre contract și comisioane"
+        },
+        "excerpt": {
+          "en": "",
+          "ro": "Evită pe cât posibil să vorbești la telefon despre contracte și comisioane."
+        },
+        "content": {
+          "en": "",
+          "ro": "Evită pe cât posibil să vorbești la telefon despre contracte și comisioane. \n\nCând faci o contactare „la rece” (suni un proprietar care tocmai a pus un anunț), obiectivul tău este să obții proprietatea în portofoliu. Deseori, proprietarul te va întreba rapid: *„Dar ce comision percepi?”*\n\nDacă răspunzi direct, ajungi să comunici la telefon lucruri care se discută exclusiv față în față. Să fim sinceri: în acel moment, pentru proprietar ești doar un alt agent din piață. Nu ai cum să creezi suficientă valoare la telefon pentru a-ți justifica onorariul și nici cum să te diferențiezi real.\n\nPrimul contact telefonic are un singur scop: **obținerea întâlnirii de listare** (sau vânzarea unui al doilea contact telefonic, dacă nu o obții din prima). Atât!\n\nDetașează-te de rezultatul final. Persoana de la celălalt capăt al firului nu te cunoaște încă, așa că nu te grăbi să discuți condițiile de colaborare."
+        },
+        "type": "text",
+        "videoUrl": null,
+        "videoDurationSeconds": null,
+        "status": "published",
+        "publishedAt": "2026-04-22T14:32:03.273Z"
+      },
+      {
+        "slug": "12-inspira-i-clientului-dorinta-de-a-se-intalni-cu-tine",
+        "order": 120,
+        "title": {
+          "en": "",
+          "ro": "Inspiră-i clientului dorința de a se întâlni cu tine"
+        },
+        "excerpt": {
+          "en": "",
+          "ro": "Contactul telefonic pentru obținerea întâlnirii de listare este unul dintre cei mai importanți pași din proces. Practic, este tot o vânzare: vinzi întâlnirea cu tine."
+        },
+        "content": {
+          "en": "",
+          "ro": "Contactul telefonic pentru obținerea întâlnirii de listare este unul dintre cei mai importanți pași din proces. Practic, este tot o vânzare: **vinzi întâlnirea cu tine**. \n\nOrice tranzacție începe cu un telefon și o întâlnire, dar mai întâi trebuie să câștigi acea întâlnire. Abordarea este totul.\n\n**Cum îi inspiri dorința de a te vedea față în față?**\n* Prin energia și atitudinea ta.\n* Prin cuvintele alese și felul în care te adaptezi la stilul interlocutorului.\n* Prin crearea unui interes comun.\n\n**Cum creezi acest interes reciproc?** Demonstrează că îți pasă cu adevărat de nevoile lui. Fii atent la detaliile discuției și construiește-ți abordarea exact pe informațiile pe care ți le oferă el."
+        },
+        "type": "text",
+        "videoUrl": null,
+        "videoDurationSeconds": null,
+        "status": "published",
+        "publishedAt": "2026-04-22T14:32:03.279Z"
+      },
+      {
+        "slug": "13-tine-cont-de-nevoile-clientilor-vanzatori-partea-i",
+        "order": 130,
+        "title": {
+          "en": "",
+          "ro": "Ține cont de nevoile clienților vânzători (Partea I)"
+        },
+        "excerpt": {
+          "en": "",
+          "ro": "Este esențial să afli nevoia reală a clientului și să ții cont de ea. Asta te ajută imens în abordarea telefonică. Deși e mai greu să depistezi totul la telefon, iată prima parte a listei cu nevoile de bază ale vânzătorilor:"
+        },
+        "content": {
+          "en": "",
+          "ro": "Este esențial să afli nevoia reală a clientului și să ții cont de ea. Asta te ajută imens în abordarea telefonică. Deși e mai greu să depistezi totul la telefon, iată prima parte a listei cu nevoile de bază ale vânzătorilor:\n\n* **Cunoașterea prețului corect:** Vrea să știe cât valorează proprietatea lui. Aici poți oferi informații exacte despre piață sau poți promite o evaluare profesională.\n* **Siguranța:** Vrea să simtă că ai grijă de el și de bunul lui. Recenziile pozitive, testimonialele sau recomandările funcționează perfect aici.\n* **Să vândă imobilul (pur și simplu):** Vrea confirmarea că ești persoana capabilă să aducă un cumpărător. Povestește-i pe scurt despre cea mai recentă tranzacție similară pe care ai închis-o.\n* **Să facă zero efort:** Nu vrea să facă niciun drum sau demers complicat. Explică-i clar ce servicii de asistență îi oferi (este imperios necesar să ai aceste servicii pregătite).\n* **Atenția:** Vrea să fie informat și ținut la curent. Stabilește de la început care va fi modul vostru de comunicare."
+        },
+        "type": "text",
+        "videoUrl": null,
+        "videoDurationSeconds": null,
+        "status": "published",
+        "publishedAt": "2026-04-22T14:32:03.283Z"
+      },
+      {
+        "slug": "14-tine-cont-de-nevoile-clientilor-vanzatori-partea-a-ii-a",
+        "order": 140,
+        "title": {
+          "en": "",
+          "ro": "ȚINE CONT DE NEVOILE CLIENȚILOR VÂNZĂTORI (Partea a II-a)"
+        },
+        "excerpt": {
+          "en": "",
+          "ro": "Continuăm lista cu nevoile de bază care stau în spatele deciziei unui client vânzător:"
+        },
+        "content": {
+          "en": "",
+          "ro": "Continuăm lista cu nevoile de bază care stau în spatele deciziei unui client vânzător:\n\n* **Să obțină cel mai bun preț:** Dacă asta caută, poți menționa o proprietate similară din portofoliul tău pe care ai reușit să o vinzi la un preț excelent.\n* **Costuri și Obligații:** Vrea să știe exact ce taxe sau acte implică tranzacția. Pentru acești clienți, cunoștințele tale juridice sunt cel mai mare atu.\n* **Vânzarea rapidă:** Clienții care vor să „scape” de imobil presant. Aici, expertiza ta în poziționarea corectă a prețului este esențială.\n* **Informarea completă:** Clienții extrem de conștiincioși care vor să știe fiecare detaliu. Va trebui să le explici transparent toți pașii tranzacției, până în momentul încasării banilor.\n* **Relocarea:** Vând pentru a cumpăra altceva. Este esențial să ai pregătită o soluție de relocare și să le prezinți opțiuni viabile de achiziție.\n\nTu cu ce alte nevoi te-ai mai întâlnit în piață?"
+        },
+        "type": "text",
+        "videoUrl": null,
+        "videoDurationSeconds": null,
+        "status": "published",
+        "publishedAt": "2026-04-22T14:32:03.288Z"
+      },
+      {
+        "slug": "15-fii-creativ-in-abordare",
+        "order": 150,
+        "title": {
+          "en": "",
+          "ro": "Fii creativ în abordare"
+        },
+        "excerpt": {
+          "en": "",
+          "ro": "Mult timp s-a crezut că doar artiștii sunt creativi. În realitate, creativitatea este la îndemâna oricui, mai ales în vânzări. Brian Tracy subliniază câteva concepte care antrenează această abilitate:"
+        },
+        "content": {
+          "en": "",
+          "ro": "Mult timp s-a crezut că doar artiștii sunt creativi. În realitate, creativitatea este la îndemâna oricui, mai ales în vânzări. Brian Tracy subliniază câteva concepte care antrenează această abilitate:\n\n**1. Specializează-te (Nișează-te)**\nIa o „felie de pizza” din piață și fă-o a ta. Nișarea se poate face pe:\n* Zonă geografică.\n* Tip de imobil (case, apartamente, terenuri).\n* Piață (vânzări/închirieri, luxury/middle market).\n* Tip de client (vânzători sau cumpărători).\n\n**2. Diferențiază-te**\nFă-o prin abordare, promovare, atitudine sau prin storytelling. Folosește povești care subliniază beneficiile serviciilor tale. Clientul trebuie să înțeleagă din prima convorbire că nu își va pierde timpul cu „încă un agent care vine, face poze și pleacă”, ci că discută cu un profesionist complet diferit.\n\n**3. Concentrează-te**\nStabilește-ți priorități clare și focusează-te pe execuția lor. Când ești specialist pe segmentul tău, complet diferit de concurență și extrem de concentrat, creativitatea vine de la sine!"
+        },
+        "type": "text",
+        "videoUrl": null,
+        "videoDurationSeconds": null,
+        "status": "published",
+        "publishedAt": "2026-04-22T14:32:03.294Z"
+      },
+      {
+        "slug": "16-castiga-imediat-atentia-clientului",
+        "order": 160,
+        "title": {
+          "en": "",
+          "ro": "Câștigă imediat atenția clientului"
+        },
+        "excerpt": {
+          "en": "",
+          "ro": "Primul obiectiv la telefon este să îi distragi atenția de la propriile preocupări și să o câștigi pentru tine. Cum faci asta?"
+        },
+        "content": {
+          "en": "",
+          "ro": "Primul obiectiv la telefon este să îi distragi atenția de la propriile preocupări și să o câștigi pentru tine. Cum faci asta?\n\n* **Vino cu energie:** Fii o persoană plină de entuziasm. Primul lucru pe care îl cumpără clientul este vibe-ul tău. Primele tale cuvinte ar trebui să aibă impactul unei „cărămizi aruncate prin geam”.\n* **Fii cameleonic:** Adaptează-ți abordarea în funcție de personalitatea omului de la capătul firului.\n* **Personalizează contactul:** Găsește elemente comune, află detalii, folosește recomandări sau testimoniale.\n* **Începe în forță:** Concepe o întrebare de deschidere interesantă și neobișnuită, concentrată pe beneficiul final pe care i-l oferi.\n\nSiguranța și creativitatea vin din experiență. Repetă. Repetă. Repetă. Atitudinea și încrederea apar natural atunci când ești foarte bine pregătit și știi exact ce ai de făcut."
+        },
+        "type": "text",
+        "videoUrl": null,
+        "videoDurationSeconds": null,
+        "status": "published",
+        "publishedAt": "2026-04-22T14:32:03.300Z"
+      },
+      {
+        "slug": "17-alterneaza-intrebarile-deschise-cu-cele-inchise",
+        "order": 170,
+        "title": {
+          "en": "",
+          "ro": "Alternează întrebările deschise cu cele închise"
+        },
+        "excerpt": {
+          "en": "",
+          "ro": "Există multe dezbateri despre ce fel de întrebări ar trebui folosite în prospectare. Unii spun să folosești doar întrebări deschise (Cum, Care, Ce, Când, Unde), alții merg pe tehnici persuasive de a forța doar „Da-uri” pe bandă rulantă."
+        },
+        "content": {
+          "en": "",
+          "ro": "Există multe dezbateri despre ce fel de întrebări ar trebui folosite în prospectare. Unii spun să folosești doar întrebări deschise (*Cum, Care, Ce, Când, Unde*), alții merg pe tehnici persuasive de a forța doar „Da-uri” pe bandă rulantă. \n\nPersonal, cred că ambele tipuri sunt utile, atâta timp cât sunt adaptate momentului:\n\n* **Întrebarea de deschidere** poate fi una închisă (cu Da/Nu). Ex: *„Mai este de vânzare imobilul dumneavoastră?”*\n* **Întrebările de calificare** (despre proprietate) trebuie să fie deschise. Ex: *„Cum este împărțită proprietatea? Ce suprafață utilă are?”*\n* **Întrebarea de închidere** (pentru obținerea întâlnirii) este bine să fie din nou închisă, pentru a cere un angajament clar. Ex: *„D-le Client, credeți că v-ar fi utilă o întâlnire de 20 de minute ca să discutăm despre vânzarea proprietății dvs.?”*\n\nTu ce fel de întrebări preferi să folosești la telefon?"
+        },
+        "type": "text",
+        "videoUrl": null,
+        "videoDurationSeconds": null,
+        "status": "published",
+        "publishedAt": "2026-04-22T14:32:03.305Z"
+      },
+      {
+        "slug": "18-amabilitatea-este-inca-la-moda",
+        "order": 180,
+        "title": {
+          "en": "",
+          "ro": "Amabilitatea este încă la modă"
+        },
+        "excerpt": {
+          "en": "",
+          "ro": "Amabilitatea în abordarea telefonică este o pârghie esențială pentru a crea o impresie bună, a te diferenția și a stabili o conexiune reală. Un ton prietenos, politicos și respectuos face mereu diferența între un „DA” și un refuz."
+        },
+        "content": {
+          "en": "",
+          "ro": "Amabilitatea în abordarea telefonică este o pârghie esențială pentru a crea o impresie bună, a te diferenția și a stabili o conexiune reală. Un ton prietenos, politicos și respectuos face mereu diferența între un „DA” și un refuz.\n\nCâteva reguli simple, dar de efect:\n* Nu vorbi la „per tu” până când nu cunoști clientul fizic și nu ai acordul lui.\n* Folosește constant formule precum: *„dumneavoastră”*, *„vă rog”*, *„mulțumesc”*, *„permiteți-mi să…”*\n* Ai grijă la salutul de deschidere și de închidere. Formulează elegant: *„Mă bucur să vă cunosc la telefon”*, *„Vă mulțumesc pentru timpul acordat”*, *„A fost o plăcere să discutăm”*, *„Vă doresc o zi remarcabilă.”*\n\nO abordare plină de energie, combinată cu o atitudine respectuoasă și disponibilitatea de a ajuta, poate transforma orice convorbire rece într-o viitoare colaborare."
+        },
+        "type": "text",
+        "videoUrl": null,
+        "videoDurationSeconds": null,
+        "status": "published",
+        "publishedAt": "2026-04-22T14:32:03.309Z"
+      },
+      {
+        "slug": "19-prea-multe-intrebari-la-telefon-provoaca-disconfort",
+        "order": 190,
+        "title": {
+          "en": "",
+          "ro": "Prea multe întrebări la telefon provoacă disconfort"
+        },
+        "excerpt": {
+          "en": "",
+          "ro": "Acum câțiva ani aveam un script plin de întrebări pentru proprietari: cum e apartamentul, la ce etaj, câte băi are, urmate de propunerea întâlnirii și un final de tipul „...da / e bine?”."
+        },
+        "content": {
+          "en": "",
+          "ro": "Acum câțiva ani aveam un script plin de întrebări pentru proprietari: cum e apartamentul, la ce etaj, câte băi are, urmate de propunerea întâlnirii și un final de tipul *„...da / e bine?”*. \n\nÎn timp, am observat că oamenii nu apreciază acest gen de „interogatoriu”. De ce? Pentru că își pierdeau controlul asupra conversației.\n\nClientul trebuie să simtă că deține controlul și că este în siguranță la telefon. Prea multe întrebări (și modul în care sunt adresate) pot crea anxietate, făcând conversația să pară că este doar despre nevoile tale (de a afla date), și prea puțin despre el. \n\n**Oferă-i iluzia controlului.** Lasă-l pe el să aleagă. Formulează întrebări de genul: *„Ar fi ok pentru dumneavoastră să...?”* sau *„Ați putea să...?”*. Contează enorm să te adaptezi."
+        },
+        "type": "text",
+        "videoUrl": null,
+        "videoDurationSeconds": null,
+        "status": "published",
+        "publishedAt": "2026-04-22T14:32:03.314Z"
+      },
+      {
+        "slug": "20-ajuta-l-pe-client-sa-vanda-singur",
+        "order": 200,
+        "title": {
+          "en": "",
+          "ro": "Ajută-l pe client să vândă singur"
+        },
+        "excerpt": {
+          "en": "",
+          "ro": "Contactul telefonic trebuie să fie dezinteresat, orientat strict spre ajutor. De multe ori, stresul agentului (și frica de refuz) vine din faptul că se gândește doar la rezultatul final: să obțină listarea, să semneze contractul, să ia comisionul."
+        },
+        "content": {
+          "en": "",
+          "ro": "Contactul telefonic trebuie să fie dezinteresat, orientat strict spre ajutor. De multe ori, stresul agentului (și frica de refuz) vine din faptul că se gândește doar la rezultatul final: să obțină listarea, să semneze contractul, să ia comisionul. \n\nÎn același timp, proprietarul se gândește: *să nu semnez nimic, să aducă doar clientul, să plătesc cât mai puțin.*\n\n**Ce-ar fi să schimbi total perspectiva?**\nDacă ne-am concentra toți pe un singur lucru la telefon: **să ajutăm clientul să-și vândă singur casa?** Asta înseamnă să-i oferi valoare încă de la primul apel: o scurtă analiză a pieței, sfaturi despre cum să pună proprietatea în lumină, detalii despre actele necesare (Cadastru, certificat energetic). O astfel de abordare coboară garda proprietarului și are șanse mult mai mari să-l fidelizeze pe termen lung."
+        },
+        "type": "text",
+        "videoUrl": null,
+        "videoDurationSeconds": null,
+        "status": "published",
+        "publishedAt": "2026-04-22T14:32:03.319Z"
+      },
+      {
+        "slug": "21-foloseste-cuvinte-magnetice-si-pozitive",
+        "order": 210,
+        "title": {
+          "en": "",
+          "ro": "Folosește cuvinte magnetice și pozitive"
+        },
+        "excerpt": {
+          "en": "",
+          "ro": "Cuvintele pe care le alegi dictează atmosfera conversației."
+        },
+        "content": {
+          "en": "",
+          "ro": "Cuvintele pe care le alegi dictează atmosfera conversației.\n\n**Cuvintele magnetice** atrag atenția și inspiră încredere. Ele fac diferența în modul în care te percepe clientul: \n*Gratuit, nou, exclusiv, garantat, soluție, rezultate, ușor, imediat, super, onest, avantaj, secret, succes.*\n\n**Cuvintele pozitive** transmit optimism, apreciere și bunăvoință. Ele construiesc o relație bazată pe colaborare: \n*Excelent, grozav, extraordinar, putem, vom reuși, e posibil, înțeleg, apreciez, te susțin, împreună, progres, sunt sigur că.*\n\nIntegrează intenționat aceste cuvinte atât în contactul telefonic, cât și în comunicarea scrisă sau verbală de zi cu zi, pentru a maximiza impactul interacțiunilor tale!"
+        },
+        "type": "text",
+        "videoUrl": null,
+        "videoDurationSeconds": null,
+        "status": "published",
+        "publishedAt": "2026-04-22T14:32:03.324Z"
+      },
+      {
+        "slug": "22-cei-6-pasi-ai-unui-contact-telefonic-de-succes",
+        "order": 220,
+        "title": {
+          "en": "",
+          "ro": "Cei 6 pași ai unui contact telefonic de succes"
+        },
+        "excerpt": {
+          "en": "",
+          "ro": "Pentru a avea predictibilitate, scriptul tău telefonic ar trebui să urmeze o structură optimă, formată din 6 pași:"
+        },
+        "content": {
+          "en": "",
+          "ro": "Pentru a avea predictibilitate, scriptul tău telefonic ar trebui să urmeze o structură optimă, formată din 6 pași:\n\n1.  **Salutul:** Trebuie să fie ENERGIC și obligatoriu însoțit de un ZÂMBET. Vibe-ul este primul lucru pe care îl vinzi.\n2.  **Prezentarea:** Folosește prenume, nume și rolul de consultant imobiliar. Evită să spui din prima numele agenției, lasă-l pe el să întrebe.\n3.  **Motivul apelului:** Fă referire la anunțul lui și folosește cuvinte magnetice. Ex: *„Aveți o casă foarte interesantă la vânzare. Ați reușit să o dați?”*\n4.  **Întrebările de calificare:** Adresează maxim 2-3 întrebări contextuale, fără să transformi totul într-un interviu.\n5.  **Stabilirea întâlnirii:** Solicită întâlnirea (o întrebare cu Da/Nu) prezentând 1-2 motive clare și importante pentru el.\n6.  **Rămas bun memorabil:** Fii politicos, mulțumește pentru timp, zâmbește și (dacă nu l-ai aflat deja) nu uita să-i ceri numele la final."
+        },
+        "type": "text",
+        "videoUrl": null,
+        "videoDurationSeconds": null,
+        "status": "published",
+        "publishedAt": "2026-04-22T14:32:03.329Z"
+      },
+      {
+        "slug": "23-14-intrebari-utile-despre-imobil-alege-maxim-3",
+        "order": 230,
+        "title": {
+          "en": "",
+          "ro": "14 Întrebări utile despre imobil (Alege maxim 3!)"
+        },
+        "excerpt": {
+          "en": "",
+          "ro": "La telefon, vrei să afli context, nu să citești anunțul împreună cu el. Important: nu adresa niciodată mai mult de 2-3 întrebări din lista de mai jos și evită să întrebi lucruri deja scrise în textul anunțului."
+        },
+        "content": {
+          "en": "",
+          "ro": "La telefon, vrei să afli context, nu să citești anunțul împreună cu el. Important: **nu adresa niciodată mai mult de 2-3 întrebări din lista de mai jos** și evită să întrebi lucruri deja scrise în textul anunțului.\n\n**Pentru apartamente:**\n1. Puteți să îmi spuneți, vă rog, unde este situat mai exact?\n2. Pe ce stradă / la ce bloc?\n3. Ce suprafață utilă are în cartea funciară?\n4. Este decomandat sau semidecomandat?\n5. Ce amenajări are apartamentul, cum se prezintă vizual?\n6. Câte băi / câte balcoane are?\n7. Din ce an este blocul?\n\n**Pentru case/terenuri:**\n8. Care este suprafața exactă a terenului, vă rog?\n9. Câte camere sunt în total?\n10. Din ce material este construită?\n11. Care este anul finalizării construcției?\n12. La ce utilități este racordată?\n13. Ce sistem de încălzire are?\n14. Care este deschiderea (frontul) la stradă?"
+        },
+        "type": "text",
+        "videoUrl": null,
+        "videoDurationSeconds": null,
+        "status": "published",
+        "publishedAt": "2026-04-22T14:32:03.333Z"
+      },
+      {
+        "slug": "24-cum-tratezi-obiectia-nu-vreau-cu-agentie",
+        "order": 240,
+        "title": {
+          "en": "",
+          "ro": "Cum tratezi obiecția „Nu vreau cu agenție”"
+        },
+        "excerpt": {
+          "en": "",
+          "ro": "Din păcate, te vei lovi ocazional de această obiecție, dar vestea bună este că apare mult mai rar decât se crede."
+        },
+        "content": {
+          "en": "",
+          "ro": "Din păcate, te vei lovi ocazional de această obiecție, dar vestea bună este că apare mult mai rar decât se crede. \n\nUn sfat esențial: nu-i crede pe toți vânzătorii care scriu cu majuscule în descriere *„EXCLUS AGENȚIE”*. Acum ceva timp, am obținut o reprezentare exclusivă fix de la un proprietar care avea asta scris în anunț. Când l-am întrebat de ce a adăugat acea propoziție, mi-a răspuns simplu: el nu era deloc împotriva agenților imobiliari, dar văzuse că „așa au scris și alții în anunțurile lor” și a crezut că așa se procedează. \n\nAbordează cu încredere și s-ar putea să fii surprins!"
+        },
+        "type": "text",
+        "videoUrl": null,
+        "videoDurationSeconds": null,
+        "status": "published",
+        "publishedAt": "2026-04-22T14:32:03.337Z"
+      }
+    ]
+  }
+]

@@ -53,7 +53,7 @@ echo "=== Phase 2: pick representative resources ==="
 # Pick a luxury and an affordable property to test tier isolation, plus
 # the AGENT's own property and a foreign one.
 LUX_ID=$(curl -s -H "X-Site: TGE_LUXURY" "$API/properties?limit=1" | jq -r '.data[0].id')
-AFF_ID=$(curl -s -H "X-Site: REVERIA"    "$API/properties?limit=1" | jq -r '.data[0].id')
+AFF_ID=$(curl -s -H "X-Site: REVERY"    "$API/properties?limit=1" | jq -r '.data[0].id')
 AGENT_ROW_ID=$(curl -s -H "Authorization: Bearer $T_AGENT" -H "X-Site: ADMIN" \
   "$API/properties?limit=1" | jq -r '.data[0].id')
 # A property owned by a *different* agent (just ask SUPER_ADMIN for a property
@@ -71,9 +71,9 @@ echo "  course (if any):    ${COURSE_ID:-<none seeded>}"
 
 echo ""
 echo "=== Phase 3: tier matrix on GET /properties ==="
-echo "  (ADMIN tier scope = null = see all; LUXURY = luxury only; REVERIA = affordable only)"
+echo "  (ADMIN tier scope = null = see all; LUXURY = luxury only; REVERY = affordable only)"
 echo "  Reading meta.total to capture full count regardless of pagination cap."
-for site in ADMIN TGE_LUXURY REVERIA ACADEMY; do
+for site in ADMIN TGE_LUXURY REVERY ACADEMY; do
   total=$(curl -s -H "Authorization: Bearer $T_SUPER" -H "X-Site: $site" \
     "$API/properties?limit=1" | jq -r '.meta.total // (.data | length)')
   printf "  %-12s -> %s total\n" "$site" "$total"
