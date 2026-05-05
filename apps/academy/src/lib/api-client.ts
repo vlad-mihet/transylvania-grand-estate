@@ -144,10 +144,20 @@ export async function apiFetch<T>(
     }
     throw new ApiError(message, res.status);
   }
-  // Nest's TransformInterceptor wraps all responses as `{ data, meta? }`.
-  // Caller gets the unwrapped `data` payload; see apps/api/src/common/
-  // interceptors/transform.interceptor.ts.
+  // Nest's TransformInterceptor wraps responses as `{ success, data, meta? }`.
+  // Non-paginated calls want just `data`. Paginated calls (catalog, lessons)
+  // expect `{ data, meta }` — the controller returns that shape, the
+  // interceptor flattens it onto the envelope, so we reassemble it here when
+  // `meta` is present. See apps/api/src/common/interceptors/transform.interceptor.ts.
   const json = await res.json();
+  if (
+    json &&
+    typeof json === "object" &&
+    "meta" in json &&
+    "data" in json
+  ) {
+    return { data: json.data, meta: json.meta } as T;
+  }
   return (json?.data ?? json) as T;
 }
 
