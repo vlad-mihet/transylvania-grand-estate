@@ -91,9 +91,19 @@ async function refreshTokens(): Promise<boolean> {
     clearTokens();
     return false;
   }
-  const data = await res.json();
-  if (data?.accessToken && data?.refreshToken) {
-    setTokens({ accessToken: data.accessToken, refreshToken: data.refreshToken });
+  // Nest's TransformInterceptor wraps the handler return as
+  // `{ success, data: { accessToken, refreshToken, user } }`. Read through
+  // `json.data` (with a raw fallback) — the previous direct-read of
+  // `json.accessToken` always returned undefined, so refresh silently
+  // failed and the next 401 logged the user out, masquerading as a
+  // "have-to-log-in-after-every-deploy" symptom.
+  const json = await res.json();
+  const payload = json?.data ?? json;
+  if (payload?.accessToken && payload?.refreshToken) {
+    setTokens({
+      accessToken: payload.accessToken,
+      refreshToken: payload.refreshToken,
+    });
     return true;
   }
   return false;
