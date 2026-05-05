@@ -183,11 +183,25 @@ export class AuditService {
   async record(input: AuditRecordInput): Promise<void> {
     const ctx = this.readContext(input.contextOverride);
     const diff = computeDiff(input.before, input.after);
+    const data = this.buildData(input, ctx, diff);
     try {
-      await this.prisma.auditLog.create({
-        data: this.buildData(input, ctx, diff),
-      });
+      await this.prisma.auditLog.create({ data });
     } catch (err) {
+      // The actor FK is `onDelete: SetNull` — the schema declares that an
+      // audit row may legitimately have no actor. If the actor was deleted
+      // between JWT issue and this insert, retry once with actorId null so
+      // the audit row survives instead of being lost.
+      if (data.actorId !== null && isOrphanActorError(err)) {
+        try {
+          await this.prisma.auditLog.create({
+            data: { ...data, actorId: null },
+          });
+          return;
+        } catch (retryErr) {
+          this.recordFailure(input, retryErr);
+          return;
+        }
+      }
       this.recordFailure(input, err);
     }
   }
@@ -318,4 +332,23 @@ function resolveRetention(action: string): Date | null {
   if (action.startsWith('site-config.')) return years(3);
   if (action.startsWith('property.')) return years(2);
   return years(1);
+}
+
+/**
+ * Detect a Prisma P2003 caused specifically by the AuditLog → AdminUser actor
+ * FK. Prisma versions stringify the violated constraint differently in
+ * `meta.field_name` (some emit the Postgres constraint name like
+ * `audit_logs_actor_id_fkey`, some emit the model field like `actorId`), so
+ * match either shape and fall back to the error message itself.
+ */
+function isOrphanActorError(err: unknown): boolean {
+  if (!(err instanceof Prisma.PrismaClientKnownRequestError)) return false;
+  if (err.code !== 'P2003') return false;
+  const fieldName = (err.meta as { field_name?: unknown } | undefined)
+    ?.field_name;
+  const haystack =
+    typeof fieldName === 'string' && fieldName.length > 0
+      ? fieldName
+      : err.message;
+  return /actor[_]?id/i.test(haystack);
 }
