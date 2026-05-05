@@ -52,7 +52,7 @@ async function bootstrap() {
   );
 
   // CORS: require CORS_ORIGINS to be explicit in production. Dev falls back to
-  // the local Next.js ports (landing:3050, admin:3051, reveria:3052) so fresh
+  // the local Next.js ports (landing:3050, admin:3051, revery:3052) so fresh
   // clones work without extra setup.
   const corsOriginsRaw = configService.get<string>('CORS_ORIGINS');
   if (!corsOriginsRaw && process.env.NODE_ENV === 'production') {

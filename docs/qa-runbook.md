@@ -1,6 +1,6 @@
-# QA runbook — TGE / Reveria monorepo
+# QA runbook — TGE / Revery monorepo
 
-A re-runnable record of the exploratory QA performed on 2026-04-17 against the `feature/reveria` branch. Use this to reproduce the same coverage against any future revision, or to smoke-check a staging deploy.
+A re-runnable record of the exploratory QA performed on 2026-04-17 against the `feature/revery` branch. Use this to reproduce the same coverage against any future revision, or to smoke-check a staging deploy.
 
 **Companion files:**
 - `scripts/qa-smoke.sh` — automated runner for every API-level and page-smoke check described below. Exit 0 = all real assertions passed (known-bug WARNs are allowed). See `scripts/qa-smoke.sh --help`.
@@ -10,7 +10,7 @@ A re-runnable record of the exploratory QA performed on 2026-04-17 against the `
 
 ## Goal
 
-Surface regressions fast. Priority surfaces (chosen 2026-04-17): admin CRUD + auth, API contracts + brand isolation, landing public flows, Reveria public flows. Deliverable: a prioritized bug report with repro + fix pointers.
+Surface regressions fast. Priority surfaces (chosen 2026-04-17): admin CRUD + auth, API contracts + brand isolation, landing public flows, Revery public flows. Deliverable: a prioritized bug report with repro + fix pointers.
 
 ---
 
@@ -33,7 +33,7 @@ cd apps/api && npx prisma generate && npx prisma migrate dev && npx prisma db se
 pnpm --filter @tge/api dev         # :3333  — API
 pnpm --filter @tge/admin dev       # :3001  — admin
 pnpm --filter @tge/landing dev     # :3000  — landing (TGE luxury)
-pnpm --filter @tge/reveria dev     # :3002  — Reveria
+pnpm --filter @tge/revery dev     # :3002  — Revery
 ```
 
 All four must be up before the suite runs. `qa-smoke.sh` aborts on preflight if API is unreachable.
@@ -77,7 +77,7 @@ The script is grouped by phase. Each phase can be run in isolation by editing th
 ### Phase A — Preflight (automated)
 
 - `docker ps` confirms Postgres container is up.
-- `curl` each of API / admin / landing / Reveria — all must return 2xx/3xx.
+- `curl` each of API / admin / landing / Revery — all must return 2xx/3xx.
 - Admin password reset via `docker exec ... psql`.
 - `POST /auth/login` yields an access + refresh token pair.
 
@@ -86,7 +86,7 @@ The script is grouped by phase. Each phase can be run in isolation by editing th
 The core invariant. `SiteMiddleware` resolves tier scope server-side; the client cannot widen it.
 
 ```bash
-curl -s "$API/properties?limit=100" -H "X-Site: REVERIA"    | jq '.data | group_by(.tier) | map({tier: .[0].tier, count: length})'
+curl -s "$API/properties?limit=100" -H "X-Site: REVERY"    | jq '.data | group_by(.tier) | map({tier: .[0].tier, count: length})'
 curl -s "$API/properties?limit=100" -H "X-Site: TGE_LUXURY" | jq '.data | group_by(.tier) | map({tier: .[0].tier, count: length})'
 curl -s "$API/properties?limit=100" -H "X-Site: ADMIN"      | jq '.data | group_by(.tier) | map({tier: .[0].tier, count: length})'
 curl -s "$API/properties?limit=100" -H "X-Site: UNKNOWN"    | jq '.data | length'   # → 0
@@ -101,9 +101,9 @@ curl -s "$API/properties?limit=100" -H "X-Site: HAX0R"      | jq '.data | length
 Attacker tries to widen tier scope via query params; API must ignore.
 
 ```bash
-curl -s "$API/properties?tier=luxury" -H "X-Site: REVERIA"          | jq '.data | map(.tier) | unique'   # ["affordable"]
-curl -s "$API/properties?maxPrice=50000000" -H "X-Site: REVERIA"    | jq '.data | map(.price) | max'    # < 1,000,000
-curl -s "$API/properties?tier=%27%3BDROP" -H "X-Site: REVERIA"      # 400 ValidationError
+curl -s "$API/properties?tier=luxury" -H "X-Site: REVERY"          | jq '.data | map(.tier) | unique'   # ["affordable"]
+curl -s "$API/properties?maxPrice=50000000" -H "X-Site: REVERY"    | jq '.data | map(.price) | max'    # < 1,000,000
+curl -s "$API/properties?tier=%27%3BDROP" -H "X-Site: REVERY"      # 400 ValidationError
 ```
 
 ### Phase B.3 — Auth + RBAC
@@ -168,7 +168,7 @@ curl "$API/properties?maxBedrooms=5"            -H "X-Site: TGE_LUXURY"  # Major
 curl "$API/properties?featured=true"            -H "X-Site: TGE_LUXURY"  # all featured
 curl "$API/properties?swLat=45&swLng=25&neLat=46&neLng=26"               # bbox
 curl "$API/properties?lat=45.5&lng=25.5&radius=50"                       # radius km
-curl "$API/properties/map-pins"                 -H "X-Site: REVERIA"     # lightweight pin data
+curl "$API/properties/map-pins"                 -H "X-Site: REVERY"     # lightweight pin data
 ```
 
 ### Phase B.8 — File uploads
@@ -201,8 +201,8 @@ curl -i "$API/health"                                       # 404
 ### Phase B.10 — Inquiry source persistence (Critical #4)
 
 ```bash
-curl -X POST "$API/inquiries" -H "X-Site: REVERIA" \
-  -d '{"name":"T","email":"t@t.t","phone":"+40","message":"Probe","source":"qa-reveria-contact"}'
+curl -X POST "$API/inquiries" -H "X-Site: REVERY" \
+  -d '{"name":"T","email":"t@t.t","phone":"+40","message":"Probe","source":"qa-revery-contact"}'
 # → 201, returned body has no .data.source field
 # → admin GET /inquiries/:id also lacks .data.source → CONFIRMED Critical #4
 ```
@@ -252,7 +252,7 @@ Automated HTTP 200 checks on `/en`, `/en/properties`, `/en/cities`, `/en/develop
 - Similar properties sidebar.
 - Responsive.
 
-### Phase E — Reveria (smoke)
+### Phase E — Revery (smoke)
 
 Automated HTTP 200 checks on home, properties (list + map view), cities, developers, agents, blog, faq, about, contact, plus all four `/ro/instrumente/*` calculators.
 
@@ -261,7 +261,7 @@ Automated HTTP 200 checks on home, properties (list + map view), cities, develop
 **Not automated:**
 - Map view `?view=map` renders pin cluster; clicking a pin opens popup.
 - Filter bar (price, bedrooms 1–6+, area, amenities, etc.) URL-syncs and debounces refetch.
-- Property detail tier guard: visiting a TGE_LUXURY slug under Reveria must show a not-found page (content-wise it does; status-wise Blocker #2).
+- Property detail tier guard: visiting a TGE_LUXURY slug under Revery must show a not-found page (content-wise it does; status-wise Blocker #2).
 - Inline inquiry form submit UX.
 - i18n + Romanian diacritics + `"Cabană"` override for `chalet` type labels.
 - Responsive.
@@ -271,12 +271,12 @@ Automated HTTP 200 checks on home, properties (list + map view), cities, develop
 
 **Automated:**
 - Pick one luxury slug + one affordable slug via the API.
-- Landing with affordable slug → 404. Reveria with luxury slug → 404 (currently 200 per Blocker #2).
-- Landing with luxury slug → 200. Reveria with affordable slug → 200.
+- Landing with affordable slug → 404. Revery with luxury slug → 404 (currently 200 per Blocker #2).
+- Landing with luxury slug → 200. Revery with affordable slug → 200.
 
 **Not automated:**
-- Admin creates a luxury property → visible on landing, invisible on Reveria.
-- Admin creates an affordable property → visible on Reveria, invisible on landing.
+- Admin creates a luxury property → visible on landing, invisible on Revery.
+- Admin creates an affordable property → visible on Revery, invisible on landing.
 - Edit reflects on both (after React Query cache window).
 - Delete disappears on both.
 - Submit inquiry on landing → appears in admin `/inquiries` list; status PATCH flows.
@@ -309,7 +309,7 @@ These stay as `!` warnings until fixed. See `docs/qa-report-2026-04-17.md` for f
 | # | Severity | Warn string | Fix area |
 |---|---|---|---|
 | 1 | Blocker | "→ 500 (KNOWN Blocker #1, landing PropertyCard crashes on image-less property)" | `apps/landing/src/components/property/property-card.tsx:20-27` |
-| 2 | Blocker | "→ 200 (expected 404 — KNOWN Blocker #2, Reveria [locale]/error.tsx intercepts notFound)" | `apps/reveria/src/app/[locale]/error.tsx` |
+| 2 | Blocker | "→ 200 (expected 404 — KNOWN Blocker #2, Revery [locale]/error.tsx intercepts notFound)" | `apps/revery/src/app/[locale]/error.tsx` |
 | 3 | Critical | "SVG with lied MIME accepted ... KNOWN Critical #3" | `apps/api/src/common/config/upload.config.ts` |
 | 4 | Critical | "Inquiry.source dropped on persist (KNOWN Critical #4)" | `apps/api/prisma/schema.prisma` + `inquiries.service.ts` |
 | 5 | Major | "Static uploads 404 (KNOWN Major #5 — rootPath wrong)" | `apps/api/src/app.module.ts:34-38` |
@@ -327,17 +327,17 @@ The rerun of this suite surfaced two additional issues that weren't in the initi
 ### 🛑 Blocker #14 (new) — admin `proxy.ts` has wrong export name for Next 16
 
 - **App:** admin.
-- **Where:** `apps/admin/src/proxy.ts` — exports `export function middleware(req)` but Next.js 16 requires the export to be named `proxy` (or a default export). Landing and Reveria both use `export default createMiddleware(routing)` and work.
+- **Where:** `apps/admin/src/proxy.ts` — exports `export function middleware(req)` but Next.js 16 requires the export to be named `proxy` (or a default export). Landing and Revery both use `export default createMiddleware(routing)` and work.
 - **Symptom:** every admin request returns HTTP 500 with runtime error: `The file "./src\proxy.ts" must export a function, either as a default export or as a named "proxy" export.`
 - **Hot-reload caveat:** admin `/en/login` returned 200 at the very first hit in this session (before Next.js discovered `proxy.ts`). Once Next warmed up, every subsequent request 500s. This explains why the original report didn't catch it.
 - **Fix:** rename the export — `export function proxy(req)` — or change to `export default` (and remove the `middleware.ts` file, since both existing triggers the precedence weirdness).
 - The automated suite detects this explicitly in `page_smoke()` and warns rather than fails.
 
-### 🛑 Blocker #15 (new) — reveria `/en/blog` returns 500
+### 🛑 Blocker #15 (new) — revery `/en/blog` returns 500
 
-- **App:** reveria — only `/en/blog` (and likely `/ro/blog`). Other Reveria pages are fine.
-- **Where:** `apps/reveria/src/app/[locale]/blog/page.tsx` or a descendant. The API endpoint `GET /articles?status=published&limit=24` returns 200 with 8 seeded articles (all `category=guide` or `market-report`, both of which have i18n translations), so the root cause is client-side — likely a null-field dereference in `ArticleCard` or a missing i18n key somewhere. Needs a server-log inspection to pinpoint.
+- **App:** revery — only `/en/blog` (and likely `/ro/blog`). Other Revery pages are fine.
+- **Where:** `apps/revery/src/app/[locale]/blog/page.tsx` or a descendant. The API endpoint `GET /articles?status=published&limit=24` returns 200 with 8 seeded articles (all `category=guide` or `market-report`, both of which have i18n translations), so the root cause is client-side — likely a null-field dereference in `ArticleCard` or a missing i18n key somewhere. Needs a server-log inspection to pinpoint.
 - **Intermittent behavior:** during the first run of the suite earlier in the session, `/en/blog` returned 200. Dev mode / turbopack may have cold-vs-warm state divergence here.
-- **Fix:** start the reveria dev server, open `/en/blog`, grab the runtime error from the terminal/browser, fix the specific throw.
+- **Fix:** start the revery dev server, open `/en/blog`, grab the runtime error from the terminal/browser, fix the specific throw.
 
-Both new bugs also need entries in the severity-ranked report once they're investigated. The suite currently fails on Blocker #15 (`✗ reveria /en/blog → 500`) and warns on Blocker #14 — adjust when fixed.
+Both new bugs also need entries in the severity-ranked report once they're investigated. The suite currently fails on Blocker #15 (`✗ revery /en/blog → 500`) and warns on Blocker #14 — adjust when fixed.

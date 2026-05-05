@@ -4,7 +4,7 @@ import { useState } from "react";
 import { Phone } from "lucide-react";
 import { cn } from "@tge/utils";
 
-export type AgentPhoneVariant = "reveria" | "landing";
+export type AgentPhoneVariant = "revery" | "landing";
 
 export interface AgentPhoneProps {
   /** Agent's phone number (E.164 or local). Masked until the user reveals. */
@@ -34,7 +34,7 @@ const VARIANT_CLASSES: Record<
     revealedLink: string;
   }
 > = {
-  reveria: {
+  revery: {
     iconWrap:
       "w-9 h-9 rounded-full border border-border flex items-center justify-center shrink-0",
     icon: "h-4 w-4 text-primary",
@@ -58,7 +58,7 @@ export function AgentPhone({
   phone,
   revealLabel,
   hideIcon,
-  variant = "reveria",
+  variant = "revery",
   className,
 }: AgentPhoneProps) {
   const [revealed, setRevealed] = useState(false);

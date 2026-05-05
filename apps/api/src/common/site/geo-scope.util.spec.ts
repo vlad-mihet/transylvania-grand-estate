@@ -20,7 +20,7 @@ describe('geo-scope util', () => {
   /**
    * Compact builder so each spec can declare just the field it cares about.
    * Defaults match the "unrestricted, nothing hidden" shape that
-   * resolveGeoScope returns for REVERIA / ADMIN.
+   * resolveGeoScope returns for ADMIN.
    */
   const scopeOf = (overrides: Partial<GeoScope> = {}): GeoScope => ({
     counties: null,
@@ -232,12 +232,15 @@ describe('geo-scope util', () => {
       });
     });
 
-    it('returns unrestricted scope with no hidden cities for REVERIA', async () => {
+    it('returns unrestricted county scope with public Revery hidden cities', async () => {
       const result = await resolveGeoScope(
-        site(SiteId.REVERIA),
+        site(SiteId.REVERY),
         stub(['should', 'not', 'be', 'read'], ['ignored']),
       );
-      expect(result).toEqual({ counties: null, hiddenCitySlugs: [] });
+      expect(result).toEqual({
+        counties: null,
+        hiddenCitySlugs: ['reghin', 'tarnaveni'],
+      });
     });
 
     it('returns unrestricted scope for ADMIN', async () => {
@@ -256,17 +259,17 @@ describe('geo-scope util', () => {
 
     it('does not call the site-config service for non-TGE sites', async () => {
       // Guards against a refactor that routes every site through the DB
-      // getter — wasteful, and breaks the "Reveria is globally unrestricted"
+      // getter — wasteful, and breaks the public Revery city denylist
       // contract if the getter ever throws.
       const getTgeCountyScope = jest.fn<Promise<readonly string[]>, []>();
       const getTgeHiddenCities = jest.fn<Promise<readonly string[]>, []>();
-      const reveria = {
+      const revery = {
         getTgeCountyScope,
         getTgeHiddenCities,
       } as unknown as SiteConfigService;
-      await resolveGeoScope(site(SiteId.REVERIA), reveria);
-      await resolveGeoScope(site(SiteId.ADMIN), reveria);
-      await resolveGeoScope(site(SiteId.UNKNOWN), reveria);
+      await resolveGeoScope(site(SiteId.REVERY), revery);
+      await resolveGeoScope(site(SiteId.ADMIN), revery);
+      await resolveGeoScope(site(SiteId.UNKNOWN), revery);
       expect(getTgeCountyScope).not.toHaveBeenCalled();
       expect(getTgeHiddenCities).not.toHaveBeenCalled();
     });

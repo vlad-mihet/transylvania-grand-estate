@@ -11,7 +11,7 @@ export class SiteOriginConfig {
     this.map = new Map();
     this.register(config.get<string>('ADMIN_ORIGIN'), SiteId.ADMIN);
     this.register(config.get<string>('TGE_ORIGIN'), SiteId.TGE_LUXURY);
-    this.register(config.get<string>('REVERIA_ORIGIN'), SiteId.REVERIA);
+    this.register(config.get<string>('REVERY_ORIGIN'), SiteId.REVERY);
     this.register(config.get<string>('ACADEMY_ORIGIN'), SiteId.ACADEMY);
 
     if (process.env.NODE_ENV !== 'production') {

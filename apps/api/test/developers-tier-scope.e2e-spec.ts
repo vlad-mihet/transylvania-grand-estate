@@ -113,12 +113,12 @@ describe('Developers — tier scope on nested properties (e2e)', () => {
     };
   }
 
-  it('REVERIA site: GET /developers/:slug returns only affordable properties', async () => {
+  it('REVERY site: GET /developers/:slug returns only affordable properties', async () => {
     const { slug, affordableId, luxuryId } = await seedMixedTierDeveloper();
 
     const res = await request(app.getHttpServer())
       .get(`/api/v1/developers/${slug}`)
-      .set('X-Site', 'REVERIA')
+      .set('X-Site', 'REVERY')
       .expect(200);
 
     const ids = res.body.data.properties.map((p: { id: string }) => p.id);

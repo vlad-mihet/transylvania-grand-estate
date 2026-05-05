@@ -21,7 +21,7 @@ returns text like `"Un domeniu magnific la poalele Muntilor Carpati, langa Braso
 **Expected:** `"Un domeniu magnific la poalele Munților Carpați, lângă Brașov, oferind o combinație extraordinară de arhitectură tradițională transilvăneană și lux contemporan..."`
 **Scale:** 97 ASCII-Romanian token hits in `packages/data/src/properties.ts`, 5 in `developers.ts`, 4 in `testimonials.ts`, 3 in `articles.ts`. 24 luxury properties, 3 shown on landing home — every Romanian visitor to a Landing property detail page sees misspelled Romanian.
 **Counter-evidence that this is *data* drift, not a coding issue:**
-- `apps/api/prisma/seed.ts` for the Reveria inline inventory uses proper diacritics: `"Piața Unirii"`, `"lângă"`, `"construcție"`, `"Brașov"`, `"îngrijit"` — so new data is policy-compliant.
+- `apps/api/prisma/seed.ts` for the Revery inline inventory uses proper diacritics: `"Piața Unirii"`, `"lângă"`, `"construcție"`, `"Brașov"`, `"îngrijit"` — so new data is policy-compliant.
 - `packages/data/src/cities.ts` has been corrected too (`"Așezat la poalele Munților Carpați"` in source).
 - Only the `packages/data/src/properties.ts` (and a handful of other `@tge/data` files) still use ASCII Romanian.
 **Notes:** Per the saved memory `feedback_diacritics.md`: "Always use ă, â, î, ș, ț in Romanian text, never ASCII." This applies to seed data as well — Landing renders this content verbatim in `ro` locale. Fix is mechanical: pass all ro strings in `packages/data/src/properties.ts` + `developers.ts` + `testimonials.ts` + `articles.ts` through a diacritic restorer, spot-check, commit.
@@ -58,7 +58,7 @@ _none_
 
 - Page HTTP 200: `/en`, `/en/properties`, `/en/cities`, `/en/developers`, `/en/about`, `/en/contact`, `/en/transylvania`.
 - 404 on `/en/properties/does-not-exist-zzz`, `/en/cities/does-not-exist-zzz`, `/en/developers/does-not-exist-zzz`.
-- Cross-tier lookup correctly 404s: Landing requesting a Reveria affordable slug → 404.
+- Cross-tier lookup correctly 404s: Landing requesting a Revery affordable slug → 404.
 - Image-less property no longer crashes `PropertyCard` (was Blocker #1 on 2026-04-17; now fixed — placeholder renders).
 - i18n key parity en↔ro at 339 keys each in `apps/landing/messages/`.
-- No lint errors in the landing app (lint errors all localized to reveria — see `qa/reveria.md`).
+- No lint errors in the landing app (lint errors all localized to revery — see `qa/revery.md`).

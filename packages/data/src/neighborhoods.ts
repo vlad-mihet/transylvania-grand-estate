@@ -1,4 +1,4 @@
-/** Curated neighborhood data for Reveria's 5 key cities */
+/** Curated neighborhood data for Revery's 5 key cities */
 
 export interface NeighborhoodSeed {
   name: string;

@@ -556,7 +556,7 @@ model Inquiry {
   property Property? @relation(fields: [propertySlug], references: [slug])
 
   // Brand + surface that originated the inquiry. `source` is the brand-derived
-  // tag (e.g. "reveria-contact", "tge-property-detail") stamped by the shared
+  // tag (e.g. "revery-contact", "tge-property-detail") stamped by the shared
   // `useInquirySubmission` hook; `sourceUrl` is the full URL of the submitting
   // page so admins can jump back to context. Both nullable for pre-existing
   // rows. See Article.source/sourceUrl for the pattern precedent.
@@ -661,7 +661,7 @@ model SiteConfig {
 
   // City-slug denylist applied to the TGE_LUXURY site only. Lets the admin
   // hide a single city without dropping its whole county from `tgeCountyScope`
-  // (e.g. keep Mureș but drop Târnăveni). Reveria and Admin ignore this list,
+  // (e.g. keep Mureș but drop Târnăveni). Revery and Admin ignore this list,
   // so the city stays visible on the affordable site.
   tgeHiddenCities String[] @default([]) @map("tge_hidden_cities")
 
@@ -695,7 +695,7 @@ model AuditLog {
   method      String?    @db.VarChar(10)
   url         String?    @db.Text
   status      Int?
-  brand       String?    @db.VarChar(32) // SiteId value: TGE_LUXURY | REVERIA | ADMIN | UNKNOWN
+  brand       String?    @db.VarChar(32) // SiteId value: TGE_LUXURY | REVERY | ADMIN | UNKNOWN
   retainUntil DateTime?  @map("retain_until")
   createdAt   DateTime   @default(now()) @map("created_at")
 
@@ -710,7 +710,7 @@ model AuditLog {
 
 // ─── Academy ─────────────────────────────────────────────
 //
-// Academy is a sibling product to admin/landing/reveria. Students live in
+// Academy is a sibling product to admin/landing/revery. Students live in
 // their own AcademyUser table — an email may coincide with an AdminUser by
 // design (separate pools, per product decision). Tokens issued by the
 // academy auth surface carry `realm: 'academy'` in the JWT payload; admin

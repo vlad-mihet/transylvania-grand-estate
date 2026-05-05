@@ -6,12 +6,12 @@ import { SiteContext, SiteId } from './site.types';
  * Per-brand geographic scope used by every public read path.
  *
  * `counties`:
- *   `null`   → unrestricted (REVERIA, ADMIN)
+ *   `null`   → unrestricted (REVERY, ADMIN)
  *   `[]`     → match-nothing clamp (UNKNOWN — never leak)
  *   `[...]`  → county-slug allowlist (TGE_LUXURY, admin-configurable)
  *
  * `hiddenCitySlugs`:
- *   Always an array. TGE-only denylist; Reveria/Admin/UNKNOWN see `[]` so
+ *   Always an array. TGE-only denylist; Revery/Admin/UNKNOWN see `[]` so
  *   the helpers below can compose without site-aware branching at call sites.
  *
  * Returning a single object keeps the call sites consistent — most readers
@@ -25,10 +25,14 @@ export interface GeoScope {
 }
 
 const EMPTY_HIDDEN: readonly string[] = Object.freeze([]);
+const REVERY_HIDDEN_CITY_SLUGS: readonly string[] = Object.freeze([
+  'reghin',
+  'tarnaveni',
+]);
 
 /**
  * Sister concept to `SITE_TIER_SCOPE` — resolves the brand's geographic
- * scope. Only TGE consults the SiteConfig getters; Reveria/Admin short-circuit
+ * scope. Only TGE consults the SiteConfig getters; Revery/Admin short-circuit
  * to "unrestricted" so a Postgres blip on the site_config row can't 500
  * their pages, and UNKNOWN clamps to "match nothing".
  */
@@ -42,6 +46,9 @@ export async function resolveGeoScope(
       siteConfig.getTgeHiddenCities(),
     ]);
     return { counties, hiddenCitySlugs };
+  }
+  if (site.id === SiteId.REVERY) {
+    return { counties: null, hiddenCitySlugs: REVERY_HIDDEN_CITY_SLUGS };
   }
   if (site.id === SiteId.UNKNOWN) {
     return { counties: [], hiddenCitySlugs: EMPTY_HIDDEN };

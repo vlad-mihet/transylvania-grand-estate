@@ -38,7 +38,7 @@ function isPlainObject(value: unknown): value is MessageTree {
 
 /**
  * Deep-merge two message trees with `overrides` winning on conflict. Used
- * to layer app-local copy on top of the shared bundle (e.g. Reveria's
+ * to layer app-local copy on top of the shared bundle (e.g. Revery's
  * `Common.propertyTypes.chalet: "Cabană"` override on RO).
  */
 export function mergeMessages(

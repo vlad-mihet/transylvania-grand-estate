@@ -21,7 +21,7 @@ export interface MutateOptions {
 
 /**
  * Auth hook injected by apps that need bearer-token access with refresh.
- * Landing/reveria pass none; admin registers one that reads its in-memory
+ * Landing/revery pass none; admin registers one that reads its in-memory
  * token and hits /api/auth/refresh on 401. Kept as a single global adapter
  * so the token handshake isn't repeated across every call site.
  */

@@ -1,6 +1,6 @@
 // Mirrors apps/api/src/common/site/site.types.ts. Kept as a string-literal
 // union (not a cross-package import) so this package stays zero-dep.
-export type SiteId = "TGE_LUXURY" | "REVERIA" | "ADMIN";
+export type SiteId = "TGE_LUXURY" | "REVERY" | "ADMIN";
 
 export type PropertyTier = "luxury" | "affordable";
 

@@ -31,8 +31,8 @@ _none_
 
 ### [Trivial] Inverted port comment in `main.ts`
 **Where:** `apps/api/src/main.ts:22`
-**Expected:** Comment reads `admin:3001, landing:3000, reveria:3002`.
-**Actual:** Reads `admin:3000, landing:3001, reveria:3002`. Actual dev ports (per each app's `package.json > scripts.dev`): `landing` = 3000 (default), `admin` = 3001 (explicit `--port`), `reveria` = 3002 (explicit `--port`). The CORS fallback values on the same lines use the correct ports — only the written labels are swapped.
+**Expected:** Comment reads `admin:3001, landing:3000, revery:3002`.
+**Actual:** Reads `admin:3000, landing:3001, revery:3002`. Actual dev ports (per each app's `package.json > scripts.dev`): `landing` = 3000 (default), `admin` = 3001 (explicit `--port`), `revery` = 3002 (explicit `--port`). The CORS fallback values on the same lines use the correct ports — only the written labels are swapped.
 **Impact:** Doc rot — will mislead future devs.
 
 ## Passed
@@ -40,9 +40,9 @@ _none_
 - All 10 sub-phases of `scripts/qa-smoke.sh` (B.1–B.10, C, D, E, F.1, F.2) pass: 90 assertions, 2 warnings (Major #5 above + a transient admin-token refresh cleanup).
 - Brand tier isolation is correctly server-enforced. Confirmed:
   - `X-Site: TGE_LUXURY` → 24 luxury only.
-  - `X-Site: REVERIA` → 15 affordable only.
+  - `X-Site: REVERY` → 15 affordable only.
   - `X-Site: ADMIN` → 39 both tiers.
-  - `X-Site: REVERIA + ?tier=luxury` client tampering still returns only affordable.
+  - `X-Site: REVERY + ?tier=luxury` client tampering still returns only affordable.
   - Origin-based resolution works for dev origins (localhost:3000/3001/3002).
   - Unknown origins resolve to `UNKNOWN` and return 0 rows.
 - Auth/RBAC: bad creds → 401, bogus token → 401, valid token → 200, refresh works, unauth mutations → 401.

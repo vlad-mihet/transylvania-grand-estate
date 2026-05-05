@@ -9,7 +9,7 @@ import { SITE_TIER_SCOPE, SiteContext } from './site.types';
  *
  *   `undefined` → no filter (ADMIN, unrestricted)
  *   `{ in: [] }` → match nothing (UNKNOWN — clamp to empty rather than leak)
- *   `PropertyTier` → single-tier pin (TGE_LUXURY, REVERIA)
+ *   `PropertyTier` → single-tier pin (TGE_LUXURY, REVERY)
  *   `{ in: [...] }` → multi-tier (reserved for future sites)
  */
 export function tierScopeFilter(
@@ -26,7 +26,7 @@ export function tierScopeFilter(
  * Layer tier + optional geo `where` clauses onto an existing Prisma include
  * shape for a nested Property relation (Agent → properties, Developer →
  * properties). Returns the base unchanged when nothing restricts the view so
- * we don't add a no-op filter for REVERIA/ADMIN callers.
+ * we don't add a no-op filter for REVERY/ADMIN callers.
  *
  * `geo` is resolved up-front by the caller via `propertyGeoWhere(scope)` so
  * this helper stays synchronous — async plumbing shouldn't propagate into

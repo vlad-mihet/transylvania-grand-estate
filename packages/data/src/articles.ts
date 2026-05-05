@@ -70,7 +70,7 @@ export const articles: ArticleSeedData[] = [
 <h2>Procesul de cumpărare pas cu pas</h2>
 
 <div class="article-steps">
-  <div class="article-step"><div class="article-step-number">1</div><div class="article-step-content"><div class="article-step-title">Cercetarea pieței și selecția proprietății</div><div class="article-step-desc">Începe prin definirea bugetului tău, inclusiv costurile adiționale (notar, taxe, comision agenție). Folosește platforme precum Reveria pentru a descoperi proprietăți accesibile în Transilvania. Vizitează personal proprietățile care te interesează și verifică zona — transport, școli, magazine, spitale. Recomandăm să vizitezi cel puțin 5-10 proprietăți înainte de a lua o decizie finală.</div></div></div>
+  <div class="article-step"><div class="article-step-number">1</div><div class="article-step-content"><div class="article-step-title">Cercetarea pieței și selecția proprietății</div><div class="article-step-desc">Începe prin definirea bugetului tău, inclusiv costurile adiționale (notar, taxe, comision agenție). Folosește platforme precum Revery pentru a descoperi proprietăți accesibile în Transilvania. Vizitează personal proprietățile care te interesează și verifică zona — transport, școli, magazine, spitale. Recomandăm să vizitezi cel puțin 5-10 proprietăți înainte de a lua o decizie finală.</div></div></div>
   <div class="article-step"><div class="article-step-number">2</div><div class="article-step-content"><div class="article-step-title">Verificarea juridică a proprietății</div><div class="article-step-desc">Aceasta este etapa cea mai importantă. Trebuie verificate: <strong>extrasul de carte funciară</strong> (confirmă proprietarul actual și eventualele sarcini — ipoteci, litigii), <strong>certificatul de urbanism</strong> (pentru construcții noi sau renovări majore), <strong>documentația cadastrală</strong> (suprafața reală vs. cea declarată), <strong>certificatul energetic</strong> (obligatoriu la vânzare) și <strong>situația juridică a terenului</strong> (dreptul de proprietate, servituți, restricții).</div></div></div>
   <div class="article-step"><div class="article-step-number">3</div><div class="article-step-content"><div class="article-step-title">Antecontractul de vânzare-cumpărare</div><div class="article-step-desc">Antecontractul (promisiunea de vânzare) este un acord preliminar care stabilește prețul convenit și modalitatea de plată, avansul (de obicei <strong>10-15% din prețul total</strong>), termenul limită pentru încheierea contractului final și penalitățile în caz de retragere. Se recomandă ca antecontractul să fie autentificat la notar, pentru protecție juridică maximă.</div></div></div>
   <div class="article-step"><div class="article-step-number">4</div><div class="article-step-content"><div class="article-step-title">Obținerea creditului ipotecar (dacă este cazul)</div><div class="article-step-desc">Dacă ai nevoie de finanțare, depune dosarul de credit la una sau mai multe bănci. Procesul durează de obicei <strong>2-4 săptămâni</strong>. Banca va evalua proprietatea prin intermediul unui evaluator autorizat și va solicita asigurare obligatorie pentru imobil și viață. Compară ofertele de la cel puțin 3 bănci pentru a obține cele mai bune condiții.</div></div></div>
@@ -148,7 +148,7 @@ export const articles: ArticleSeedData[] = [
 <h2>Step-by-Step Buying Process</h2>
 
 <h3>1. Market Research and Property Selection</h3>
-<p>Start by defining your budget, including additional costs (notary, taxes, agency commission). Use platforms like Reveria to discover affordable properties in Transylvania. Visit properties in person and check the area — transport, schools, shops, hospitals.</p>
+<p>Start by defining your budget, including additional costs (notary, taxes, agency commission). Use platforms like Revery to discover affordable properties in Transylvania. Visit properties in person and check the area — transport, schools, shops, hospitals.</p>
 
 <h3>2. Legal Due Diligence</h3>
 <p>This is the most important step. You need to verify:</p>
@@ -240,7 +240,7 @@ export const articles: ArticleSeedData[] = [
       "România",
     ],
     publishedAt: "2026-04-02T08:00:00.000Z",
-    authorName: "Echipa Reveria",
+    authorName: "Echipa Revery",
     authorAvatar: null,
     readTimeMinutes: 12,
   },
@@ -483,7 +483,7 @@ export const articles: ArticleSeedData[] = [
       "bănci",
     ],
     publishedAt: "2026-04-03T10:00:00.000Z",
-    authorName: "Echipa Reveria",
+    authorName: "Echipa Revery",
     authorAvatar: null,
     readTimeMinutes: 10,
   },
@@ -691,7 +691,7 @@ export const articles: ArticleSeedData[] = [
       "randament",
     ],
     publishedAt: "2026-04-05T09:00:00.000Z",
-    authorName: "Echipa Reveria",
+    authorName: "Echipa Revery",
     authorAvatar: null,
     readTimeMinutes: 8,
   },
@@ -749,7 +749,7 @@ export const articles: ArticleSeedData[] = [
 </ul>
 <p>Unele agenții percep comision fix, iar altele negociază procente diferite în funcție de valoarea proprietății. Este important de menționat că, în România, nu există o reglementare strictă a comisioanelor — ele se negociază liber.</p>
 
-<div class="article-callout article-callout-tip"><div class="article-callout-title">💡 Sfat practic</div><p>Comisionul agenției este <strong>negociabil</strong>. Dacă tranzacția este de valoare mare (peste 150.000 EUR), poți solicita un procent mai mic sau un comision plafonat. De asemenea, verifică ce servicii sunt incluse — unele agenții oferă asistență juridică inclusă în comision. La Reveria, conectăm cumpărătorii direct cu proprietățile, reducând semnificativ costurile de intermediere.</p></div>
+<div class="article-callout article-callout-tip"><div class="article-callout-title">💡 Sfat practic</div><p>Comisionul agenției este <strong>negociabil</strong>. Dacă tranzacția este de valoare mare (peste 150.000 EUR), poți solicita un procent mai mic sau un comision plafonat. De asemenea, verifică ce servicii sunt incluse — unele agenții oferă asistență juridică inclusă în comision. La Revery, conectăm cumpărătorii direct cu proprietățile, reducând semnificativ costurile de intermediere.</p></div>
 
 <h2>4. Costuri legate de credit ipotecar</h2>
 <p>Dacă achiziționezi cu credit ipotecar, bugetul tău trebuie să includă o serie de costuri suplimentare pe care băncile le percep pentru procesarea și administrarea creditului:</p>
@@ -805,7 +805,7 @@ export const articles: ArticleSeedData[] = [
 <p>Registration costs about <strong>0.15%</strong> of property value (standard) or 0.50% for urgent processing. For €100,000, that's roughly <strong>€150</strong>.</p>
 
 <h2>3. Agency Commissions</h2>
-<p>If using an agent: buyer commission is typically <strong>1-3%</strong>, seller commission <strong>2-3%</strong> (plus VAT). At Reveria, we connect buyers directly with properties, significantly reducing intermediation costs.</p>
+<p>If using an agent: buyer commission is typically <strong>1-3%</strong>, seller commission <strong>2-3%</strong> (plus VAT). At Revery, we connect buyers directly with properties, significantly reducing intermediation costs.</p>
 
 <h2>4. Mortgage-Related Costs</h2>
 <ul>
@@ -865,7 +865,7 @@ export const articles: ArticleSeedData[] = [
       "buget",
     ],
     publishedAt: "2026-04-06T11:00:00.000Z",
-    authorName: "Echipa Reveria",
+    authorName: "Echipa Revery",
     authorAvatar: null,
     readTimeMinutes: 7,
   },
@@ -1033,7 +1033,7 @@ export const articles: ArticleSeedData[] = [
       "previziuni",
     ],
     publishedAt: "2026-04-08T07:00:00.000Z",
-    authorName: "Echipa Reveria",
+    authorName: "Echipa Revery",
     authorAvatar: null,
     readTimeMinutes: 15,
   },
@@ -1221,7 +1221,7 @@ export const articles: ArticleSeedData[] = [
       "prima-locuință",
     ],
     publishedAt: "2026-04-10T08:30:00.000Z",
-    authorName: "Echipa Reveria",
+    authorName: "Echipa Revery",
     authorAvatar: null,
     readTimeMinutes: 9,
   },
@@ -1243,7 +1243,7 @@ export const articles: ArticleSeedData[] = [
     },
     content: {
       ro: `<h2>Apartament sau casă — alegerea fundamentală a vieții tale</h2>
-<p>Decizia între un apartament și o casă este mult mai mult decât o simplă tranzacție imobiliară. Este o alegere de stil de viață care îți va influența rutina zilnică, finanțele, relațiile de familie și chiar starea de spirit pentru următorii 10, 20 sau 30 de ani. Pe Reveria, această întrebare apare în mod constant în rândul cumpărătorilor din Transilvania, iar răspunsul nu este niciodată simplu. Depinde de bugetul tău real, de etapa vieții în care te afli, de planurile tale de familie și de viziunea ta pe termen lung.</p>
+<p>Decizia între un apartament și o casă este mult mai mult decât o simplă tranzacție imobiliară. Este o alegere de stil de viață care îți va influența rutina zilnică, finanțele, relațiile de familie și chiar starea de spirit pentru următorii 10, 20 sau 30 de ani. Pe Revery, această întrebare apare în mod constant în rândul cumpărătorilor din Transilvania, iar răspunsul nu este niciodată simplu. Depinde de bugetul tău real, de etapa vieții în care te afli, de planurile tale de familie și de viziunea ta pe termen lung.</p>
 
 <div class="article-stats-grid">
   <div class="article-stat">
@@ -1271,7 +1271,7 @@ export const articles: ArticleSeedData[] = [
 
 <div class="article-callout article-callout-info">
   <div class="article-callout-title">💡 O alegere fundamentală de stil de viață</div>
-  <p>Conform datelor Reveria din primul trimestru 2026, <strong>62% dintre cumpărătorii sub 35 de ani</strong> aleg apartamente, în timp ce <strong>74% dintre familiile cu copii</strong> preferă casele. Nu este vorba doar de bani — este vorba de cum vrei să trăiești. Apartamentul înseamnă proximitate urbană, comoditate și predictibilitate financiară. Casa înseamnă spațiu, independență și libertate, dar cu responsabilități semnificativ mai mari. Ambele au argumente puternice — cheia este să înțelegi care se potrivește <strong>situației tale concrete</strong>, nu unui ideal abstract.</p>
+  <p>Conform datelor Revery din primul trimestru 2026, <strong>62% dintre cumpărătorii sub 35 de ani</strong> aleg apartamente, în timp ce <strong>74% dintre familiile cu copii</strong> preferă casele. Nu este vorba doar de bani — este vorba de cum vrei să trăiești. Apartamentul înseamnă proximitate urbană, comoditate și predictibilitate financiară. Casa înseamnă spațiu, independență și libertate, dar cu responsabilități semnificativ mai mari. Ambele au argumente puternice — cheia este să înțelegi care se potrivește <strong>situației tale concrete</strong>, nu unui ideal abstract.</p>
 </div>
 
 <h2>Comparație completă — apartament versus casă în 2026</h2>
@@ -1491,7 +1491,7 @@ export const articles: ArticleSeedData[] = [
 </div>`,
 
       en: `<h2>The Classic Dilemma: Apartment or House?</h2>
-<p>This is one of the most common questions Reveria buyers ask. The answer depends on your financial situation, lifestyle, family plans, and long-term goals.</p>
+<p>This is one of the most common questions Revery buyers ask. The answer depends on your financial situation, lifestyle, family plans, and long-term goals.</p>
 
 <h2>Purchase Cost</h2>
 <p><strong>Apartments</strong> in Transylvanian cities: 2-room from €60,000-130,000, 3-room from €80,000-180,000. <strong>Houses</strong> (3-4 rooms + land): €100,000-250,000, varying significantly by location.</p>
@@ -1550,7 +1550,7 @@ export const articles: ArticleSeedData[] = [
       "întreținere",
     ],
     publishedAt: "2026-04-12T09:00:00.000Z",
-    authorName: "Echipa Reveria",
+    authorName: "Echipa Revery",
     authorAvatar: null,
     readTimeMinutes: 6,
   },
@@ -1949,7 +1949,7 @@ export const articles: ArticleSeedData[] = [
       "proprietari",
     ],
     publishedAt: "2026-04-14T10:00:00.000Z",
-    authorName: "Echipa Reveria",
+    authorName: "Echipa Revery",
     authorAvatar: null,
     readTimeMinutes: 8,
   },

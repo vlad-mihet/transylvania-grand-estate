@@ -80,7 +80,7 @@ describe('Agents — public projection (e2e)', () => {
       },
     });
 
-    // One affordable property attached so REVERIA-scoped requests succeed.
+    // One affordable property attached so REVERY-scoped requests succeed.
     const county = await prisma.county.upsert({
       where: { slug: 'cluj' },
       update: {},
@@ -181,7 +181,7 @@ describe('Agents — public projection (e2e)', () => {
     it('GET /agents drops admin-only fields', async () => {
       const res = await request(app.getHttpServer())
         .get('/api/v1/agents?active=true')
-        .set('X-Site', 'REVERIA')
+        .set('X-Site', 'REVERY')
         .expect(200);
 
       const rows = res.body.data as Array<Record<string, unknown>>;
@@ -200,7 +200,7 @@ describe('Agents — public projection (e2e)', () => {
     it('GET /agents/:slug drops email', async () => {
       const res = await request(app.getHttpServer())
         .get(`/api/v1/agents/${agentRecord.slug}`)
-        .set('X-Site', 'REVERIA')
+        .set('X-Site', 'REVERY')
         .expect(200);
 
       for (const field of ADMIN_ONLY_FIELDS) {
@@ -211,7 +211,7 @@ describe('Agents — public projection (e2e)', () => {
     it('GET /agents/id/:id drops email', async () => {
       const res = await request(app.getHttpServer())
         .get(`/api/v1/agents/id/${agentRecord.id}`)
-        .set('X-Site', 'REVERIA')
+        .set('X-Site', 'REVERY')
         .expect(200);
 
       for (const field of ADMIN_ONLY_FIELDS) {
@@ -222,7 +222,7 @@ describe('Agents — public projection (e2e)', () => {
     it('GET /properties/:slug embeds agent without email', async () => {
       const res = await request(app.getHttpServer())
         .get(`/api/v1/properties/${propertySlug}`)
-        .set('X-Site', 'REVERIA')
+        .set('X-Site', 'REVERY')
         .expect(200);
 
       const agent = res.body.data.agent as Record<string, unknown>;
@@ -246,7 +246,7 @@ describe('Agents — public projection (e2e)', () => {
       // public list.
       const res = await request(app.getHttpServer())
         .get('/api/v1/agents?unlinked=false')
-        .set('X-Site', 'REVERIA')
+        .set('X-Site', 'REVERY')
         .expect(200);
 
       const rows = res.body.data as Array<Record<string, unknown>>;
@@ -256,7 +256,7 @@ describe('Agents — public projection (e2e)', () => {
     it('GET /agents?search=<email> does not match by email for anonymous', async () => {
       const res = await request(app.getHttpServer())
         .get('/api/v1/agents?search=pii-agent@test.local')
-        .set('X-Site', 'REVERIA')
+        .set('X-Site', 'REVERY')
         .expect(200);
 
       const rows = res.body.data as Array<{ slug: string }>;

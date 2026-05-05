@@ -97,7 +97,7 @@ export class LocationsService {
 
       const res = await fetch(`${PHOTON_BASE}?${params}`, {
         signal: controller.signal,
-        headers: { 'User-Agent': 'Reveria/1.0' },
+        headers: { 'User-Agent': 'Revery/1.0' },
       });
       clearTimeout(timeout);
 

@@ -51,5 +51,5 @@ The smoke suite only validates HTTP-level routing/redirects. Every visual/intera
 - Property form validator extends the shared Zod schema correctly: strips nested `coordinates`, re-declares flat `latitude/longitude`, adds non-terrain `yearBuilt ≥ 1800` refinement.
 - Bank-rate form validator (new) has sensible ranges: `rate ∈ [0,100]`, `maxLtv ∈ [0,1]`, `maxTermYears ∈ [1,40]`, `notes` max 500 chars.
 - i18n key parity en↔ro at 285 keys each.
-- Lint: no errors in `apps/admin/` (all lint failures localized to `apps/reveria/` — see `qa/reveria.md`).
+- Lint: no errors in `apps/admin/` (all lint failures localized to `apps/revery/` — see `qa/revery.md`).
 - Build: `pnpm build:all` succeeds for all 5 projects including admin.

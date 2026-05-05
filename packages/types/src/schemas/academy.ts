@@ -433,7 +433,7 @@ export type UpdateAcademyProfileInput = z.infer<
 /**
  * What the student-facing list endpoint returns. Content is rendered
  * server-side to HTML for text lessons; client just injects it. Matches
- * the prose-tailwind pattern already used by reveria's blog detail page.
+ * the prose-tailwind pattern already used by revery's blog detail page.
  */
 export type AcademyCourseSummary = {
   id: string;

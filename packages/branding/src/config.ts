@@ -1,6 +1,6 @@
 import type { Brand, SiteId } from "./types";
 
-// Brand catalogue. Luxury: 1M+ EUR, Reveria: 1–999,999 EUR. Admin reuses the
+// Brand catalogue. Luxury: 1M+ EUR, Revery: 1–999,999 EUR. Admin reuses the
 // luxury brand by default for the dashboard chrome; admin screens read from
 // the entity being edited, so this value just controls the shell.
 export const BRAND_CONFIG: Record<SiteId, Brand> = {
@@ -12,10 +12,10 @@ export const BRAND_CONFIG: Record<SiteId, Brand> = {
     tier: "luxury",
     priceRange: { min: 1_000_000, max: 50_000_000 },
   },
-  REVERIA: {
-    siteId: "REVERIA",
-    key: "reveria",
-    name: "Reveria",
+  REVERY: {
+    siteId: "REVERY",
+    key: "revery",
+    name: "Revery",
     tagline: "Approachable homes across Romania",
     tier: "affordable",
     priceRange: { min: 10_000, max: 999_000 },
@@ -33,7 +33,7 @@ export const BRAND_CONFIG: Record<SiteId, Brand> = {
 const DEFAULT_SITE: SiteId = "TGE_LUXURY";
 
 function normalizeSiteId(raw: string | undefined): SiteId {
-  if (raw === "TGE_LUXURY" || raw === "REVERIA" || raw === "ADMIN") return raw;
+  if (raw === "TGE_LUXURY" || raw === "REVERY" || raw === "ADMIN") return raw;
   return DEFAULT_SITE;
 }
 

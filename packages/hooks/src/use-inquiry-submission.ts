@@ -44,7 +44,7 @@ export interface InquirySubmissionState {
  * Shared state machine for posting to `POST /inquiries` from any contact
  * form. Encapsulates the loading/success/error triad and stamps the payload
  * with a brand-derived `source` so analytics can attribute inquiries without
- * the caller hardcoding "tge-contact" / "reveria-contact".
+ * the caller hardcoding "tge-contact" / "revery-contact".
  */
 export function useInquirySubmission(
   options: UseInquirySubmissionOptions = {},

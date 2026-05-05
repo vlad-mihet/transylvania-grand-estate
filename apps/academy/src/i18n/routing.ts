@@ -3,7 +3,7 @@ import { locales, defaultLocale } from "@tge/i18n";
 
 /**
  * Academy URL pathnames. Identity mapping for every route; no per-locale
- * path rewrites in v1 (the student surface is narrower than reveria's).
+ * path rewrites in v1 (the student surface is narrower than revery's).
  */
 export const routing = defineRouting({
   locales,

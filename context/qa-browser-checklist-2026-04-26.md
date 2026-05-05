@@ -86,8 +86,8 @@ Quick walk to confirm nothing is on fire for the un-narrowed role.
 - Edit existing — change status `available` → `reserved` → `sold`.
 - Delete a property — confirm physical files removed from `apps/api/uploads/`.
 - **Cascade A (landing):** Create `tier=luxury, status=available` property → load `landing:3050/<locale>/properties` → expect property visible (live read, no stale window).
-- **Cascade B (reveria):** Create `tier=affordable, status=available` → load `reveria:3052/<locale>/properties` → visible. Confirm a `tier=luxury` property does **not** appear on reveria.
-- **Cascade C (sold):** Set a public-visible property to `sold` → reload landing/reveria → expect immediate disappearance (live read).
+- **Cascade B (revery):** Create `tier=affordable, status=available` → load `revery:3052/<locale>/properties` → visible. Confirm a `tier=luxury` property does **not** appear on revery.
+- **Cascade C (sold):** Set a public-visible property to `sold` → reload landing/revery → expect immediate disappearance (live read).
 
 ### B5. Academy → Courses (`/academy/courses`)
 
@@ -159,7 +159,7 @@ If you find any unwrapped mutate control, that's a P2 leak (clicking will 403 fr
 
 ### D3. Articles + Academy (full write access)
 
-- Create article → publish → verify on landing/reveria if articles surface there.
+- Create article → publish → verify on landing/revery if articles surface there.
 - Create academy course + lessons → confirm Delete is hidden (EDITOR lacks delete).
 - Try delete via API directly: `curl -X DELETE -H "Authorization: Bearer <editor_jwt>" /api/v1/academy/courses/<id>` → expect 403.
 
@@ -203,12 +203,12 @@ Confirm the cascades during Pass B but capture them as a standalone table for th
 | Admin action | Where to verify | Expected delay |
 |---|---|---|
 | Property tier=luxury,available | `landing:3050/<locale>/properties` | Immediate (live read) |
-| Property tier=affordable | `reveria:3052/<locale>/properties` | Immediate |
-| Property → status=sold | landing + reveria | Immediate disappearance |
+| Property tier=affordable | `revery:3052/<locale>/properties` | Immediate |
+| Property → status=sold | landing + revery | Immediate disappearance |
 | Course publish (public) | `academy:3053/<locale>/courses` | Up to 60s (ISR) |
 | Course publish (enrolled-only) | academy course detail logged-out | Body gated immediately |
 | Course delete | academy course detail | 404 after 60s ISR window |
-| Bank rate update | reveria financial-data page | Immediate |
+| Bank rate update | revery financial-data page | Immediate |
 | Agent invite | API console (Resend stdout) | Immediate |
 | Academy student invite | API console + academy app | Immediate |
 

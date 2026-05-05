@@ -117,12 +117,12 @@ describe('Agents — tier scope on nested properties (e2e)', () => {
     };
   }
 
-  it('REVERIA site: GET /agents/:slug returns only affordable properties', async () => {
+  it('REVERY site: GET /agents/:slug returns only affordable properties', async () => {
     const { slug, affordableId, luxuryId } = await seedMixedTierAgent();
 
     const res = await request(app.getHttpServer())
       .get(`/api/v1/agents/${slug}`)
-      .set('X-Site', 'REVERIA')
+      .set('X-Site', 'REVERY')
       .expect(200);
 
     const ids = res.body.data.properties.map((p: { id: string }) => p.id);
@@ -156,12 +156,12 @@ describe('Agents — tier scope on nested properties (e2e)', () => {
     expect(ids).toContain(affordableId);
   });
 
-  it('REVERIA site: GET /agents (list) filters embedded properties', async () => {
+  it('REVERY site: GET /agents (list) filters embedded properties', async () => {
     const { affordableId, luxuryId } = await seedMixedTierAgent();
 
     const res = await request(app.getHttpServer())
       .get('/api/v1/agents?page=1&limit=10')
-      .set('X-Site', 'REVERIA')
+      .set('X-Site', 'REVERY')
       .expect(200);
 
     const rows = res.body.data as Array<{

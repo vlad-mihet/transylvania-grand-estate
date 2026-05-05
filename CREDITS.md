@@ -1,6 +1,6 @@
 # Image credits
 
-Attribution tracking for bundled image assets under `apps/landing/public/images/` and `apps/reveria/public/images/`.
+Attribution tracking for bundled image assets under `apps/landing/public/images/` and `apps/revery/public/images/`.
 
 **Status:** In-progress audit. Rows marked `TBD` need the original uploader to fill in the source URL, author, and license. Rows marked `own` are original/owned by TGE (no attribution needed). See the [license quick reference](#license-quick-reference) at the bottom.
 
@@ -81,7 +81,7 @@ Attribution tracking for bundled image assets under `apps/landing/public/images/
 | `towns/sibiu-church.jpg`   | 1200×1200 | TBD | TBD | TBD |
 | `towns/sighisoara.jpg`     | 1200×1600 | TBD | TBD | TBD |
 
-## Reveria (`apps/reveria/public/images/**`)
+## Revery (`apps/revery/public/images/**`)
 
 These files are byte-identical copies of the matching `apps/landing/public/images/cities/*.jpg` files — the brands share the same city hero assets. Whatever Source / Author / License applies above also applies here.
 
@@ -100,7 +100,7 @@ These files are byte-identical copies of the matching `apps/landing/public/image
 ## Counts
 
 - Landing: 34 images (5 castles · 9 cities · 1 hero · 10 interiors · 5 nature · 4 towns)
-- Reveria: 9 images (city heroes, mirroring landing)
+- Revery: 9 images (city heroes, mirroring landing)
 - **Total: 43**
 - Attributed: 8 (targu-mures, sighisoara, reghin, tarnaveni — each × both brands)
 - TBD: 35

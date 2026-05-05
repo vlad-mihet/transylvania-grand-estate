@@ -457,7 +457,7 @@ async function main() {
   }
   console.log(`  ${properties.length} properties seeded`);
 
-  // 4b. Seed Reveria (affordable) properties. These live in the same table
+  // 4b. Seed Revery (affordable) properties. These live in the same table
   //    as luxury listings; the `tier` column is what keeps the two brands
   //    separated at the API layer (see apps/api/prisma/schema.prisma).
   const affordableProperties = buildAffordableProperties(
@@ -544,7 +544,7 @@ async function main() {
     });
   }
   console.log(
-    `  ${affordableProperties.length} affordable (Reveria) properties seeded`,
+    `  ${affordableProperties.length} affordable (Revery) properties seeded`,
   );
 
   // 5. Seed testimonials — wipe when SEED_RESET is set so content edits
@@ -613,9 +613,9 @@ async function main() {
       ro: 'Descoperiți proprietăți de lux excepționale în cele mai prestigioase adrese din România. Vile, conace și domenii de la €1M+.',
     },
     contact: {
-      phone: '+40 264 123 456',
+      phone: '+40 748 605 203',
       email: 'contact@tge.ro',
-      whatsapp: '+40 745 123 456',
+      whatsapp: '+40 748 605 203',
     },
     socialLinks: [
       { platform: 'instagram', url: 'https://instagram.com/tge' },
@@ -700,11 +700,11 @@ async function main() {
   console.log('Seed completed successfully!');
 }
 
-// ── Reveria affordable seed data ─────────────────────────────────────────
+// ── Revery affordable seed data ─────────────────────────────────────────
 //
 // Hand-curated listings in the 60k–950k EUR band. Prices and addresses are
 // fictional but plausible; Romanian strings use the proper diacritics that
-// the Reveria brand requires. Kept inline (not in @tge/data) because the
+// the Revery brand requires. Kept inline (not in @tge/data) because the
 // package currently only exports luxury data and we don't want to couple
 // the two datasets yet.
 
@@ -752,7 +752,7 @@ function buildAffordableProperties(
   return [
     // ─── Cluj-Napoca ────────────────────────────────────────
     {
-      slug: 'reveria-studio-centru-cluj',
+      slug: 'revery-studio-centru-cluj',
       title: {
         en: 'Bright studio in central Cluj-Napoca',
         ro: 'Studio luminos în centrul Clujului',
@@ -790,7 +790,7 @@ function buildAffordableProperties(
       images: [stockImage('photo-1502672260266-1c1ef2d93688'), stockImage('photo-1484154218962-a197022b5858')],
     },
     {
-      slug: 'reveria-2cam-marasti-cluj',
+      slug: 'revery-2cam-marasti-cluj',
       title: {
         en: 'Two-room apartment in Mărăști',
         ro: 'Apartament cu 2 camere în Mărăști',
@@ -828,7 +828,7 @@ function buildAffordableProperties(
       images: [stockImage('photo-1522708323590-d24dbb6b0267'), stockImage('photo-1560448204-e02f11c3d0e2')],
     },
     {
-      slug: 'reveria-3cam-grigorescu-cluj',
+      slug: 'revery-3cam-grigorescu-cluj',
       title: {
         en: 'Three-room apartment in Grigorescu',
         ro: 'Apartament cu 3 camere în Grigorescu',
@@ -866,7 +866,7 @@ function buildAffordableProperties(
 
     // ─── Timișoara ──────────────────────────────────────────
     {
-      slug: 'reveria-studio-iosefin-timisoara',
+      slug: 'revery-studio-iosefin-timisoara',
       title: {
         en: 'Studio in historic Iosefin, Timișoara',
         ro: 'Studio în cartierul istoric Iosefin, Timișoara',
@@ -899,7 +899,7 @@ function buildAffordableProperties(
       images: [stockImage('photo-1493809842364-78817add7ffb')],
     },
     {
-      slug: 'reveria-2cam-complex-timisoara',
+      slug: 'revery-2cam-complex-timisoara',
       title: {
         en: 'New 2-room apartment in Timișoara',
         ro: 'Apartament nou cu 2 camere în Timișoara',
@@ -936,7 +936,7 @@ function buildAffordableProperties(
       images: [stockImage('photo-1507089947368-19c1da9775ae'), stockImage('photo-1600585154340-be6161a56a0c')],
     },
     {
-      slug: 'reveria-casa-ghiroda-timisoara',
+      slug: 'revery-casa-ghiroda-timisoara',
       title: {
         en: 'House with garden in Ghiroda',
         ro: 'Casă cu grădină în Ghiroda',
@@ -971,7 +971,7 @@ function buildAffordableProperties(
 
     // ─── Brașov ─────────────────────────────────────────────
     {
-      slug: 'reveria-studio-centru-brasov',
+      slug: 'revery-studio-centru-brasov',
       title: {
         en: 'Studio near the old town of Brașov',
         ro: 'Studio lângă centrul vechi din Brașov',
@@ -1004,7 +1004,7 @@ function buildAffordableProperties(
       images: [stockImage('photo-1505693416388-ac5ce068fe85')],
     },
     {
-      slug: 'reveria-3cam-astra-brasov',
+      slug: 'revery-3cam-astra-brasov',
       title: {
         en: 'Three-room apartment in Astra, Brașov',
         ro: 'Apartament cu 3 camere în Astra, Brașov',
@@ -1039,7 +1039,7 @@ function buildAffordableProperties(
       images: [stockImage('photo-1502672260266-1c1ef2d93688'), stockImage('photo-1560448204-e02f11c3d0e2')],
     },
     {
-      slug: 'reveria-casa-sacele-brasov',
+      slug: 'revery-casa-sacele-brasov',
       title: {
         en: 'House with mountain view near Săcele',
         ro: 'Casă cu vedere la munte lângă Săcele',
@@ -1075,7 +1075,7 @@ function buildAffordableProperties(
 
     // ─── Sibiu ──────────────────────────────────────────────
     {
-      slug: 'reveria-studio-centru-sibiu',
+      slug: 'revery-studio-centru-sibiu',
       title: {
         en: 'Studio in Sibiu upper town',
         ro: 'Studio în orașul de sus din Sibiu',
@@ -1108,7 +1108,7 @@ function buildAffordableProperties(
       images: [stockImage('photo-1507089947368-19c1da9775ae')],
     },
     {
-      slug: 'reveria-2cam-vasile-aaron-sibiu',
+      slug: 'revery-2cam-vasile-aaron-sibiu',
       title: {
         en: 'Two-room flat in Vasile Aaron, Sibiu',
         ro: 'Apartament cu 2 camere în Vasile Aaron, Sibiu',
@@ -1142,7 +1142,7 @@ function buildAffordableProperties(
       images: [stockImage('photo-1522708323590-d24dbb6b0267')],
     },
     {
-      slug: 'reveria-casa-cisnadie-sibiu',
+      slug: 'revery-casa-cisnadie-sibiu',
       title: {
         en: 'Family house in Cisnădie',
         ro: 'Casă de familie în Cisnădie',
@@ -1177,7 +1177,7 @@ function buildAffordableProperties(
 
     // ─── Oradea ─────────────────────────────────────────────
     {
-      slug: 'reveria-studio-centru-oradea',
+      slug: 'revery-studio-centru-oradea',
       title: {
         en: 'Studio in Oradea city centre',
         ro: 'Studio în centrul Oradiei',
@@ -1209,7 +1209,7 @@ function buildAffordableProperties(
       images: [stockImage('photo-1484154218962-a197022b5858')],
     },
     {
-      slug: 'reveria-3cam-rogerius-oradea',
+      slug: 'revery-3cam-rogerius-oradea',
       title: {
         en: 'Three-room apartment in Rogerius',
         ro: 'Apartament cu 3 camere în Rogerius',
@@ -1243,7 +1243,7 @@ function buildAffordableProperties(
       images: [stockImage('photo-1493809842364-78817add7ffb')],
     },
     {
-      slug: 'reveria-casa-episcopia-oradea',
+      slug: 'revery-casa-episcopia-oradea',
       title: {
         en: 'New-build house in Episcopia, Oradea',
         ro: 'Casă nouă în Episcopia, Oradea',
@@ -1280,7 +1280,7 @@ function buildAffordableProperties(
 
     // ─── Târgu Mureș ────────────────────────────────────────
     {
-      slug: 'reveria-studio-centru-targu-mures',
+      slug: 'revery-studio-centru-targu-mures',
       title: {
         en: 'Studio near Piața Trandafirilor',
         ro: 'Studio lângă Piața Trandafirilor',
@@ -1314,7 +1314,7 @@ function buildAffordableProperties(
       images: [stockImage('photo-1502672260266-1c1ef2d93688'), stockImage('photo-1484154218962-a197022b5858')],
     },
     {
-      slug: 'reveria-2cam-tudor-targu-mures',
+      slug: 'revery-2cam-tudor-targu-mures',
       title: {
         en: 'Two-room apartment in Tudor Vladimirescu',
         ro: 'Apartament cu 2 camere în Tudor Vladimirescu',
@@ -1349,7 +1349,7 @@ function buildAffordableProperties(
       images: [stockImage('photo-1522708323590-d24dbb6b0267'), stockImage('photo-1560448204-e02f11c3d0e2')],
     },
     {
-      slug: 'reveria-casa-livezeni-targu-mures',
+      slug: 'revery-casa-livezeni-targu-mures',
       title: {
         en: 'Family house in Livezeni',
         ro: 'Casă de familie în Livezeni',
@@ -1385,7 +1385,7 @@ function buildAffordableProperties(
 
     // ─── Reghin ─────────────────────────────────────────────
     {
-      slug: 'reveria-studio-centru-reghin',
+      slug: 'revery-studio-centru-reghin',
       title: {
         en: 'Studio in central Reghin',
         ro: 'Studio în centrul Reghinului',
@@ -1417,7 +1417,7 @@ function buildAffordableProperties(
       images: [stockImage('photo-1502672260266-1c1ef2d93688')],
     },
     {
-      slug: 'reveria-2cam-apalina-reghin',
+      slug: 'revery-2cam-apalina-reghin',
       title: {
         en: 'Two-room apartment in Apalina',
         ro: 'Apartament cu 2 camere în Apalina',
@@ -1451,7 +1451,7 @@ function buildAffordableProperties(
       images: [stockImage('photo-1522708323590-d24dbb6b0267')],
     },
     {
-      slug: 'reveria-casa-iernuteni-reghin',
+      slug: 'revery-casa-iernuteni-reghin',
       title: {
         en: 'Family house in Iernuțeni',
         ro: 'Casă de familie în Iernuțeni',
@@ -1486,7 +1486,7 @@ function buildAffordableProperties(
 
     // ─── Târnăveni ──────────────────────────────────────────
     {
-      slug: 'reveria-studio-centru-tarnaveni',
+      slug: 'revery-studio-centru-tarnaveni',
       title: {
         en: 'Studio in central Târnăveni',
         ro: 'Studio în centrul Târnăveniului',
@@ -1520,7 +1520,7 @@ function buildAffordableProperties(
       images: [stockImage('photo-1484154218962-a197022b5858')],
     },
     {
-      slug: 'reveria-2cam-botorca-tarnaveni',
+      slug: 'revery-2cam-botorca-tarnaveni',
       title: {
         en: 'Two-room flat in Botorca',
         ro: 'Apartament cu 2 camere în Botorca',
@@ -1554,7 +1554,7 @@ function buildAffordableProperties(
       images: [stockImage('photo-1493809842364-78817add7ffb')],
     },
     {
-      slug: 'reveria-casa-bobohalma-tarnaveni',
+      slug: 'revery-casa-bobohalma-tarnaveni',
       title: {
         en: 'House in Bobohalma',
         ro: 'Casă în Bobohalma',

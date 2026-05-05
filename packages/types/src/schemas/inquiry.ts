@@ -19,7 +19,7 @@ export const createInquirySchema = z
     budget: z.string().max(100).optional(),
     propertySlug: z.string().max(200).optional(),
     // `source` is stamped by the shared `useInquirySubmission` hook with the
-    // caller's brand key (e.g. "tge-contact", "reveria-property-detail");
+    // caller's brand key (e.g. "tge-contact", "revery-property-detail");
     // accept it so the API can attribute inquiries.
     source: z.string().max(120).optional(),
     sourceUrl: z.string().url().max(500).optional(),

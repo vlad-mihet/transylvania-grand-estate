@@ -5,7 +5,7 @@ import { SiteId } from './site.types';
  * `next dev --port` flags in each app's package.json — keep in sync:
  *   apps/landing/package.json   --port 3050
  *   apps/admin/package.json     --port 3051
- *   apps/reveria/package.json   --port 3052
+ *   apps/revery/package.json   --port 3052
  *   apps/academy/package.json   --port 3053
  * Consumed by SiteOriginConfig (brand routing) and the CORS fallback in
  * main.ts. Deliberately not derived at build time; four port flags aren't
@@ -14,7 +14,7 @@ import { SiteId } from './site.types';
 export const DEV_ORIGINS: Record<Exclude<SiteId, SiteId.UNKNOWN>, string[]> = {
   [SiteId.TGE_LUXURY]: ['http://localhost:3050'],
   [SiteId.ADMIN]: ['http://localhost:3051'],
-  [SiteId.REVERIA]: ['http://localhost:3052'],
+  [SiteId.REVERY]: ['http://localhost:3052'],
   [SiteId.ACADEMY]: ['http://localhost:3053'],
 };
 

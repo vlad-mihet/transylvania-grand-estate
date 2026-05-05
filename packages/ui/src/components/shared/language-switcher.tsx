@@ -58,7 +58,7 @@ export interface LanguageSwitcherProps {
  * without translating the menu first.
  *
  * Each app wires its app-local `useRouter`/`usePathname` so dynamic routes
- * and per-locale pathname rewrites (e.g. reveria's `/instrumente` ↔ `/tools`)
+ * and per-locale pathname rewrites (e.g. revery's `/instrumente` ↔ `/tools`)
  * resolve correctly. Theming inherits from the host via `--popover`,
  * `--foreground`, `--muted-foreground`, `--accent`, `--accent-foreground` —
  * no hardcoded brand colors.
