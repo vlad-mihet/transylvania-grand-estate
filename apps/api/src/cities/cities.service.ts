@@ -299,6 +299,14 @@ export class CitiesService {
    * (e.g. Târnăveni on TGE). Same rationale as assertTierInScope: 404 (not
    * 403) avoids leaking the existence of out-of-scope rows to the
    * Transylvania Grand Estate site.
+   *
+   * Featured-curation override: a city present in the site's home-page
+   * curated list (SiteConfig.{tge,revery}HomepageCities) is reachable even
+   * when its county sits outside the default geo allowlist. Mirrors what
+   * `findAll({ featured: true })` already does for the listing — the tile
+   * is on the home page, so the user must be able to click into it. Without
+   * this override, TGE's curated cross-country tiles (București, Iași,
+   * Constanța…) 404 on click.
    */
   private async assertInScope(
     citySlug: string,
@@ -306,8 +314,11 @@ export class CitiesService {
     site: SiteContext,
   ): Promise<void> {
     const scope = await resolveGeoScope(site, this.siteConfig);
-    if (!isCountyInScope(countySlug, scope) || !isCityVisible(citySlug, scope)) {
-      throw new NotFoundException('City not found');
+    if (isCountyInScope(countySlug, scope) && isCityVisible(citySlug, scope)) {
+      return;
     }
+    const featured = await this.siteConfig.getHomepageCities(site.id);
+    if (featured.includes(citySlug)) return;
+    throw new NotFoundException('City not found');
   }
 }
