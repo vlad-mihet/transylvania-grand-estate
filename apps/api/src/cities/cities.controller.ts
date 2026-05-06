@@ -37,9 +37,14 @@ export class CitiesController {
     @Query('sort') sort?: string,
     @Query('page') page?: number,
     @Query('limit') limit?: number,
+    @Query('featured') featured?: string,
   ) {
+    // `featured` arrives as a string ("true"/"false") via Express query parsing.
+    // Coerce to boolean only on the affirmative literal so a missing or
+    // arbitrary value falls through to the default unfiltered listing.
+    const featuredFlag = featured === 'true';
     return this.citiesService.findAll(
-      { county, search, sort, page, limit },
+      { county, search, sort, page, limit, featured: featuredFlag },
       site,
     );
   }

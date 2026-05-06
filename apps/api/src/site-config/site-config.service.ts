@@ -8,6 +8,7 @@ import { Prisma, SiteConfig } from '@prisma/client';
 import { PrismaService } from '../prisma/prisma.service';
 import { UpdateSiteConfigDto } from './dto/update-site-config.dto';
 import { toJson } from '../common/utils/prisma-json';
+import { SiteId } from '../common/site';
 
 /**
  * Fallback allowlist used when the DB row is missing or its scope is empty.
@@ -76,6 +77,12 @@ export class SiteConfigService {
     if (dto.tgeHiddenCities !== undefined) {
       await this.assertCitiesExist(dto.tgeHiddenCities);
     }
+    if (dto.tgeHomepageCities !== undefined) {
+      await this.assertCitiesExist(dto.tgeHomepageCities);
+    }
+    if (dto.reveryHomepageCities !== undefined) {
+      await this.assertCitiesExist(dto.reveryHomepageCities);
+    }
 
     const data: Prisma.SiteConfigUpdateInput = {};
     if (dto.name !== undefined) data.name = dto.name;
@@ -89,6 +96,15 @@ export class SiteConfigService {
       data.tgeCountyScope = this.dedupeSorted(dto.tgeCountyScope);
     if (dto.tgeHiddenCities !== undefined)
       data.tgeHiddenCities = this.dedupeSorted(dto.tgeHiddenCities);
+    // Homepage curation arrays preserve order (rank = position), so do NOT
+    // dedupe-sort — that would scramble the curated sequence. We still strip
+    // duplicates while keeping first-occurrence order.
+    if (dto.tgeHomepageCities !== undefined)
+      data.tgeHomepageCities = this.dedupePreserveOrder(dto.tgeHomepageCities);
+    if (dto.reveryHomepageCities !== undefined)
+      data.reveryHomepageCities = this.dedupePreserveOrder(
+        dto.reveryHomepageCities,
+      );
 
     const updated = await this.prisma.siteConfig.update({
       where: { id: 'singleton' },
@@ -169,6 +185,40 @@ export class SiteConfigService {
   }
 
   /**
+   * Ordered slug list driving the home-page "featured cities" section for the
+   * given site. Returns an empty array for sites that don't have a curated
+   * list (Admin, Academy, Unknown) — callers treat empty as "no curation
+   * configured, fall back to default behaviour" so an unconfigured env never
+   * blanks the home page. Same DB-error resilience as `getTgeHiddenCities`:
+   * degrade to empty rather than crash a public page.
+   */
+  async getHomepageCities(siteId: SiteId): Promise<readonly string[]> {
+    if (siteId !== SiteId.TGE_LUXURY && siteId !== SiteId.REVERY) return [];
+    const field =
+      siteId === SiteId.TGE_LUXURY
+        ? 'tgeHomepageCities'
+        : 'reveryHomepageCities';
+
+    const cached = this.readCache();
+    if (cached) return cached[field];
+    try {
+      const config = await this.prisma.siteConfig.findUnique({
+        where: { id: 'singleton' },
+      });
+      if (!config) return [];
+      this.writeCache(config);
+      return config[field];
+    } catch (err) {
+      this.logger.warn(
+        `Falling back to empty homepage cities (${siteId}): ${
+          err instanceof Error ? err.message : String(err)
+        }`,
+      );
+      return [];
+    }
+  }
+
+  /**
    * City-slug denylist applied to the TGE landing site only. Same caching
    * strategy as `getTgeCountyScope` but the absence of a "default" makes
    * fallback cheaper: if the row is missing or the column is empty, no
@@ -222,6 +272,17 @@ export class SiteConfigService {
 
   private dedupeSorted(slugs: string[]): string[] {
     return Array.from(new Set(slugs)).sort();
+  }
+
+  /**
+   * Dedupe while keeping first-occurrence order. Used by the homepage curation
+   * arrays where position IS the rank — `dedupeSorted` would scramble the
+   * sequence. A duplicate slug from a sloppy admin paste is silently collapsed
+   * to its first appearance rather than rejected, which is more forgiving and
+   * matches the implicit semantics of an ordered set.
+   */
+  private dedupePreserveOrder(slugs: string[]): string[] {
+    return Array.from(new Set(slugs));
   }
 
   private async assertCountyExists(slug: string): Promise<void> {

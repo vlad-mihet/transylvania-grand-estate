@@ -36,7 +36,7 @@ export default async function HomePage() {
 
   const [propertiesRaw, cities, countiesRaw, articlesResult] = await Promise.all([
     fetchProperties({ limit: 8, sort: "newest" }),
-    fetchApi<City[]>("/cities"),
+    fetchApi<City[]>("/cities?featured=true"),
     fetchApi<ApiCounty[]>("/counties"),
     fetchApiSafe<ApiArticle[]>(
       "/articles?status=published&limit=6&sort=newest",

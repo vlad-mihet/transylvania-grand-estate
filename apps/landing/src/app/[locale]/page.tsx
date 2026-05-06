@@ -19,7 +19,7 @@ export default async function HomePage() {
 
   const [propertiesRaw, cities, developers, testimonials] = await Promise.all([
     fetchApi<ApiProperty[]>("/properties?featured=true&limit=6"),
-    fetchApi<City[]>("/cities"),
+    fetchApi<City[]>("/cities?featured=true"),
     fetchApi<Developer[]>("/developers?featured=true"),
     fetchApi<Testimonial[]>("/testimonials"),
   ]);

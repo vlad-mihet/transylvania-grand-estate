@@ -666,6 +666,25 @@ async function main() {
       'reghin',
       'sfantu-gheorghe',
     ],
+    // Client-curated home-page order for the upcoming presentation. 18 cities,
+    // rendered in a uniform 3-per-row grid on TGE; same set in different order
+    // on Revery. Position in the array IS the rank — keep the order intact.
+    tgeHomepageCities: [
+      'cluj-napoca', 'timisoara', 'brasov',
+      'sibiu', 'oradea', 'arad',
+      'targu-mures', 'alba-iulia', 'satu-mare',
+      'bucuresti', 'iasi', 'constanta',
+      'sighisoara', 'craiova', 'ploiesti',
+      'bistrita', 'suceava', 'deva',
+    ],
+    reveryHomepageCities: [
+      'bucuresti', 'cluj-napoca', 'timisoara',
+      'brasov', 'oradea', 'sibiu',
+      'arad', 'alba-iulia', 'targu-mures',
+      'constanta', 'iasi', 'satu-mare',
+      'sighisoara', 'craiova', 'ploiesti',
+      'bistrita', 'suceava', 'deva',
+    ],
   };
   await prisma.siteConfig.upsert({
     where: { id: 'singleton' },
@@ -685,6 +704,8 @@ async function main() {
       socialLinks: siteConfigData.socialLinks as any,
       tgeCountyScope: siteConfigData.tgeCountyScope,
       tgeHiddenCities: siteConfigData.tgeHiddenCities,
+      tgeHomepageCities: siteConfigData.tgeHomepageCities,
+      reveryHomepageCities: siteConfigData.reveryHomepageCities,
     },
   });
   console.log('  Site config seeded');

@@ -86,11 +86,47 @@ export class CitiesService {
       sort?: string;
       page?: number;
       limit?: number;
+      featured?: boolean;
     } = {},
     site: SiteContext,
   ) {
     const scope = await resolveGeoScope(site, this.siteConfig);
     const geo = cityGeoWhere(scope);
+
+    // Curated home-page subset. Site-scoped slug list lives on SiteConfig
+    // (alongside tgeCountyScope / tgeHiddenCities) and is resolved here so the
+    // front-end stays a dumb consumer. Empty list → fall through to the
+    // default unfiltered response so an unseeded env doesn't blank the home
+    // page; non-empty list short-circuits paging/sorting entirely because
+    // the curated order IS the answer.
+    if (query.featured) {
+      const slugs = await this.siteConfig.getHomepageCities(site.id);
+      if (slugs.length > 0) {
+        const featuredWhere: Prisma.CityWhereInput = {
+          slug: { in: [...slugs] },
+        };
+        if (geo) featuredWhere.AND = [geo];
+        const featuredInclude = {
+          county: true,
+          _count: { select: this.propertyCountSelect(site) },
+        } satisfies Prisma.CityInclude;
+        const rows = await this.prisma.city.findMany({
+          where: featuredWhere,
+          include: featuredInclude,
+        });
+        // Postgres `IN` doesn't preserve argument order, so sort in-memory by
+        // the curated slug list. Out-of-scope slugs (geo/denylist filtered)
+        // just don't appear — never inject a placeholder.
+        const bySlug = new Map(rows.map((r) => [r.slug, r]));
+        return slugs
+          .map((slug) => bySlug.get(slug))
+          .filter((r): r is (typeof rows)[number] => r !== undefined)
+          .map((r) => this.withLiveCount(r));
+      }
+      this.logger.warn(
+        `Homepage cities not configured for site ${site.id}; falling back to default listing`,
+      );
+    }
 
     const where: Prisma.CityWhereInput = {};
     if (query.county) where.county = { slug: query.county };

@@ -665,6 +665,15 @@ model SiteConfig {
   // so the city stays visible on the affordable site.
   tgeHiddenCities String[] @default([]) @map("tge_hidden_cities")
 
+  // Ordered slug lists driving the home-page "featured cities" section on each
+  // brand. `?featured=true` on /cities resolves to the array for the requesting
+  // X-Site (TGE_LUXURY → tgeHomepageCities, REVERY → reveryHomepageCities) and
+  // returns those cities in the listed order. Empty array falls back to the
+  // default alphabetical list so an unconfigured env never blanks the section.
+  // Position in the array IS the rank — admin reorder is an array swap.
+  tgeHomepageCities    String[] @default([]) @map("tge_homepage_cities")
+  reveryHomepageCities String[] @default([]) @map("revery_homepage_cities")
+
   updatedAt DateTime @updatedAt @map("updated_at")
 
   @@map("site_config")
