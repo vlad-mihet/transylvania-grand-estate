@@ -69,6 +69,10 @@
       "rule_upper": "Uppercase letter",
       "rule_digit": "Number"
     },
+    "passwordToggle": {
+      "show": "Show password",
+      "hide": "Hide password"
+    },
     "forgotPassword": {
       "title": "Reset your password",
       "intro": "Enter your email. We’ll send you a link to choose a new password.",

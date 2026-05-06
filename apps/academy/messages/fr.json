@@ -69,6 +69,10 @@
       "rule_upper": "Lettre majuscule",
       "rule_digit": "Chiffre"
     },
+    "passwordToggle": {
+      "show": "Afficher le mot de passe",
+      "hide": "Masquer le mot de passe"
+    },
     "forgotPassword": {
       "title": "Réinitialiser le mot de passe",
       "intro": "Entrez votre email. Nous vous enverrons un lien pour choisir un nouveau mot de passe.",

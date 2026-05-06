@@ -69,6 +69,10 @@
       "rule_upper": "Literă mare",
       "rule_digit": "Cifră"
     },
+    "passwordToggle": {
+      "show": "Afișează parola",
+      "hide": "Ascunde parola"
+    },
     "forgotPassword": {
       "title": "Resetare parolă",
       "intro": "Introdu adresa ta de email. Îți trimitem un link pentru a-ți alege o parolă nouă.",

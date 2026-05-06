@@ -11,6 +11,7 @@ import { useApiFormErrors } from "@tge/hooks";
 import { locales, localeAutonyms } from "@tge/i18n";
 import { useRouter } from "@/i18n/navigation";
 import { AppHeader } from "@/components/app-header";
+import { PasswordInput } from "@/components/password-input";
 import { AccountSkeleton } from "@/components/skeletons";
 import { useAuthGuard } from "@/hooks/use-auth-guard";
 import { useSession } from "@/hooks/use-session";
@@ -240,11 +241,9 @@ export default function AccountPage() {
               <span className="mb-1 block font-medium">
                 {t("account.currentPasswordLabel")}
               </span>
-              <input
-                type="password"
+              <PasswordInput
                 autoComplete="current-password"
                 {...passwordForm.register("currentPassword")}
-                className="w-full rounded-md border border-[color:var(--color-border)] px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-[color:var(--color-ring)]"
               />
               {passwordForm.formState.errors.currentPassword ? (
                 <p className="mt-1 text-xs text-red-600" role="alert">
@@ -256,11 +255,9 @@ export default function AccountPage() {
               <span className="mb-1 block font-medium">
                 {t("account.newPasswordLabel")}
               </span>
-              <input
-                type="password"
+              <PasswordInput
                 autoComplete="new-password"
                 {...passwordForm.register("newPassword")}
-                className="w-full rounded-md border border-[color:var(--color-border)] px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-[color:var(--color-ring)]"
               />
               {passwordForm.formState.errors.newPassword ? (
                 <p className="mt-1 text-xs text-red-600" role="alert">

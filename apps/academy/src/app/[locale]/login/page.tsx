@@ -11,6 +11,7 @@ import { SubmitButton } from "@tge/ui";
 import { useApiFormErrors } from "@tge/hooks";
 import { Link, useRouter } from "@/i18n/navigation";
 import { PublicShell } from "@/components/public-shell";
+import { PasswordInput } from "@/components/password-input";
 import { validateReturnTo } from "@/lib/return-to";
 import { useLogin } from "@/hooks/mutations";
 import { ApiError } from "@/lib/api-client";
@@ -95,11 +96,9 @@ function LoginInner() {
           </label>
           <label className="text-sm">
             <span className="mb-1 block font-medium">{t("passwordLabel")}</span>
-            <input
-              type="password"
+            <PasswordInput
               autoComplete="current-password"
               {...form.register("password")}
-              className="w-full rounded-md border border-[color:var(--color-border)] px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-[color:var(--color-ring)]"
             />
             {form.formState.errors.password ? (
               <p className="mt-1 text-xs text-red-600" role="alert">

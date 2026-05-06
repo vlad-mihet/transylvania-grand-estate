@@ -69,6 +69,10 @@
       "rule_upper": "Großbuchstabe",
       "rule_digit": "Ziffer"
     },
+    "passwordToggle": {
+      "show": "Passwort anzeigen",
+      "hide": "Passwort ausblenden"
+    },
     "forgotPassword": {
       "title": "Passwort zurücksetzen",
       "intro": "Geben Sie Ihre E-Mail ein. Wir senden Ihnen einen Link zum Festlegen eines neuen Passworts.",
