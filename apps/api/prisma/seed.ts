@@ -625,6 +625,7 @@ async function main() {
     ],
     tgeCountyScope: [
       'alba',
+      'bihor',
       'bistrita-nasaud',
       'brasov',
       'cluj',
@@ -634,6 +635,12 @@ async function main() {
       'mures',
       'salaj',
       'sibiu',
+      'timis',
+    ],
+    tgeHiddenCities: [
+      'miercurea-ciuc',
+      'reghin',
+      'sfantu-gheorghe',
     ],
   };
   await prisma.siteConfig.upsert({
@@ -653,6 +660,7 @@ async function main() {
       contact: siteConfigData.contact,
       socialLinks: siteConfigData.socialLinks as any,
       tgeCountyScope: siteConfigData.tgeCountyScope,
+      tgeHiddenCities: siteConfigData.tgeHiddenCities,
     },
   });
   console.log('  Site config seeded');
