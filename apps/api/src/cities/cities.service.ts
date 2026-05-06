@@ -99,24 +99,29 @@ export class CitiesService {
     // default unfiltered response so an unseeded env doesn't blank the home
     // page; non-empty list short-circuits paging/sorting entirely because
     // the curated order IS the answer.
+    //
+    // Curation deliberately bypasses cityGeoWhere(scope). The default TGE
+    // geo allowlist is Transylvania-only, but the homepage curation can —
+    // and does — feature national cities (București, Iași, Constanța…) the
+    // client wants surfaced for the brand. Treating the curated list as an
+    // explicit admin override is the whole point of having it; re-applying
+    // the geo filter would silently drop those tiles. Property counts still
+    // pass through `tierScopeFilter` so each tile reflects only its brand's
+    // tier of properties.
     if (query.featured) {
       const slugs = await this.siteConfig.getHomepageCities(site.id);
       if (slugs.length > 0) {
-        const featuredWhere: Prisma.CityWhereInput = {
-          slug: { in: [...slugs] },
-        };
-        if (geo) featuredWhere.AND = [geo];
         const featuredInclude = {
           county: true,
           _count: { select: this.propertyCountSelect(site) },
         } satisfies Prisma.CityInclude;
         const rows = await this.prisma.city.findMany({
-          where: featuredWhere,
+          where: { slug: { in: [...slugs] } },
           include: featuredInclude,
         });
         // Postgres `IN` doesn't preserve argument order, so sort in-memory by
-        // the curated slug list. Out-of-scope slugs (geo/denylist filtered)
-        // just don't appear — never inject a placeholder.
+        // the curated slug list. A slug that doesn't resolve (typo, deleted
+        // city) is silently dropped rather than rendered as a broken tile.
         const bySlug = new Map(rows.map((r) => [r.slug, r]));
         return slugs
           .map((slug) => bySlug.get(slug))
