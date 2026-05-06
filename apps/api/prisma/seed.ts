@@ -31,6 +31,19 @@ import {
  */
 const SEED_RESET = process.env.SEED_RESET === 'true';
 
+/**
+ * Skip the dev/QA admin-user fixtures (admin@/editor@/agent@tge.ro) when
+ * running against a production database. Prod admin onboarding goes through
+ * the deliberate invitation flow once a SUPER_ADMIN exists; silent random-
+ * password fixtures here would otherwise pollute prod with unknown-password
+ * accounts on every seed run. Set SEED_FORCE_FIXTURES=true to override (e.g.
+ * for an initial bootstrap of a fresh prod DB before the invitation flow
+ * has anyone to invite from).
+ */
+const IS_PROD = process.env.NODE_ENV === 'production';
+const FORCE_FIXTURES = process.env.SEED_FORCE_FIXTURES === 'true';
+const SEED_USER_FIXTURES = !IS_PROD || FORCE_FIXTURES;
+
 /*
  * Prod workflow: when you change data in packages/data/**, after the
  * deploy goes green run
@@ -135,63 +148,73 @@ async function main() {
   //   Re-seeds leave an existing admin alone — the random password is only
   //   logged when we actually created the row, avoiding a misleading
   //   "here's a password that doesn't work" message on subsequent runs.
-  const existingAdmin = await prisma.adminUser.findUnique({
-    where: { email: 'admin@tge.ro' },
-    select: { id: true },
-  });
-  if (!existingAdmin) {
-    const envPassword = process.env.SEED_ADMIN_PASSWORD;
-    const plainPassword =
-      envPassword && envPassword.length > 0
-        ? envPassword
-        : randomBytes(12).toString('base64url');
-    const adminPassword = await bcrypt.hash(plainPassword, 12);
-    await prisma.adminUser.create({
-      data: {
-        email: 'admin@tge.ro',
-        passwordHash: adminPassword,
-        name: 'Admin User',
-        role: AdminRole.SUPER_ADMIN,
-      },
-    });
-    if (envPassword) {
-      console.log('  Admin user created: admin@tge.ro (password from SEED_ADMIN_PASSWORD)');
-    } else {
-      console.log(`  Admin user created: admin@tge.ro / ${plainPassword}`);
-      console.log('    ^ random password, set SEED_ADMIN_PASSWORD to pin it');
-    }
+  //
+  //   Skipped on prod (gated by SEED_USER_FIXTURES) so reseeds don't silently
+  //   recreate this row with an unknown random password if it ever gets
+  //   deleted. Bootstrap a fresh prod DB with SEED_FORCE_FIXTURES=true and
+  //   SEED_ADMIN_PASSWORD set to a known value, then unset both before the
+  //   next deploy.
+  if (!SEED_USER_FIXTURES) {
+    console.log('  Skipping admin/editor/agent fixtures (NODE_ENV=production; set SEED_FORCE_FIXTURES=true to override)');
   } else {
-    console.log('  Admin user already exists: admin@tge.ro (password unchanged)');
-  }
+    const existingAdmin = await prisma.adminUser.findUnique({
+      where: { email: 'admin@tge.ro' },
+      select: { id: true },
+    });
+    if (!existingAdmin) {
+      const envPassword = process.env.SEED_ADMIN_PASSWORD;
+      const plainPassword =
+        envPassword && envPassword.length > 0
+          ? envPassword
+          : randomBytes(12).toString('base64url');
+      const adminPassword = await bcrypt.hash(plainPassword, 12);
+      await prisma.adminUser.create({
+        data: {
+          email: 'admin@tge.ro',
+          passwordHash: adminPassword,
+          name: 'Admin User',
+          role: AdminRole.SUPER_ADMIN,
+        },
+      });
+      if (envPassword) {
+        console.log('  Admin user created: admin@tge.ro (password from SEED_ADMIN_PASSWORD)');
+      } else {
+        console.log(`  Admin user created: admin@tge.ro / ${plainPassword}`);
+        console.log('    ^ random password, set SEED_ADMIN_PASSWORD to pin it');
+      }
+    } else {
+      console.log('  Admin user already exists: admin@tge.ro (password unchanged)');
+    }
 
-  // 1b. Create default EDITOR fixture so each role is exercisable out of the box.
-  const existingEditor = await prisma.adminUser.findUnique({
-    where: { email: 'editor@tge.ro' },
-    select: { id: true },
-  });
-  if (!existingEditor) {
-    const envPassword = process.env.SEED_EDITOR_PASSWORD;
-    const plainPassword =
-      envPassword && envPassword.length > 0
-        ? envPassword
-        : randomBytes(12).toString('base64url');
-    const passwordHash = await bcrypt.hash(plainPassword, 12);
-    await prisma.adminUser.create({
-      data: {
-        email: 'editor@tge.ro',
-        passwordHash,
-        name: 'Editor User',
-        role: AdminRole.EDITOR,
-      },
+    // 1b. Create default EDITOR fixture so each role is exercisable out of the box.
+    const existingEditor = await prisma.adminUser.findUnique({
+      where: { email: 'editor@tge.ro' },
+      select: { id: true },
     });
-    if (envPassword) {
-      console.log('  Editor user created: editor@tge.ro (password from SEED_EDITOR_PASSWORD)');
+    if (!existingEditor) {
+      const envPassword = process.env.SEED_EDITOR_PASSWORD;
+      const plainPassword =
+        envPassword && envPassword.length > 0
+          ? envPassword
+          : randomBytes(12).toString('base64url');
+      const passwordHash = await bcrypt.hash(plainPassword, 12);
+      await prisma.adminUser.create({
+        data: {
+          email: 'editor@tge.ro',
+          passwordHash,
+          name: 'Editor User',
+          role: AdminRole.EDITOR,
+        },
+      });
+      if (envPassword) {
+        console.log('  Editor user created: editor@tge.ro (password from SEED_EDITOR_PASSWORD)');
+      } else {
+        console.log(`  Editor user created: editor@tge.ro / ${plainPassword}`);
+        console.log('    ^ random password, set SEED_EDITOR_PASSWORD to pin it');
+      }
     } else {
-      console.log(`  Editor user created: editor@tge.ro / ${plainPassword}`);
-      console.log('    ^ random password, set SEED_EDITOR_PASSWORD to pin it');
+      console.log('  Editor user already exists: editor@tge.ro (password unchanged)');
     }
-  } else {
-    console.log('  Editor user already exists: editor@tge.ro (password unchanged)');
   }
 
   // 2. Seed developers (before properties, due to FK)
@@ -249,9 +272,10 @@ async function main() {
 
   // 2c. AGENT-role fixture: creates `agent@tge.ro` linked to the first seeded
   // Agent. Idempotent — skipped if the email is already registered (whether
-  // linked or not) so repeated runs don't flicker the adminUserId.
+  // linked or not) so repeated runs don't flicker the adminUserId. Sister
+  // gate to the admin/editor fixtures above — see SEED_USER_FIXTURES.
   const firstAgentId = agentIdMap.values().next().value as string | undefined;
-  if (firstAgentId) {
+  if (SEED_USER_FIXTURES && firstAgentId) {
     const existingAgentUser = await prisma.adminUser.findUnique({
       where: { email: 'agent@tge.ro' },
       select: { id: true },

@@ -31,6 +31,12 @@ RUN pnpm --filter @tge/api build
 # --- Production ---
 FROM node:22-alpine AS runner
 RUN apk add --no-cache libc6-compat openssl
+# Activate pnpm in the runner so `prisma.config.ts`'s seed command
+# (`pnpm exec ts-node prisma/seed.ts`) can run inside the container —
+# the documented `fly ssh console -a tge-api -C "… npx prisma db seed"`
+# runbook in CONTRIBUTING.md fails with `spawn pnpm ENOENT` without it.
+# Mirrors the same activation in the base stage.
+RUN corepack enable && corepack prepare pnpm@latest --activate
 WORKDIR /app
 
 ENV NODE_ENV=production
