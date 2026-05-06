@@ -132,14 +132,33 @@ export class PropertiesService {
    * the OR-based search filter and any future top-level clauses. `cityRef`
    * nested path is used (not the deprecated `countySlug` column) so the fix
    * doesn't re-entrench a field already flagged for removal.
+   *
+   * Featured-curation widening: cities the admin has curated onto the home
+   * page (SiteConfig.{tge,revery}HomepageCities) are layered in as an OR
+   * branch — properties in those cities pass the geo gate even when their
+   * county sits outside the default allowlist. This keeps the listing path
+   * consistent with the single-row override on `assertGeoInScope` and with
+   * the cities listing's `?featured=true` short-circuit. Tier scope is
+   * unaffected, so a Revery property in a TGE-curated city stays invisible
+   * on TGE.
    */
   private async applyBrandGeoScope(
     where: Prisma.PropertyWhereInput,
     site: SiteContext,
   ): Promise<void> {
     const scope = await resolveGeoScope(site, this.siteConfig);
-    const clause = propertyGeoWhere(scope);
-    if (!clause) return;
+    const baseClause = propertyGeoWhere(scope);
+    if (!baseClause) return;
+    const featured = await this.siteConfig.getHomepageCities(site.id);
+    const clause: Prisma.PropertyWhereInput =
+      featured.length > 0
+        ? {
+            OR: [
+              baseClause,
+              { cityRef: { slug: { in: [...featured] } } },
+            ],
+          }
+        : baseClause;
     where.AND = Array.isArray(where.AND)
       ? [...where.AND, clause]
       : where.AND
@@ -632,6 +651,15 @@ export class PropertiesService {
    * or the city is on the per-brand hidden list (e.g. Târnăveni on TGE).
    * 404 rather than 403 for the same reason as `assertTierInScope`: don't
    * leak existence of rows outside the brand's advertised reach.
+   *
+   * Featured-curation override: properties in cities the admin has curated
+   * onto the home page (SiteConfig.{tge,revery}HomepageCities) are reachable
+   * even when their county sits outside the default geo allowlist. Mirrors
+   * the same override on cities.assertInScope and on the cities listing's
+   * `?featured=true` path — once the home page features a city, every
+   * tile-and-listing path leading from it must work end to end.
+   * `assertTierInScope` still enforces brand-tier separation, so a Revery
+   * property in a TGE-curated city stays invisible on TGE.
    */
   private async assertGeoInScope(
     countySlug: string | null,
@@ -639,9 +667,14 @@ export class PropertiesService {
     site: SiteContext,
   ): Promise<void> {
     const scope = await resolveGeoScope(site, this.siteConfig);
-    if (!isCountyInScope(countySlug, scope) || !isCityVisible(citySlug, scope)) {
-      throw new NotFoundException('Property not found');
+    if (isCountyInScope(countySlug, scope) && isCityVisible(citySlug, scope)) {
+      return;
     }
+    if (citySlug) {
+      const featured = await this.siteConfig.getHomepageCities(site.id);
+      if (featured.includes(citySlug)) return;
+    }
+    throw new NotFoundException('Property not found');
   }
 
   /**
