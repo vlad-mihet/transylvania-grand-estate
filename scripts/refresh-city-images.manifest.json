@@ -1,0 +1,103 @@
+[
+  {
+    "slug": "arad",
+    "photoId": "pixabay:969955",
+    "title": "The State Theater Arad",
+    "source": "Pixabay",
+    "license": "Pixabay Content License",
+    "sourcePage": "https://pixabay.com/photos/state-theatre-arad-romania-969955/",
+    "downloadUrl": "https://cdn.pixabay.com/photo/2015/10/03/15/23/state-theatre-969955_1280.jpg"
+  },
+  {
+    "slug": "baia-mare",
+    "photoId": "pixabay:6340443",
+    "title": "Baia Mare Stephan Turm",
+    "source": "Pixabay",
+    "license": "Pixabay Content License",
+    "sourcePage": "https://pixabay.com/photos/baia-mare-stephan-turm-6340443/",
+    "downloadUrl": "https://cdn.pixabay.com/photo/2021/06/16/07/11/baia-mare-6340443_1280.jpg"
+  },
+  {
+    "slug": "buftea",
+    "photoId": "unsplash:1635677215241-3fe25b8ab8b7",
+    "title": "Building with staircase (Stirbei chapel)",
+    "source": "Unsplash",
+    "license": "Unsplash License",
+    "sourcePage": "https://unsplash.com/photos/a-building-with-a-staircase-leading-up-to-it-WurHb29Wcsc",
+    "downloadUrl": "https://images.unsplash.com/photo-1635677215241-3fe25b8ab8b7?auto=format&fit=crop&w=2400&q=85"
+  },
+  {
+    "slug": "drobeta-turnu-severin",
+    "photoId": "unsplash:1717016388140-ffcdd56c86dc",
+    "title": "Black and white photo of a city — Drobeta-Turnu Severin",
+    "source": "Unsplash",
+    "license": "Unsplash License",
+    "sourcePage": "https://unsplash.com/photos/a-black-and-white-photo-of-a-city-02Ze1Y0fuzk",
+    "downloadUrl": "https://images.unsplash.com/photo-1717016388140-ffcdd56c86dc?auto=format&fit=crop&w=2400&q=85"
+  },
+  {
+    "slug": "resita",
+    "photoId": "unsplash:1666999683854-7682fd4ce5df",
+    "title": "Reșița valley town",
+    "source": "Unsplash",
+    "license": "Unsplash License",
+    "sourcePage": "https://unsplash.com/photos/a-city-with-many-buildings-YIO-MCusBj4",
+    "downloadUrl": "https://images.unsplash.com/photo-1666999683854-7682fd4ce5df?auto=format&fit=crop&w=2400&q=85"
+  },
+  {
+    "slug": "sibiu",
+    "photoId": "pexels:30621324",
+    "title": "Charming Sibiu City Square in Romania",
+    "source": "Pexels",
+    "license": "Pexels License",
+    "sourcePage": "https://www.pexels.com/photo/30621324/",
+    "downloadUrl": "https://images.pexels.com/photos/30621324/pexels-photo-30621324.jpeg?auto=compress&cs=tinysrgb&w=2400&fit=crop"
+  },
+  {
+    "slug": "slatina",
+    "photoId": "pexels:32297104",
+    "title": "Historic Building in Downtown Slatina, Romania",
+    "source": "Pexels",
+    "license": "Pexels License",
+    "sourcePage": "https://www.pexels.com/photo/32297104/",
+    "downloadUrl": "https://images.pexels.com/photos/32297104/pexels-photo-32297104.jpeg?auto=compress&cs=tinysrgb&w=2400&fit=crop",
+    "note": "Atmospheric B&W of a derelict mansion — defensible but consider replacing with a brighter shot when one becomes available."
+  },
+  {
+    "slug": "slobozia",
+    "photoId": "placeholder",
+    "title": "(no free-license photo of Slobozia found)",
+    "source": "placeholder.jpg fallback",
+    "license": "n/a",
+    "sourcePage": null,
+    "downloadUrl": null,
+    "note": "Exhaustive search of Pexels / Pixabay / Unsplash via DDG image search returned no usable photo specifically of Slobozia. The May 5 scrape's Slobozia file was a generic Romania duplicate; this session's Flickr candidate was either ARR or a watermarked postcard scan. Reverted to apps/landing/public/images/cities/placeholder.jpg until manual sourcing or commission."
+  },
+  {
+    "slug": "suceava",
+    "photoId": "pixabay:2106720",
+    "title": "The Fortress of Suceava Walls",
+    "source": "Pixabay",
+    "license": "Pixabay Content License",
+    "sourcePage": "https://pixabay.com/photos/the-fortress-of-suceava-2106720/",
+    "downloadUrl": "https://cdn.pixabay.com/photo/2017/02/28/19/50/the-fortress-of-suceava-2106720_1280.jpg"
+  },
+  {
+    "slug": "targu-mures",
+    "photoId": "unsplash:1562073358-108876d35ce0",
+    "title": "Edifício de tijolos cinza (Baroque facade — Târgu Mureș)",
+    "source": "Unsplash",
+    "license": "Unsplash License",
+    "sourcePage": "https://unsplash.com/photos/Mhwn-2hG2cM",
+    "downloadUrl": "https://images.unsplash.com/photo-1562073358-108876d35ce0?auto=format&fit=crop&w=2400&q=85"
+  },
+  {
+    "slug": "zalau",
+    "photoId": "pixabay:1004668",
+    "title": "Zalau Transylvania The Church",
+    "source": "Pixabay",
+    "license": "Pixabay Content License",
+    "sourcePage": "https://pixabay.com/photos/zalau-transylvania-the-church-1004668/",
+    "downloadUrl": "https://cdn.pixabay.com/photo/2015/10/24/16/58/zalau-1004668_1280.jpg"
+  }
+]

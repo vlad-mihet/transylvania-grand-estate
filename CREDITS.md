@@ -27,19 +27,30 @@ Attribution tracking for bundled image assets under `apps/landing/public/images/
 | `castles/peles-castle.jpg`  | 1200×1600 | TBD | TBD | TBD |
 | `castles/peles-park.jpg`    | 1200×1200 | TBD | TBD | TBD |
 
-### Cities (800×600 hero format)
+### Cities (1600×1067 hero format)
+
+The 11 cities below were re-sourced on 2026-05-06 from Pexels / Pixabay / Unsplash (free-for-commercial-use platform licenses, no attribution required) after `scripts/scrape-images.mjs` produced byte-identical duplicates across 8 cities. Picks were verified by visual inspection. The replacement script lives at `scripts/refresh-city-images.mjs` and the as-shipped manifest at `scripts/refresh-city-images.manifest.json`.
 
 | File | Dimensions | Source | Author | License |
 |---|---|---|---|---|
-| `cities/brasov.jpg`       | 800×600 | TBD | TBD | TBD |
-| `cities/cluj-napoca.jpg`  | 800×600 | TBD | TBD | TBD |
-| `cities/oradea.jpg`       | 800×600 | TBD | TBD | TBD |
-| `cities/reghin.jpg`       | 800×600 | [Reghin001.jpg](https://commons.wikimedia.org/wiki/File:Reghin001.jpg) (Wikimedia Commons) | Flavinhu | Public Domain — cropped (top two-thirds) and downscaled from the original |
-| `cities/sibiu.jpg`        | 800×600 | TBD | TBD | TBD |
-| `cities/targu-mures.jpg`  | 800×600 | [Palatul Culturii din Târgu Mureș 01.jpg](https://commons.wikimedia.org/wiki/File:Palatul_Culturii_din_T%C3%A2rgu_Mure%C8%99_01.jpg) (Wikimedia Commons) | Radueduard | [CC BY-SA 3.0 RO](https://creativecommons.org/licenses/by-sa/3.0/ro/deed.en) — cropped and downscaled from the original |
-| `cities/sighisoara.jpg`   | 800×600 | [Panoramic Schäßburg Medieval Citadel (20903916345).jpg](https://commons.wikimedia.org/wiki/File:Panoramic_Sch%C3%A4%C3%9Fburg_Medieval_Citadel_(20903916345).jpg) (Wikimedia Commons) | Andrei-Daniel Nicolae | [CC BY 2.0](https://creativecommons.org/licenses/by/2.0/) — cropped and downscaled from the original |
-| `cities/tarnaveni.jpg`    | 800×600 | [Tarnaveni-PanoramicView.jpg](https://commons.wikimedia.org/wiki/File:Tarnaveni-PanoramicView.jpg) (Wikimedia Commons) | Olario | [CC BY-SA 3.0](https://creativecommons.org/licenses/by-sa/3.0/) — cropped and downscaled from the original |
-| `cities/timisoara.jpg`    | 800×600 | TBD | TBD | TBD |
+| `cities/arad.jpg`                  | 1600×1067 | [The State Theater Arad](https://pixabay.com/photos/state-theatre-arad-romania-969955/) (Pixabay) | Pixabay contributor | [Pixabay Content License](https://pixabay.com/service/license-summary/) — free for commercial use, no attribution required |
+| `cities/baia-mare.jpg`             | 1600×1067 | [Baia Mare Stephan Turm](https://pixabay.com/photos/baia-mare-stephan-turm-6340443/) (Pixabay) | Pixabay contributor | [Pixabay Content License](https://pixabay.com/service/license-summary/) |
+| `cities/brasov.jpg`                | 800×600   | TBD | TBD | TBD |
+| `cities/buftea.jpg`                | 1600×1067 | [Building with staircase (Stirbei chapel)](https://unsplash.com/photos/WurHb29Wcsc) (Unsplash) | Unsplash contributor | [Unsplash License](https://unsplash.com/license) — free for commercial use, no attribution required |
+| `cities/cluj-napoca.jpg`           | 800×600   | TBD | TBD | TBD |
+| `cities/drobeta-turnu-severin.jpg` | 1600×1067 | [B&W city aerial of Drobeta-Turnu Severin](https://unsplash.com/photos/02Ze1Y0fuzk) (Unsplash) | Unsplash contributor | [Unsplash License](https://unsplash.com/license) |
+| `cities/oradea.jpg`                | 800×600   | TBD | TBD | TBD |
+| `cities/reghin.jpg`                | 800×600   | [Reghin001.jpg](https://commons.wikimedia.org/wiki/File:Reghin001.jpg) (Wikimedia Commons) | Flavinhu | Public Domain — cropped (top two-thirds) and downscaled from the original |
+| `cities/resita.jpg`                | 1600×1067 | [Reșița valley town](https://unsplash.com/photos/YIO-MCusBj4) (Unsplash) | Unsplash contributor | [Unsplash License](https://unsplash.com/license) |
+| `cities/sibiu.jpg`                 | 1600×1067 | [Charming Sibiu City Square in Romania](https://www.pexels.com/photo/30621324/) (Pexels) | Pexels contributor | [Pexels License](https://www.pexels.com/license/) — free for commercial use, no attribution required |
+| `cities/sighisoara.jpg`            | 800×600   | [Panoramic Schäßburg Medieval Citadel (20903916345).jpg](https://commons.wikimedia.org/wiki/File:Panoramic_Sch%C3%A4%C3%9Fburg_Medieval_Citadel_(20903916345).jpg) (Wikimedia Commons) | Andrei-Daniel Nicolae | [CC BY 2.0](https://creativecommons.org/licenses/by/2.0/) — cropped and downscaled from the original |
+| `cities/slatina.jpg`               | 1600×1067 | [Historic Building in Downtown Slatina, Romania](https://www.pexels.com/photo/32297104/) (Pexels) | Pexels contributor | [Pexels License](https://www.pexels.com/license/) |
+| `cities/slobozia.jpg`              | 800×600   | placeholder (copy of `cities/placeholder.jpg`) — no free-license photo of Slobozia found on Pexels / Pixabay / Unsplash; needs manual sourcing | — | — |
+| `cities/suceava.jpg`               | 1600×1067 | [The Fortress of Suceava Walls](https://pixabay.com/photos/the-fortress-of-suceava-2106720/) (Pixabay) | Pixabay contributor | [Pixabay Content License](https://pixabay.com/service/license-summary/) |
+| `cities/targu-mures.jpg`           | 1600×1067 | [Edifício de tijolos cinza (Târgu Mureș)](https://unsplash.com/photos/108876d35ce0) (Unsplash) | Unsplash contributor | [Unsplash License](https://unsplash.com/license) |
+| `cities/tarnaveni.jpg`             | 800×600   | [Tarnaveni-PanoramicView.jpg](https://commons.wikimedia.org/wiki/File:Tarnaveni-PanoramicView.jpg) (Wikimedia Commons) | Olario | [CC BY-SA 3.0](https://creativecommons.org/licenses/by-sa/3.0/) — cropped and downscaled from the original |
+| `cities/timisoara.jpg`             | 800×600   | TBD | TBD | TBD |
+| `cities/zalau.jpg`                 | 1600×1067 | [Zalau Transylvania The Church](https://pixabay.com/photos/zalau-transylvania-the-church-1004668/) (Pixabay) | Pixabay contributor | [Pixabay Content License](https://pixabay.com/service/license-summary/) |
 
 ### Hero
 
