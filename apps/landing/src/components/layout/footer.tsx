@@ -17,7 +17,7 @@ const socialIcons = {
 const contact = {
   phone: CONTACT_PHONE.display,
   tel: CONTACT_PHONE.tel,
-  email: "contact@tge.ro",
+  email: "contact@transylvaniagrandestate.ro",
 };
 
 const mainOfficeAddress: Record<string, string> = {

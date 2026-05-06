@@ -17,7 +17,7 @@ export const agents: AgentWithCity[] = [
     slug: "elena-popescu",
     firstName: "Elena",
     lastName: "Popescu",
-    email: "elena.popescu@tge.ro",
+    email: "elena.popescu@transylvaniagrandestate.ro",
     phone: "+40 745 100 201",
     city: "cluj-napoca",
     bio: {
@@ -31,7 +31,7 @@ export const agents: AgentWithCity[] = [
     slug: "andrei-moldovan",
     firstName: "Andrei",
     lastName: "Moldovan",
-    email: "andrei.moldovan@tge.ro",
+    email: "andrei.moldovan@transylvaniagrandestate.ro",
     phone: "+40 745 100 202",
     city: "cluj-napoca",
     bio: {
@@ -45,7 +45,7 @@ export const agents: AgentWithCity[] = [
     slug: "catalina-rus",
     firstName: "Cătălina",
     lastName: "Rus",
-    email: "catalina.rus@tge.ro",
+    email: "catalina.rus@transylvaniagrandestate.ro",
     phone: "+40 745 100 203",
     city: "cluj-napoca",
     bio: {
@@ -61,7 +61,7 @@ export const agents: AgentWithCity[] = [
     slug: "radu-stanescu",
     firstName: "Radu",
     lastName: "Stănescu",
-    email: "radu.stanescu@tge.ro",
+    email: "radu.stanescu@transylvaniagrandestate.ro",
     phone: "+40 745 100 204",
     city: "timisoara",
     bio: {
@@ -75,7 +75,7 @@ export const agents: AgentWithCity[] = [
     slug: "diana-crisan",
     firstName: "Diana",
     lastName: "Crișan",
-    email: "diana.crisan@tge.ro",
+    email: "diana.crisan@transylvaniagrandestate.ro",
     phone: "+40 745 100 205",
     city: "timisoara",
     bio: {
@@ -91,7 +91,7 @@ export const agents: AgentWithCity[] = [
     slug: "maria-ionescu",
     firstName: "Maria",
     lastName: "Ionescu",
-    email: "maria.ionescu@tge.ro",
+    email: "maria.ionescu@transylvaniagrandestate.ro",
     phone: "+40 745 100 206",
     city: "brasov",
     bio: {
@@ -105,7 +105,7 @@ export const agents: AgentWithCity[] = [
     slug: "victor-luca",
     firstName: "Victor",
     lastName: "Luca",
-    email: "victor.luca@tge.ro",
+    email: "victor.luca@transylvaniagrandestate.ro",
     phone: "+40 745 100 207",
     city: "brasov",
     bio: {
@@ -121,7 +121,7 @@ export const agents: AgentWithCity[] = [
     slug: "ioana-nagy",
     firstName: "Ioana",
     lastName: "Nagy",
-    email: "ioana.nagy@tge.ro",
+    email: "ioana.nagy@transylvaniagrandestate.ro",
     phone: "+40 745 100 208",
     city: "oradea",
     bio: {
@@ -137,7 +137,7 @@ export const agents: AgentWithCity[] = [
     slug: "stefan-bratu",
     firstName: "Ștefan",
     lastName: "Bratu",
-    email: "stefan.bratu@tge.ro",
+    email: "stefan.bratu@transylvaniagrandestate.ro",
     phone: "+40 745 100 209",
     city: "sibiu",
     bio: {

@@ -72,7 +72,7 @@ async function fetchJson(url, init, attempt = 1) {
   const res = await fetch(url, {
     ...init,
     headers: {
-      "User-Agent": "TGE-Revery-city-image-populator/1.0 ops-contact=admin@tge.ro",
+      "User-Agent": "TGE-Revery-city-image-populator/1.0 ops-contact=admin@transylvaniagrandestate.ro",
       ...(init?.headers ?? {}),
     },
   });
@@ -327,7 +327,7 @@ async function downloadApproved(entry, attempt = 1) {
   const filepath = join(DOWNLOAD_DIR, filename);
   await sleep(REQUEST_DELAY_MS);
   const res = await fetch(entry.downloadUrl ?? entry.sourceUrl, {
-    headers: { "User-Agent": "TGE-Revery-city-image-populator/1.0 ops-contact=admin@tge.ro" },
+    headers: { "User-Agent": "TGE-Revery-city-image-populator/1.0 ops-contact=admin@transylvaniagrandestate.ro" },
   });
   if (res.status === 429 && attempt <= 4) {
     const retryAfter = Number(res.headers.get("retry-after"));

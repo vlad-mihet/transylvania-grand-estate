@@ -54,7 +54,7 @@ export function ClosingInvitation() {
           <div className="mt-8 flex flex-col sm:flex-row items-center justify-center gap-4 text-cream-muted/40 text-xs tracking-[0.15em]">
             <span>{CONTACT_PHONE.display}</span>
             <span className="hidden sm:inline">&middot;</span>
-            <span>contact@tge.ro</span>
+            <span>contact@transylvaniagrandestate.ro</span>
           </div>
         </ScrollReveal>
       </div>

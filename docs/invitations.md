@@ -155,7 +155,7 @@ This is the one workflow that can't self-serve today (until the password-reset f
 1. Create Resend account → API Keys → create a key with the **Sending** scope only.
 2. Domains → Add Domain `tge.ro` → follow the DKIM + SPF + MX instructions to add DNS records at your registrar.
 3. Wait for Resend to show ✓ on all three records (usually <10min).
-4. `fly secrets set -a tge-api RESEND_API_KEY=re_… EMAIL_FROM="TGE <no-reply@tge.ro>"`.
+4. `fly secrets set -a tge-api RESEND_API_KEY=re_… EMAIL_FROM="TGE <no-reply@transylvaniagrandestate.ro>"`.
 5. Webhooks: Resend → Webhooks → add endpoint `https://tge-api.fly.dev/api/v1/webhooks/resend`. Select events `email.delivered`, `email.bounced`, `email.complained`. Copy the Signing Secret.
 6. `fly secrets set -a tge-api RESEND_WEBHOOK_SECRET=whsec_…`.
 

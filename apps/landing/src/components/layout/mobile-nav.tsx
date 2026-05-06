@@ -237,11 +237,11 @@ export function MobileNav() {
                 {CONTACT_PHONE.display}
               </a>
               <a
-                href="mailto:contact@tge.ro"
+                href="mailto:contact@transylvaniagrandestate.ro"
                 className="flex items-center gap-2 hover:text-copper transition-colors"
               >
                 <Mail className="h-3.5 w-3.5" />
-                contact@tge.ro
+                contact@transylvaniagrandestate.ro
               </a>
             </div>
 

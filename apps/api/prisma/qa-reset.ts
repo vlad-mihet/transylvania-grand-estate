@@ -41,10 +41,10 @@ async function ensureUser(email: string, role: AdminRole, name: string) {
 }
 
 async function main() {
-  await ensureUser('admin@tge.ro', AdminRole.SUPER_ADMIN, 'Super Admin');
-  await ensureUser('manager@tge.ro', AdminRole.ADMIN, 'Manager');
-  await ensureUser('editor@tge.ro', AdminRole.EDITOR, 'Editor');
-  await ensureUser('agent@tge.ro', AdminRole.AGENT, 'Agent');
+  await ensureUser('admin@transylvaniagrandestate.ro', AdminRole.SUPER_ADMIN, 'Super Admin');
+  await ensureUser('manager@transylvaniagrandestate.ro', AdminRole.ADMIN, 'Manager');
+  await ensureUser('editor@transylvaniagrandestate.ro', AdminRole.EDITOR, 'Editor');
+  await ensureUser('agent@transylvaniagrandestate.ro', AdminRole.AGENT, 'Agent');
   console.log(`\n  password for all four: ${PASS}`);
 }
 

@@ -37,12 +37,12 @@ ST() {
 
 echo "=== Phase 1: minting tokens ==="
 # Mint super_admin via the pair-fetcher so Phase 14 can reuse the RT.
-SUPER_PAIR=$(login_pair admin@tge.ro)
+SUPER_PAIR=$(login_pair admin@transylvaniagrandestate.ro)
 T_SUPER=$(echo "$SUPER_PAIR" | jq -r '.data.accessToken')
 T_SUPER_RT=$(echo "$SUPER_PAIR" | jq -r '.data.refreshToken')
-T_ADMIN=$(login manager@tge.ro)
-T_EDIT=$(login editor@tge.ro)
-T_AGENT=$(login agent@tge.ro)
+T_ADMIN=$(login manager@transylvaniagrandestate.ro)
+T_EDIT=$(login editor@transylvaniagrandestate.ro)
+T_AGENT=$(login agent@transylvaniagrandestate.ro)
 echo "  super: ${T_SUPER:0:24}..."
 echo "  admin: ${T_ADMIN:0:24}..."
 echo "  editor: ${T_EDIT:0:24}..."

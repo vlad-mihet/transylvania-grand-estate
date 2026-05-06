@@ -26,7 +26,7 @@ REVERY="${QA_REVERY_URL:-http://localhost:3002}"
 PG_CONTAINER="${QA_PG_CONTAINER:-tge-postgres-1}"
 PG_DB="${QA_PG_DB:-tge_dev}"
 PG_USER="${QA_PG_USER:-postgres}"
-ADMIN_EMAIL="${QA_ADMIN_EMAIL:-admin@tge.ro}"
+ADMIN_EMAIL="${QA_ADMIN_EMAIL:-admin@transylvaniagrandestate.ro}"
 # NOTE: A random admin password is generated at first `prisma db seed` unless
 # SEED_ADMIN_PASSWORD was set. This script resets it to the value below via a
 # direct UPDATE so the script is self-contained. If you pinned your own
@@ -266,11 +266,11 @@ b3_auth_rbac() {
   code=$(curl -s -o /dev/null -w "%{http_code}" "$API/auth/me" -H "Authorization: Bearer $TOKEN" -H "X-Site: ADMIN")
   [[ "$code" == "200" ]] && ok "/auth/me with valid token → 200" || fail "valid token got $code"
   # Wrong password (≥6 chars) → 401 "Invalid credentials"
-  resp=$(curl -s -X POST "$API/auth/login" -H "Content-Type: application/json" -H "X-Site: ADMIN" -d '{"email":"admin@tge.ro","password":"definitely-not-right"}')
+  resp=$(curl -s -X POST "$API/auth/login" -H "Content-Type: application/json" -H "X-Site: ADMIN" -d '{"email":"admin@transylvaniagrandestate.ro","password":"definitely-not-right"}')
   msg=$(echo "$resp" | json_get "error.message")
   [[ "$msg" == "Invalid credentials" ]] && ok "Bad password → 401 Invalid credentials" || warn "Bad password msg='$msg'"
   # Short password (<6 chars) leaks requirement via Zod (KNOWN Minor bug)
-  resp=$(curl -s -X POST "$API/auth/login" -H "Content-Type: application/json" -H "X-Site: ADMIN" -d '{"email":"admin@tge.ro","password":"x"}')
+  resp=$(curl -s -X POST "$API/auth/login" -H "Content-Type: application/json" -H "X-Site: ADMIN" -d '{"email":"admin@transylvaniagrandestate.ro","password":"x"}')
   path=$(echo "$resp" | json_get "error.fields")
   if [[ "$path" == *"Too small"* || "$path" == *"too_small"* ]]; then
     warn "Short password leaks min-length via Zod (KNOWN Minor #9 in qa-report-2026-04-17.md)"

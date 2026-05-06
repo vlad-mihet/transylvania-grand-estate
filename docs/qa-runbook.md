@@ -113,9 +113,9 @@ curl -i -X POST "$API/properties" -H "Content-Type: application/json" -H "X-Site
 curl -i      "$API/auth/me"       -H "Authorization: Bearer garbage" -H "X-Site: ADMIN"                      # 401
 curl -i      "$API/auth/me"       -H "Authorization: Bearer $TOKEN"  -H "X-Site: ADMIN"                      # 200
 curl -X POST "$API/auth/login"    -H "Content-Type: application/json" -H "X-Site: ADMIN" \
-                                  -d '{"email":"admin@tge.ro","password":"bad-but-long-enough"}'              # 401 "Invalid credentials"
+                                  -d '{"email":"admin@transylvaniagrandestate.ro","password":"bad-but-long-enough"}'              # 401 "Invalid credentials"
 curl -X POST "$API/auth/login"    -H "Content-Type: application/json" -H "X-Site: ADMIN" \
-                                  -d '{"email":"admin@tge.ro","password":"x"}'                                # 400 Zod error (Minor #9)
+                                  -d '{"email":"admin@transylvaniagrandestate.ro","password":"x"}'                                # 400 Zod error (Minor #9)
 curl -X POST "$API/auth/refresh"  -H "Content-Type: application/json" -d "{\"refreshToken\":\"$REFRESH\"}"    # 200 new access token
 curl -X POST "$API/auth/refresh"  -H "Content-Type: application/json" -d '{"refreshToken":"garbage"}'         # 401
 ```
@@ -218,7 +218,7 @@ curl -I --max-redirs 0 "$ADMIN/en/properties"               # 307 to /en/login
 ```
 
 **Not automated (do in a browser):**
-- Log in as `admin@tge.ro / QaTest123!`.
+- Log in as `admin@transylvaniagrandestate.ro / QaTest123!`.
 - Each CRUD module: Properties, Developers, Agents, Cities, Testimonials, Bank Rates, Site Config.
   - List view renders on desktop (1440px) and mobile (375px).
   - Inline featured/active toggles persist and invalidate the list query.

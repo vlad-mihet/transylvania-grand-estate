@@ -32,7 +32,7 @@ import {
 const SEED_RESET = process.env.SEED_RESET === 'true';
 
 /**
- * Skip the dev/QA admin-user fixtures (admin@/editor@/agent@tge.ro) when
+ * Skip the dev/QA admin-user fixtures (admin@/editor@/agent@transylvaniagrandestate.ro) when
  * running against a production database. Prod admin onboarding goes through
  * the deliberate invitation flow once a SUPER_ADMIN exists; silent random-
  * password fixtures here would otherwise pollute prod with unknown-password
@@ -158,7 +158,7 @@ async function main() {
     console.log('  Skipping admin/editor/agent fixtures (NODE_ENV=production; set SEED_FORCE_FIXTURES=true to override)');
   } else {
     const existingAdmin = await prisma.adminUser.findUnique({
-      where: { email: 'admin@tge.ro' },
+      where: { email: 'admin@transylvaniagrandestate.ro' },
       select: { id: true },
     });
     if (!existingAdmin) {
@@ -170,25 +170,25 @@ async function main() {
       const adminPassword = await bcrypt.hash(plainPassword, 12);
       await prisma.adminUser.create({
         data: {
-          email: 'admin@tge.ro',
+          email: 'admin@transylvaniagrandestate.ro',
           passwordHash: adminPassword,
           name: 'Admin User',
           role: AdminRole.SUPER_ADMIN,
         },
       });
       if (envPassword) {
-        console.log('  Admin user created: admin@tge.ro (password from SEED_ADMIN_PASSWORD)');
+        console.log('  Admin user created: admin@transylvaniagrandestate.ro (password from SEED_ADMIN_PASSWORD)');
       } else {
-        console.log(`  Admin user created: admin@tge.ro / ${plainPassword}`);
+        console.log(`  Admin user created: admin@transylvaniagrandestate.ro / ${plainPassword}`);
         console.log('    ^ random password, set SEED_ADMIN_PASSWORD to pin it');
       }
     } else {
-      console.log('  Admin user already exists: admin@tge.ro (password unchanged)');
+      console.log('  Admin user already exists: admin@transylvaniagrandestate.ro (password unchanged)');
     }
 
     // 1b. Create default EDITOR fixture so each role is exercisable out of the box.
     const existingEditor = await prisma.adminUser.findUnique({
-      where: { email: 'editor@tge.ro' },
+      where: { email: 'editor@transylvaniagrandestate.ro' },
       select: { id: true },
     });
     if (!existingEditor) {
@@ -200,20 +200,20 @@ async function main() {
       const passwordHash = await bcrypt.hash(plainPassword, 12);
       await prisma.adminUser.create({
         data: {
-          email: 'editor@tge.ro',
+          email: 'editor@transylvaniagrandestate.ro',
           passwordHash,
           name: 'Editor User',
           role: AdminRole.EDITOR,
         },
       });
       if (envPassword) {
-        console.log('  Editor user created: editor@tge.ro (password from SEED_EDITOR_PASSWORD)');
+        console.log('  Editor user created: editor@transylvaniagrandestate.ro (password from SEED_EDITOR_PASSWORD)');
       } else {
-        console.log(`  Editor user created: editor@tge.ro / ${plainPassword}`);
+        console.log(`  Editor user created: editor@transylvaniagrandestate.ro / ${plainPassword}`);
         console.log('    ^ random password, set SEED_EDITOR_PASSWORD to pin it');
       }
     } else {
-      console.log('  Editor user already exists: editor@tge.ro (password unchanged)');
+      console.log('  Editor user already exists: editor@transylvaniagrandestate.ro (password unchanged)');
     }
   }
 
@@ -270,14 +270,14 @@ async function main() {
   }
   console.log(`  ${agents.length} agents seeded`);
 
-  // 2c. AGENT-role fixture: creates `agent@tge.ro` linked to the first seeded
+  // 2c. AGENT-role fixture: creates `agent@transylvaniagrandestate.ro` linked to the first seeded
   // Agent. Idempotent — skipped if the email is already registered (whether
   // linked or not) so repeated runs don't flicker the adminUserId. Sister
   // gate to the admin/editor fixtures above — see SEED_USER_FIXTURES.
   const firstAgentId = agentIdMap.values().next().value as string | undefined;
   if (SEED_USER_FIXTURES && firstAgentId) {
     const existingAgentUser = await prisma.adminUser.findUnique({
-      where: { email: 'agent@tge.ro' },
+      where: { email: 'agent@transylvaniagrandestate.ro' },
       select: { id: true },
     });
     if (!existingAgentUser) {
@@ -289,7 +289,7 @@ async function main() {
       const passwordHash = await bcrypt.hash(plainPassword, 12);
       const created = await prisma.adminUser.create({
         data: {
-          email: 'agent@tge.ro',
+          email: 'agent@transylvaniagrandestate.ro',
           passwordHash,
           name: 'Test Agent',
           role: AdminRole.AGENT,
@@ -300,13 +300,13 @@ async function main() {
         data: { adminUserId: created.id },
       });
       if (envPassword) {
-        console.log('  Agent user created: agent@tge.ro (password from SEED_AGENT_PASSWORD)');
+        console.log('  Agent user created: agent@transylvaniagrandestate.ro (password from SEED_AGENT_PASSWORD)');
       } else {
-        console.log(`  Agent user created: agent@tge.ro / ${plainPassword}`);
+        console.log(`  Agent user created: agent@transylvaniagrandestate.ro / ${plainPassword}`);
         console.log('    ^ random password, set SEED_AGENT_PASSWORD to pin it');
       }
     } else {
-      console.log('  Agent user already exists: agent@tge.ro (password unchanged)');
+      console.log('  Agent user already exists: agent@transylvaniagrandestate.ro (password unchanged)');
     }
   }
 
@@ -638,7 +638,7 @@ async function main() {
     },
     contact: {
       phone: '+40 748 605 203',
-      email: 'contact@tge.ro',
+      email: 'contact@transylvaniagrandestate.ro',
       whatsapp: '+40 748 605 203',
     },
     socialLinks: [

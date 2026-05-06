@@ -105,11 +105,11 @@ export function Header({ developers }: HeaderProps) {
               </a>
               <span className="w-px h-3 bg-copper/15" />
               <a
-                href="mailto:contact@tge.ro"
+                href="mailto:contact@transylvaniagrandestate.ro"
                 className="flex items-center gap-1.5 text-[11px] text-cream-muted hover:text-copper tracking-[0.1em] uppercase transition-colors duration-500 ease-luxury"
               >
                 <Mail className="h-3 w-3" />
-                contact@tge.ro
+                contact@transylvaniagrandestate.ro
               </a>
             </div>
 

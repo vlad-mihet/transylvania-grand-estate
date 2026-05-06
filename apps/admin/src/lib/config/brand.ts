@@ -10,7 +10,7 @@ export const BRAND = {
   /** Descriptor that follows the wordmark in tab titles + meta. */
   productName: "Admin",
   /** Operator inbox — access requests, invitation support, password resets. */
-  supportEmail: "admin@tge.ro",
+  supportEmail: "admin@transylvaniagrandestate.ro",
   /** Public brand URL. */
   orgUrl: "https://tge.ro",
 } as const;

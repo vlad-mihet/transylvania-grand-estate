@@ -106,7 +106,7 @@ The Prisma schema lives at `apps/api/prisma/schema.prisma`. Key entities:
 | `Inquiry` | Contact form submissions. Types: `general`, `property`, `developer`. Statuses: `new`, `read`, `archived`. |
 | `SiteConfig` | **Singleton** — `id` is always `"singleton"`. Stores site name, tagline, contact info, social links. |
 
-The seed script (`apps/api/prisma/seed.ts`) creates a default admin user (`admin@tge.ro` / `admin123!`), plus sample developers, cities, properties, and testimonials from `@tge/data`.
+The seed script (`apps/api/prisma/seed.ts`) creates a default admin user (`admin@transylvaniagrandestate.ro` / `admin123!`), plus sample developers, cities, properties, and testimonials from `@tge/data`.
 
 ## File Storage
 

@@ -18,7 +18,7 @@ const offices = [
     },
     phone: CONTACT_PHONE.display,
     tel: CONTACT_PHONE.tel,
-    email: "cluj@tge.ro",
+    email: "cluj@transylvaniagrandestate.ro",
     hours: {
       en: "Mon-Fri: 9:00 - 18:00 | Sat: 10:00 - 14:00",
       ro: "Lun-Vin: 9:00 - 18:00 | Sâm: 10:00 - 14:00",
@@ -36,7 +36,7 @@ const offices = [
     },
     phone: CONTACT_PHONE.display,
     tel: CONTACT_PHONE.tel,
-    email: "brasov@tge.ro",
+    email: "brasov@transylvaniagrandestate.ro",
     hours: {
       en: "Mon-Fri: 9:00 - 18:00 | Sat: 10:00 - 14:00",
       ro: "Lun-Vin: 9:00 - 18:00 | Sâm: 10:00 - 14:00",
@@ -54,7 +54,7 @@ const offices = [
     },
     phone: CONTACT_PHONE.display,
     tel: CONTACT_PHONE.tel,
-    email: "timisoara@tge.ro",
+    email: "timisoara@transylvaniagrandestate.ro",
     hours: {
       en: "Mon-Fri: 9:00 - 18:00 | Sat: 10:00 - 14:00",
       ro: "Lun-Vin: 9:00 - 18:00 | Sâm: 10:00 - 14:00",
