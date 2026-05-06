@@ -7,10 +7,14 @@ Short reference for operational tasks that aren't obvious from reading the code.
 Whenever you merge a PR that edits anything under `packages/data/**` or `apps/api/prisma/seed.ts`, the new rows do **not** ship to prod automatically. Fly's `release_command` only runs `prisma migrate deploy`, not `prisma db seed`. After the `deploy-api` workflow goes green on `main`, run:
 
 ```bash
-fly ssh console -a tge-api -C "sh -c 'cd /app && npx prisma db seed'"
+fly ssh console -a tge-api -C "sh -c 'cd /app && pnpm exec ts-node prisma/seed.ts'"
 ```
 
 This is idempotent (every write is an upsert keyed by a natural id, and `SEED_RESET` is off by default) — safe to re-run. Manual on purpose: keeps deploys fast and keeps seed failures out of the release rollback path.
+
+> **Why not `npx prisma db seed`?** The Prisma CLI wraps the seed via `npm exec → pnpm exec → ts-node`, and somewhere in that chain `console.log` from `seed.ts` block-buffers when stdout is piped (which `fly ssh -C` always does). The seed itself runs to completion, but you get no progress output and no easy way to confirm success. Calling `pnpm exec ts-node prisma/seed.ts` directly skips the `npm exec` layer and streams output line-by-line. The `prisma.config.ts` `seed:` field is still set to the same `pnpm exec ts-node …` string, so `npx prisma db seed` works for interactive local dev.
+
+Production seed gating: the `admin@tge.ro` / `editor@tge.ro` / `agent@tge.ro` admin-user fixtures are dev/QA scaffolding and are **skipped** when `NODE_ENV=production` (which is set on the Fly app). All other seed data — counties, cities, properties, agents, developers, site config, bank rates — runs unconditionally. To bootstrap a fresh prod DB before the invitation flow has anyone to invite from, set `SEED_FORCE_FIXTURES=true` and `SEED_ADMIN_PASSWORD=<value>` for that one run, then unset both.
 
 ## Rotating the Fly deploy token
 

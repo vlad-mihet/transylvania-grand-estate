@@ -1,5 +1,14 @@
 [
   {
+    "slug": "alba-iulia",
+    "photoId": "pexels:13876219",
+    "title": "View of the Gate Tower to the Coronation Cathedral, Alba Iulia, Romania",
+    "source": "Pexels",
+    "license": "Pexels License",
+    "sourcePage": "https://www.pexels.com/photo/view-of-the-gate-tower-to-the-coronation-cathedral-alba-iulia-romania-13876219/",
+    "downloadUrl": "https://images.pexels.com/photos/13876219/pexels-photo-13876219.jpeg?auto=compress&cs=tinysrgb&w=2400&fit=crop"
+  },
+  {
     "slug": "arad",
     "photoId": "pixabay:969955",
     "title": "The State Theater Arad",
@@ -18,6 +27,16 @@
     "downloadUrl": "https://cdn.pixabay.com/photo/2021/06/16/07/11/baia-mare-6340443_1280.jpg"
   },
   {
+    "slug": "bistrita",
+    "photoId": "placeholder",
+    "title": "(no free-license photo of Bistrița city found)",
+    "source": "placeholder.jpg fallback",
+    "license": "n/a",
+    "sourcePage": null,
+    "downloadUrl": null,
+    "note": "Bistrița city is undersized on free-stock platforms — Pexels has 1 portrait shot, Pixabay/Unsplash hits are either generic Romania or Bistrița Monastery in Vâlcea (different place). One Unsplash hit tagged Bistrița was actually Constanța (togate statue). Reverted to placeholder.jpg until manual sourcing."
+  },
+  {
     "slug": "buftea",
     "photoId": "unsplash:1635677215241-3fe25b8ab8b7",
     "title": "Building with staircase (Stirbei chapel)",
@@ -25,6 +44,15 @@
     "license": "Unsplash License",
     "sourcePage": "https://unsplash.com/photos/a-building-with-a-staircase-leading-up-to-it-WurHb29Wcsc",
     "downloadUrl": "https://images.unsplash.com/photo-1635677215241-3fe25b8ab8b7?auto=format&fit=crop&w=2400&q=85"
+  },
+  {
+    "slug": "deva",
+    "photoId": "pexels:18208680",
+    "title": "Aerial Panorama of a Fortress on top of a Hill, Deva, Romania",
+    "source": "Pexels",
+    "license": "Pexels License",
+    "sourcePage": "https://www.pexels.com/photo/aerial-panorama-of-a-fortress-on-top-of-a-hill-deva-romania-18208680/",
+    "downloadUrl": "https://images.pexels.com/photos/18208680/pexels-photo-18208680.jpeg?auto=compress&cs=tinysrgb&w=2400&fit=crop"
   },
   {
     "slug": "drobeta-turnu-severin",

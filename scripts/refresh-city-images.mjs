@@ -36,6 +36,9 @@ const CITIES = [
   { slug: 'resita', names: ['resita'], landmarks: ['locomotive resita', 'gara resita'] },
   { slug: 'buftea', names: ['buftea'], landmarks: ['stirbei', 'castelul stirbei'] },
   { slug: 'slatina', names: ['slatina olt'], landmarks: ['ionascu', 'slatina romania olt'] },
+  { slug: 'alba-iulia', names: ['alba iulia', 'alba-iulia', 'gyulafehervar'], landmarks: ['cetatea alba carolina', 'alba carolina citadel', 'cathedral alba iulia'] },
+  { slug: 'bistrita', names: ['bistrita', 'bistritz'], landmarks: ['evangelical church bistrita', 'biserica evanghelica', 'piata centrala bistrita'] },
+  { slug: 'deva', names: ['deva'], landmarks: ['deva fortress', 'cetatea deva', 'magna curia'] },
 ];
 
 const OUT_DIRS = [

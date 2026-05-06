@@ -33,11 +33,14 @@ The 11 cities below were re-sourced on 2026-05-06 from Pexels / Pixabay / Unspla
 
 | File | Dimensions | Source | Author | License |
 |---|---|---|---|---|
+| `cities/alba-iulia.jpg`            | 1600×1067 | [Gate Tower to the Coronation Cathedral, Alba Iulia](https://www.pexels.com/photo/view-of-the-gate-tower-to-the-coronation-cathedral-alba-iulia-romania-13876219/) (Pexels) | Pexels contributor | [Pexels License](https://www.pexels.com/license/) — free for commercial use, no attribution required |
 | `cities/arad.jpg`                  | 1600×1067 | [The State Theater Arad](https://pixabay.com/photos/state-theatre-arad-romania-969955/) (Pixabay) | Pixabay contributor | [Pixabay Content License](https://pixabay.com/service/license-summary/) — free for commercial use, no attribution required |
 | `cities/baia-mare.jpg`             | 1600×1067 | [Baia Mare Stephan Turm](https://pixabay.com/photos/baia-mare-stephan-turm-6340443/) (Pixabay) | Pixabay contributor | [Pixabay Content License](https://pixabay.com/service/license-summary/) |
+| `cities/bistrita.jpg`              | 800×600   | placeholder (copy of `cities/placeholder.jpg`) — no usable free-license photo of Bistrița city on Pexels / Pixabay / Unsplash; needs manual sourcing | — | — |
 | `cities/brasov.jpg`                | 800×600   | TBD | TBD | TBD |
 | `cities/buftea.jpg`                | 1600×1067 | [Building with staircase (Stirbei chapel)](https://unsplash.com/photos/WurHb29Wcsc) (Unsplash) | Unsplash contributor | [Unsplash License](https://unsplash.com/license) — free for commercial use, no attribution required |
 | `cities/cluj-napoca.jpg`           | 800×600   | TBD | TBD | TBD |
+| `cities/deva.jpg`                  | 1600×1067 | [Aerial Panorama of Deva Fortress](https://www.pexels.com/photo/aerial-panorama-of-a-fortress-on-top-of-a-hill-deva-romania-18208680/) (Pexels) | Pexels contributor (Daniel Lepădatu) | [Pexels License](https://www.pexels.com/license/) |
 | `cities/drobeta-turnu-severin.jpg` | 1600×1067 | [B&W city aerial of Drobeta-Turnu Severin](https://unsplash.com/photos/02Ze1Y0fuzk) (Unsplash) | Unsplash contributor | [Unsplash License](https://unsplash.com/license) |
 | `cities/oradea.jpg`                | 800×600   | TBD | TBD | TBD |
 | `cities/reghin.jpg`                | 800×600   | [Reghin001.jpg](https://commons.wikimedia.org/wiki/File:Reghin001.jpg) (Wikimedia Commons) | Flavinhu | Public Domain — cropped (top two-thirds) and downscaled from the original |
