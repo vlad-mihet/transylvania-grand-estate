@@ -9,6 +9,7 @@ import {
   isCountyInScope,
   resolveGeoScope,
   SiteContext,
+  tierScopeFilter,
 } from '../common/site';
 import { CreateCityDto } from './dto/create-city.dto';
 import { UpdateCityDto } from './dto/update-city.dto';
@@ -51,6 +52,33 @@ export class CitiesService {
     private siteConfig: SiteConfigService,
   ) {}
 
+  /**
+   * Returns the Prisma `_count: { properties: { where: ... } }` shape for the
+   * caller's site. The denormalized `City.property_count` column was getting
+   * out of sync every time properties were added/removed (no triggers, no
+   * app-level increments) — counting via the relation, scoped to the brand's
+   * tier filter, keeps tiles honest without anyone having to remember to bump
+   * a counter. ADMIN sees the unfiltered count.
+   */
+  private propertyCountSelect(site: SiteContext) {
+    const tier = tierScopeFilter(site);
+    return {
+      properties: tier === undefined ? true : { where: { tier } },
+    } as const;
+  }
+
+  /**
+   * Strip Prisma's nested `_count.properties` and surface it as the flat
+   * `propertyCount` field clients already consume. Keeps the API response
+   * shape stable so `mapApiCity` and the City type don't change.
+   */
+  private withLiveCount<
+    T extends { _count: { properties: number } },
+  >(row: T): Omit<T, '_count'> & { propertyCount: number } {
+    const { _count, ...rest } = row;
+    return { ...rest, propertyCount: _count.properties };
+  }
+
   async findAll(
     query: {
       county?: string;
@@ -80,7 +108,10 @@ export class CitiesService {
       where.AND = [...(Array.isArray(where.AND) ? where.AND : where.AND ? [where.AND] : []), geo];
     }
 
-    const include = { county: true };
+    const include = {
+      county: true,
+      _count: { select: this.propertyCountSelect(site) },
+    } satisfies Prisma.CityInclude;
     const orderBy = resolveCitySort(query.sort);
 
     const isPaginated =
@@ -92,7 +123,7 @@ export class CitiesService {
     if (isPaginated) {
       const page = query.page ?? 1;
       const limit = Math.min(query.limit ?? 50, UNPAGINATED_CAP);
-      return paginate(
+      const result = await paginate(
         (skip, take) =>
           this.prisma.city.findMany({
             where,
@@ -105,6 +136,7 @@ export class CitiesService {
         page,
         limit,
       );
+      return { ...result, data: result.data.map((r) => this.withLiveCount(r)) };
     }
 
     const rows = await this.prisma.city.findMany({
@@ -118,31 +150,37 @@ export class CitiesService {
         `Cities unpaginated cap hit (${UNPAGINATED_CAP}) — switch the caller to pagination.`,
       );
     }
-    return rows;
+    return rows.map((r) => this.withLiveCount(r));
   }
 
   async findById(id: string, site: SiteContext) {
     const city = await ensureFound(
       this.prisma.city.findUnique({
         where: { id },
-        include: { county: true },
+        include: {
+          county: true,
+          _count: { select: this.propertyCountSelect(site) },
+        },
       }),
       'City',
     );
     await this.assertInScope(city.slug, city.county.slug, site);
-    return city;
+    return this.withLiveCount(city);
   }
 
   async findBySlug(slug: string, site: SiteContext) {
     const city = await ensureFound(
       this.prisma.city.findUnique({
         where: { slug },
-        include: { county: true },
+        include: {
+          county: true,
+          _count: { select: this.propertyCountSelect(site) },
+        },
       }),
       'City',
     );
     await this.assertInScope(city.slug, city.county.slug, site);
-    return city;
+    return this.withLiveCount(city);
   }
 
   async findNeighborhoods(citySlug: string, site: SiteContext) {
