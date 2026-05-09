@@ -1,4 +1,15 @@
 {
+  "Preview": {
+    "bannerTitle": "Mod previzualizare",
+    "bannerSubtitle": "Previzualizare admin — conținutul include modificările în ciornă. Studenții nu văd această pagină.",
+    "loading": "Se încarcă previzualizarea…",
+    "errorTitle": "Nu am putut încărca previzualizarea",
+    "missingToken": "Această pagină are nevoie de un token de previzualizare. Generează unul nou din pagina de editare a lecției.",
+    "expired": "Tokenul de previzualizare a expirat. Generează unul nou din editorul de lecție.",
+    "notFound": "Lecția nu există sau tokenul nu o autorizează.",
+    "genericFailure": "Ceva nu a mers la încărcarea previzualizării.",
+    "fallbackLocale": "afișat în {locale}"
+  },
   "Academy": {
     "appName": "TGE Academy",
     "tagline": "Platformă de studiu pentru agenți imobiliari",
@@ -164,7 +175,10 @@
       "completeSuccess": "Lecție marcată ca terminată.",
       "courseCompletedToast": "Felicitări! Ai finalizat toate lecțiile.",
       "prevAriaLabel": "Lecția anterioară: {title}",
-      "nextAriaLabel": "Lecția următoare: {title}"
+      "nextAriaLabel": "Lecția următoare: {title}",
+      "attachments": {
+        "title": "Resurse"
+      }
     },
     "account": {
       "title": "Contul meu",

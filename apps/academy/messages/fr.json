@@ -1,4 +1,15 @@
 {
+  "Preview": {
+    "bannerTitle": "Mode aperçu",
+    "bannerSubtitle": "Aperçu administrateur — le contenu inclut les modifications en brouillon. Les étudiants ne voient pas cette vue.",
+    "loading": "Chargement de l'aperçu…",
+    "errorTitle": "Impossible de charger l'aperçu",
+    "missingToken": "Cette page nécessite un jeton d'aperçu. Générez-en un depuis la page d'édition de la leçon.",
+    "expired": "Jeton d'aperçu expiré. Générez-en un nouveau depuis l'éditeur.",
+    "notFound": "Leçon introuvable ou jeton non autorisé.",
+    "genericFailure": "Une erreur est survenue lors du chargement.",
+    "fallbackLocale": "affiché en {locale}"
+  },
   "Academy": {
     "appName": "TGE Academy",
     "tagline": "Plateforme d'apprentissage pour agents immobiliers",
@@ -164,7 +175,10 @@
       "completeSuccess": "Leçon marquée comme terminée.",
       "courseCompletedToast": "Bravo ! Vous avez terminé toutes les leçons.",
       "prevAriaLabel": "Leçon précédente : {title}",
-      "nextAriaLabel": "Leçon suivante : {title}"
+      "nextAriaLabel": "Leçon suivante : {title}",
+      "attachments": {
+        "title": "Ressources"
+      }
     },
     "account": {
       "title": "Mon compte",

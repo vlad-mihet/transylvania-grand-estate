@@ -2,12 +2,13 @@
 
 import { useTransition } from "react";
 import { useParams } from "next/navigation";
-import { LessonMarkdown } from "@/components/lesson-markdown";
+import { MarkdownView } from "@tge/ui";
 import { useLocale, useTranslations } from "next-intl";
 import { toast } from "sonner";
 import { ErrorState, SubmitButton } from "@tge/ui";
 import { Link, useRouter } from "@/i18n/navigation";
 import { AppHeader } from "@/components/app-header";
+import { LessonAttachments } from "@/components/lesson-attachments";
 import { LessonVideoPlayer } from "@/components/lesson-video-player";
 import { LessonSkeleton } from "@/components/skeletons";
 import { useAuthGuard } from "@/hooks/use-auth-guard";
@@ -176,9 +177,11 @@ export default function LessonPage() {
         {lesson.type === "video" && lesson.videoUrl ? (
           <LessonVideoPlayer src={lesson.videoUrl} title={lesson.localizedTitle} />
         ) : null}
-        <article className="lesson-prose mt-8 prose prose-neutral max-w-[72ch] md:max-w-none">
-          <LessonMarkdown>{lesson.content}</LessonMarkdown>
-        </article>
+        <MarkdownView className="lesson-prose mt-8 max-w-[72ch] md:max-w-none">
+          {lesson.content}
+        </MarkdownView>
+
+        <LessonAttachments attachments={lesson.attachments ?? []} />
 
         <div className="mt-10 flex flex-col items-stretch gap-4 border-t border-[color:var(--color-border)] pt-6 sm:flex-row sm:items-center sm:justify-between">
           <div className="flex items-center gap-3 text-sm text-[color:var(--color-muted-foreground)]">

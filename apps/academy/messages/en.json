@@ -1,4 +1,15 @@
 {
+  "Preview": {
+    "bannerTitle": "Preview mode",
+    "bannerSubtitle": "Admin preview — content is rendered with pending drafts. Students don't see this view.",
+    "loading": "Loading preview…",
+    "errorTitle": "Couldn't load preview",
+    "missingToken": "This page needs a preview token. Generate a fresh link from the lesson edit page.",
+    "expired": "Preview token expired. Generate a fresh one from the admin lesson editor.",
+    "notFound": "Lesson not found, or token doesn't authorize this lesson.",
+    "genericFailure": "Something went wrong loading the preview.",
+    "fallbackLocale": "served {locale}"
+  },
   "Academy": {
     "appName": "TGE Academy",
     "tagline": "Study platform for real-estate agents",
@@ -164,7 +175,10 @@
       "completeSuccess": "Lesson marked as done.",
       "courseCompletedToast": "Congratulations! You finished every lesson.",
       "prevAriaLabel": "Previous lesson: {title}",
-      "nextAriaLabel": "Next lesson: {title}"
+      "nextAriaLabel": "Next lesson: {title}",
+      "attachments": {
+        "title": "Resources"
+      }
     },
     "account": {
       "title": "My account",

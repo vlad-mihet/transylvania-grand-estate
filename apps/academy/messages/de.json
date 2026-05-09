@@ -1,4 +1,15 @@
 {
+  "Preview": {
+    "bannerTitle": "Vorschaumodus",
+    "bannerSubtitle": "Admin-Vorschau — Inhalt zeigt ausstehende Entwürfe. Studenten sehen diese Ansicht nicht.",
+    "loading": "Vorschau wird geladen…",
+    "errorTitle": "Vorschau konnte nicht geladen werden",
+    "missingToken": "Diese Seite benötigt ein Vorschau-Token. Erzeugen Sie eines im Lektions-Editor.",
+    "expired": "Vorschau-Token abgelaufen. Erzeugen Sie ein neues im Editor.",
+    "notFound": "Lektion nicht gefunden oder Token nicht berechtigt.",
+    "genericFailure": "Beim Laden ist ein Fehler aufgetreten.",
+    "fallbackLocale": "in {locale} ausgegeben"
+  },
   "Academy": {
     "appName": "TGE Academy",
     "tagline": "Lernplattform für Immobilienmakler",
@@ -164,7 +175,10 @@
       "completeSuccess": "Lektion als erledigt markiert.",
       "courseCompletedToast": "Herzlichen Glückwunsch! Sie haben alle Lektionen abgeschlossen.",
       "prevAriaLabel": "Vorherige Lektion: {title}",
-      "nextAriaLabel": "Nächste Lektion: {title}"
+      "nextAriaLabel": "Nächste Lektion: {title}",
+      "attachments": {
+        "title": "Materialien"
+      }
     },
     "account": {
       "title": "Mein Konto",

@@ -80,6 +80,16 @@ export type CourseLessonsPage = {
 
 type LessonNeighbour = { slug: string; localizedTitle: string } | null;
 
+export type LessonAttachment = {
+  id: string;
+  filename: string;
+  mimeType: string;
+  sizeBytes: number;
+  downloadUrl: string;
+  sortOrder: number;
+  createdAt: string;
+};
+
 export type LessonDetail = {
   id: string;
   slug: string;
@@ -99,6 +109,7 @@ export type LessonDetail = {
   completedAt: string | null;
   prev: LessonNeighbour;
   next: LessonNeighbour;
+  attachments: LessonAttachment[];
 };
 
 /**
