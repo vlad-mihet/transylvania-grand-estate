@@ -11,24 +11,6 @@ import { toJson } from '../common/utils/prisma-json';
 import { SiteId } from '../common/site';
 
 /**
- * Fallback allowlist used when the DB row is missing or its scope is empty.
- * Matches the strict historical Transylvania (10 counties). Keeping this
- * frozen (not a class field) so no code path can mutate it at runtime.
- */
-const DEFAULT_TGE_COUNTY_SCOPE: readonly string[] = Object.freeze([
-  'alba',
-  'bistrita-nasaud',
-  'brasov',
-  'cluj',
-  'covasna',
-  'harghita',
-  'hunedoara',
-  'mures',
-  'salaj',
-  'sibiu',
-]);
-
-/**
  * Cache TTL for the singleton row. Reads on the scoped hot path (every
  * `/properties`, `/cities`, nested agents/developers include) must not
  * round-trip to Postgres, but a multi-node deploy (Fly.io scales horizontally
@@ -67,16 +49,9 @@ export class SiteConfigService {
   }
 
   async update(dto: UpdateSiteConfigDto) {
-    // Reject unknown county slugs up-front so we never persist dead keys
-    // that silently filter no rows. Only runs when the caller is actually
-    // touching the scope — other PATCH payloads (name, tagline, etc.) are
-    // unaffected.
-    if (dto.tgeCountyScope !== undefined) {
-      await this.assertCountiesExist(dto.tgeCountyScope);
-    }
-    if (dto.tgeHiddenCities !== undefined) {
-      await this.assertCitiesExist(dto.tgeHiddenCities);
-    }
+    // Validate any city slugs touched on this PATCH so dead keys can't sneak
+    // into the curation lists. Other PATCH payloads (name, tagline, etc.)
+    // are unaffected.
     if (dto.tgeHomepageCities !== undefined) {
       await this.assertCitiesExist(dto.tgeHomepageCities);
     }
@@ -92,10 +67,6 @@ export class SiteConfigService {
     if (dto.contact !== undefined) data.contact = toJson(dto.contact);
     if (dto.socialLinks !== undefined)
       data.socialLinks = toJson(dto.socialLinks);
-    if (dto.tgeCountyScope !== undefined)
-      data.tgeCountyScope = this.dedupeSorted(dto.tgeCountyScope);
-    if (dto.tgeHiddenCities !== undefined)
-      data.tgeHiddenCities = this.dedupeSorted(dto.tgeHiddenCities);
     // Homepage curation arrays preserve order (rank = position), so do NOT
     // dedupe-sort — that would scramble the curated sequence. We still strip
     // duplicates while keeping first-occurrence order.
@@ -115,82 +86,12 @@ export class SiteConfigService {
   }
 
   /**
-   * Idempotent single-slug add. Used by the per-row toggle in the admin
-   * counties page. Atomic at the DB layer (Postgres `array_append` guarded
-   * against duplicates) so concurrent toggles on different slugs can't
-   * clobber each other — the classic lost-update anomaly of whole-array
-   * PATCHes under two admins editing at once.
-   */
-  async addTgeCountyScope(slug: string): Promise<SiteConfig> {
-    await this.assertCountyExists(slug);
-    await this.prisma.$executeRaw`
-      UPDATE site_config
-      SET tge_county_scope = array_append(tge_county_scope, ${slug})
-      WHERE id = 'singleton' AND NOT (${slug} = ANY(tge_county_scope))
-    `;
-    return this.reloadAndCache();
-  }
-
-  /** Idempotent single-slug remove. `array_remove` is a no-op if absent. */
-  async removeTgeCountyScope(slug: string): Promise<SiteConfig> {
-    // No existence check needed — removing an unknown slug is a safe no-op
-    // and the caller might be cleaning up a stale entry after a rename.
-    await this.prisma.$executeRaw`
-      UPDATE site_config
-      SET tge_county_scope = array_remove(tge_county_scope, ${slug})
-      WHERE id = 'singleton'
-    `;
-    return this.reloadAndCache();
-  }
-
-  /**
-   * Allowlist of county slugs the TGE landing site is permitted to show.
-   *
-   * Resilience layers:
-   *   1. Hot-path cache with TTL → < 1ms typical.
-   *   2. DB fallback when cache is cold.
-   *   3. Empty persisted array → hard-coded Transylvania default.
-   *   4. Missing singleton row → hard-coded default (for unseeded envs).
-   *   5. DB error → hard-coded default + warning log. A Postgres blip must
-   *      not 500 every TGE page; serving the canonical Transylvania set is
-   *      the closest thing to correct we can do without DB access.
-   */
-  async getTgeCountyScope(): Promise<readonly string[]> {
-    const cached = this.readCache();
-    if (cached) {
-      return cached.tgeCountyScope.length === 0
-        ? DEFAULT_TGE_COUNTY_SCOPE
-        : cached.tgeCountyScope;
-    }
-    try {
-      const config = await this.prisma.siteConfig.findUnique({
-        where: { id: 'singleton' },
-      });
-      if (!config) return DEFAULT_TGE_COUNTY_SCOPE;
-      this.writeCache(config);
-      return config.tgeCountyScope.length === 0
-        ? DEFAULT_TGE_COUNTY_SCOPE
-        : config.tgeCountyScope;
-    } catch (err) {
-      // Structured warn (not error) because we are degrading gracefully.
-      // The alerting path should watch the Prisma / DB error metrics, not
-      // this log — but this gives a breadcrumb for post-mortems.
-      this.logger.warn(
-        `Falling back to default TGE county scope: ${
-          err instanceof Error ? err.message : String(err)
-        }`,
-      );
-      return DEFAULT_TGE_COUNTY_SCOPE;
-    }
-  }
-
-  /**
    * Ordered slug list driving the home-page "featured cities" section for the
    * given site. Returns an empty array for sites that don't have a curated
    * list (Admin, Academy, Unknown) — callers treat empty as "no curation
    * configured, fall back to default behaviour" so an unconfigured env never
-   * blanks the home page. Same DB-error resilience as `getTgeHiddenCities`:
-   * degrade to empty rather than crash a public page.
+   * blanks the home page. Degrades to empty on DB error rather than crashing
+   * a public page.
    */
   async getHomepageCities(siteId: SiteId): Promise<readonly string[]> {
     if (siteId !== SiteId.TGE_LUXURY && siteId !== SiteId.REVERY) return [];
@@ -218,34 +119,6 @@ export class SiteConfigService {
     }
   }
 
-  /**
-   * City-slug denylist applied to the TGE landing site only. Same caching
-   * strategy as `getTgeCountyScope` but the absence of a "default" makes
-   * fallback cheaper: if the row is missing or the column is empty, no
-   * cities are hidden — that's the correct behaviour for an unseeded env.
-   * On a DB error we degrade to "hide nothing" rather than crash the page,
-   * matching the resilience contract of the county-scope getter.
-   */
-  async getTgeHiddenCities(): Promise<readonly string[]> {
-    const cached = this.readCache();
-    if (cached) return cached.tgeHiddenCities;
-    try {
-      const config = await this.prisma.siteConfig.findUnique({
-        where: { id: 'singleton' },
-      });
-      if (!config) return [];
-      this.writeCache(config);
-      return config.tgeHiddenCities;
-    } catch (err) {
-      this.logger.warn(
-        `Falling back to empty TGE hidden-cities list: ${
-          err instanceof Error ? err.message : String(err)
-        }`,
-      );
-      return [];
-    }
-  }
-
   // ── internals ──────────────────────────────────────────────────────────
 
   private readCache(): SiteConfig | null {
@@ -261,66 +134,20 @@ export class SiteConfigService {
     this.cached = { value, at: Date.now() };
   }
 
-  private async reloadAndCache(): Promise<SiteConfig> {
-    const config = await this.prisma.siteConfig.findUnique({
-      where: { id: 'singleton' },
-    });
-    if (!config) throw new NotFoundException('Site config not found');
-    this.writeCache(config);
-    return config;
-  }
-
-  private dedupeSorted(slugs: string[]): string[] {
-    return Array.from(new Set(slugs)).sort();
-  }
-
   /**
    * Dedupe while keeping first-occurrence order. Used by the homepage curation
-   * arrays where position IS the rank — `dedupeSorted` would scramble the
-   * sequence. A duplicate slug from a sloppy admin paste is silently collapsed
-   * to its first appearance rather than rejected, which is more forgiving and
-   * matches the implicit semantics of an ordered set.
+   * arrays where position IS the rank. A duplicate slug from a sloppy admin
+   * paste is silently collapsed to its first appearance rather than rejected,
+   * which matches the implicit semantics of an ordered set.
    */
   private dedupePreserveOrder(slugs: string[]): string[] {
     return Array.from(new Set(slugs));
   }
 
-  private async assertCountyExists(slug: string): Promise<void> {
-    const found = await this.prisma.county.findUnique({
-      where: { slug },
-      select: { id: true },
-    });
-    if (!found) {
-      throw new NotFoundException(`County not found: ${slug}`);
-    }
-  }
-
   /**
    * 400 on unknown slugs with the list attached so the admin UI can highlight
-   * them. Single query (`slug IN (...)`) — cheap even for a full 42-county
-   * payload.
-   */
-  private async assertCountiesExist(slugs: string[]): Promise<void> {
-    if (slugs.length === 0) return;
-    const unique = Array.from(new Set(slugs));
-    const rows = await this.prisma.county.findMany({
-      where: { slug: { in: unique } },
-      select: { slug: true },
-    });
-    const known = new Set(rows.map((r) => r.slug));
-    const missing = unique.filter((s) => !known.has(s));
-    if (missing.length > 0) {
-      throw new BadRequestException({
-        message: 'Unknown county slugs',
-        unknownSlugs: missing,
-      });
-    }
-  }
-
-  /**
-   * Sister check to `assertCountiesExist` for the city-slug denylist.
-   * Same single-query shape; bail with a 400 listing the missing slugs so
-   * the admin UI can flag them inline.
+   * them. Single query (`slug IN (...)`) — cheap even for a full 45-city
+   * payload. Used to validate homepage-cities curation lists.
    */
   private async assertCitiesExist(slugs: string[]): Promise<void> {
     if (slugs.length === 0) return;

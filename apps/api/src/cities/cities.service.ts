@@ -1,13 +1,11 @@
-import { Injectable, Logger, NotFoundException } from '@nestjs/common';
-import { Prisma } from '@prisma/client';
+import { BadRequestException, Injectable, Logger, NotFoundException } from '@nestjs/common';
+import { Brand, Prisma } from '@prisma/client';
 import { PrismaService } from '../prisma/prisma.service';
 import { UploadsService } from '../uploads/uploads.service';
 import { SiteConfigService } from '../site-config/site-config.service';
 import {
-  cityGeoWhere,
-  isCityVisible,
-  isCountyInScope,
-  resolveGeoScope,
+  cityBrandWhere,
+  isCityInBrand,
   SiteContext,
   tierScopeFilter,
 } from '../common/site';
@@ -17,6 +15,7 @@ import { ensureFound } from '../common/utils/ensure-found.util';
 import { ensureSlugUnique } from '../common/utils/ensure-slug-unique.util';
 import { paginate } from '../common/utils/pagination.util';
 import { toJson } from '../common/utils/prisma-json';
+import { applyDraftMode } from '../common/utils/entry-draft';
 
 const UNPAGINATED_CAP = 200;
 
@@ -69,14 +68,27 @@ export class CitiesService {
 
   /**
    * Strip Prisma's nested `_count.properties` and surface it as the flat
-   * `propertyCount` field clients already consume. Keeps the API response
-   * shape stable so `mapApiCity` and the City type don't change.
+   * `propertyCount` field clients already consume, plus flatten the
+   * `CityBrand[]` relation into `brands: Brand[]` so the admin can render
+   * badges without an extra fetch.
    */
   private withLiveCount<
-    T extends { _count: { properties: number } },
-  >(row: T): Omit<T, '_count'> & { propertyCount: number } {
-    const { _count, ...rest } = row;
-    return { ...rest, propertyCount: _count.properties };
+    T extends {
+      _count: { properties: number };
+      brands?: { brand: Brand }[];
+    },
+  >(
+    row: T,
+  ): Omit<T, '_count' | 'brands'> & {
+    propertyCount: number;
+    brands: Brand[];
+  } {
+    const { _count, brands, ...rest } = row;
+    return {
+      ...rest,
+      propertyCount: _count.properties,
+      brands: (brands ?? []).map((b) => b.brand),
+    };
   }
 
   async findAll(
@@ -87,36 +99,46 @@ export class CitiesService {
       page?: number;
       limit?: number;
       featured?: boolean;
+      /**
+       * Admin-only `?brand=<id>` override. Layered on top of the site-context
+       * brand gate: an admin (X-Site: ADMIN, no implicit brand) can opt into
+       * `?brand=tge` to inspect the TGE-tagged subset; a public site can pass
+       * its own brand and get a no-op intersection. Lets the admin
+       * brand-context switcher round-trip without needing a dedicated route.
+       */
+      brand?: Brand;
     } = {},
     site: SiteContext,
   ) {
-    const scope = await resolveGeoScope(site, this.siteConfig);
-    const geo = cityGeoWhere(scope);
+    const siteFilter = cityBrandWhere(site);
+    const queryFilter: Prisma.CityWhereInput | undefined = query.brand
+      ? { brands: { some: { brand: query.brand } } }
+      : undefined;
+    const brandFilter: Prisma.CityWhereInput | undefined = queryFilter
+      ? siteFilter
+        ? { AND: [siteFilter, queryFilter] }
+        : queryFilter
+      : siteFilter;
 
     // Curated home-page subset. Site-scoped slug list lives on SiteConfig
-    // (alongside tgeCountyScope / tgeHiddenCities) and is resolved here so the
-    // front-end stays a dumb consumer. Empty list → fall through to the
-    // default unfiltered response so an unseeded env doesn't blank the home
-    // page; non-empty list short-circuits paging/sorting entirely because
-    // the curated order IS the answer.
-    //
-    // Curation deliberately bypasses cityGeoWhere(scope). The default TGE
-    // geo allowlist is Transylvania-only, but the homepage curation can —
-    // and does — feature national cities (București, Iași, Constanța…) the
-    // client wants surfaced for the brand. Treating the curated list as an
-    // explicit admin override is the whole point of having it; re-applying
-    // the geo filter would silently drop those tiles. Property counts still
-    // pass through `tierScopeFilter` so each tile reflects only its brand's
-    // tier of properties.
+    // and dictates ORDER for the brand's hero tiles. Visibility is enforced
+    // by the brand membership filter (city_brands join) — a slug in the
+    // curated list that hasn't been brand-tagged is silently dropped, which
+    // matches the rule for the listing pages and prevents stale curation
+    // entries from leaking out-of-scope cities.
     if (query.featured) {
       const slugs = await this.siteConfig.getHomepageCities(site.id);
       if (slugs.length > 0) {
         const featuredInclude = {
           county: true,
           _count: { select: this.propertyCountSelect(site) },
+          brands: { select: { brand: true } },
         } satisfies Prisma.CityInclude;
+        const featuredWhere: Prisma.CityWhereInput = brandFilter
+          ? { AND: [{ slug: { in: [...slugs] } }, brandFilter] }
+          : { slug: { in: [...slugs] } };
         const rows = await this.prisma.city.findMany({
-          where: { slug: { in: [...slugs] } },
+          where: featuredWhere,
           include: featuredInclude,
         });
         // Postgres `IN` doesn't preserve argument order, so sort in-memory by
@@ -142,16 +164,20 @@ export class CitiesService {
         { slug: { contains: s, mode: 'insensitive' } },
       ];
     }
-    if (geo) {
-      // Compose via AND so the geo clause doesn't clobber OR-search clauses
+    if (brandFilter) {
+      // Compose via AND so the brand clause doesn't clobber OR-search clauses
       // above and survives any future filter additions that use top-level
       // where fields.
-      where.AND = [...(Array.isArray(where.AND) ? where.AND : where.AND ? [where.AND] : []), geo];
+      where.AND = [
+        ...(Array.isArray(where.AND) ? where.AND : where.AND ? [where.AND] : []),
+        brandFilter,
+      ];
     }
 
     const include = {
       county: true,
       _count: { select: this.propertyCountSelect(site) },
+      brands: { select: { brand: true } },
     } satisfies Prisma.CityInclude;
     const orderBy = resolveCitySort(query.sort);
 
@@ -201,11 +227,12 @@ export class CitiesService {
         include: {
           county: true,
           _count: { select: this.propertyCountSelect(site) },
+          brands: { select: { brand: true } },
         },
       }),
       'City',
     );
-    await this.assertInScope(city.slug, city.county.slug, site);
+    await this.assertInBrand(city.slug, site);
     return this.withLiveCount(city);
   }
 
@@ -216,11 +243,12 @@ export class CitiesService {
         include: {
           county: true,
           _count: { select: this.propertyCountSelect(site) },
+          brands: { select: { brand: true } },
         },
       }),
       'City',
     );
-    await this.assertInScope(city.slug, city.county.slug, site);
+    await this.assertInBrand(city.slug, site);
     return this.withLiveCount(city);
   }
 
@@ -254,6 +282,13 @@ export class CitiesService {
         image: dto.image ?? '/uploads/placeholder-city.png',
         propertyCount: dto.propertyCount ?? 0,
         county: { connect: { id: county.id } },
+        ...(dto.brands && dto.brands.length > 0
+          ? {
+              brands: {
+                create: dto.brands.map((brand) => ({ brand })),
+              },
+            }
+          : {}),
       },
     });
   }
@@ -262,12 +297,50 @@ export class CitiesService {
     await this.ensureExists(id);
     const data: Prisma.CityUpdateInput = {};
 
+    const { live, draft } = applyDraftMode(
+      dto,
+      ['description'] as const,
+      dto.mode,
+    );
+    if (live.description !== undefined) data.description = live.description;
+    if (draft !== undefined) data.draft = draft;
+
     if (dto.name !== undefined) data.name = dto.name;
     if (dto.slug !== undefined) data.slug = dto.slug;
-    if (dto.description !== undefined)
-      data.description = toJson(dto.description);
     if (dto.image !== undefined) data.image = dto.image;
     if (dto.propertyCount !== undefined) data.propertyCount = dto.propertyCount;
+
+    // Brand membership diff. The form sends the whole desired set; we read
+    // the current rows and reconcile with INSERT/DELETE so the city ends up
+    // tagged with exactly `dto.brands`. Wrapped in a single transaction with
+    // the row update so a partial failure doesn't leave the city's brand set
+    // half-applied.
+    if (dto.brands !== undefined) {
+      const desired = new Set<Brand>(dto.brands);
+      const current = await this.prisma.cityBrand.findMany({
+        where: { cityId: id },
+        select: { brand: true },
+      });
+      const currentSet = new Set<Brand>(current.map((r) => r.brand));
+      const toAdd: Brand[] = [...desired].filter((b) => !currentSet.has(b));
+      const toRemove: Brand[] = [...currentSet].filter((b) => !desired.has(b));
+
+      return this.prisma.$transaction(async (tx) => {
+        const updated = await tx.city.update({ where: { id }, data });
+        if (toAdd.length > 0) {
+          await tx.cityBrand.createMany({
+            data: toAdd.map((brand) => ({ cityId: id, brand })),
+            skipDuplicates: true,
+          });
+        }
+        if (toRemove.length > 0) {
+          await tx.cityBrand.deleteMany({
+            where: { cityId: id, brand: { in: toRemove } },
+          });
+        }
+        return updated;
+      });
+    }
 
     return this.prisma.city.update({ where: { id }, data });
   }
@@ -286,6 +359,41 @@ export class CitiesService {
     });
   }
 
+  /**
+   * Idempotent insert into `city_brands`. Re-tagging an already-tagged city
+   * is a no-op rather than an error so the admin's optimistic toggle UI can
+   * retry without user-visible failures.
+   */
+  async addBrand(id: string, brand: Brand) {
+    await this.ensureExists(id);
+    this.assertBrand(brand);
+    await this.prisma.cityBrand.upsert({
+      where: { cityId_brand: { cityId: id, brand } },
+      create: { cityId: id, brand },
+      update: {},
+    });
+    return { cityId: id, brand };
+  }
+
+  /**
+   * Idempotent delete from `city_brands`. Removing a tag that doesn't exist
+   * is a no-op for the same reason as `addBrand`.
+   */
+  async removeBrand(id: string, brand: Brand) {
+    await this.ensureExists(id);
+    this.assertBrand(brand);
+    await this.prisma.cityBrand.deleteMany({
+      where: { cityId: id, brand },
+    });
+    return { cityId: id, brand };
+  }
+
+  private assertBrand(brand: string): asserts brand is Brand {
+    if (brand !== 'tge' && brand !== 'revery') {
+      throw new BadRequestException(`Unknown brand: ${brand}`);
+    }
+  }
+
   private ensureExists(id: string) {
     return ensureFound(
       this.prisma.city.findUnique({ where: { id } }),
@@ -294,31 +402,16 @@ export class CitiesService {
   }
 
   /**
-   * 404 when a single-row lookup falls outside the caller's brand geo scope —
-   * either by county allowlist or by the per-brand hidden-city denylist
-   * (e.g. Târnăveni on TGE). Same rationale as assertTierInScope: 404 (not
-   * 403) avoids leaking the existence of out-of-scope rows to the
-   * Transylvania Grand Estate site.
-   *
-   * Featured-curation override: a city present in the site's home-page
-   * curated list (SiteConfig.{tge,revery}HomepageCities) is reachable even
-   * when its county sits outside the default geo allowlist. Mirrors what
-   * `findAll({ featured: true })` already does for the listing — the tile
-   * is on the home page, so the user must be able to click into it. Without
-   * this override, TGE's curated cross-country tiles (București, Iași,
-   * Constanța…) 404 on click.
+   * 404 when a single-row lookup falls outside the caller's brand. Brand
+   * membership is the sole gate now — a city is reachable iff it has a
+   * row in `city_brands` for the caller's brand. 404 (not 403) avoids
+   * leaking the existence of out-of-brand rows.
    */
-  private async assertInScope(
+  private async assertInBrand(
     citySlug: string,
-    countySlug: string,
     site: SiteContext,
   ): Promise<void> {
-    const scope = await resolveGeoScope(site, this.siteConfig);
-    if (isCountyInScope(countySlug, scope) && isCityVisible(citySlug, scope)) {
-      return;
-    }
-    const featured = await this.siteConfig.getHomepageCities(site.id);
-    if (featured.includes(citySlug)) return;
-    throw new NotFoundException('City not found');
+    const inBrand = await isCityInBrand(site, citySlug, this.prisma);
+    if (!inBrand) throw new NotFoundException('City not found');
   }
 }

@@ -6,14 +6,13 @@ import { useParams } from "next/navigation";
 import { useTranslations } from "next-intl";
 import type { ApiDeveloper } from "@tge/types";
 
-import { useRouter } from "@/i18n/navigation";
+import { Link, useRouter } from "@/i18n/navigation";
 import { toast } from "@/lib/toast";
 import { apiClient } from "@/lib/api-client";
 import { usePermissions } from "@/components/auth/auth-provider";
 import { DeveloperForm } from "@/components/forms/developer-form";
 import { EntityDeleteButton } from "@/components/shared/entity-delete-button";
 import { DetailPageShell } from "@/components/resource/detail-page-shell";
-import { FormPageShell } from "@/components/resource/form-page-shell";
 import { DeveloperFormValues } from "@/lib/validations/developer";
 
 export default function EditDeveloperPage() {
@@ -21,6 +20,7 @@ export default function EditDeveloperPage() {
   const router = useRouter();
   const queryClient = useQueryClient();
   const t = useTranslations("Developers");
+  const tc = useTranslations("Common");
   const { can } = usePermissions();
 
   useEffect(() => {
@@ -66,9 +66,8 @@ export default function EditDeveloperPage() {
       enabled={!!id}
       notFoundTitle={t("notFound")}
       render={(developer) => (
-        <FormPageShell
-          title={t("editDeveloper")}
-          actions={
+        <div>
+          <div className="flex items-center justify-end gap-2 px-4 pt-3 md:px-6">
             <EntityDeleteButton
               apiPath={`/developers/${id}`}
               permission="developer.delete"
@@ -78,8 +77,7 @@ export default function EditDeveloperPage() {
               successMessage={t("deleted")}
               errorMessage={t("deleteFailed")}
             />
-          }
-        >
+          </div>
           <DeveloperForm
             cancelHref={`/developers/${id}`}
             defaultValues={developer as Partial<DeveloperFormValues>}
@@ -87,8 +85,17 @@ export default function EditDeveloperPage() {
             onSubmit={(data, logo) => updateMutation.mutate({ data, logo })}
             loading={updateMutation.isPending}
             submissionError={updateMutation.error}
+            title={developer.name}
+            breadcrumb={
+              <Link
+                href={`/developers/${id}`}
+                className="hover:text-foreground hover:underline"
+              >
+                {tc("back")}
+              </Link>
+            }
           />
-        </FormPageShell>
+        </div>
       )}
     />
   );

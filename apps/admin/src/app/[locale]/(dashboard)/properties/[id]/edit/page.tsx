@@ -6,14 +6,13 @@ import { useParams } from "next/navigation";
 import { useTranslations } from "next-intl";
 import type { ApiProperty, ApiPropertyImage } from "@tge/types";
 
-import { useRouter } from "@/i18n/navigation";
+import { Link, useRouter } from "@/i18n/navigation";
 import { toast } from "@/lib/toast";
 import { apiClient } from "@/lib/api-client";
 import { usePermissions } from "@/components/auth/auth-provider";
 import { PropertyForm } from "@/components/forms/property-form";
 import { EntityDeleteButton } from "@/components/shared/entity-delete-button";
 import { DetailPageShell } from "@/components/resource/detail-page-shell";
-import { FormPageShell } from "@/components/resource/form-page-shell";
 import { PropertyFormValues } from "@/lib/validations/property";
 import { toPropertyPayload } from "@/lib/transform-property";
 import { GalleryImage } from "@/components/shared/image-gallery-manager";
@@ -23,6 +22,7 @@ export default function EditPropertyPage() {
   const router = useRouter();
   const queryClient = useQueryClient();
   const t = useTranslations("Properties");
+  const tc = useTranslations("Common");
   const { can } = usePermissions();
 
   useEffect(() => {
@@ -117,10 +117,12 @@ export default function EditPropertyPage() {
           }),
         );
 
+        const headline =
+          property.title.ro || property.title.en || property.slug;
+
         return (
-          <FormPageShell
-            title={t("editProperty")}
-            actions={
+          <div>
+            <div className="flex items-center justify-end gap-2 px-4 pt-3 md:px-6">
               <EntityDeleteButton
                 apiPath={`/properties/${id}`}
                 permission="property.delete"
@@ -132,8 +134,7 @@ export default function EditPropertyPage() {
                 successMessage={t("deleted")}
                 errorMessage={t("deleteFailed")}
               />
-            }
-          >
+            </div>
             <PropertyForm
               cancelHref={`/properties/${id}`}
               defaultValues={defaultValues}
@@ -143,8 +144,17 @@ export default function EditPropertyPage() {
               }
               loading={updateMutation.isPending}
               submissionError={updateMutation.error}
+              title={headline}
+              breadcrumb={
+                <Link
+                  href={`/properties/${id}`}
+                  className="hover:text-foreground hover:underline"
+                >
+                  {tc("back")}
+                </Link>
+              }
             />
-          </FormPageShell>
+          </div>
         );
       }}
     />

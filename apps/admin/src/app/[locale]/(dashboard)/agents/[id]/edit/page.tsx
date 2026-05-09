@@ -6,14 +6,13 @@ import { useParams } from "next/navigation";
 import { useTranslations } from "next-intl";
 import type { ApiAgent } from "@tge/types";
 
-import { useRouter } from "@/i18n/navigation";
+import { Link, useRouter } from "@/i18n/navigation";
 import { toast } from "@/lib/toast";
 import { apiClient } from "@/lib/api-client";
 import { usePermissions } from "@/components/auth/auth-provider";
 import { AgentForm } from "@/components/forms/agent-form";
 import { EntityDeleteButton } from "@/components/shared/entity-delete-button";
 import { DetailPageShell } from "@/components/resource/detail-page-shell";
-import { FormPageShell } from "@/components/resource/form-page-shell";
 import { AgentFormValues } from "@/lib/validations/agent";
 
 export default function EditAgentPage() {
@@ -21,6 +20,7 @@ export default function EditAgentPage() {
   const router = useRouter();
   const queryClient = useQueryClient();
   const t = useTranslations("Agents");
+  const tc = useTranslations("Common");
   const { can } = usePermissions();
 
   useEffect(() => {
@@ -66,9 +66,8 @@ export default function EditAgentPage() {
       enabled={!!id}
       notFoundTitle={t("notFound")}
       render={(agent) => (
-        <FormPageShell
-          title={t("editAgent")}
-          actions={
+        <div>
+          <div className="flex items-center justify-end gap-2 px-4 pt-3 md:px-6">
             <EntityDeleteButton
               apiPath={`/agents/${id}`}
               permission="agent.delete"
@@ -79,8 +78,7 @@ export default function EditAgentPage() {
               successMessage={t("deleted")}
               errorMessage={t("deleteFailed")}
             />
-          }
-        >
+          </div>
           <AgentForm
             cancelHref={`/agents/${id}`}
             defaultValues={{ ...agent, photo: agent.photo ?? undefined }}
@@ -88,8 +86,17 @@ export default function EditAgentPage() {
             onSubmit={(data, photo) => updateMutation.mutate({ data, photo })}
             loading={updateMutation.isPending}
             submissionError={updateMutation.error}
+            title={`${agent.firstName} ${agent.lastName}`}
+            breadcrumb={
+              <Link
+                href={`/agents/${id}`}
+                className="hover:text-foreground hover:underline"
+              >
+                {tc("back")}
+              </Link>
+            }
           />
-        </FormPageShell>
+        </div>
       )}
     />
   );

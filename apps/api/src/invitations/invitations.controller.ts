@@ -13,6 +13,7 @@ import { AdminRole } from '@prisma/client';
 import { InvitationsService } from './invitations.service';
 import { InviteAgentDto } from './dto/invite-agent.dto';
 import { InviteExistingAgentDto } from './dto/invite-existing-agent.dto';
+import { InviteUserDto } from './dto/invite-user.dto';
 import { AcceptInvitationPasswordDto } from './dto/accept-invitation-password.dto';
 import { VerifyInvitationDto } from './dto/verify-invitation.dto';
 import { ListInvitationsDto } from './dto/list-invitations.dto';
@@ -56,6 +57,22 @@ export class InvitationsController {
     @CurrentUser() user: CurrentUserPayload,
   ) {
     return this.invitationsService.inviteExistingAgent(agentId, dto, user.id);
+  }
+
+  /**
+   * Invite a non-AGENT platform user (SUPER_ADMIN, ADMIN, or EDITOR). Only a
+   * SUPER_ADMIN can issue these — inviting another SUPER_ADMIN or ADMIN is
+   * a privilege-grant that mirrors the SUPER_ADMIN-only User CRUD on
+   * /auth/users. ADMIN-role admins can invite agents (POST /invitations/agents)
+   * but not platform users.
+   */
+  @Roles(AdminRole.SUPER_ADMIN)
+  @Post('users')
+  async inviteUser(
+    @Body() dto: InviteUserDto,
+    @CurrentUser() user: CurrentUserPayload,
+  ) {
+    return this.invitationsService.inviteUser(dto, user.id);
   }
 
   @Roles(AdminRole.SUPER_ADMIN, AdminRole.ADMIN)

@@ -7,7 +7,7 @@ import { Mono } from "@/components/shared/mono";
 import { RelativeTime } from "@/components/shared/relative-time";
 import { StatusBadge } from "@/components/shared/status-badge";
 import type { AuthUser } from "@/components/auth/auth-provider";
-import { ROLE_TONE } from "./constants";
+import { ROLE_TONE, STATUS_TONE } from "./constants";
 import type { AdminUser } from "./types";
 
 function initials(name: string): string {
@@ -19,6 +19,7 @@ interface BuildColumnsArgs {
   self: AuthUser | null;
   onEdit: (user: AdminUser) => void;
   onDelete: (id: string) => void;
+  onPeek: (user: AdminUser) => void;
   t: (key: string) => string;
   tc: (key: string) => string;
 }
@@ -32,6 +33,7 @@ export function buildUserColumns({
   self,
   onEdit,
   onDelete,
+  onPeek,
   t,
   tc,
 }: BuildColumnsArgs): ColumnDef<AdminUser, unknown>[] {
@@ -40,11 +42,18 @@ export function buildUserColumns({
       id: "name",
       header: t("columnName"),
       cell: ({ row }) => (
-        <div className="flex items-center gap-2">
+        <button
+          type="button"
+          className="flex items-center gap-2 text-left"
+          onClick={(e) => {
+            e.stopPropagation();
+            onPeek(row.original);
+          }}
+        >
           <div className="flex h-6 w-6 shrink-0 items-center justify-center rounded-sm bg-copper/10 text-[11px] font-semibold uppercase text-copper">
             {initials(row.original.name)}
           </div>
-          <p className="truncate text-sm font-medium text-foreground">
+          <p className="truncate text-sm font-medium text-foreground hover:text-copper">
             {row.original.name}
             {row.original.id === self?.id && (
               <span className="mono ml-1.5 text-[10px] uppercase tracking-[0.08em] text-muted-foreground">
@@ -52,7 +61,7 @@ export function buildUserColumns({
               </span>
             )}
           </p>
-        </div>
+        </button>
       ),
     },
     {
@@ -74,6 +83,17 @@ export function buildUserColumns({
       ),
     },
     {
+      id: "status",
+      header: t("columnStatus"),
+      enableSorting: false,
+      cell: ({ row }) => (
+        <StatusBadge
+          status={row.original.status}
+          tone={STATUS_TONE[row.original.status]}
+        />
+      ),
+    },
+    {
       id: "agentLink",
       header: t("agentLink"),
       enableSorting: false,
@@ -89,13 +109,14 @@ export function buildUserColumns({
         ),
     },
     {
-      id: "createdAt",
-      header: tc("columnUpdated"),
+      id: "lastLoginAt",
+      header: t("columnLastLogin"),
+      enableSorting: false,
       cell: ({ row }) =>
-        row.original.createdAt ? (
-          <RelativeTime value={row.original.createdAt} />
+        row.original.lastLoginAt ? (
+          <RelativeTime value={row.original.lastLoginAt} />
         ) : (
-          <Mono>—</Mono>
+          <Mono className="text-muted-foreground/60">{t("lastLoginNever")}</Mono>
         ),
     },
     {
@@ -115,6 +136,7 @@ export function buildUserColumns({
               size="icon"
               className="h-7 w-7"
               onClick={() => onEdit(row.original)}
+              title={tc("edit")}
             >
               <Pencil className="h-3.5 w-3.5" />
             </Button>
@@ -123,7 +145,7 @@ export function buildUserColumns({
               size="icon"
               className="h-7 w-7 text-destructive/70 hover:bg-[var(--color-danger-bg)] hover:text-[var(--color-danger)] disabled:opacity-30"
               disabled={isSelf}
-              title={isSelf ? t("cannotDeleteSelf") : undefined}
+              title={isSelf ? t("cannotDeleteSelf") : tc("delete")}
               onClick={() => !isSelf && onDelete(row.original.id)}
             >
               <Trash2 className="h-3.5 w-3.5" />

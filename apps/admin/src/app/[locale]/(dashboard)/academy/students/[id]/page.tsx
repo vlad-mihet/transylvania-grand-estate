@@ -14,12 +14,13 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@tge/ui";
-import { Trash2 } from "lucide-react";
+import { ChevronDown, ChevronRight, Trash2 } from "lucide-react";
 import { apiClient, ApiError } from "@/lib/api-client";
 import { toast } from "@/lib/toast";
 import { Link } from "@/i18n/navigation";
 import { Can } from "@/components/shared/can";
 import { SectionCard } from "@/components/shared/section-card";
+import { ConfirmDialog } from "@/components/shared/confirm-dialog";
 import { DeleteDialog } from "@/components/shared/delete-dialog";
 import { Mono } from "@/components/shared/mono";
 import { PageHeader } from "@/components/shared/page-header";
@@ -29,6 +30,8 @@ import { LoadingState } from "@tge/ui";
 import { useUnsavedChangesWarning } from "@/hooks/use-unsaved-changes-warning";
 import { pickTitle, WILDCARD_COURSE_VALUE } from "@/lib/academy/pick-title";
 import { flags } from "@/lib/flags";
+import { AcademyProgressBar } from "@/components/academy/academy-progress-bar";
+import { StudentLessonStatesTable } from "@/components/academy/student-lesson-states-table";
 
 type Enrollment = {
   id: string;
@@ -63,6 +66,8 @@ type Student = {
   emailVerifiedAt: string | null;
   lastLoginAt: string | null;
   createdAt: string;
+  suspendedAt: string | null;
+  suspendedReason: string | null;
   enrollments: Enrollment[];
   identities: Identity[];
 };
@@ -71,6 +76,21 @@ type Course = {
   id: string;
   slug: string;
   title: Record<string, string | undefined>;
+};
+
+type ProgressRow = {
+  courseId: string;
+  slug: string;
+  title: Record<string, string | undefined>;
+  totalLessons: number;
+  completedLessons: number;
+  completionRate: number;
+  lastSeenAt: string | null;
+  resumeLessonSlug: string | null;
+  firstSeenAt: string | null;
+  lastCompletedAt: string | null;
+  viaWildcard: boolean;
+  enrollmentId: string | null;
 };
 
 type Invitation = {
@@ -99,6 +119,7 @@ export default function AcademyStudentDetailPage() {
   const tLang = useTranslations("Academy.languages");
   const tc = useTranslations("Common");
   const tt = useTranslations("Academy.toasts");
+  const tp = useTranslations("Academy.studentProgress");
 
   const studentQuery = useQuery({
     queryKey: ["academy-student", params.id],
@@ -122,6 +143,26 @@ export default function AcademyStudentDetailPage() {
         { envelope: true },
       ),
   });
+
+  const progressQuery = useQuery({
+    queryKey: ["academy-student-progress", params.id],
+    queryFn: () =>
+      apiClient<ProgressRow[]>(
+        `/admin/academy/users/${params.id}/progress`,
+      ),
+  });
+
+  const [expandedCourseIds, setExpandedCourseIds] = useState<Set<string>>(
+    new Set(),
+  );
+  const toggleExpand = (courseId: string) => {
+    setExpandedCourseIds((prev) => {
+      const next = new Set(prev);
+      if (next.has(courseId)) next.delete(courseId);
+      else next.add(courseId);
+      return next;
+    });
+  };
 
   const [nameDraft, setNameDraft] = useState<string | null>(null);
   const [localeDraft, setLocaleDraft] = useState<StudentLocale | undefined>(
@@ -167,6 +208,9 @@ export default function AcademyStudentDetailPage() {
       queryClient.invalidateQueries({
         queryKey: ["academy-student", params.id],
       });
+      queryClient.invalidateQueries({
+        queryKey: ["academy-student-progress", params.id],
+      });
       toast.success(tt("accessGranted"));
       setGrantCourseId("");
     },
@@ -182,6 +226,9 @@ export default function AcademyStudentDetailPage() {
     onSuccess: () => {
       queryClient.invalidateQueries({
         queryKey: ["academy-student", params.id],
+      });
+      queryClient.invalidateQueries({
+        queryKey: ["academy-student-progress", params.id],
       });
       toast.success(tt("accessRevoked"));
     },
@@ -217,6 +264,126 @@ export default function AcademyStudentDetailPage() {
     onError: (err) =>
       toast.error(
         err instanceof ApiError ? err.message : tt("verificationResendFailed"),
+      ),
+  });
+
+  const [sendResetOpen, setSendResetOpen] = useState(false);
+  const sendResetMutation = useMutation({
+    mutationFn: () =>
+      apiClient<{ sent: boolean; expiresAt: string }>(
+        `/admin/academy/users/${params.id}/send-password-reset`,
+        { method: "POST", body: {} },
+      ),
+    onSuccess: (result) => {
+      toast.success(
+        result.sent ? tt("passwordResetSent") : tt("passwordResetMailFailed"),
+      );
+      setSendResetOpen(false);
+    },
+    onError: (err) => {
+      toast.error(
+        err instanceof ApiError ? err.message : tt("passwordResetFailed"),
+      );
+      setSendResetOpen(false);
+    },
+  });
+
+  const [suspendOpen, setSuspendOpen] = useState(false);
+  const [suspendReason, setSuspendReason] = useState("");
+  const suspendMutation = useMutation({
+    mutationFn: () =>
+      apiClient(`/admin/academy/users/${params.id}/suspend`, {
+        method: "POST",
+        body: suspendReason.trim()
+          ? { reason: suspendReason.trim() }
+          : {},
+      }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: ["academy-student", params.id],
+      });
+      queryClient.invalidateQueries({ queryKey: ["academy-students"] });
+      toast.success(tt("studentSuspended"));
+      setSuspendOpen(false);
+      setSuspendReason("");
+    },
+    onError: (err) => {
+      toast.error(
+        err instanceof ApiError ? err.message : tt("studentSuspendFailed"),
+      );
+    },
+  });
+
+  const [markCompleteCourseId, setMarkCompleteCourseId] = useState<
+    string | null
+  >(null);
+  const markCompleteMutation = useMutation({
+    mutationFn: (courseId: string) =>
+      apiClient(
+        `/admin/academy/users/${params.id}/courses/${courseId}/progress/complete`,
+        { method: "POST", body: {} },
+      ),
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: ["academy-student-progress", params.id],
+      });
+      queryClient.invalidateQueries({
+        queryKey: ["academy-student-lessons", params.id],
+      });
+      toast.success(tt("progressMarkedComplete"));
+      setMarkCompleteCourseId(null);
+    },
+    onError: (err) => {
+      toast.error(
+        err instanceof ApiError ? err.message : tt("progressMarkFailed"),
+      );
+      setMarkCompleteCourseId(null);
+    },
+  });
+
+  const [resetProgressCourseId, setResetProgressCourseId] = useState<
+    string | null
+  >(null);
+  const resetProgressMutation = useMutation({
+    mutationFn: (courseId: string) =>
+      apiClient(
+        `/admin/academy/users/${params.id}/courses/${courseId}/progress/reset`,
+        { method: "POST", body: {} },
+      ),
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: ["academy-student-progress", params.id],
+      });
+      queryClient.invalidateQueries({
+        queryKey: ["academy-student-lessons", params.id],
+      });
+      toast.success(tt("progressReset"));
+      setResetProgressCourseId(null);
+    },
+    onError: (err) => {
+      toast.error(
+        err instanceof ApiError ? err.message : tt("progressResetFailed"),
+      );
+      setResetProgressCourseId(null);
+    },
+  });
+
+  const reactivateMutation = useMutation({
+    mutationFn: () =>
+      apiClient(`/admin/academy/users/${params.id}/reactivate`, {
+        method: "POST",
+        body: {},
+      }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: ["academy-student", params.id],
+      });
+      queryClient.invalidateQueries({ queryKey: ["academy-students"] });
+      toast.success(tt("studentReactivated"));
+    },
+    onError: (err) =>
+      toast.error(
+        err instanceof ApiError ? err.message : tt("studentReactivateFailed"),
       ),
   });
 
@@ -299,6 +466,19 @@ export default function AcademyStudentDetailPage() {
       />
 
       <div className="mx-auto flex w-full max-w-3xl flex-col gap-5">
+        {student.suspendedAt && (
+          <div className="rounded-md border border-[color-mix(in_srgb,var(--color-danger)_30%,var(--border))] bg-[var(--color-danger-bg)] px-4 py-3 text-sm text-[var(--color-danger)]">
+            <p className="font-semibold">{t("suspendedBannerTitle")}</p>
+            <p className="mt-1 text-xs text-[var(--color-danger)]/80">
+              {t("suspendedBannerSince", {
+                date: new Date(student.suspendedAt).toLocaleString(locale),
+              })}
+              {student.suspendedReason
+                ? ` · ${student.suspendedReason}`
+                : ""}
+            </p>
+          </div>
+        )}
         <div className="-mt-3 flex flex-wrap items-center gap-2 text-xs">
           <Mono className="text-muted-foreground">{student.email}</Mono>
           {!flags.emailVerificationDisabled && (
@@ -306,6 +486,9 @@ export default function AcademyStudentDetailPage() {
               status={student.emailVerifiedAt ? "verified" : "unverified"}
               tone={student.emailVerifiedAt ? "success" : "warning"}
             />
+          )}
+          {student.suspendedAt && (
+            <StatusBadge status="suspended" tone="danger" />
           )}
           <span className="rounded-full border border-border px-2 py-0.5 text-[10px] uppercase tracking-[0.06em] text-muted-foreground">
             {t(`origin_${origin}`)}
@@ -382,6 +565,117 @@ export default function AcademyStudentDetailPage() {
               </Button>
             </div>
           </div>
+        </SectionCard>
+
+        <SectionCard
+          title={tp("progressTitle")}
+          description={tp("progressDescription")}
+        >
+          {progressQuery.isLoading ? (
+            <LoadingState label={tc("loading")} />
+          ) : progressQuery.isError ? (
+            <p className="text-sm text-muted-foreground">
+              {tp("progressLoadFailed")}
+            </p>
+          ) : !progressQuery.data || progressQuery.data.length === 0 ? (
+            <p className="text-sm text-muted-foreground">
+              {tp("progressEmpty")}
+            </p>
+          ) : (
+            <ul className="divide-y divide-border rounded-md border border-border">
+              {progressQuery.data.map((row) => {
+                const expanded = expandedCourseIds.has(row.courseId);
+                const title = pickTitle(row.title, row.slug, locale);
+                const Chevron = expanded ? ChevronDown : ChevronRight;
+                return (
+                  <li key={row.courseId} className="px-4 py-3">
+                    <div className="flex flex-wrap items-center gap-3">
+                      <button
+                        type="button"
+                        onClick={() => toggleExpand(row.courseId)}
+                        className="flex min-w-0 flex-1 items-center gap-2 text-left"
+                        aria-expanded={expanded}
+                      >
+                        <Chevron className="h-3.5 w-3.5 shrink-0 text-muted-foreground" />
+                        <span className="min-w-0 flex-1 truncate text-sm font-medium">
+                          {title}
+                        </span>
+                        {row.viaWildcard && (
+                          <span className="shrink-0 rounded-full border border-border px-2 py-0.5 text-[10px] uppercase tracking-[0.06em] text-muted-foreground">
+                            {tp("badgeWildcard")}
+                          </span>
+                        )}
+                      </button>
+                      <div className="flex w-full items-center gap-3 sm:w-64">
+                        <AcademyProgressBar
+                          completed={row.completedLessons}
+                          total={row.totalLessons}
+                          className="flex-1"
+                        />
+                        <Mono className="shrink-0 text-[11px] text-muted-foreground">
+                          {row.completionRate}%
+                        </Mono>
+                      </div>
+                    </div>
+                    <div className="mt-1.5 flex flex-wrap items-center gap-x-4 gap-y-1 pl-5 text-[11px] text-muted-foreground">
+                      {row.lastSeenAt ? (
+                        <span className="flex items-center gap-1">
+                          {tp("lastSeen")}
+                          <RelativeTime value={row.lastSeenAt} />
+                        </span>
+                      ) : (
+                        <span>{tp("neverOpened")}</span>
+                      )}
+                      {row.resumeLessonSlug && row.totalLessons > 0 ? (
+                        <Link
+                          href={`/academy/courses/${row.courseId}/lessons`}
+                          className="hover:text-foreground hover:underline"
+                        >
+                          {tp("resumeFrom", { slug: row.resumeLessonSlug })}
+                        </Link>
+                      ) : null}
+                    </div>
+                    {expanded && (
+                      <div className="mt-3 space-y-3 pl-5">
+                        <StudentLessonStatesTable
+                          studentId={params.id}
+                          courseId={row.courseId}
+                        />
+                        <Can action="academy.user.manage">
+                          <div className="flex flex-wrap gap-2">
+                            <Button
+                              size="sm"
+                              variant="outline"
+                              onClick={() =>
+                                setMarkCompleteCourseId(row.courseId)
+                              }
+                              disabled={
+                                row.totalLessons === 0 ||
+                                markCompleteMutation.isPending
+                              }
+                            >
+                              {tp("markCompleteAction")}
+                            </Button>
+                            <Button
+                              size="sm"
+                              variant="outline"
+                              className="text-[var(--color-danger)]"
+                              onClick={() =>
+                                setResetProgressCourseId(row.courseId)
+                              }
+                              disabled={resetProgressMutation.isPending}
+                            >
+                              {tp("resetProgressAction")}
+                            </Button>
+                          </div>
+                        </Can>
+                      </div>
+                    )}
+                  </li>
+                );
+              })}
+            </ul>
+          )}
         </SectionCard>
 
         <SectionCard
@@ -541,7 +835,39 @@ export default function AcademyStudentDetailPage() {
             <p className="text-sm text-muted-foreground">
               {t("dangerDescription")}
             </p>
-            <div className="mt-4">
+            <div className="mt-4 flex flex-wrap gap-2">
+              <Button
+                size="sm"
+                variant="outline"
+                onClick={() => setSendResetOpen(true)}
+                disabled={sendResetMutation.isPending}
+              >
+                {sendResetMutation.isPending
+                  ? t("passwordResetSending")
+                  : t("passwordResetAction")}
+              </Button>
+              {student.suspendedAt ? (
+                <Button
+                  size="sm"
+                  variant="outline"
+                  onClick={() => reactivateMutation.mutate()}
+                  disabled={reactivateMutation.isPending}
+                >
+                  {reactivateMutation.isPending
+                    ? t("reactivateSending")
+                    : t("reactivateAction")}
+                </Button>
+              ) : (
+                <Button
+                  size="sm"
+                  variant="outline"
+                  className="text-[var(--color-danger)]"
+                  onClick={() => setSuspendOpen(true)}
+                  disabled={suspendMutation.isPending}
+                >
+                  {t("suspendAction")}
+                </Button>
+              )}
               <Button
                 size="sm"
                 variant="outline"
@@ -563,6 +889,55 @@ export default function AcademyStudentDetailPage() {
         title={t("dangerDeleteTitle", { name: student.name })}
         description={t("dangerDeleteDescription")}
         loading={deleteMutation.isPending}
+      />
+
+      <ConfirmDialog
+        open={sendResetOpen}
+        onOpenChange={setSendResetOpen}
+        onConfirm={() => sendResetMutation.mutate()}
+        title={t("passwordResetTitle", { name: student.name })}
+        description={t("passwordResetDescription", { email: student.email })}
+        confirmLabel={t("passwordResetConfirm")}
+        loading={sendResetMutation.isPending}
+      />
+
+      <ConfirmDialog
+        open={suspendOpen}
+        onOpenChange={(open) => {
+          setSuspendOpen(open);
+          if (!open) setSuspendReason("");
+        }}
+        onConfirm={() => suspendMutation.mutate()}
+        title={t("suspendTitle", { name: student.name })}
+        description={t("suspendDescription")}
+        confirmLabel={t("suspendConfirm")}
+        loading={suspendMutation.isPending}
+      />
+
+      <ConfirmDialog
+        open={!!markCompleteCourseId}
+        onOpenChange={(open) => !open && setMarkCompleteCourseId(null)}
+        onConfirm={() =>
+          markCompleteCourseId &&
+          markCompleteMutation.mutate(markCompleteCourseId)
+        }
+        title={tp("markCompleteTitle")}
+        description={tp("markCompleteDescription")}
+        confirmLabel={tp("markCompleteConfirm")}
+        loading={markCompleteMutation.isPending}
+      />
+
+      <ConfirmDialog
+        open={!!resetProgressCourseId}
+        onOpenChange={(open) => !open && setResetProgressCourseId(null)}
+        onConfirm={() =>
+          resetProgressCourseId &&
+          resetProgressMutation.mutate(resetProgressCourseId)
+        }
+        title={tp("resetProgressTitle")}
+        description={tp("resetProgressDescription")}
+        confirmLabel={tp("resetProgressConfirm")}
+        loading={resetProgressMutation.isPending}
       />
     </div>
   );

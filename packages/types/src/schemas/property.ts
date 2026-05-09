@@ -15,6 +15,7 @@ import {
   amenityFlagsSchema,
   amenityQueryFlagsSchema,
   coordinatesSchema,
+  entryModeSchema,
   geoFilterSchema,
   localizedStringSchema,
   paginationSchema,
@@ -76,7 +77,10 @@ export const createPropertySchema = amenityFlagsSchema
   })
   .strict();
 
-export const updatePropertySchema = createPropertySchema.partial();
+export const updatePropertySchema = createPropertySchema
+  .partial()
+  .extend({ mode: entryModeSchema })
+  .strict();
 
 /**
  * List/query params. `.strict()` deliberately NOT applied — browser

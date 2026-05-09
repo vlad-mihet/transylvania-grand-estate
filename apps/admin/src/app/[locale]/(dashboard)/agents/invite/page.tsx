@@ -2,13 +2,12 @@
 
 import { useEffect } from "react";
 import { useMutation } from "@tanstack/react-query";
-import { useRouter } from "@/i18n/navigation";
+import { Link, useRouter } from "@/i18n/navigation";
 import { useTranslations } from "next-intl";
 import { apiClient } from "@/lib/api-client";
 import { toast } from "@/lib/toast";
 import { usePermissions } from "@/components/auth/auth-provider";
 import { AgentForm } from "@/components/forms/agent-form";
-import { PageHeader } from "@/components/shared/page-header";
 import type { AgentFormValues } from "@/lib/validations/agent";
 
 interface InviteResponse {
@@ -22,6 +21,7 @@ interface InviteResponse {
 export default function InviteAgentPage() {
   const router = useRouter();
   const t = useTranslations("Invitations");
+  const tc = useTranslations("Common");
   const { can } = usePermissions();
 
   useEffect(() => {
@@ -49,19 +49,19 @@ export default function InviteAgentPage() {
   if (!can("agent.create")) return null;
 
   return (
-    <div className="space-y-6">
-      <PageHeader
-        title={t("inviteAgent")}
-        description={t("inviteDescription")}
-      />
-      <AgentForm
-        cancelHref="/agents"
-        // Photo upload skipped on invite — the agent adds it themselves
-        // from /profile after accepting. Keeps the invite form minimal.
-        onSubmit={(data) => inviteMutation.mutate(data)}
-        loading={inviteMutation.isPending}
-        submissionError={inviteMutation.error}
-      />
-    </div>
+    <AgentForm
+      cancelHref="/agents"
+      // Photo upload skipped on invite — the agent adds it themselves
+      // from /profile after accepting. Keeps the invite form minimal.
+      onSubmit={(data) => inviteMutation.mutate(data)}
+      loading={inviteMutation.isPending}
+      submissionError={inviteMutation.error}
+      title={t("inviteAgent")}
+      breadcrumb={
+        <Link href="/agents" className="hover:text-foreground hover:underline">
+          {tc("back")}
+        </Link>
+      }
+    />
   );
 }

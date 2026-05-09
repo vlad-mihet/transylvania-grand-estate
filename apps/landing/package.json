@@ -3,14 +3,15 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev --port 3050",
-    "build": "next build",
+    "dev": "tge-sync-assets ./public && next dev --port 3050",
+    "build": "tge-sync-assets ./public && next build",
     "start": "next start",
     "lint": "eslint"
   },
   "dependencies": {
     "@tanstack/react-query": "^5.90.21",
     "@tge/api-client": "workspace:*",
+    "@tge/assets": "workspace:*",
     "@tge/branding": "workspace:*",
     "@tge/hooks": "workspace:*",
     "@tge/i18n": "workspace:*",

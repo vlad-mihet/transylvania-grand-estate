@@ -1,13 +1,18 @@
 import {
   ConflictException,
   ForbiddenException,
+  Inject,
   Injectable,
   NotFoundException,
+  forwardRef,
 } from '@nestjs/common';
 import { CourseStatus, CourseVisibility, Prisma } from '@prisma/client';
 import { PrismaService } from '../../prisma/prisma.service';
 import { AcademyAuthService } from '../auth/academy-auth.service';
+import { AcademyInvitationsService } from '../invitations/academy-invitations.service';
+import type { BulkGrantEnrollmentResult } from '@tge/types/schemas/academy';
 import type {
+  BulkGrantEnrollmentDto,
   GrantEnrollmentDto,
   ListEnrollmentsDto,
 } from './dto/enrollments.dto';
@@ -17,6 +22,8 @@ export class EnrollmentsService {
   constructor(
     private readonly prisma: PrismaService,
     private readonly authService: AcademyAuthService,
+    @Inject(forwardRef(() => AcademyInvitationsService))
+    private readonly invitationsService: AcademyInvitationsService,
   ) {}
 
   async list(query: ListEnrollmentsDto) {
@@ -113,6 +120,189 @@ export class EnrollmentsService {
       where: { id },
       data: { revokedAt: new Date() },
     });
+  }
+
+  /**
+   * Bulk-grant access for many students at once. Three input modes
+   * compose: a list of pre-resolved AcademyUser ids, a list of emails,
+   * and an optional `inviteUnknownEmails` flag that turns unresolved
+   * emails into fresh invitations. Each row gets a structured outcome
+   * so the admin UI can render a useful summary table.
+   *
+   * Soft-revoked enrollments for the same (userId, courseId) are
+   * re-activated rather than throwing — the bulk path is meant to be
+   * the "make it so" button.
+   */
+  async bulkGrant(
+    dto: BulkGrantEnrollmentDto,
+    actorId: string,
+  ): Promise<BulkGrantEnrollmentResult> {
+    const result: BulkGrantEnrollmentResult = {
+      granted: 0,
+      alreadyEnrolled: 0,
+      invited: 0,
+      skipped: [],
+    };
+
+    // Validate the course (or wildcard) once up front. A bad courseId
+    // turns the whole batch into a single 404 instead of N skipped rows.
+    if (dto.courseId) {
+      const course = await this.prisma.course.findUnique({
+        where: { id: dto.courseId },
+        select: { id: true },
+      });
+      if (!course) throw new NotFoundException('Course not found');
+    }
+    const courseId = dto.courseId ?? null;
+
+    // Step 1: resolve emails to existing AcademyUsers in one query.
+    // Anything that doesn't resolve falls through to the invite path
+    // (or `no_account` skip). Emails are normalized to lowercase before
+    // lookup since the unique constraint is case-sensitive but admin
+    // input commonly varies.
+    const normalizedEmails = (dto.emails ?? []).map((e) =>
+      e.trim().toLowerCase(),
+    );
+    const dedupedEmails = Array.from(new Set(normalizedEmails));
+
+    const usersByEmail = new Map<string, { id: string }>();
+    if (dedupedEmails.length) {
+      const found = await this.prisma.academyUser.findMany({
+        where: { email: { in: dedupedEmails } },
+        select: { id: true, email: true },
+      });
+      for (const u of found) {
+        usersByEmail.set(u.email.toLowerCase(), { id: u.id });
+      }
+    }
+
+    // Step 2: collect every userId we'll act on. UserIds can come
+    // pre-supplied OR from email resolution. Dedupe so a user passed
+    // both ways doesn't get processed twice.
+    const targetedUserIds = new Set<string>(dto.userIds ?? []);
+    const emailsThatResolved = new Set<string>();
+    for (const email of dedupedEmails) {
+      const u = usersByEmail.get(email);
+      if (u) {
+        targetedUserIds.add(u.id);
+        emailsThatResolved.add(email);
+      }
+    }
+
+    // Step 3: validate each userId actually exists. Drop the misses
+    // into the skipped list so the admin can spot the typo upstream.
+    const userIds = Array.from(targetedUserIds);
+    const validUsers = userIds.length
+      ? await this.prisma.academyUser.findMany({
+          where: { id: { in: userIds } },
+          select: { id: true },
+        })
+      : [];
+    const validUserIds = new Set(validUsers.map((u) => u.id));
+    for (const id of userIds) {
+      if (!validUserIds.has(id)) {
+        result.skipped.push({ userId: id, reason: 'user_not_found' });
+      }
+    }
+
+    // Step 4: load existing enrollments for the (user, course) pairs we
+    // care about so we can re-activate soft-revoked rows in place
+    // instead of failing the unique constraint.
+    const existing = validUsers.length
+      ? await this.prisma.academyEnrollment.findMany({
+          where: {
+            userId: { in: validUsers.map((u) => u.id) },
+            courseId,
+          },
+          select: {
+            id: true,
+            userId: true,
+            revokedAt: true,
+          },
+        })
+      : [];
+    const existingByUserId = new Map<
+      string,
+      { id: string; revokedAt: Date | null }
+    >();
+    for (const row of existing) {
+      existingByUserId.set(row.userId, {
+        id: row.id,
+        revokedAt: row.revokedAt,
+      });
+    }
+
+    // Step 5: write. One transaction per row keeps the failure surface
+    // narrow — a single bad row doesn't roll back the whole bulk.
+    for (const userId of validUserIds) {
+      const prior = existingByUserId.get(userId);
+      try {
+        if (prior && prior.revokedAt === null) {
+          result.alreadyEnrolled += 1;
+          continue;
+        }
+        if (prior) {
+          await this.prisma.academyEnrollment.update({
+            where: { id: prior.id },
+            data: {
+              revokedAt: null,
+              enrolledAt: new Date(),
+              grantedById: actorId,
+            },
+          });
+          result.granted += 1;
+          continue;
+        }
+        await this.prisma.academyEnrollment.create({
+          data: { userId, courseId, grantedById: actorId },
+        });
+        result.granted += 1;
+      } catch (err) {
+        // Race conditions (concurrent grants) hit the unique index;
+        // treat them as already-enrolled rather than crashing the batch.
+        if (
+          err instanceof Prisma.PrismaClientKnownRequestError &&
+          err.code === 'P2002'
+        ) {
+          result.skipped.push({ userId, reason: 'duplicate' });
+        } else {
+          throw err;
+        }
+      }
+    }
+
+    // Step 6: handle unresolved emails. With `inviteUnknownEmails: true`
+    // we mint a fresh AcademyInvitation per address; without it, they
+    // get a `no_account` skip so the admin can see who needs an invite.
+    const unresolvedEmails = dedupedEmails.filter(
+      (e) => !emailsThatResolved.has(e),
+    );
+    if (dto.inviteUnknownEmails) {
+      for (const email of unresolvedEmails) {
+        try {
+          await this.invitationsService.invite(
+            {
+              email,
+              // Conservative default: derive a name from the local part
+              // of the email so the invitation template has something
+              // human-readable. The student can edit it on accept.
+              name: deriveNameFromEmail(email),
+              initialCourseId: dto.courseId ?? null,
+            },
+            actorId,
+          );
+          result.invited += 1;
+        } catch {
+          result.skipped.push({ email, reason: 'invite_failed' });
+        }
+      }
+    } else {
+      for (const email of unresolvedEmails) {
+        result.skipped.push({ email, reason: 'no_account' });
+      }
+    }
+
+    return result;
   }
 
   // ── Student self-service ────────────────────────────────────────────
@@ -252,4 +442,21 @@ export class EnrollmentsService {
       // enroll click will recover.
     }
   }
+}
+
+/**
+ * Local-part-of-email → human-ish name fallback for bulk-invited
+ * accounts. "alice.gomez+work@example.com" ⇒ "Alice Gomez". The student
+ * can edit this on accept; we just need *something* the invitation
+ * template can address them by. Capitalisation is best-effort — Romanian
+ * diacritics in email locals are rare and round-trip cleanly here.
+ */
+function deriveNameFromEmail(email: string): string {
+  const local = email.split('@')[0] ?? email;
+  const cleaned = local.replace(/\+.*$/, '').replace(/[._-]+/g, ' ').trim();
+  if (!cleaned) return email;
+  return cleaned
+    .split(/\s+/)
+    .map((part) => part.charAt(0).toUpperCase() + part.slice(1).toLowerCase())
+    .join(' ');
 }

@@ -6,25 +6,18 @@ import { Mono, MonoTag } from "@/components/shared/mono";
 import { RowActions } from "@/components/shared/row-actions";
 
 export type County = ApiCounty & {
+  id: string;
   createdAt?: string;
   updatedAt?: string;
   cities?: { id: string }[];
 };
 
 interface BuildColumnsArgs {
-  scopeSet: Set<string>;
-  canEditScope: boolean;
-  toggleScopePending: boolean;
-  onToggleScope: (args: { slug: string; next: boolean }) => void;
   onDelete: (id: string) => void;
   t: (key: string, values?: Record<string, string>) => string;
 }
 
 export function buildCountyColumns({
-  scopeSet,
-  canEditScope,
-  toggleScopePending,
-  onToggleScope,
   onDelete,
   t,
 }: BuildColumnsArgs): ColumnDef<County, unknown>[] {
@@ -74,33 +67,6 @@ export function buildCountyColumns({
       cell: ({ row }) => (
         <Mono className="text-foreground">{row.original.propertyCount}</Mono>
       ),
-    },
-    {
-      id: "tgeScope",
-      header: t("columnTgeScope"),
-      enableSorting: false,
-      size: 64,
-      cell: ({ row }) => {
-        const slug = row.original.slug;
-        const checked = scopeSet.has(slug);
-        return (
-          <label
-            className="flex cursor-pointer items-center justify-center"
-            onClick={(e) => e.stopPropagation()}
-            aria-label={t("tgeScopeAria", { county: row.original.name })}
-          >
-            <input
-              type="checkbox"
-              checked={checked}
-              disabled={!canEditScope || toggleScopePending}
-              onChange={(e) =>
-                onToggleScope({ slug, next: e.target.checked })
-              }
-              className="size-3.5 rounded-sm border-border accent-[var(--color-copper)] disabled:cursor-not-allowed disabled:opacity-50"
-            />
-          </label>
-        );
-      },
     },
     {
       id: "actions",

@@ -8,13 +8,12 @@ import { ensureFound } from '../common/utils/ensure-found.util';
 import { ensureSlugUnique } from '../common/utils/ensure-slug-unique.util';
 import { paginate } from '../common/utils/pagination.util';
 import { toJson } from '../common/utils/prisma-json';
+import { applyDraftMode } from '../common/utils/entry-draft';
 import {
   SiteContext,
-  propertyGeoWhere,
-  resolveGeoScope,
+  propertyBrandWhere,
   scopedPropertiesInclude,
 } from '../common/site';
-import { SiteConfigService } from '../site-config/site-config.service';
 import type { CurrentUserPayload } from '../common/decorators/user.decorator';
 import {
   adminAgentSelect,
@@ -55,7 +54,6 @@ export class AgentsService {
   constructor(
     private prisma: PrismaService,
     private uploadsService: UploadsService,
-    private siteConfig: SiteConfigService,
   ) {}
 
   async findAll(
@@ -109,9 +107,7 @@ export class AgentsService {
       where.OR = or;
     }
 
-    const geo = propertyGeoWhere(
-      await resolveGeoScope(site, this.siteConfig),
-    );
+    const geo = propertyBrandWhere(site);
     // Top-level `select` (not `include`) so we can drop email/adminUserId
     // for untrusted callers without leaking them via Prisma's default
     // scalar projection.
@@ -194,9 +190,7 @@ export class AgentsService {
   ) {
     const trusted = force || isTrustedCaller(user);
     const baseSelect = trusted ? adminAgentSelect : publicAgentSelect;
-    const geo = propertyGeoWhere(
-      await resolveGeoScope(site, this.siteConfig),
-    );
+    const geo = propertyBrandWhere(site);
     return ensureFound(
       this.prisma.agent.findUnique({
         where: { id },
@@ -224,9 +218,7 @@ export class AgentsService {
   ) {
     const trusted = isTrustedCaller(user);
     const baseSelect = trusted ? adminAgentSelect : publicAgentSelect;
-    const geo = propertyGeoWhere(
-      await resolveGeoScope(site, this.siteConfig),
-    );
+    const geo = propertyBrandWhere(site);
     return ensureFound(
       this.prisma.agent.findUnique({
         where: { slug },
@@ -273,14 +265,16 @@ export class AgentsService {
     await this.ensureExists(id);
     const data: Prisma.AgentUpdateInput = {};
 
+    const { live, draft } = applyDraftMode(dto, ['bio'] as const, dto.mode);
+    if (live.bio !== undefined) data.bio = live.bio;
+    if (draft !== undefined) data.draft = draft;
+
     if (dto.slug !== undefined) data.slug = dto.slug;
     if (dto.firstName !== undefined) data.firstName = dto.firstName;
     if (dto.lastName !== undefined) data.lastName = dto.lastName;
     if (dto.email !== undefined) data.email = dto.email;
     if (dto.phone !== undefined) data.phone = dto.phone;
     if (dto.photo !== undefined) data.photo = dto.photo;
-    if (dto.bio !== undefined)
-      data.bio = toJson(dto.bio);
     if (dto.active !== undefined) data.active = dto.active;
 
     return this.prisma.agent.update({ where: { id }, data });

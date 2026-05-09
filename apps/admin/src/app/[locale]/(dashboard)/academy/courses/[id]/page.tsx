@@ -1,37 +1,34 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { useParams, notFound } from "next/navigation";
+import { useState } from "react";
+import { useParams, notFound, useRouter } from "next/navigation";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useLocale, useTranslations } from "next-intl";
-import { Button, Input } from "@tge/ui";
-import { GripVertical, Plus, Search, Trash2 } from "lucide-react";
 import {
-  DndContext,
-  KeyboardSensor,
-  PointerSensor,
-  closestCenter,
-  useSensor,
-  useSensors,
-  type DragEndEvent,
-} from "@dnd-kit/core";
-import {
-  SortableContext,
-  arrayMove,
-  sortableKeyboardCoordinates,
-  useSortable,
-  verticalListSortingStrategy,
-} from "@dnd-kit/sortable";
+  Button,
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  Input,
+  Label,
+  LoadingState,
+} from "@tge/ui";
+import { Copy, Plus, Search } from "lucide-react";
 import { apiClient, ApiError } from "@/lib/api-client";
-import { computeReadingTimeMinutes } from "@tge/types/utils/reading-time";
 import { toast } from "@/lib/toast";
 import { Link } from "@/i18n/navigation";
 import { Can } from "@/components/shared/can";
 import { DeleteDialog } from "@/components/shared/delete-dialog";
-import { Mono } from "@/components/shared/mono";
 import { PageHeader } from "@/components/shared/page-header";
-import { StatusBadge } from "@/components/shared/status-badge";
-import { LoadingState } from "@tge/ui";
+import { SectionCard } from "@/components/shared/section-card";
+import { StatTile } from "@/components/shared/stat-tile";
+import { Mono } from "@/components/shared/mono";
+import { ExportCsvButton } from "@/components/shared/export-csv-button";
+import { LessonsTable, type LessonsTableLesson } from "@/components/academy/lessons-table";
+import { AcademyProgressBar } from "@/components/academy/academy-progress-bar";
 import { pickTitle } from "@/lib/academy/pick-title";
 
 type Course = {
@@ -46,22 +43,25 @@ type Course = {
   _count: { lessons: number };
 };
 
-type Lesson = {
-  id: string;
-  slug: string;
-  order: number;
-  title: Record<string, string | undefined>;
-  content: Record<string, string | undefined>;
-  type: "text" | "video";
-  status: "draft" | "published" | "archived";
-  videoDurationSeconds: number | null;
-  publishedAt: string | null;
-};
+type LessonList = { data: LessonsTableLesson[]; meta: { total: number } };
 
-type LessonList = { data: Lesson[]; meta: { total: number } };
+type CourseStats = {
+  enrolledCount: number;
+  startedCount: number;
+  completedCount: number;
+  completionRate: number;
+  avgDaysToFirstCompletion: number | null;
+  totalPublishedLessons: number;
+  lessonCompletionDistribution: Array<{
+    lessonId: string;
+    slug: string;
+    completedCount: number;
+  }>;
+};
 
 export default function AcademyCourseDetailPage() {
   const params = useParams<{ id: string }>();
+  const router = useRouter();
   const locale = useLocale();
   const queryClient = useQueryClient();
   const t = useTranslations("Academy.courses");
@@ -70,6 +70,7 @@ export default function AcademyCourseDetailPage() {
   const tVisibility = useTranslations("Academy.visibilities");
   const tc = useTranslations("Common");
   const tt = useTranslations("Academy.toasts");
+  const tStats = useTranslations("Academy.courseStats");
 
   const courseQuery = useQuery({
     queryKey: ["academy-course", params.id],
@@ -89,23 +90,13 @@ export default function AcademyCourseDetailPage() {
       ),
   });
 
-  const [orderedLessons, setOrderedLessons] = useState<Lesson[]>([]);
-  useEffect(() => {
-    if (lessonsQuery.data) setOrderedLessons(lessonsQuery.data.data);
-  }, [lessonsQuery.data]);
+  const statsQuery = useQuery({
+    queryKey: ["academy-course-stats", params.id],
+    queryFn: () =>
+      apiClient<CourseStats>(`/admin/academy/courses/${params.id}/stats`),
+  });
 
   const [searchQuery, setSearchQuery] = useState("");
-  const trimmedQuery = searchQuery.trim().toLowerCase();
-  const isFiltered = trimmedQuery.length > 0;
-  const visibleLessons = isFiltered
-    ? orderedLessons.filter((lesson) => {
-        if (lesson.slug.toLowerCase().includes(trimmedQuery)) return true;
-        for (const value of Object.values(lesson.title)) {
-          if (value && value.toLowerCase().includes(trimmedQuery)) return true;
-        }
-        return false;
-      })
-    : orderedLessons;
 
   const publishMutation = useMutation({
     mutationFn: () =>
@@ -145,6 +136,34 @@ export default function AcademyCourseDetailPage() {
     },
   });
 
+  const [duplicateOpen, setDuplicateOpen] = useState(false);
+  const [duplicateSlug, setDuplicateSlug] = useState("");
+  const [duplicateCopyLessons, setDuplicateCopyLessons] = useState(true);
+  const duplicateMutation = useMutation({
+    mutationFn: () =>
+      apiClient<{ id: string }>(
+        `/admin/academy/courses/${params.id}/duplicate`,
+        {
+          method: "POST",
+          body: {
+            slug: duplicateSlug.trim(),
+            copyLessons: duplicateCopyLessons,
+          },
+        },
+      ),
+    onSuccess: (created) => {
+      queryClient.invalidateQueries({ queryKey: ["academy-courses"] });
+      toast.success(tt("courseDuplicated"));
+      setDuplicateOpen(false);
+      setDuplicateSlug("");
+      router.push(`/${locale}/academy/courses/${created.id}/edit`);
+    },
+    onError: (err) =>
+      toast.error(
+        err instanceof ApiError ? err.message : tt("courseDuplicateFailed"),
+      ),
+  });
+
   const [deleteLessonId, setDeleteLessonId] = useState<string | null>(null);
   const deleteLessonMutation = useMutation({
     mutationFn: (id: string) =>
@@ -167,24 +186,6 @@ export default function AcademyCourseDetailPage() {
       ),
   });
 
-  const sensors = useSensors(
-    useSensor(PointerSensor, { activationConstraint: { distance: 5 } }),
-    useSensor(KeyboardSensor, {
-      coordinateGetter: sortableKeyboardCoordinates,
-    }),
-  );
-
-  const onDragEnd = (event: DragEndEvent) => {
-    const { active, over } = event;
-    if (!over || active.id === over.id) return;
-    const oldIndex = orderedLessons.findIndex((l) => l.id === active.id);
-    const newIndex = orderedLessons.findIndex((l) => l.id === over.id);
-    if (oldIndex < 0 || newIndex < 0) return;
-    const next = arrayMove(orderedLessons, oldIndex, newIndex);
-    setOrderedLessons(next);
-    reorderMutation.mutate(next.map((l) => l.id));
-  };
-
   if (courseQuery.isLoading) {
     return <LoadingState label={tc("loading")} />;
   }
@@ -200,13 +201,14 @@ export default function AcademyCourseDetailPage() {
   const title = pickTitle(course.title, course.slug, locale);
   const description =
     course.description[locale] ?? course.description.ro ?? "";
+  const lessons = lessonsQuery.data?.data ?? [];
 
   return (
     <div className="space-y-6">
       <PageHeader
         title={title}
         description={t("detailSummary", {
-          lessonCount: orderedLessons.length,
+          lessonCount: lessons.length,
           status: tStatus(course.status),
           visibility: tVisibility(course.visibility),
         })}
@@ -230,6 +232,14 @@ export default function AcademyCourseDetailPage() {
                 ? t("unpublishAction")
                 : t("publishAction")}
             </Button>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setDuplicateOpen(true)}
+            >
+              <Copy className="mr-1.5 h-4 w-4" />
+              {t("duplicateAction")}
+            </Button>
             <Button asChild variant="outline" size="sm">
               <Link href={`/academy/courses/${course.id}/edit`}>
                 {t("editAction")}
@@ -242,6 +252,35 @@ export default function AcademyCourseDetailPage() {
       {description ? (
         <p className="max-w-3xl text-sm text-muted-foreground">{description}</p>
       ) : null}
+
+      <SectionCard
+        title={tStats("title")}
+        description={tStats("description")}
+        headerActions={
+          <Can action="academy.user.manage">
+            <ExportCsvButton
+              path={`/admin/academy/courses/${course.id}/enrollments.csv`}
+              label={tStats("exportEnrollments")}
+              variant="ghost"
+            />
+            <ExportCsvButton
+              path={`/admin/academy/courses/${course.id}/progress.csv`}
+              label={tStats("exportProgress")}
+              variant="ghost"
+            />
+          </Can>
+        }
+      >
+        {statsQuery.isLoading ? (
+          <LoadingState label={tc("loading")} />
+        ) : statsQuery.isError || !statsQuery.data ? (
+          <p className="text-sm text-muted-foreground">
+            {tStats("loadFailed")}
+          </p>
+        ) : (
+          <CourseStatsContent stats={statsQuery.data} />
+        )}
+      </SectionCard>
 
       <div className="flex items-center justify-between">
         <h2 className="text-lg font-semibold">{tLessons("heading")}</h2>
@@ -257,100 +296,26 @@ export default function AcademyCourseDetailPage() {
 
       <p className="-mt-4 text-xs text-muted-foreground">{tLessons("hint")}</p>
 
-      <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
-        <div className="relative w-full sm:max-w-sm">
-          <Search className="pointer-events-none absolute left-2.5 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-muted-foreground" />
-          <Input
-            type="search"
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            placeholder={tLessons("searchPlaceholder")}
-            className="h-8 pl-8 text-sm"
-            aria-label={tLessons("searchPlaceholder")}
-          />
-        </div>
-        {isFiltered ? (
-          <p className="text-xs text-muted-foreground">
-            {tLessons("reorderDisabledHint")}
-          </p>
-        ) : null}
+      <div className="relative w-full sm:max-w-sm">
+        <Search className="pointer-events-none absolute left-2.5 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-muted-foreground" />
+        <Input
+          type="search"
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+          placeholder={tLessons("searchPlaceholder")}
+          className="h-8 pl-8 text-sm"
+          aria-label={tLessons("searchPlaceholder")}
+        />
       </div>
 
-      {/*
-        DnD context sits OUTSIDE the table element. @dnd-kit renders a
-        hidden <div> accessibility live region as a child of DndContext;
-        nesting it between <table> and <tbody> is invalid HTML and triggers
-        a hydration mismatch. Wrapping the whole table keeps the useSortable
-        IDs reachable without that.
-      */}
-      <DndContext
-        sensors={sensors}
-        collisionDetection={closestCenter}
-        onDragEnd={onDragEnd}
-      >
-        <SortableContext
-          items={visibleLessons.map((l) => l.id)}
-          strategy={verticalListSortingStrategy}
-          // Disable sortable while a search filter is active — the filtered
-          // view doesn't represent the real order, so a drag would yield
-          // nonsense. The reorder endpoint also requires the full lesson
-          // sequence; partial reordering would 400.
-          disabled={isFiltered}
-        >
-          <div className="overflow-hidden rounded-md border border-border">
-            <table className="w-full text-sm">
-              <thead className="bg-muted text-left text-xs uppercase tracking-wider text-muted-foreground">
-                <tr>
-                  {!isFiltered ? (
-                    <th
-                      className="w-10 px-2 py-3"
-                      aria-label={tLessons("dragHandleAria")}
-                    />
-                  ) : null}
-                  <th className="w-12 px-4 py-3">{tLessons("columnPosition")}</th>
-                  <th className="px-4 py-3">{tLessons("columnTitle")}</th>
-                  <th className="px-4 py-3">{tLessons("columnType")}</th>
-                  <th className="px-4 py-3">{tLessons("columnDuration")}</th>
-                  <th className="px-4 py-3">{tLessons("columnStatus")}</th>
-                  <th className="w-10 px-2 py-3" aria-label={tLessons("actionsAria")} />
-                </tr>
-              </thead>
-              <tbody>
-                {visibleLessons.length === 0 ? (
-                  <tr>
-                    <td
-                      colSpan={isFiltered ? 6 : 7}
-                      className="px-4 py-6 text-center text-sm text-muted-foreground"
-                    >
-                      {isFiltered ? tLessons("searchEmpty") : tLessons("empty")}
-                    </td>
-                  </tr>
-                ) : (
-                  visibleLessons.map((lesson) => {
-                    // Position is the lesson's place in the FULL ordered
-                    // list, not the filtered view — so a search result
-                    // still shows "lesson 47" rather than reshuffled "1, 2, 3".
-                    const idx = orderedLessons.findIndex(
-                      (l) => l.id === lesson.id,
-                    );
-                    return (
-                      <SortableLessonRow
-                        key={lesson.id}
-                        lesson={lesson}
-                        index={idx}
-                        locale={locale}
-                        courseId={course.id}
-                        onDelete={() => setDeleteLessonId(lesson.id)}
-                        showDragHandle={!isFiltered}
-                      />
-                    );
-                  })
-                )}
-              </tbody>
-            </table>
-          </div>
-        </SortableContext>
-      </DndContext>
+      <LessonsTable
+        lessons={lessons}
+        searchQuery={searchQuery}
+        courseId={course.id}
+        isLoading={lessonsQuery.isLoading}
+        onReorder={(ids) => reorderMutation.mutate(ids)}
+        onDelete={(id) => setDeleteLessonId(id)}
+      />
 
       <DeleteDialog
         open={!!deleteLessonId}
@@ -362,125 +327,162 @@ export default function AcademyCourseDetailPage() {
         description={tLessons("deleteDescription")}
         loading={deleteLessonMutation.isPending}
       />
+
+      <Dialog
+        open={duplicateOpen}
+        onOpenChange={(open) => {
+          if (!open) setDuplicateSlug("");
+          setDuplicateOpen(open);
+        }}
+      >
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>{t("duplicateTitle")}</DialogTitle>
+            <DialogDescription>{t("duplicateDescription")}</DialogDescription>
+          </DialogHeader>
+          <div className="space-y-3 py-2">
+            <div>
+              <Label htmlFor="duplicate-slug">
+                {t("duplicateSlugLabel")}
+              </Label>
+              <Input
+                id="duplicate-slug"
+                value={duplicateSlug}
+                onChange={(e) => setDuplicateSlug(e.target.value)}
+                placeholder={`${course.slug}-copy`}
+                className="mt-1.5 font-mono"
+              />
+              <p className="mt-1.5 text-xs text-muted-foreground">
+                {t("duplicateSlugHelper")}
+              </p>
+            </div>
+            <label className="flex items-start gap-2 rounded-md border border-border p-3 text-sm">
+              <input
+                type="checkbox"
+                className="mt-1"
+                checked={duplicateCopyLessons}
+                onChange={(e) => setDuplicateCopyLessons(e.target.checked)}
+              />
+              <span>
+                <span className="font-medium">
+                  {t("duplicateCopyLessonsLabel")}
+                </span>
+                <span className="mt-0.5 block text-xs text-muted-foreground">
+                  {t("duplicateCopyLessonsHelper")}
+                </span>
+              </span>
+            </label>
+          </div>
+          <DialogFooter>
+            <Button
+              variant="outline"
+              onClick={() => setDuplicateOpen(false)}
+              disabled={duplicateMutation.isPending}
+            >
+              {tc("cancel")}
+            </Button>
+            <Button
+              onClick={() => duplicateMutation.mutate()}
+              disabled={
+                !duplicateSlug.trim() || duplicateMutation.isPending
+              }
+            >
+              {duplicateMutation.isPending
+                ? t("duplicateSubmitting")
+                : t("duplicateSubmit")}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
 
-function SortableLessonRow({
-  lesson,
-  index,
-  locale,
-  courseId,
-  onDelete,
-  showDragHandle,
-}: {
-  lesson: Lesson;
-  index: number;
-  locale: string;
-  courseId: string;
-  onDelete: () => void;
-  showDragHandle: boolean;
-}) {
-  const tLessons = useTranslations("Academy.lessons");
-  const tType = useTranslations("Academy.lessonTypes");
-  const {
-    attributes,
-    listeners,
-    setNodeRef,
-    transform,
-    transition,
-    isDragging,
-  } = useSortable({ id: lesson.id });
+function CourseStatsContent({ stats }: { stats: CourseStats }) {
+  const tStats = useTranslations("Academy.courseStats");
 
-  const style: React.CSSProperties = {
-    transform: transform
-      ? `translate3d(${Math.round(transform.x)}px, ${Math.round(transform.y)}px, 0)`
-      : undefined,
-    transition,
-    backgroundColor: isDragging ? "var(--color-muted)" : undefined,
-    opacity: isDragging ? 0.85 : 1,
-  };
+  // Derived caption for the average days tile — null when nobody has
+  // finished yet, otherwise the count of completers contributing to the
+  // average so admins can read the number with the right confidence.
+  const avgCaption =
+    stats.avgDaysToFirstCompletion === null
+      ? tStats("avgPending")
+      : tStats("avgFromCompleters", { count: stats.completedCount });
 
-  const title = pickTitle(lesson.title, lesson.slug, locale);
+  // Drop-off detection: any lesson where the completed count is < 50%
+  // of the highest gets a subtle warning highlight.
+  const peakCompletions = stats.lessonCompletionDistribution.reduce(
+    (max, l) => Math.max(max, l.completedCount),
+    0,
+  );
 
   return (
-    <tr
-      ref={setNodeRef}
-      style={style}
-      className="border-t border-border"
-      {...attributes}
-    >
-      {showDragHandle ? (
-        <td className="w-10 cursor-grab px-2 py-3 text-muted-foreground active:cursor-grabbing">
-          <button
-            type="button"
-            className="inline-flex h-6 w-6 items-center justify-center rounded hover:bg-muted"
-            aria-label={tLessons("dragRowAria", { position: index + 1 })}
-            {...listeners}
-          >
-            <GripVertical className="h-4 w-4" />
-          </button>
-        </td>
-      ) : null}
-      <td className="px-4 py-3">
-        <Mono className="text-muted-foreground">
-          {String(index + 1).padStart(2, "0")}
-        </Mono>
-      </td>
-      <td className="px-4 py-3">
-        <Link
-          href={`/academy/courses/${courseId}/lessons/${lesson.id}/edit`}
-          className="block font-medium hover:underline"
-        >
-          {title}
-        </Link>
-        <Mono className="block text-[11px] text-muted-foreground">
-          {lesson.slug}
-        </Mono>
-      </td>
-      <td className="px-4 py-3 text-xs text-foreground/80">
-        {tType(lesson.type)}
-      </td>
-      <td className="px-4 py-3">
-        {lesson.type === "text" ? (
-          <Mono>
-            {tLessons("readingTime", {
-              minutes: computeReadingTimeMinutes(
-                lesson.content?.[locale] ?? lesson.content?.ro ?? "",
-              ),
+    <>
+      <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+        <StatTile label={tStats("enrolled")} value={stats.enrolledCount} />
+        <StatTile label={tStats("started")} value={stats.startedCount} />
+        <StatTile
+          label={tStats("completed")}
+          value={stats.completedCount}
+          tone={stats.completedCount > 0 ? "success" : "default"}
+        />
+        <StatTile
+          label={tStats("rate")}
+          value={`${stats.completionRate}%`}
+          caption={
+            stats.avgDaysToFirstCompletion !== null
+              ? tStats("avgDays", {
+                  days: stats.avgDaysToFirstCompletion,
+                })
+              : avgCaption
+          }
+          tone={stats.completionRate >= 50 ? "success" : "default"}
+        />
+      </div>
+
+      {stats.lessonCompletionDistribution.length > 0 && (
+        <div className="mt-5">
+          <div className="mono text-[10px] font-semibold uppercase tracking-[0.08em] text-muted-foreground">
+            {tStats("perLessonDistribution")}
+          </div>
+          <ul className="mt-2 divide-y divide-border rounded-md border border-border">
+            {stats.lessonCompletionDistribution.map((l, idx) => {
+              const dropOff =
+                peakCompletions > 0 &&
+                l.completedCount < peakCompletions * 0.5;
+              return (
+                <li
+                  key={l.lessonId}
+                  className="flex items-center gap-3 px-3 py-2 text-xs"
+                >
+                  <Mono className="w-7 shrink-0 text-muted-foreground">
+                    {String(idx + 1).padStart(2, "0")}
+                  </Mono>
+                  <span className="min-w-0 flex-1 truncate font-mono text-[11px] text-muted-foreground">
+                    {l.slug}
+                  </span>
+                  <div className="w-32 shrink-0">
+                    <AcademyProgressBar
+                      completed={l.completedCount}
+                      total={Math.max(peakCompletions, 1)}
+                      hideCount
+                    />
+                  </div>
+                  <Mono
+                    className={
+                      dropOff
+                        ? "w-10 shrink-0 text-right text-[var(--color-warning)]"
+                        : "w-10 shrink-0 text-right text-foreground"
+                    }
+                  >
+                    {l.completedCount}
+                  </Mono>
+                </li>
+              );
             })}
-          </Mono>
-        ) : lesson.videoDurationSeconds != null ? (
-          <Mono>
-            {tLessons("videoDuration", {
-              minutes: Math.floor(lesson.videoDurationSeconds / 60),
-              seconds: String(lesson.videoDurationSeconds % 60).padStart(
-                2,
-                "0",
-              ),
-            })}
-          </Mono>
-        ) : (
-          <span className="text-muted-foreground">
-            {tLessons("durationNone")}
-          </span>
-        )}
-      </td>
-      <td className="px-4 py-3">
-        <StatusBadge status={lesson.status} />
-      </td>
-      <td className="w-10 px-2 py-3 text-right">
-        <Can action="academy.lesson.delete">
-          <button
-            type="button"
-            onClick={onDelete}
-            className="text-[var(--color-danger)] hover:underline"
-            aria-label={tLessons("deleteAria", { position: index + 1 })}
-          >
-            <Trash2 className="h-4 w-4" />
-          </button>
-        </Can>
-      </td>
-    </tr>
+          </ul>
+        </div>
+      )}
+    </>
   );
 }

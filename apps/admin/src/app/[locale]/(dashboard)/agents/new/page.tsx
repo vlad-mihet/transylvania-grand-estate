@@ -4,17 +4,17 @@ import { useEffect } from "react";
 import { useMutation } from "@tanstack/react-query";
 import { useTranslations } from "next-intl";
 
-import { useRouter } from "@/i18n/navigation";
+import { Link, useRouter } from "@/i18n/navigation";
 import { toast } from "@/lib/toast";
 import { apiClient } from "@/lib/api-client";
 import { usePermissions } from "@/components/auth/auth-provider";
 import { AgentForm } from "@/components/forms/agent-form";
-import { FormPageShell } from "@/components/resource/form-page-shell";
 import { AgentFormValues } from "@/lib/validations/agent";
 
 export default function NewAgentPage() {
   const router = useRouter();
   const t = useTranslations("Agents");
+  const tc = useTranslations("Common");
   const { can } = usePermissions();
 
   useEffect(() => {
@@ -56,13 +56,17 @@ export default function NewAgentPage() {
   if (!can("agent.create")) return null;
 
   return (
-    <FormPageShell title={t("newAgent")}>
-      <AgentForm
-        cancelHref="/agents"
-        onSubmit={(data, photo) => createMutation.mutate({ data, photo })}
-        loading={createMutation.isPending}
-        submissionError={createMutation.error}
-      />
-    </FormPageShell>
+    <AgentForm
+      cancelHref="/agents"
+      onSubmit={(data, photo) => createMutation.mutate({ data, photo })}
+      loading={createMutation.isPending}
+      submissionError={createMutation.error}
+      title={t("newAgent")}
+      breadcrumb={
+        <Link href="/agents" className="hover:text-foreground hover:underline">
+          {tc("back")}
+        </Link>
+      }
+    />
   );
 }

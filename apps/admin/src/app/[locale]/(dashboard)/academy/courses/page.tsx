@@ -3,8 +3,13 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useLocale, useTranslations } from "next-intl";
 import { useState } from "react";
-import { Button } from "@tge/ui";
-import { Trash2 } from "lucide-react";
+import {
+  Button,
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@tge/ui";
+import { Archive, Eye, RotateCcw, Trash2 } from "lucide-react";
 import { apiClient } from "@/lib/api-client";
 import { toast } from "@/lib/toast";
 import { Link } from "@/i18n/navigation";
@@ -104,6 +109,50 @@ export default function AcademyCoursesPage() {
     onError: () => toast.error(tt("courseDeleteFailed")),
   });
 
+  const setStatusMutation = useMutation({
+    mutationFn: ({
+      id,
+      status,
+    }: {
+      id: string;
+      status: "draft" | "published" | "archived";
+    }) =>
+      apiClient(`/admin/academy/courses/${id}`, {
+        method: "PATCH",
+        body: { status },
+      }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["academy-courses"] });
+      toast.success(tt("courseStatusUpdated"));
+    },
+    onError: () => toast.error(tt("courseStatusFailed")),
+  });
+
+  const bulkSetStatusMutation = useMutation({
+    mutationFn: async ({
+      ids,
+      status,
+    }: {
+      ids: string[];
+      status: "draft" | "published" | "archived";
+    }) => {
+      await Promise.all(
+        ids.map((id) =>
+          apiClient(`/admin/academy/courses/${id}`, {
+            method: "PATCH",
+            body: { status },
+          }),
+        ),
+      );
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["academy-courses"] });
+      toast.success(tt("courseStatusUpdated"));
+      list.clearSelection();
+    },
+    onError: () => toast.error(tt("courseStatusFailed")),
+  });
+
   const toggleStatus = (status: StatusFilter) => {
     setStatusFilters((prev) => {
       const next = new Set(prev);
@@ -167,25 +216,102 @@ export default function AcademyCoursesPage() {
     {
       id: "actions",
       header: "",
-      size: 64,
+      size: 120,
       enableSorting: false,
-      cell: ({ row }) => (
-        <Can action="academy.course.delete">
-          <button
-            type="button"
-            onClick={(e) => {
-              e.stopPropagation();
-              setDeleteId(row.original.id);
-            }}
-            className="text-[var(--color-danger)] hover:underline"
-            aria-label={t("deleteAriaLabel", {
-              title: pickTitle(row.original.title, row.original.slug, locale),
-            })}
+      cell: ({ row }) => {
+        const courseTitle = pickTitle(
+          row.original.title,
+          row.original.slug,
+          locale,
+        );
+        const status = row.original.status;
+        return (
+          <div
+            className="flex justify-end gap-1"
+            onClick={(e) => e.stopPropagation()}
           >
-            <Trash2 className="h-4 w-4" />
-          </button>
-        </Can>
-      ),
+            <Can action="academy.course.update">
+              {status === "draft" ? (
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Button
+                      variant="ghost"
+                      size="icon-sm"
+                      onClick={() =>
+                        setStatusMutation.mutate({
+                          id: row.original.id,
+                          status: "published",
+                        })
+                      }
+                      disabled={setStatusMutation.isPending}
+                      aria-label={t("publishAria", { title: courseTitle })}
+                    >
+                      <Eye className="text-[var(--color-success)]" />
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent>{t("publishAction")}</TooltipContent>
+                </Tooltip>
+              ) : status === "published" ? (
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Button
+                      variant="ghost"
+                      size="icon-sm"
+                      onClick={() =>
+                        setStatusMutation.mutate({
+                          id: row.original.id,
+                          status: "archived",
+                        })
+                      }
+                      disabled={setStatusMutation.isPending}
+                      aria-label={t("archiveAria", { title: courseTitle })}
+                    >
+                      <Archive className="text-muted-foreground" />
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent>{t("archiveAction")}</TooltipContent>
+                </Tooltip>
+              ) : (
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Button
+                      variant="ghost"
+                      size="icon-sm"
+                      onClick={() =>
+                        setStatusMutation.mutate({
+                          id: row.original.id,
+                          status: "draft",
+                        })
+                      }
+                      disabled={setStatusMutation.isPending}
+                      aria-label={t("restoreAria", { title: courseTitle })}
+                    >
+                      <RotateCcw className="text-muted-foreground" />
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent>{t("restoreAction")}</TooltipContent>
+                </Tooltip>
+              )}
+            </Can>
+            <Can action="academy.course.delete">
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button
+                    variant="ghost"
+                    size="icon-sm"
+                    onClick={() => setDeleteId(row.original.id)}
+                    aria-label={t("deleteAriaLabel", { title: courseTitle })}
+                    className="text-destructive hover:bg-destructive/10 hover:text-destructive"
+                  >
+                    <Trash2 />
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent>{tc("delete")}</TooltipContent>
+              </Tooltip>
+            </Can>
+          </div>
+        );
+      },
     },
   ];
 
@@ -247,18 +373,54 @@ export default function AcademyCoursesPage() {
           </Can>
         }
         bulkActions={(selection) => (
-          <Can action="academy.course.delete">
-            <Button
-              variant="outline"
-              size="sm"
-              className="text-[var(--color-danger)] border-[color-mix(in_srgb,var(--color-danger)_30%,var(--border))] hover:bg-[var(--color-danger-bg)]"
-              onClick={() => setBulkDeleteOpen(true)}
-              disabled={selection.size === 0}
-            >
-              <Trash2 className="mr-1.5 h-3.5 w-3.5" />
-              {t("bulkDelete")}
-            </Button>
-          </Can>
+          <>
+            <Can action="academy.course.update">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() =>
+                  bulkSetStatusMutation.mutate({
+                    ids: Array.from(selection),
+                    status: "published",
+                  })
+                }
+                disabled={
+                  selection.size === 0 || bulkSetStatusMutation.isPending
+                }
+              >
+                <Eye className="mr-1.5 h-3.5 w-3.5" />
+                {t("bulkPublish")}
+              </Button>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() =>
+                  bulkSetStatusMutation.mutate({
+                    ids: Array.from(selection),
+                    status: "archived",
+                  })
+                }
+                disabled={
+                  selection.size === 0 || bulkSetStatusMutation.isPending
+                }
+              >
+                <Archive className="mr-1.5 h-3.5 w-3.5" />
+                {t("bulkArchive")}
+              </Button>
+            </Can>
+            <Can action="academy.course.delete">
+              <Button
+                variant="outline"
+                size="sm"
+                className="text-[var(--color-danger)] border-[color-mix(in_srgb,var(--color-danger)_30%,var(--border))] hover:bg-[var(--color-danger-bg)]"
+                onClick={() => setBulkDeleteOpen(true)}
+                disabled={selection.size === 0}
+              >
+                <Trash2 className="mr-1.5 h-3.5 w-3.5" />
+                {t("bulkDelete")}
+              </Button>
+            </Can>
+          </>
         )}
       />
 

@@ -32,12 +32,11 @@ export class AuditController {
     private auditHealth: AuditHealthService,
   ) {}
 
-  @Roles(
-    AdminRole.SUPER_ADMIN,
-    AdminRole.ADMIN,
-    AdminRole.EDITOR,
-    AdminRole.AGENT,
-  )
+  // AGENT removed from the global firehose: an AGENT only ever needs audit
+  // for their own profile or the properties they own, both of which are
+  // reachable via /audit-logs/by-entity below. The global list is reserved
+  // for ADMIN+, who manage cross-entity audit reads.
+  @Roles(AdminRole.SUPER_ADMIN, AdminRole.ADMIN, AdminRole.EDITOR)
   @Get()
   async findAll(
     @CurrentUser() user: CurrentUserPayload | null,

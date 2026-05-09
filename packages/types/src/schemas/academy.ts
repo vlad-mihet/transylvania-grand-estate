@@ -6,6 +6,7 @@ import {
   LessonStatus,
 } from "@prisma/client";
 import {
+  entryModeSchema,
   lessonEmbedUrlSchema,
   localizedStringSchema,
   paginationSchema,
@@ -47,6 +48,7 @@ export const updateCourseSchema = createCourseSchema
   .extend({
     status: z.nativeEnum(CourseStatus).optional(),
     publishedAt: z.string().datetime().nullable().optional(),
+    mode: entryModeSchema,
   })
   .strict();
 
@@ -57,9 +59,25 @@ export const queryCourseSchema = paginationSchema.extend({
   sort: z.enum(["order", "newest", "oldest"]).optional(),
 });
 
+/**
+ * Clone an existing course (and optionally its lessons) into a fresh
+ * draft. Use case: editor wants to author a new course that mirrors the
+ * structure of an existing one without rebuilding from scratch. Copies
+ * localized fields + the `draft` JSON column verbatim; cover image is
+ * referenced (not duplicated) since the storage path is per-course-id
+ * and the next image upload on the clone will point to its own path.
+ */
+export const duplicateCourseSchema = z
+  .object({
+    slug: slugSchema,
+    copyLessons: z.boolean().optional(),
+  })
+  .strict();
+
 export type CreateCourseInput = z.infer<typeof createCourseSchema>;
 export type UpdateCourseInput = z.infer<typeof updateCourseSchema>;
 export type QueryCourseInput = z.infer<typeof queryCourseSchema>;
+export type DuplicateCourseInput = z.infer<typeof duplicateCourseSchema>;
 
 // ─── Lesson ─────────────────────────────────────────────
 
@@ -99,6 +117,7 @@ export const updateLessonSchema = createLessonSchema
   .extend({
     status: z.nativeEnum(LessonStatus).optional(),
     publishedAt: z.string().datetime().nullable().optional(),
+    mode: entryModeSchema,
   })
   .strict();
 
@@ -138,6 +157,41 @@ export const queryLessonSchema = paginationSchema.extend({
 export type CreateLessonInput = z.infer<typeof createLessonSchema>;
 export type UpdateLessonInput = z.infer<typeof updateLessonSchema>;
 export type QueryLessonInput = z.infer<typeof queryLessonSchema>;
+
+// ─── Lesson attachments ─────────────────────────────────
+
+/**
+ * Per-lesson downloadable file (PDF, ZIP, slide deck, etc.). The
+ * student lesson endpoint returns these inline so the lesson page
+ * stays one round-trip; the admin attachments controller manages the
+ * write side. `downloadUrl` is short-lived when the storage backend is
+ * R2 (signed URL); local-dev returns a stable static path.
+ */
+export type LessonAttachmentSummary = {
+  id: string;
+  filename: string;
+  mimeType: string;
+  sizeBytes: number;
+  downloadUrl: string;
+  sortOrder: number;
+  createdAt: string;
+};
+
+/**
+ * Atomic reorder of all attachments on a lesson. Same discipline as
+ * `reorderLessonsSchema`: client sends the full ordered sequence of
+ * attachment ids and the server rewrites `sortOrder` accordingly. The
+ * cap matches `ATTACHMENTS_PER_LESSON_CAP` on the API side.
+ */
+export const reorderLessonAttachmentsSchema = z
+  .object({
+    attachmentIds: z.array(z.string().uuid()).min(1).max(10),
+  })
+  .strict();
+
+export type ReorderLessonAttachmentsInput = z.infer<
+  typeof reorderLessonAttachmentsSchema
+>;
 
 /**
  * Bulk reorder for lessons inside a course. The full ordered sequence of
@@ -181,8 +235,68 @@ export const listEnrollmentsSchema = paginationSchema.extend({
     .optional(),
 });
 
+/**
+ * Bulk-grant access to one course (or wildcard) for many students at
+ * once. Two complementary inputs — `userIds` are pre-resolved IDs from
+ * the admin's student list selection; `emails` come from a pasted CSV
+ * or text blob. With `inviteUnknownEmails: true`, addresses without an
+ * existing AcademyUser get a fresh invitation; with false they're
+ * skipped with reason "no_account". Hard cap of 500 total entries to
+ * keep request latency bounded; admins doing larger bulk imports
+ * should split the operation.
+ */
+export const bulkGrantEnrollmentSchema = z
+  .object({
+    courseId: z.string().uuid().nullable(),
+    userIds: z.array(z.string().uuid()).max(500).optional(),
+    emails: z.array(z.string().email().max(200)).max(500).optional(),
+    inviteUnknownEmails: z.boolean().optional(),
+  })
+  .strict()
+  .refine(
+    (data) =>
+      (data.userIds?.length ?? 0) + (data.emails?.length ?? 0) > 0,
+    {
+      message: "Provide at least one userId or email",
+      path: ["userIds"],
+    },
+  )
+  .refine(
+    (data) =>
+      (data.userIds?.length ?? 0) + (data.emails?.length ?? 0) <= 500,
+    {
+      message: "Combined userIds + emails must be ≤ 500",
+      path: ["emails"],
+    },
+  );
+
 export type GrantEnrollmentInput = z.infer<typeof grantEnrollmentSchema>;
 export type ListEnrollmentsInput = z.infer<typeof listEnrollmentsSchema>;
+export type BulkGrantEnrollmentInput = z.infer<
+  typeof bulkGrantEnrollmentSchema
+>;
+
+/**
+ * Per-row outcome envelope returned by the bulk endpoint. Counts cover
+ * the happy paths (granted, already-enrolled, invited); `skipped`
+ * carries the rest with a structured reason so the admin UI can render
+ * a useful "what went wrong" table.
+ */
+export type BulkGrantEnrollmentResult = {
+  granted: number;
+  alreadyEnrolled: number;
+  invited: number;
+  skipped: Array<{
+    email?: string;
+    userId?: string;
+    reason:
+      | "no_account"
+      | "user_not_found"
+      | "course_not_found"
+      | "invite_failed"
+      | "duplicate";
+  }>;
+};
 
 // ─── Academy user (admin-facing management) ─────────────
 
@@ -215,8 +329,20 @@ export const updateAcademyUserSchema = z
   })
   .strict();
 
+/**
+ * Soft-disable an AcademyUser account. Optional `reason` is stored
+ * verbatim on the user row for audit and surfaced to the student on
+ * subsequent login attempts so they know who to contact.
+ */
+export const suspendAcademyUserSchema = z
+  .object({
+    reason: z.string().max(500).optional(),
+  })
+  .strict();
+
 export type ListAcademyUsersInput = z.infer<typeof listAcademyUsersSchema>;
 export type UpdateAcademyUserInput = z.infer<typeof updateAcademyUserSchema>;
+export type SuspendAcademyUserInput = z.infer<typeof suspendAcademyUserSchema>;
 
 // ─── Invitation (admin issues, student accepts) ──────────
 
@@ -498,6 +624,116 @@ export type AcademyLessonSummary = {
   completed?: boolean;
 };
 
+// ─── Admin reporting (academy overview) ──────────────────
+
+/**
+ * Academy section landing dashboard. Single endpoint hits a handful of
+ * cheap aggregations and returns one envelope so the page is one
+ * round-trip. `recentActivity` is intentionally short (max 20) — the
+ * dashboard is a glance surface, not an audit log.
+ */
+export type AcademyOverview = {
+  mau30d: number;
+  activeEnrollments: number;
+  newStudentsLast7d: number;
+  pendingInvitations: number;
+  topCoursesByCompletion: Array<{
+    courseId: string;
+    slug: string;
+    title: Record<"ro" | "en" | "fr" | "de", string | undefined>;
+    completedCount: number;
+    enrolledCount: number;
+    completionRate: number;
+  }>;
+  recentActivity: Array<{
+    studentId: string;
+    studentName: string;
+    kind: "started" | "completed";
+    courseId: string;
+    courseSlug: string;
+    courseTitle: Record<"ro" | "en" | "fr" | "de", string | undefined>;
+    lessonId: string;
+    lessonSlug: string;
+    at: string;
+  }>;
+};
+
+// ─── Admin reporting (course stats) ──────────────────────
+
+/**
+ * Course-level completion rollup for the admin course detail page.
+ * `enrolledCount` counts distinct AcademyUsers reachable by either an
+ * active wildcard enrollment or an active per-course enrollment. Started
+ * users have at least one `LessonProgress` row in the course; completed
+ * users have a `completedAt`-stamped row for every currently-published
+ * lesson. `avgDaysToFirstCompletion` is null when no user has fully
+ * completed the course (otherwise: average days from earliest
+ * `startedAt` to latest `completedAt`, rounded to 1 decimal).
+ */
+export type AcademyCourseStats = {
+  enrolledCount: number;
+  startedCount: number;
+  completedCount: number;
+  /** 0..100 integer. 0 when enrolledCount is 0. */
+  completionRate: number;
+  avgDaysToFirstCompletion: number | null;
+  totalPublishedLessons: number;
+  lessonCompletionDistribution: Array<{
+    lessonId: string;
+    slug: string;
+    completedCount: number;
+  }>;
+};
+
+// ─── Admin reporting (per-student progress) ───────────────
+
+/**
+ * One row per course the student has access to. Wildcard enrollments
+ * expand into every published course; per-course enrollments contribute
+ * a single row each. Drives the "Enrollments" section on the admin
+ * student-detail page so an admin can see at a glance which courses a
+ * student is making progress on without clicking into each one.
+ *
+ * `firstSeenAt` / `lastCompletedAt` are derived from the user's
+ * `LessonProgress` rows for that course. `enrollmentId` is null for
+ * rows surfaced by a wildcard (no per-course row exists yet); per-course
+ * grants carry their enrollment id so the admin can revoke just one
+ * row without touching the wildcard.
+ */
+export type AcademyStudentProgressRow = {
+  courseId: string;
+  slug: string;
+  title: Record<"ro" | "en" | "fr" | "de", string | undefined>;
+  totalLessons: number;
+  completedLessons: number;
+  /** 0..100, integer. 0 when totalLessons is 0. */
+  completionRate: number;
+  lastSeenAt: string | null;
+  resumeLessonSlug: string | null;
+  firstSeenAt: string | null;
+  lastCompletedAt: string | null;
+  /** Whether the row was surfaced by a wildcard enrollment. */
+  viaWildcard: boolean;
+  /** The per-course enrollment id, if any. Null on wildcard rows. */
+  enrollmentId: string | null;
+};
+
+/**
+ * Per-lesson progress state for a single (student, course) pair. Used
+ * by the admin "View detailed progress" disclosure on the student-detail
+ * page to show which lessons have been started/completed and when.
+ */
+export type AcademyStudentLessonState = {
+  lessonId: string;
+  slug: string;
+  title: Record<"ro" | "en" | "fr" | "de", string | undefined>;
+  order: number;
+  status: "draft" | "published" | "archived";
+  startedAt: string | null;
+  completedAt: string | null;
+  lastSeenAt: string | null;
+};
+
 export type AcademyLessonDetail = AcademyLessonSummary & {
   // Raw markdown source for one locale, chosen by the API from the
   // requested `Accept-Language` header with fallback to `ro`. The client
@@ -514,4 +750,8 @@ export type AcademyLessonDetail = AcademyLessonSummary & {
   completedAt: string | null;
   prev: { slug: string; localizedTitle: string } | null;
   next: { slug: string; localizedTitle: string } | null;
+  // Downloadable attachments (PDFs, slide decks, etc.) admin-attached to
+  // this lesson. Returned ordered by sortOrder ascending. Empty array
+  // when the lesson has no attachments.
+  attachments: LessonAttachmentSummary[];
 };

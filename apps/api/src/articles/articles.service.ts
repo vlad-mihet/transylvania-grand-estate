@@ -8,6 +8,7 @@ import { paginate } from '../common/utils/pagination.util';
 import { ensureFound } from '../common/utils/ensure-found.util';
 import { ensureSlugUnique } from '../common/utils/ensure-slug-unique.util';
 import { toJson } from '../common/utils/prisma-json';
+import { applyDraftMode } from '../common/utils/entry-draft';
 
 @Injectable()
 export class ArticlesService {
@@ -56,6 +57,23 @@ export class ArticlesService {
     );
   }
 
+  /**
+   * Editor-only read used by the admin edit page to pre-populate the form
+   * (including any pending `draft` snapshot). The PrismaService applies a
+   * default `omit: { draft: true }` for every model with a draft column;
+   * this method opts back in with `omit: { draft: false }` so the editor
+   * sees the unpublished snapshot.
+   */
+  async findBySlugForEditor(slug: string) {
+    return ensureFound(
+      this.prisma.article.findUnique({
+        where: { slug },
+        omit: { draft: false },
+      }),
+      'Article',
+    );
+  }
+
   async create(dto: CreateArticleDto) {
     await ensureSlugUnique(dto.slug, 'Article', (slug) =>
       this.prisma.article.findUnique({
@@ -85,13 +103,18 @@ export class ArticlesService {
     await this.ensureExists(id);
     const data: Prisma.ArticleUpdateInput = {};
 
+    // Localized fields go through the draft/publish split.
+    const { live, draft } = applyDraftMode(
+      dto,
+      ['title', 'excerpt', 'content'] as const,
+      dto.mode,
+    );
+    if (live.title !== undefined) data.title = live.title;
+    if (live.excerpt !== undefined) data.excerpt = live.excerpt;
+    if (live.content !== undefined) data.content = live.content;
+    if (draft !== undefined) data.draft = draft;
+
     if (dto.slug !== undefined) data.slug = dto.slug;
-    if (dto.title !== undefined)
-      data.title = toJson(dto.title);
-    if (dto.excerpt !== undefined)
-      data.excerpt = toJson(dto.excerpt);
-    if (dto.content !== undefined)
-      data.content = toJson(dto.content);
     if (dto.coverImage !== undefined) data.coverImage = dto.coverImage;
     if (dto.category !== undefined) data.category = dto.category;
     if (dto.tags !== undefined)

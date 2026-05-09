@@ -21,6 +21,7 @@ import { UploadsModule } from './uploads/uploads.module';
 import { InquiriesModule } from './inquiries/inquiries.module';
 import { ArticlesModule } from './articles/articles.module';
 import { AcademyModule } from './academy/academy.module';
+import { AdminContentModule } from './admin/content/admin-content.module';
 import { CountiesModule } from './counties/counties.module';
 import { LocationsModule } from './locations/locations.module';
 import { FinancialDataModule } from './financial-data/financial-data.module';
@@ -160,6 +161,7 @@ const serveStaticModules =
     InquiriesModule,
     ArticlesModule,
     AcademyModule,
+    AdminContentModule,
     CountiesModule,
     LocationsModule,
     FinancialDataModule,

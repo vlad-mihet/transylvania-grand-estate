@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { localizedStringSchema, slugSchema } from "./_primitives";
+import { entryModeSchema, localizedStringSchema, slugSchema } from "./_primitives";
 
 /**
  * Agent — a broker/salesperson attached to properties. Mirrors
@@ -18,7 +18,10 @@ export const createAgentSchema = z
   })
   .strict();
 
-export const updateAgentSchema = createAgentSchema.partial();
+export const updateAgentSchema = createAgentSchema
+  .partial()
+  .extend({ mode: entryModeSchema })
+  .strict();
 
 export type CreateAgentInput = z.infer<typeof createAgentSchema>;
 export type UpdateAgentInput = z.infer<typeof updateAgentSchema>;

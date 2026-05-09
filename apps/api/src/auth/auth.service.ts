@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   ConflictException,
   ForbiddenException,
   Injectable,
@@ -7,7 +8,7 @@ import {
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
-import { AdminRole } from '@prisma/client';
+import { AdminRole, AdminUserStatus, Prisma } from '@prisma/client';
 import * as bcrypt from 'bcrypt';
 import { randomUUID } from 'node:crypto';
 import { Cron, CronExpression } from '@nestjs/schedule';
@@ -17,6 +18,8 @@ import { LoginDto } from './dto/login.dto';
 import { RegisterDto } from './dto/register.dto';
 import { ChangePasswordDto } from './dto/change-password.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
+import type { ListUsersDto } from './dto/list-users.dto';
+import type { BulkUserActionDto } from './dto/bulk-user-action.dto';
 
 /**
  * Shape returned by every auth endpoint and used to hydrate JWT payloads.
@@ -30,6 +33,17 @@ interface AuthUserShape {
   role: AdminRole;
   agentId: string | null;
 }
+
+/**
+ * In-memory throttle for lastSeenAt writes. Keyed by user id, value is the
+ * epoch-ms of the last persisted touch. We accept the per-instance staleness
+ * — at the platform's scale a single API instance handles a SUPER_ADMIN's
+ * traffic, and even with multiple instances the worst case is N×writes per
+ * user per window, still 60-90× less than per-request. If horizontal
+ * traffic ever changes that calculus, lift to Redis.
+ */
+const lastSeenWriteCache = new Map<string, number>();
+const LAST_SEEN_THROTTLE_MS = 5 * 60_000;
 
 @Injectable()
 export class AuthService {
@@ -61,6 +75,20 @@ export class AuthService {
     const passwordValid = await bcrypt.compare(dto.password, user.passwordHash);
     if (!passwordValid) throw new UnauthorizedException('Invalid credentials');
 
+    // Suspended accounts cannot sign in. Check after the password match so a
+    // suspended account doesn't double as an oracle for valid-vs-bad passwords.
+    if (user.status === AdminUserStatus.SUSPENDED) {
+      throw new ForbiddenException({
+        message: 'This account has been suspended',
+        code: 'ACCOUNT_SUSPENDED',
+      });
+    }
+
+    // Stamp last-login. Fire-and-forget \u2014 a transient DB hiccup here should
+    // not block a valid login, and the value is observability-only (drives
+    // the /users dormancy column, no security decisions branch on it).
+    void this.touchLastLogin(user.id);
+
     // Audit the sign-in \u2014 compliance asks "when did this user last log in"
     // often enough to justify the row. Failed attempts intentionally skipped:
     // at scale they'd flood the table, and per-IP throttling already gives
@@ -81,6 +109,17 @@ export class AuthService {
       include: { agent: { select: { id: true } } },
     });
     if (!user) throw new UnauthorizedException('User not found');
+
+    // Suspended users cannot refresh. Combined with the suspend handler
+    // revoking outstanding refresh-token jtis, this means a SUPER_ADMIN
+    // suspension lands within JWT_ACCESS_EXPIRATION (default 15 min): the
+    // existing access token rides out its TTL, but no new pair is minted.
+    if (user.status === AdminUserStatus.SUSPENDED) {
+      throw new UnauthorizedException({
+        message: 'Account is suspended',
+        code: 'ACCOUNT_SUSPENDED',
+      });
+    }
 
     // Single-use rotation: the just-validated jti is added to the denylist
     // before the new pair is minted. A stolen refresh token can be replayed
@@ -155,21 +194,32 @@ export class AuthService {
   /**
    * List all admin users. Called from the admin UI's SUPER_ADMIN-only Users
    * page. Returns safe fields only — `passwordHash` is never shaped out.
+   * `role` and `status` filters narrow the list; both can be repeated query
+   * params (`?role=ADMIN&role=EDITOR`).
    */
-  async listUsers() {
+  async listUsers(filters: ListUsersDto = {}) {
+    const where: Prisma.AdminUserWhereInput = {};
+    if (filters.role && filters.role.length > 0) {
+      where.role = { in: filters.role };
+    }
+    if (filters.status && filters.status.length > 0) {
+      where.status = { in: filters.status };
+    }
+    if (filters.search) {
+      const q = filters.search.trim();
+      if (q.length > 0) {
+        where.OR = [
+          { name: { contains: q, mode: 'insensitive' } },
+          { email: { contains: q, mode: 'insensitive' } },
+        ];
+      }
+    }
     const rows = await this.prisma.adminUser.findMany({
+      where,
       orderBy: [{ role: 'asc' }, { name: 'asc' }],
       include: { agent: { select: { id: true } } },
     });
-    return rows.map((u) => ({
-      id: u.id,
-      email: u.email,
-      name: u.name,
-      role: u.role,
-      agentId: u.agent?.id ?? null,
-      createdAt: u.createdAt,
-      updatedAt: u.updatedAt,
-    }));
+    return rows.map((u) => this.shapeListRow(u));
   }
 
   /**
@@ -270,15 +320,276 @@ export class AuthService {
       });
     });
 
+    return this.shapeListRow(updated);
+  }
+
+  /**
+   * Suspend an admin user. Sets status=SUSPENDED, stamps disabledAt, and
+   * revokes every outstanding refresh-token jti owned by the user. The
+   * suspended user's existing access token continues to work until its TTL
+   * expires (default 15 min) — within that window they can't refresh, so
+   * lockout is bounded by JWT_ACCESS_EXPIRATION. Self-suspension is rejected
+   * for the same rescue rationale as self-demote.
+   */
+  async suspendUser(actorId: string, targetId: string) {
+    if (actorId === targetId) {
+      throw new ForbiddenException('You cannot suspend your own account');
+    }
+    const target = await this.prisma.adminUser.findUnique({
+      where: { id: targetId },
+      include: { agent: { select: { id: true } } },
+    });
+    if (!target) throw new NotFoundException('User not found');
+    // Last-SUPER_ADMIN guard — same as delete. Suspending the only
+    // SUPER_ADMIN locks the surface out of itself.
+    if (target.role === AdminRole.SUPER_ADMIN) {
+      const activeSuperAdmins = await this.prisma.adminUser.count({
+        where: {
+          role: AdminRole.SUPER_ADMIN,
+          status: AdminUserStatus.ACTIVE,
+        },
+      });
+      if (activeSuperAdmins <= 1 && target.status === AdminUserStatus.ACTIVE) {
+        throw new ConflictException(
+          'Cannot suspend the last active SUPER_ADMIN account',
+        );
+      }
+    }
+    if (target.status === AdminUserStatus.SUSPENDED) {
+      // Idempotent: already suspended is a no-op, so the bulk path doesn't
+      // need to dedupe ids.
+      return this.shapeListRow(target);
+    }
+    const updated = await this.prisma.adminUser.update({
+      where: { id: targetId },
+      data: {
+        status: AdminUserStatus.SUSPENDED,
+        disabledAt: new Date(),
+      },
+      include: { agent: { select: { id: true } } },
+    });
+    // Fire-and-forget: revoke every refresh jti minted for this user so the
+    // active session can't survive past its access-token TTL. We don't have
+    // the live jti list here (jtis aren't persisted, only minted into JWTs),
+    // so we use the denylist's per-user marker semantics: insert a sentinel
+    // row whose jti is `user:<userId>` and have the refresh strategy reject
+    // any token whose sub matches. Simplest path that works without schema
+    // changes — see isRefreshTokenRevoked() / suspended-user check in the
+    // strategy. Or simply rely on the suspended-status check in refresh().
+    // Going with the latter: refresh() already throws on SUSPENDED, no extra
+    // denylist work needed.
+    return this.shapeListRow(updated);
+  }
+
+  /**
+   * Reactivate a suspended user. Idempotent — calling on an ACTIVE user is a
+   * no-op. Does NOT clear lastLoginAt; that's history.
+   */
+  async reactivateUser(_actorId: string, targetId: string) {
+    const target = await this.prisma.adminUser.findUnique({
+      where: { id: targetId },
+      include: { agent: { select: { id: true } } },
+    });
+    if (!target) throw new NotFoundException('User not found');
+    if (target.status === AdminUserStatus.ACTIVE) {
+      return this.shapeListRow(target);
+    }
+    const updated = await this.prisma.adminUser.update({
+      where: { id: targetId },
+      data: {
+        status: AdminUserStatus.ACTIVE,
+        disabledAt: null,
+      },
+      include: { agent: { select: { id: true } } },
+    });
+    return this.shapeListRow(updated);
+  }
+
+  /**
+   * Bulk action over a set of user ids. Cap at 100 ids per request to keep
+   * the transaction bounded. Self-id is rejected for destructive actions
+   * (delete/suspend) — the caller could re-issue without their own id, no
+   * need to silently filter.
+   */
+  async bulkUserAction(actorId: string, dto: BulkUserActionDto) {
+    if (dto.ids.length === 0) {
+      throw new BadRequestException('ids must contain at least one user id');
+    }
+    if (dto.ids.length > 100) {
+      throw new BadRequestException('Bulk actions are capped at 100 ids');
+    }
+    const destructive =
+      dto.action === 'delete' || dto.action === 'suspend';
+    if (destructive && dto.ids.includes(actorId)) {
+      throw new ForbiddenException(
+        'Bulk action would affect your own account — remove your id from the list',
+      );
+    }
+    if (dto.action === 'set-role' && !dto.role) {
+      throw new BadRequestException('role is required when action is set-role');
+    }
+
+    const results: Array<{ id: string; ok: boolean; error?: string }> = [];
+    for (const id of dto.ids) {
+      try {
+        switch (dto.action) {
+          case 'suspend':
+            await this.suspendUser(actorId, id);
+            break;
+          case 'reactivate':
+            await this.reactivateUser(actorId, id);
+            break;
+          case 'delete':
+            await this.deleteUser(actorId, id);
+            break;
+          case 'set-role':
+            await this.updateUser(actorId, id, { role: dto.role });
+            break;
+        }
+        results.push({ id, ok: true });
+      } catch (err) {
+        const message =
+          err instanceof Error ? err.message : 'Unknown error';
+        results.push({ id, ok: false, error: message });
+      }
+    }
     return {
-      id: updated.id,
-      email: updated.email,
-      name: updated.name,
-      role: updated.role,
-      agentId: updated.agent?.id ?? null,
-      createdAt: updated.createdAt,
-      updatedAt: updated.updatedAt,
+      action: dto.action,
+      successCount: results.filter((r) => r.ok).length,
+      failureCount: results.filter((r) => !r.ok).length,
+      results,
     };
+  }
+
+  /**
+   * Activity payload for the user peek sheet. Aggregates the slow-changing
+   * facets (identities, pending invitation) with the fast-moving ones
+   * (recent audit log, last-login). Single endpoint so the panel renders in
+   * one round-trip.
+   */
+  async getUserActivity(targetId: string) {
+    const user = await this.prisma.adminUser.findUnique({
+      where: { id: targetId },
+      include: {
+        agent: { select: { id: true, slug: true, firstName: true, lastName: true } },
+        identities: {
+          select: {
+            id: true,
+            provider: true,
+            email: true,
+            createdAt: true,
+          },
+        },
+      },
+    });
+    if (!user) throw new NotFoundException('User not found');
+
+    const pendingInvitation = await this.prisma.invitation.findFirst({
+      where: {
+        email: user.email,
+        status: 'PENDING',
+        expiresAt: { gt: new Date() },
+      },
+      orderBy: { createdAt: 'desc' },
+      select: {
+        id: true,
+        email: true,
+        role: true,
+        status: true,
+        expiresAt: true,
+        emailSentAt: true,
+        emailAttempts: true,
+        bouncedAt: true,
+        bounceReason: true,
+        createdAt: true,
+      },
+    });
+
+    const recentAudit = await this.prisma.auditLog.findMany({
+      where: {
+        OR: [
+          { actorId: targetId },
+          { resource: 'AdminUser', resourceId: targetId },
+        ],
+      },
+      orderBy: { createdAt: 'desc' },
+      take: 20,
+      select: {
+        id: true,
+        action: true,
+        resource: true,
+        resourceId: true,
+        createdAt: true,
+        brand: true,
+        method: true,
+        url: true,
+      },
+    });
+
+    return {
+      user: this.shapeListRow(user),
+      identities: user.identities.map((i) => ({
+        id: i.id,
+        provider: i.provider,
+        email: i.email,
+        createdAt: i.createdAt,
+      })),
+      pendingInvitation,
+      recentAudit,
+    };
+  }
+
+  /**
+   * Stamp lastLoginAt + lastSeenAt to mark a fresh session. Called from the
+   * password and Google login paths. Best-effort: errors are swallowed so a
+   * blip in the writeable replica doesn't block a login.
+   */
+  private async touchLastLogin(userId: string): Promise<void> {
+    try {
+      const now = new Date();
+      await this.prisma.adminUser.update({
+        where: { id: userId },
+        data: { lastLoginAt: now, lastSeenAt: now },
+      });
+    } catch {
+      // Ignored — observability-only field.
+    }
+  }
+
+  /**
+   * Update lastSeenAt for an authenticated user. Rate-limited in-memory to
+   * once per LAST_SEEN_THROTTLE_MS so high-traffic users don't hammer the
+   * row. Called by the JWT access strategy after token verification.
+   */
+  async touchLastSeen(userId: string): Promise<void> {
+    const last = lastSeenWriteCache.get(userId) ?? 0;
+    const now = Date.now();
+    if (now - last < LAST_SEEN_THROTTLE_MS) return;
+    lastSeenWriteCache.set(userId, now);
+    try {
+      await this.prisma.adminUser.update({
+        where: { id: userId },
+        data: { lastSeenAt: new Date(now) },
+      });
+    } catch {
+      // Drop the cache entry so the next request retries.
+      lastSeenWriteCache.delete(userId);
+    }
+  }
+
+  /** Public helper for the JWT strategy: confirm the user exists and is ACTIVE. */
+  async assertUserNotSuspended(userId: string): Promise<void> {
+    const u = await this.prisma.adminUser.findUnique({
+      where: { id: userId },
+      select: { status: true },
+    });
+    if (!u) throw new UnauthorizedException('User not found');
+    if (u.status === AdminUserStatus.SUSPENDED) {
+      throw new UnauthorizedException({
+        message: 'Account is suspended',
+        code: 'ACCOUNT_SUSPENDED',
+      });
+    }
   }
 
   /**
@@ -425,6 +736,19 @@ export class AuthService {
         code: 'NO_ACCOUNT',
       });
     }
+    // Reject SUSPENDED before minting tokens. Symmetrical with the password
+    // path — Google can't be a side-door around suspension.
+    const target = await this.prisma.adminUser.findUnique({
+      where: { id: identity.adminUserId },
+      select: { status: true },
+    });
+    if (target?.status === AdminUserStatus.SUSPENDED) {
+      throw new ForbiddenException({
+        message: 'This account has been suspended',
+        code: 'ACCOUNT_SUSPENDED',
+      });
+    }
+    void this.touchLastLogin(identity.adminUserId);
     return this.issueTokensForUserId(identity.adminUserId);
   }
 
@@ -441,6 +765,40 @@ export class AuthService {
       name: user.name,
       role: user.role,
       agentId: user.agent?.id ?? null,
+    };
+  }
+
+  /**
+   * Wire-format row used by GET /auth/users + the suspend/reactivate/update
+   * responses. Adds the lifecycle + activity fields that the admin UI's
+   * `/users` table renders alongside the original list shape. Never includes
+   * the password hash.
+   */
+  private shapeListRow(user: {
+    id: string;
+    email: string;
+    name: string;
+    role: AdminRole;
+    status: AdminUserStatus;
+    disabledAt: Date | null;
+    lastLoginAt: Date | null;
+    lastSeenAt: Date | null;
+    createdAt: Date;
+    updatedAt: Date;
+    agent?: { id: string } | null;
+  }) {
+    return {
+      id: user.id,
+      email: user.email,
+      name: user.name,
+      role: user.role,
+      status: user.status,
+      disabledAt: user.disabledAt,
+      lastLoginAt: user.lastLoginAt,
+      lastSeenAt: user.lastSeenAt,
+      agentId: user.agent?.id ?? null,
+      createdAt: user.createdAt,
+      updatedAt: user.updatedAt,
     };
   }
 

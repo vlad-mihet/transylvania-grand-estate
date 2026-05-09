@@ -176,8 +176,9 @@ const matrix: Record<AdminRole, ReadonlySet<Action> | "all"> = {
     "academy.lesson.update",
   ]),
   AGENT: new Set<Action>([
-    // Server scopes audit reads to own actions + own properties only.
-    "audit-log.read",
+    // No `audit-log.read` here: the global firehose is ADMIN+. An AGENT only
+    // ever needs audit for their own properties, which the per-entity API
+    // (`/audit-logs/by-entity/Property/:id`) handles via ownership scoping.
     "developer.read",
     "city.read",
     "county.read",

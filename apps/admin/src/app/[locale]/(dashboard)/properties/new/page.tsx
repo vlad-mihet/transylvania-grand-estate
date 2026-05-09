@@ -4,12 +4,11 @@ import { useEffect } from "react";
 import { useMutation } from "@tanstack/react-query";
 import { useTranslations } from "next-intl";
 
-import { useRouter } from "@/i18n/navigation";
+import { Link, useRouter } from "@/i18n/navigation";
 import { toast } from "@/lib/toast";
 import { apiClient } from "@/lib/api-client";
 import { usePermissions } from "@/components/auth/auth-provider";
 import { PropertyForm } from "@/components/forms/property-form";
-import { FormPageShell } from "@/components/resource/form-page-shell";
 import { PropertyFormValues } from "@/lib/validations/property";
 import { toPropertyPayload } from "@/lib/transform-property";
 import { GalleryImage } from "@/components/shared/image-gallery-manager";
@@ -17,6 +16,7 @@ import { GalleryImage } from "@/components/shared/image-gallery-manager";
 export default function NewPropertyPage() {
   const router = useRouter();
   const t = useTranslations("Properties");
+  const tc = useTranslations("Common");
   const { can } = usePermissions();
 
   useEffect(() => {
@@ -65,13 +65,17 @@ export default function NewPropertyPage() {
   if (!can("property.create")) return null;
 
   return (
-    <FormPageShell title={t("newProperty")}>
-      <PropertyForm
-        cancelHref="/properties"
-        onSubmit={(data, images) => createMutation.mutate({ data, images })}
-        loading={createMutation.isPending}
-        submissionError={createMutation.error}
-      />
-    </FormPageShell>
+    <PropertyForm
+      cancelHref="/properties"
+      onSubmit={(data, images) => createMutation.mutate({ data, images })}
+      loading={createMutation.isPending}
+      submissionError={createMutation.error}
+      title={t("newProperty")}
+      breadcrumb={
+        <Link href="/properties" className="hover:text-foreground hover:underline">
+          {tc("back")}
+        </Link>
+      }
+    />
   );
 }

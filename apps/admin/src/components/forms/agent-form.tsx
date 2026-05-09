@@ -1,18 +1,24 @@
 "use client";
 
-import { useForm } from "react-hook-form";
+import type { ReactNode } from "react";
+import { useState } from "react";
+import { FormProvider, useForm, useFormContext } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useTranslations } from "next-intl";
+import { Button, Input, Switch } from "@tge/ui";
+import {
+  EntryEditorShell,
+  EntryLocaleProvider,
+  LocalizedTextarea,
+  MetaField,
+  useLocaleCompleteness,
+} from "@/components/entry-editor";
+import { FormActions } from "@/components/shared/form-actions";
+import { ImageUpload } from "@/components/shared/image-upload";
 import { agentSchema, AgentFormValues } from "@/lib/validations/agent";
 import { useApiFormErrors } from "@tge/hooks";
-import { toast } from "@/lib/toast";
-import { BilingualTextarea } from "@/components/shared/bilingual-textarea";
-import { ImageUpload } from "@/components/shared/image-upload";
-import { Button, Input, Label, Switch } from "@tge/ui";
-import { SectionCard } from "@/components/shared/section-card";
-import { FormActions } from "@/components/shared/form-actions";
 import { useUnsavedChangesWarning } from "@/hooks/use-unsaved-changes-warning";
-import { useState } from "react";
-import { useTranslations } from "next-intl";
+import { toast } from "@/lib/toast";
 
 interface AgentFormProps {
   defaultValues?: Partial<AgentFormValues>;
@@ -20,8 +26,9 @@ interface AgentFormProps {
   onSubmit: (data: AgentFormValues, photoFile: File | null) => void;
   loading?: boolean;
   submissionError?: unknown;
-  /** Where Cancel navigates (detail page on edit, list on create). */
   cancelHref: string;
+  title: ReactNode;
+  breadcrumb?: ReactNode;
 }
 
 export function AgentForm({
@@ -31,9 +38,10 @@ export function AgentForm({
   loading,
   submissionError,
   cancelHref,
+  title,
+  breadcrumb,
 }: AgentFormProps) {
   const [photoFile, setPhotoFile] = useState<File | null>(null);
-  const t = useTranslations("AgentForm");
   const tc = useTranslations("Common");
 
   const form = useForm<AgentFormValues>({
@@ -53,8 +61,89 @@ export function AgentForm({
   useApiFormErrors(form, submissionError, (err) => {
     toast.error(err instanceof Error ? err.message : tc("saveFailed"));
   });
-
   useUnsavedChangesWarning(form.formState.isDirty);
+
+  return (
+    <FormProvider {...form}>
+      <EntryLocaleProvider>
+        <form onSubmit={form.handleSubmit((data) => onSubmit(data, photoFile))}>
+          <AgentFormBody
+            cancelHref={cancelHref}
+            loading={loading}
+            dirty={form.formState.isDirty}
+            photoUrl={photoUrl}
+            onPhotoFileChange={setPhotoFile}
+            title={title}
+            breadcrumb={breadcrumb}
+          />
+        </form>
+      </EntryLocaleProvider>
+    </FormProvider>
+  );
+}
+
+interface BodyProps {
+  cancelHref: string;
+  loading?: boolean;
+  dirty: boolean;
+  photoUrl?: string | null;
+  onPhotoFileChange: (file: File | null) => void;
+  title: ReactNode;
+  breadcrumb?: ReactNode;
+}
+
+function AgentFormBody({
+  cancelHref,
+  loading,
+  dirty,
+  photoUrl,
+  onPhotoFileChange,
+  title,
+  breadcrumb,
+}: BodyProps) {
+  const t = useTranslations("AgentForm");
+  const { completeness, errorCounts } = useLocaleCompleteness<AgentFormValues>(
+    ["bio"],
+  );
+
+  return (
+    <EntryEditorShell
+      title={title}
+      breadcrumb={breadcrumb}
+      unsavedDirty={dirty}
+      switcherCompleteness={completeness}
+      switcherErrorCounts={errorCounts}
+      actions={
+        <FormActions cancelHref={cancelHref} loading={loading} dirty={dirty} />
+      }
+      localizedFields={
+        <LocalizedTextarea<AgentFormValues>
+          name="bio"
+          label={t("bio")}
+          required
+          rows={8}
+        />
+      }
+      extraSection={
+        <div>
+          <p className="mb-3 text-[11px] font-semibold tracking-[0.08em] uppercase text-muted-foreground">
+            {t("photo")}
+          </p>
+          <ImageUpload value={photoUrl} onChange={onPhotoFileChange} />
+        </div>
+      }
+      metadataFields={<AgentMetadataFields t={t} />}
+    />
+  );
+}
+
+function AgentMetadataFields({
+  t,
+}: {
+  t: ReturnType<typeof useTranslations>;
+}) {
+  const tc = useTranslations("Common");
+  const form = useFormContext<AgentFormValues>();
 
   const generateSlug = () => {
     const firstName = form.getValues("firstName");
@@ -67,73 +156,43 @@ export function AgentForm({
   };
 
   return (
-    <form
-      onSubmit={form.handleSubmit((data) => onSubmit(data, photoFile))}
-      className="w-full space-y-5"
-    >
-      <SectionCard title={t("title")}>
-        <div className="space-y-4">
-          <div className="grid gap-4 sm:grid-cols-2">
-            <div className="space-y-2">
-              <Label>{t("firstName")}</Label>
-              <Input {...form.register("firstName")} />
-            </div>
-            <div className="space-y-2">
-              <Label>{t("lastName")}</Label>
-              <Input {...form.register("lastName")} />
-            </div>
-          </div>
-          <div className="flex gap-3 items-end">
-            <div className="flex-1 space-y-2">
-              <Label>{t("slug")}</Label>
-              <Input {...form.register("slug")} />
-            </div>
-            <Button type="button" variant="outline" onClick={generateSlug}>
-              {tc("generate")}
-            </Button>
-          </div>
-          <div className="grid gap-4 sm:grid-cols-2">
-            <div className="space-y-2">
-              <Label>{t("email")}</Label>
-              <Input type="email" {...form.register("email")} />
-            </div>
-            <div className="space-y-2">
-              <Label>{t("phone")}</Label>
-              <Input {...form.register("phone")} />
-            </div>
-          </div>
-          <BilingualTextarea
-            label={t("bio")}
-            valueEn={form.watch("bio.en")}
-            valueRo={form.watch("bio.ro")}
-            onChangeEn={(v) => form.setValue("bio.en", v)}
-            onChangeRo={(v) => form.setValue("bio.ro", v)}
-            valueFr={form.watch("bio.fr") ?? ""}
-            valueDe={form.watch("bio.de") ?? ""}
-            onChangeFr={(v) => form.setValue("bio.fr", v)}
-            onChangeDe={(v) => form.setValue("bio.de", v)}
-            required
+    <>
+      <MetaField id="agent-first-name" label={t("firstName")}>
+        <Input id="agent-first-name" {...form.register("firstName")} />
+      </MetaField>
+      <MetaField id="agent-last-name" label={t("lastName")}>
+        <Input id="agent-last-name" {...form.register("lastName")} />
+      </MetaField>
+      <MetaField id="agent-slug" label={t("slug")}>
+        <div className="flex gap-2">
+          <Input
+            id="agent-slug"
+            {...form.register("slug")}
+            className="mono flex-1"
           />
-          <label className="flex items-center gap-2 text-sm">
-            <Switch
-              checked={form.watch("active")}
-              onCheckedChange={(v) => form.setValue("active", v)}
-            />
-            {t("active")}
-          </label>
-          <ImageUpload
-            label={t("photo")}
-            value={photoUrl}
-            onChange={(file) => setPhotoFile(file)}
-          />
+          <Button
+            type="button"
+            variant="outline"
+            size="sm"
+            onClick={generateSlug}
+          >
+            {tc("generate")}
+          </Button>
         </div>
-      </SectionCard>
-
-      <FormActions
-        cancelHref={cancelHref}
-        loading={loading}
-        dirty={form.formState.isDirty}
-      />
-    </form>
+      </MetaField>
+      <MetaField id="agent-email" label={t("email")}>
+        <Input id="agent-email" type="email" {...form.register("email")} />
+      </MetaField>
+      <MetaField id="agent-phone" label={t("phone")}>
+        <Input id="agent-phone" {...form.register("phone")} className="mono" />
+      </MetaField>
+      <label className="flex items-center justify-between gap-3 text-xs">
+        <span className="font-medium tracking-[0.04em]">{t("active")}</span>
+        <Switch
+          checked={form.watch("active")}
+          onCheckedChange={(v) => form.setValue("active", v)}
+        />
+      </label>
+    </>
   );
 }

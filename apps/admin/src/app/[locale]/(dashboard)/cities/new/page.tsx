@@ -4,17 +4,17 @@ import { useEffect } from "react";
 import { useMutation } from "@tanstack/react-query";
 import { useTranslations } from "next-intl";
 
-import { useRouter } from "@/i18n/navigation";
+import { Link, useRouter } from "@/i18n/navigation";
 import { toast } from "@/lib/toast";
 import { apiClient } from "@/lib/api-client";
 import { usePermissions } from "@/components/auth/auth-provider";
 import { CityForm } from "@/components/forms/city-form";
-import { FormPageShell } from "@/components/resource/form-page-shell";
 import { CityFormValues } from "@/lib/validations/city";
 
 export default function NewCityPage() {
   const router = useRouter();
   const t = useTranslations("Cities");
+  const tc = useTranslations("Common");
   const { can } = usePermissions();
 
   useEffect(() => {
@@ -56,13 +56,17 @@ export default function NewCityPage() {
   if (!can("city.create")) return null;
 
   return (
-    <FormPageShell title={t("newCity")}>
-      <CityForm
-        cancelHref="/cities"
-        onSubmit={(data, image) => createMutation.mutate({ data, image })}
-        loading={createMutation.isPending}
-        submissionError={createMutation.error}
-      />
-    </FormPageShell>
+    <CityForm
+      cancelHref="/cities"
+      onSubmit={(data, image) => createMutation.mutate({ data, image })}
+      loading={createMutation.isPending}
+      submissionError={createMutation.error}
+      title={t("newCity")}
+      breadcrumb={
+        <Link href="/cities" className="hover:text-foreground hover:underline">
+          {tc("back")}
+        </Link>
+      }
+    />
   );
 }

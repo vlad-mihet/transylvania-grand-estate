@@ -1,0 +1,13 @@
+{
+  "name": "@tge/assets",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "bin": {
+    "tge-sync-assets": "./scripts/sync.mjs"
+  },
+  "files": [
+    "public",
+    "scripts"
+  ]
+}

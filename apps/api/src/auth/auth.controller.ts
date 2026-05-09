@@ -29,6 +29,8 @@ import { LoginDto } from './dto/login.dto';
 import { RegisterDto } from './dto/register.dto';
 import { ChangePasswordDto } from './dto/change-password.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
+import { ListUsersDto } from './dto/list-users.dto';
+import { BulkUserActionDto } from './dto/bulk-user-action.dto';
 import type { GoogleVerifiedProfile } from './strategies/google.strategy';
 import { GoogleAuthGuard } from './guards/google-auth.guard';
 import { Public } from '../common/decorators/public.decorator';
@@ -37,6 +39,7 @@ import { InvitationsService } from '../invitations/invitations.service';
 import { MetricsService } from '../metrics/metrics.service';
 import { AuditService } from '../audit/audit.service';
 import { FeatureFlagsService } from '../common/config/feature-flags.service';
+import { PasswordResetService } from '../password-reset/password-reset.service';
 
 @ApiTags('Auth')
 @Controller('auth')
@@ -50,6 +53,8 @@ export class AuthController {
     private metrics: MetricsService,
     private audit: AuditService,
     private flags: FeatureFlagsService,
+    @Inject(forwardRef(() => PasswordResetService))
+    private passwordReset: PasswordResetService,
   ) {}
 
   @Public()
@@ -116,8 +121,8 @@ export class AuthController {
 
   @Roles(AdminRole.SUPER_ADMIN)
   @Get('users')
-  async listUsers() {
-    return this.authService.listUsers();
+  async listUsers(@Query() query: ListUsersDto) {
+    return this.authService.listUsers(query);
   }
 
   @Roles(AdminRole.SUPER_ADMIN)
@@ -137,6 +142,64 @@ export class AuthController {
     @Param('id', ParseUUIDPipe) id: string,
   ) {
     return this.authService.deleteUser(req.user.id, id);
+  }
+
+  /**
+   * Suspend a user. Idempotent — calling against an already-SUSPENDED user
+   * is a no-op success. The actor cannot suspend themselves; the service
+   * also blocks suspending the last active SUPER_ADMIN.
+   */
+  @Roles(AdminRole.SUPER_ADMIN)
+  @Post('users/:id/suspend')
+  async suspendUser(
+    @Request() req: { user: { id: string } },
+    @Param('id', ParseUUIDPipe) id: string,
+  ) {
+    return this.authService.suspendUser(req.user.id, id);
+  }
+
+  @Roles(AdminRole.SUPER_ADMIN)
+  @Post('users/:id/reactivate')
+  async reactivateUser(
+    @Request() req: { user: { id: string } },
+    @Param('id', ParseUUIDPipe) id: string,
+  ) {
+    return this.authService.reactivateUser(req.user.id, id);
+  }
+
+  /**
+   * Admin-triggered password reset. Issues a fresh single-use token and
+   * emails it to the target user, the same way self-serve forgot-password
+   * does, but bypasses the per-email cooldown (a SUPER_ADMIN clicking this
+   * is an explicit, audited action, not a scraping vector).
+   */
+  @Roles(AdminRole.SUPER_ADMIN)
+  @Post('users/:id/reset-password')
+  async adminTriggerPasswordReset(
+    @Request() req: { user: { id: string } },
+    @Param('id', ParseUUIDPipe) id: string,
+  ) {
+    return this.passwordReset.adminTriggerReset(req.user.id, id);
+  }
+
+  /**
+   * Activity payload feeding the admin /users peek sheet. Bundles identities,
+   * pending invitation, recent audit, and login timestamps into one round-
+   * trip so the side panel renders without N waterfall fetches.
+   */
+  @Roles(AdminRole.SUPER_ADMIN)
+  @Get('users/:id/activity')
+  async userActivity(@Param('id', ParseUUIDPipe) id: string) {
+    return this.authService.getUserActivity(id);
+  }
+
+  @Roles(AdminRole.SUPER_ADMIN)
+  @Post('users/bulk')
+  async bulkUserAction(
+    @Request() req: { user: { id: string } },
+    @Body() dto: BulkUserActionDto,
+  ) {
+    return this.authService.bulkUserAction(req.user.id, dto);
   }
 
   @Get('me')

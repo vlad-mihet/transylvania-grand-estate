@@ -50,11 +50,14 @@ export default async function globalSetup(): Promise<void> {
   process.env.ADMIN_PUBLIC_URL =
     process.env.ADMIN_PUBLIC_URL ?? 'http://admin.test';
 
-  // Run Prisma migrations against the test container. Using `migrate deploy`
-  // because the migration folder is committed; `migrate dev` would mutate
-  // the developer's workstation schema outside the container.
+  // Sync schema to the test container. Using `db push` instead of `migrate
+  // deploy` because some committed seed migrations (e.g.
+  // `20260505003000_seed_revery_romania_cities`) assert the existence of
+  // pre-seeded counties and abort against an empty container. `db push`
+  // syncs the schema without running migration history — tests that need
+  // specific data seed it themselves.
   const apiDir = path.resolve(__dirname, '..');
-  execSync('npx prisma migrate deploy', {
+  execSync('npx prisma db push --skip-generate --accept-data-loss', {
     cwd: apiDir,
     env: { ...process.env, DATABASE_URL: url },
     stdio: 'inherit',

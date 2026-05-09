@@ -9,7 +9,6 @@ import { toast } from "@/lib/toast";
 import { Link } from "@/i18n/navigation";
 import { usePermissions } from "@/components/auth/auth-provider";
 import { CourseForm } from "@/components/forms/course-form";
-import { FormPageShell } from "@/components/resource/form-page-shell";
 import { LoadingState } from "@tge/ui";
 import type { CourseFormValues } from "@/lib/validations/academy";
 import type { CourseStatus, CourseVisibility } from "@prisma/client";
@@ -23,6 +22,10 @@ type Course = {
   status: CourseStatus;
   visibility: CourseVisibility;
   order: number;
+  draft?: {
+    title?: Record<string, string | undefined>;
+    description?: Record<string, string | undefined>;
+  } | null;
 };
 
 export default function EditAcademyCoursePage() {
@@ -45,7 +48,7 @@ export default function EditAcademyCoursePage() {
   });
 
   const updateMutation = useMutation({
-    mutationFn: (input: CourseFormValues) =>
+    mutationFn: (input: CourseFormValues & { mode?: "draft" | "publish" }) =>
       apiClient<Course>(`/admin/academy/courses/${params.id}`, {
         method: "PATCH",
         body: input,
@@ -72,19 +75,22 @@ export default function EditAcademyCoursePage() {
   }
 
   const course = courseQuery.data;
+  const draft = course.draft ?? null;
+  const titleSource = draft?.title ?? course.title;
+  const descriptionSource = draft?.description ?? course.description;
   const defaults: Partial<CourseFormValues> = {
     slug: course.slug,
     title: {
-      ro: course.title.ro ?? "",
-      en: course.title.en ?? "",
-      fr: course.title.fr,
-      de: course.title.de,
+      ro: titleSource.ro ?? "",
+      en: titleSource.en ?? "",
+      fr: titleSource.fr,
+      de: titleSource.de,
     },
     description: {
-      ro: course.description.ro ?? "",
-      en: course.description.en ?? "",
-      fr: course.description.fr,
-      de: course.description.de,
+      ro: descriptionSource.ro ?? "",
+      en: descriptionSource.en ?? "",
+      fr: descriptionSource.fr,
+      de: descriptionSource.de,
     },
     coverImage: course.coverImage ?? undefined,
     status: course.status,
@@ -92,10 +98,21 @@ export default function EditAcademyCoursePage() {
     order: course.order,
   };
 
+  const headline = course.title.ro || course.title.en || course.slug;
+
   return (
-    <FormPageShell
-      title={t("editTitle")}
-      description={t("editDescription")}
+    <CourseForm
+      mode="edit"
+      courseId={params.id}
+      defaultValues={defaults}
+      onSubmit={(values, saveMode) =>
+        updateMutation.mutate({ ...values, mode: saveMode })
+      }
+      loading={updateMutation.isPending}
+      submissionError={updateMutation.error}
+      cancelHref={`/academy/courses/${params.id}`}
+      title={headline}
+      hasPendingDraft={draft !== null}
       breadcrumb={
         <Link
           href={`/academy/courses/${params.id}`}
@@ -104,16 +121,6 @@ export default function EditAcademyCoursePage() {
           {t("detailBackToList")}
         </Link>
       }
-    >
-      <CourseForm
-        mode="edit"
-        courseId={params.id}
-        defaultValues={defaults}
-        onSubmit={(values) => updateMutation.mutate(values)}
-        loading={updateMutation.isPending}
-        submissionError={updateMutation.error}
-        cancelHref={`/academy/courses/${params.id}`}
-      />
-    </FormPageShell>
+    />
   );
 }

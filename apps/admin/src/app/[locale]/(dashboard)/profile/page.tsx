@@ -4,7 +4,6 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useTranslations } from "next-intl";
 import { apiClient } from "@/lib/api-client";
 import { toast } from "@/lib/toast";
-import { PageHeader } from "@/components/shared/page-header";
 import { EmptyState, ErrorState, LoadingState } from "@tge/ui";
 import { Mono } from "@/components/shared/mono";
 import {
@@ -63,47 +62,42 @@ export default function ProfilePage() {
       toast.error(err instanceof Error ? err.message : t("saveFailed")),
   });
 
-  return (
-    <div className="flex flex-col gap-5">
-      <PageHeader
-        title={t("title")}
-        description={
-          agent
-            ? `${agent.firstName} ${agent.lastName}`
-            : t("description")
-        }
-      />
+  if (isLoading) {
+    return <LoadingState label={tc("loading")} />;
+  }
+  if (isError) {
+    return <NoAgentLinkedOrError onRetry={() => refetch()} />;
+  }
+  if (!agent) {
+    return <NoAgentLinked />;
+  }
 
-      {isLoading ? (
-        <LoadingState label={tc("loading")} />
-      ) : isError ? (
-        <NoAgentLinkedOrError onRetry={() => refetch()} />
-      ) : !agent ? (
-        <NoAgentLinked />
-      ) : (
-        <div className="flex flex-col gap-4">
-          <div className="rounded-md border border-border bg-muted/40 px-4 py-2.5 text-xs">
-            <Mono className="text-muted-foreground">
-              {agent.email} · slug: {agent.slug} · active:{" "}
-              {agent.active ? "yes" : "no"}
-            </Mono>
-          </div>
-          <AgentProfileForm
-            defaultValues={{
-              firstName: agent.firstName,
-              lastName: agent.lastName,
-              phone: agent.phone,
-              bio: agent.bio as AgentProfileValues["bio"],
-            }}
-            photoUrl={agent.photo ?? null}
-            onSubmit={(data, photoFile) =>
-              saveMutation.mutate({ data, photoFile })
-            }
-            loading={saveMutation.isPending}
-            submissionError={saveMutation.error}
-          />
+  return (
+    <div>
+      <div className="px-4 pt-3 md:px-6">
+        <div className="rounded-md border border-border bg-muted/40 px-4 py-2.5 text-xs">
+          <Mono className="text-muted-foreground">
+            {agent.email} · slug: {agent.slug} · active:{" "}
+            {agent.active ? "yes" : "no"}
+          </Mono>
         </div>
-      )}
+      </div>
+      <AgentProfileForm
+        defaultValues={{
+          firstName: agent.firstName,
+          lastName: agent.lastName,
+          phone: agent.phone,
+          bio: agent.bio as AgentProfileValues["bio"],
+        }}
+        photoUrl={agent.photo ?? null}
+        onSubmit={(data, photoFile) =>
+          saveMutation.mutate({ data, photoFile })
+        }
+        loading={saveMutation.isPending}
+        submissionError={saveMutation.error}
+        title={`${agent.firstName} ${agent.lastName}`}
+        breadcrumb={t("title")}
+      />
     </div>
   );
 }

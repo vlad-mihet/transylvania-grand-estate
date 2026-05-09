@@ -4,17 +4,17 @@ import { useEffect } from "react";
 import { useMutation } from "@tanstack/react-query";
 import { useTranslations } from "next-intl";
 
-import { useRouter } from "@/i18n/navigation";
+import { Link, useRouter } from "@/i18n/navigation";
 import { toast } from "@/lib/toast";
 import { apiClient } from "@/lib/api-client";
 import { usePermissions } from "@/components/auth/auth-provider";
 import { DeveloperForm } from "@/components/forms/developer-form";
-import { FormPageShell } from "@/components/resource/form-page-shell";
 import { DeveloperFormValues } from "@/lib/validations/developer";
 
 export default function NewDeveloperPage() {
   const router = useRouter();
   const t = useTranslations("Developers");
+  const tc = useTranslations("Common");
   const { can } = usePermissions();
 
   useEffect(() => {
@@ -56,13 +56,17 @@ export default function NewDeveloperPage() {
   if (!can("developer.create")) return null;
 
   return (
-    <FormPageShell title={t("newDeveloper")}>
-      <DeveloperForm
-        cancelHref="/developers"
-        onSubmit={(data, logo) => createMutation.mutate({ data, logo })}
-        loading={createMutation.isPending}
-        submissionError={createMutation.error}
-      />
-    </FormPageShell>
+    <DeveloperForm
+      cancelHref="/developers"
+      onSubmit={(data, logo) => createMutation.mutate({ data, logo })}
+      loading={createMutation.isPending}
+      submissionError={createMutation.error}
+      title={t("newDeveloper")}
+      breadcrumb={
+        <Link href="/developers" className="hover:text-foreground hover:underline">
+          {tc("back")}
+        </Link>
+      }
+    />
   );
 }

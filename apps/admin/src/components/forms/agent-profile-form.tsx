@@ -1,17 +1,23 @@
 "use client";
 
-import { useForm } from "react-hook-form";
+import type { ReactNode } from "react";
+import { useState } from "react";
+import { FormProvider, useForm, useFormContext } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
+import { useTranslations } from "next-intl";
+import { Button, Input } from "@tge/ui";
+import { Loader2 } from "lucide-react";
+import {
+  EntryEditorShell,
+  EntryLocaleProvider,
+  LocalizedTextarea,
+  MetaField,
+  useLocaleCompleteness,
+} from "@/components/entry-editor";
+import { ImageUpload } from "@/components/shared/image-upload";
 import { useApiFormErrors } from "@tge/hooks";
 import { toast } from "@/lib/toast";
-import { BilingualTextarea } from "@/components/shared/bilingual-textarea";
-import { ImageUpload } from "@/components/shared/image-upload";
-import { SectionCard } from "@/components/shared/section-card";
-import { Button, Input, Label } from "@tge/ui";
-import { Loader2 } from "lucide-react";
-import { useState } from "react";
-import { useTranslations } from "next-intl";
 
 /**
  * Profile self-edit schema. Strict subset of the admin agent schema — no
@@ -44,6 +50,8 @@ interface AgentProfileFormProps {
   onSubmit: (data: AgentProfileValues, photoFile: File | null) => void;
   loading?: boolean;
   submissionError?: unknown;
+  title: ReactNode;
+  breadcrumb?: ReactNode;
 }
 
 export function AgentProfileForm({
@@ -52,11 +60,11 @@ export function AgentProfileForm({
   onSubmit,
   loading,
   submissionError,
+  title,
+  breadcrumb,
 }: AgentProfileFormProps) {
   const [photoFile, setPhotoFile] = useState<File | null>(null);
   const t = useTranslations("Profile");
-  const tag = useTranslations("AgentForm");
-  const tc = useTranslations("Common");
 
   const form = useForm<AgentProfileValues>({
     resolver: zodResolver(agentProfileSchema),
@@ -74,65 +82,104 @@ export function AgentProfileForm({
   });
 
   return (
-    <form
-      onSubmit={form.handleSubmit((data) => onSubmit(data, photoFile))}
-      className="w-full space-y-5"
-    >
-      <SectionCard
-        title={t("contactDetails")}
-        description={t("contactDetailsDescription")}
-      >
-        <div className="grid gap-4 sm:grid-cols-2">
-          <div className="space-y-1.5">
-            <Label>{tag("firstName")}</Label>
-            <Input {...form.register("firstName")} />
-          </div>
-          <div className="space-y-1.5">
-            <Label>{tag("lastName")}</Label>
-            <Input {...form.register("lastName")} />
-          </div>
-          <div className="space-y-1.5 sm:col-span-2">
-            <Label>{tag("phone")}</Label>
-            <Input {...form.register("phone")} className="mono" />
-          </div>
-        </div>
-      </SectionCard>
+    <FormProvider {...form}>
+      <EntryLocaleProvider>
+        <form onSubmit={form.handleSubmit((data) => onSubmit(data, photoFile))}>
+          <AgentProfileBody
+            loading={loading}
+            dirty={form.formState.isDirty}
+            photoUrl={photoUrl}
+            onPhotoFileChange={setPhotoFile}
+            title={title}
+            breadcrumb={breadcrumb}
+          />
+        </form>
+      </EntryLocaleProvider>
+    </FormProvider>
+  );
+}
 
-      <SectionCard title={t("bio")} description={t("bioDescription")}>
-        <BilingualTextarea
-          label={tag("bio")}
-          valueEn={form.watch("bio.en")}
-          valueRo={form.watch("bio.ro")}
-          onChangeEn={(v) => form.setValue("bio.en", v)}
-          onChangeRo={(v) => form.setValue("bio.ro", v)}
-          valueFr={form.watch("bio.fr") ?? ""}
-          valueDe={form.watch("bio.de") ?? ""}
-          onChangeFr={(v) => form.setValue("bio.fr", v)}
-          onChangeDe={(v) => form.setValue("bio.de", v)}
-          required
-        />
-      </SectionCard>
+interface BodyProps {
+  loading?: boolean;
+  dirty: boolean;
+  photoUrl?: string | null;
+  onPhotoFileChange: (file: File | null) => void;
+  title: ReactNode;
+  breadcrumb?: ReactNode;
+}
 
-      <SectionCard title={t("photo")} description={t("photoDescription")}>
-        <ImageUpload
-          label={tag("photo")}
-          value={photoUrl}
-          onChange={(file) => setPhotoFile(file)}
-        />
-      </SectionCard>
+function AgentProfileBody({
+  loading,
+  dirty,
+  photoUrl,
+  onPhotoFileChange,
+  title,
+  breadcrumb,
+}: BodyProps) {
+  const t = useTranslations("Profile");
+  const tag = useTranslations("AgentForm");
+  const tc = useTranslations("Common");
+  const { completeness, errorCounts } = useLocaleCompleteness<AgentProfileValues>(
+    ["bio"],
+  );
 
-      <div className="flex justify-end">
-        <Button type="submit" disabled={loading}>
+  return (
+    <EntryEditorShell
+      title={title}
+      breadcrumb={breadcrumb}
+      unsavedDirty={dirty}
+      switcherCompleteness={completeness}
+      switcherErrorCounts={errorCounts}
+      actions={
+        <Button type="submit" size="sm" disabled={loading} aria-busy={loading}>
           {loading ? (
             <>
-              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              <Loader2 className="mr-2 h-3.5 w-3.5 animate-spin" />
               {tc("saving")}
             </>
           ) : (
             t("save")
           )}
         </Button>
-      </div>
-    </form>
+      }
+      localizedFields={
+        <LocalizedTextarea<AgentProfileValues>
+          name="bio"
+          label={tag("bio")}
+          required
+          rows={8}
+        />
+      }
+      extraSection={
+        <div>
+          <p className="mb-3 text-[11px] font-semibold tracking-[0.08em] uppercase text-muted-foreground">
+            {tag("photo")}
+          </p>
+          <ImageUpload value={photoUrl} onChange={onPhotoFileChange} />
+        </div>
+      }
+      metadataFields={<ProfileMetadataFields tag={tag} />}
+    />
+  );
+}
+
+function ProfileMetadataFields({
+  tag,
+}: {
+  tag: ReturnType<typeof useTranslations>;
+}) {
+  const form = useFormContext<AgentProfileValues>();
+  return (
+    <>
+      <MetaField id="profile-first-name" label={tag("firstName")}>
+        <Input id="profile-first-name" {...form.register("firstName")} />
+      </MetaField>
+      <MetaField id="profile-last-name" label={tag("lastName")}>
+        <Input id="profile-last-name" {...form.register("lastName")} />
+      </MetaField>
+      <MetaField id="profile-phone" label={tag("phone")}>
+        <Input id="profile-phone" {...form.register("phone")} className="mono" />
+      </MetaField>
+    </>
   );
 }

@@ -60,6 +60,23 @@ export const acceptInvitationWithPasswordSchema = z
   .strict();
 
 /**
+ * Admin invites a non-AGENT platform user (SUPER_ADMIN, ADMIN, or EDITOR).
+ * AGENT invitations live on a separate endpoint because they also create the
+ * Agent profile in the same transaction; this endpoint creates an
+ * AdminUser-only invitation with no linked Agent. Same email + token
+ * discipline as inviteAgent — see invitations.service.ts.
+ */
+export const inviteUserSchema = z
+  .object({
+    email: z.string().email().max(200),
+    name: z.string().min(2).max(200),
+    role: z.enum(["SUPER_ADMIN", "ADMIN", "EDITOR"]),
+    expiresInDays: z.number().int().min(1).max(30).optional(),
+    locale: invitationLocaleSchema.optional(),
+  })
+  .strict();
+
+/**
  * Admin list filter. Status normalised to lowercase strings at the schema
  * boundary; the service maps to the Prisma enum.
  */
@@ -76,6 +93,7 @@ export const listInvitationsSchema = z
 export type InvitationLocale = z.infer<typeof invitationLocaleSchema>;
 export type InviteAgentInput = z.infer<typeof inviteAgentSchema>;
 export type InviteExistingAgentInput = z.infer<typeof inviteExistingAgentSchema>;
+export type InviteUserInput = z.infer<typeof inviteUserSchema>;
 export type VerifyInvitationInput = z.infer<typeof verifyInvitationSchema>;
 export type AcceptInvitationWithPasswordInput = z.infer<
   typeof acceptInvitationWithPasswordSchema

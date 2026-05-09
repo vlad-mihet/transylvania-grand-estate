@@ -4,11 +4,12 @@ import { useState } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { parseAsString, useQueryState } from "nuqs";
 import { useLocale, useTranslations } from "next-intl";
-import { Button } from "@tge/ui";
-import { Send, XCircle } from "lucide-react";
+import { Button, Tooltip, TooltipContent, TooltipTrigger } from "@tge/ui";
+import { AlertTriangle, Link2, Send, XCircle } from "lucide-react";
 import { apiClient, ApiError } from "@/lib/api-client";
 import { toast } from "@/lib/toast";
 import { Can } from "@/components/shared/can";
+import { ConfirmDialog } from "@/components/shared/confirm-dialog";
 import { DeleteDialog } from "@/components/shared/delete-dialog";
 import { Mono } from "@/components/shared/mono";
 import { RelativeTime } from "@/components/shared/relative-time";
@@ -21,6 +22,7 @@ import {
 import { ResourceListPage } from "@/components/resource/resource-list-page";
 import { type ColumnDef } from "@/components/resource/resource-table";
 import { useResourceList } from "@/hooks/use-resource-list";
+import { ExportCsvButton } from "@/components/shared/export-csv-button";
 import { pickTitle } from "@/lib/academy/pick-title";
 
 type InvitationStatus =
@@ -121,6 +123,38 @@ export default function AcademyInvitationsPage() {
       ),
   });
 
+  const [copyLinkConfirmId, setCopyLinkConfirmId] = useState<string | null>(
+    null,
+  );
+  const copyLinkMutation = useMutation({
+    mutationFn: async (id: string) => {
+      const result = await apiClient<{ url: string; expiresAt: string }>(
+        `/admin/academy/invitations/${id}/accept-link`,
+      );
+      // Best-effort write to clipboard. If permissions are denied (rare;
+      // the page is admin-only behind HTTPS) fall back to a toast that
+      // surfaces the URL inline so the admin can copy manually.
+      try {
+        await navigator.clipboard.writeText(result.url);
+        return { copied: true, url: result.url };
+      } catch {
+        return { copied: false, url: result.url };
+      }
+    },
+    onSuccess: (result) => {
+      queryClient.invalidateQueries({ queryKey: ["academy-invitations"] });
+      if (result.copied) toast.success(tt("invitationLinkCopied"));
+      else toast.success(tt("invitationLinkReady", { url: result.url }));
+      setCopyLinkConfirmId(null);
+    },
+    onError: (err) => {
+      toast.error(
+        err instanceof ApiError ? err.message : tt("invitationLinkFailed"),
+      );
+      setCopyLinkConfirmId(null);
+    },
+  });
+
   const bulkRevokeMutation = useMutation({
     mutationFn: async (ids: string[]) => {
       await Promise.all(
@@ -161,19 +195,31 @@ export default function AcademyInvitationsPage() {
     {
       id: "status",
       header: t("columnStatus"),
-      cell: ({ row }) => (
-        <div>
-          <StatusBadge status={row.original.status.toLowerCase()} />
-          {row.original.bouncedAt ? (
-            <p className="mt-1 text-[11px] text-[var(--color-danger)]">
+      cell: ({ row }) => {
+        const bounced = !!row.original.bouncedAt;
+        if (!bounced) {
+          return <StatusBadge status={row.original.status.toLowerCase()} />;
+        }
+        return (
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <span className="inline-flex items-center gap-1.5">
+                <StatusBadge status={row.original.status.toLowerCase()} />
+                <AlertTriangle
+                  className="h-3.5 w-3.5 text-[var(--color-danger)]"
+                  aria-label={t("bouncedAria")}
+                />
+              </span>
+            </TooltipTrigger>
+            <TooltipContent className="max-w-xs">
               {t("bouncedSuffix", {
                 reason:
                   row.original.bounceReason ?? t("bouncedReasonUnknown"),
               })}
-            </p>
-          ) : null}
-        </div>
-      ),
+            </TooltipContent>
+          </Tooltip>
+        );
+      },
     },
     {
       id: "course",
@@ -204,12 +250,23 @@ export default function AcademyInvitationsPage() {
     {
       id: "actions",
       header: "",
-      size: 112,
+      size: 156,
       enableSorting: false,
       cell: ({ row }) =>
         row.original.status !== "ACCEPTED" ? (
           <Can action="academy.user.manage">
             <div className="inline-flex gap-2">
+              <Button
+                size="sm"
+                variant="outline"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setCopyLinkConfirmId(row.original.id);
+                }}
+                aria-label={t("copyLinkAria", { email: row.original.email })}
+              >
+                <Link2 className="h-3.5 w-3.5" />
+              </Button>
               <Button
                 size="sm"
                 variant="outline"
@@ -268,6 +325,21 @@ export default function AcademyInvitationsPage() {
         }
         emptyTitle={t("emptyTitle")}
         emptyDescription={t("emptyDescription")}
+        headerActions={
+          <Can action="academy.user.manage">
+            <ExportCsvButton
+              path={`/admin/academy/invitations/export.csv${
+                statusFilters.size === 1
+                  ? `?status=${Array.from(statusFilters)[0]}`
+                  : ""
+              }${
+                emailSearch
+                  ? `${statusFilters.size === 1 ? "&" : "?"}email=${encodeURIComponent(emailSearch)}`
+                  : ""
+              }`}
+            />
+          </Can>
+        }
         bulkActions={(selection) => (
           <Can action="academy.user.manage">
             <Button
@@ -291,6 +363,18 @@ export default function AcademyInvitationsPage() {
         title={t("revokeTitle")}
         description={t("revokeDescription")}
         loading={revokeMutation.isPending}
+      />
+
+      <ConfirmDialog
+        open={!!copyLinkConfirmId}
+        onOpenChange={(open) => !open && setCopyLinkConfirmId(null)}
+        onConfirm={() =>
+          copyLinkConfirmId && copyLinkMutation.mutate(copyLinkConfirmId)
+        }
+        title={t("copyLinkTitle")}
+        description={t("copyLinkDescription")}
+        confirmLabel={t("copyLinkConfirm")}
+        loading={copyLinkMutation.isPending}
       />
 
       <DeleteDialog

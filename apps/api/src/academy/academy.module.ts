@@ -25,6 +25,7 @@ import {
 import { LessonsService } from './lessons/lessons.service';
 import {
   AdminLessonsController,
+  LessonPreviewController,
   StudentLessonsController,
 } from './lessons/lessons.controller';
 
@@ -36,6 +37,12 @@ import { AcademyUsersController } from './users/academy-users.controller';
 
 import { LessonProgressService } from './progress/lesson-progress.service';
 import { LessonProgressController } from './progress/lesson-progress.controller';
+
+import { AcademyOverviewService } from './overview/overview.service';
+import { AcademyOverviewController } from './overview/overview.controller';
+
+import { LessonAttachmentsService } from './attachments/lesson-attachments.service';
+import { LessonAttachmentsController } from './attachments/lesson-attachments.controller';
 
 import { EnrolledGuard } from './guards/enrolled.guard';
 
@@ -60,10 +67,13 @@ import { EnrolledGuard } from './guards/enrolled.guard';
     AdminCoursesController,
     StudentCoursesController,
     AdminLessonsController,
+    LessonPreviewController,
     StudentLessonsController,
     EnrollmentsController,
     AcademyUsersController,
     LessonProgressController,
+    AcademyOverviewController,
+    LessonAttachmentsController,
   ],
   providers: [
     AcademyAuthService,
@@ -78,6 +88,8 @@ import { EnrolledGuard } from './guards/enrolled.guard';
     EnrollmentsService,
     AcademyUsersService,
     LessonProgressService,
+    AcademyOverviewService,
+    LessonAttachmentsService,
     EnrolledGuard,
   ],
   exports: [AcademyAuthService, AcademyInvitationsService],

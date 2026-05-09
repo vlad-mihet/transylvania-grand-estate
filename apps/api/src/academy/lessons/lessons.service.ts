@@ -10,6 +10,7 @@ import { EnrollmentsService } from '../enrollments/enrollments.service';
 import { LessonProgressService } from '../progress/lesson-progress.service';
 import { ensureFound } from '../../common/utils/ensure-found.util';
 import { toJson } from '../../common/utils/prisma-json';
+import { applyDraftMode } from '../../common/utils/entry-draft';
 import { paginate } from '../../common/utils/pagination.util';
 import type {
   CreateLessonDto,
@@ -54,15 +55,62 @@ export class LessonsService {
   }
 
   /**
+   * Lightweight existence check used by routes that mint preview tokens
+   * — they want to fail fast on a bogus lessonId without paying the
+   * full `findByIdForAdmin` projection cost.
+   */
+  async assertExists(id: string): Promise<void> {
+    const exists = await this.prisma.lesson.findUnique({
+      where: { id },
+      select: { id: true },
+    });
+    if (!exists) throw new NotFoundException('Lesson not found');
+  }
+
+  /**
+   * Preview read: returns the lesson by id with no enrollment /
+   * visibility / status gating. Used by the dedicated preview endpoint
+   * so admins (via a one-shot `previewToken=`) can render the
+   * student-side view of any draft or unpublished lesson. Includes
+   * prev/next pointers from the same course so the preview navigation
+   * still works.
+   */
+  async findForPreview(lessonId: string) {
+    const lesson = await this.prisma.lesson.findUnique({
+      where: { id: lessonId },
+      // Opt back into the `draft` JSON column so the preview shows the
+      // pending unpublished snapshot (the whole point of preview).
+      omit: { draft: false },
+    });
+    if (!lesson) return null;
+    // Whole course's lessons in publication order so prev/next align
+    // with the eventual student view; archived/draft lessons stay
+    // visible here because a preview deliberately bypasses gates.
+    const siblings = await this.prisma.lesson.findMany({
+      where: { courseId: lesson.courseId },
+      orderBy: { order: 'asc' },
+      select: { id: true, slug: true, title: true },
+    });
+    const idx = siblings.findIndex((l) => l.id === lesson.id);
+    const prev = idx > 0 ? siblings[idx - 1] : null;
+    const next = idx < siblings.length - 1 ? siblings[idx + 1] : null;
+    return { lesson, prev, next };
+  }
+
+  /**
    * Admin read with prev/next pointers for in-editor navigation. Mirrors the
    * student `findForStudent` sibling slice but ignores status — admin sees
    * draft and archived lessons too. Throws when the lesson exists but does
    * not belong to the supplied course (cross-course access via crafted URL).
    */
   async findByIdForAdminWithSiblings(courseId: string, id: string) {
+    // Admin path used by the lesson edit page; opt back into the `draft`
+    // column (PrismaService omits it by default) so the form can render
+    // any pending unpublished snapshot.
     const lessons = await this.prisma.lesson.findMany({
       where: { courseId },
       orderBy: { order: 'asc' },
+      omit: { draft: false },
     });
     const idx = lessons.findIndex((l) => l.id === id);
     if (idx < 0) throw new NotFoundException('Lesson not found');
@@ -303,11 +351,18 @@ export class LessonsService {
     }
 
     const data: Prisma.LessonUpdateInput = {};
+    const { live, draft } = applyDraftMode(
+      dto,
+      ['title', 'excerpt', 'content'] as const,
+      dto.mode,
+    );
+    if (live.title !== undefined) data.title = live.title;
+    if (live.excerpt !== undefined) data.excerpt = live.excerpt;
+    if (live.content !== undefined) data.content = live.content;
+    if (draft !== undefined) data.draft = draft;
+
     if (dto.slug !== undefined) data.slug = dto.slug;
     if (dto.order !== undefined) data.order = dto.order;
-    if (dto.title !== undefined) data.title = toJson(dto.title);
-    if (dto.excerpt !== undefined) data.excerpt = toJson(dto.excerpt);
-    if (dto.content !== undefined) data.content = toJson(dto.content);
     if (dto.type !== undefined) data.type = dto.type;
     if (dto.videoUrl !== undefined) data.videoUrl = dto.videoUrl;
     if (dto.videoDurationSeconds !== undefined)

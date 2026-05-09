@@ -32,6 +32,12 @@ export class CountiesService {
 
   constructor(private prisma: PrismaService) {}
 
+  /**
+   * Counties are universal — every county is reachable from every brand
+   * because they're consumed as filter chips on the public sites, not as
+   * visibility gates. Brand membership lives on cities (city_brands), not
+   * here. No SiteContext-based filtering happens at this layer.
+   */
   async findAll(
     query: {
       search?: string;

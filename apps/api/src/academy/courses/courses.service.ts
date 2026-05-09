@@ -1,11 +1,15 @@
 import { ConflictException, Injectable } from '@nestjs/common';
-import { CourseStatus, CourseVisibility, Prisma } from '@prisma/client';
+import { CourseStatus, CourseVisibility, LessonStatus, Prisma } from '@prisma/client';
 import { PrismaService } from '../../prisma/prisma.service';
 import { UploadsService } from '../../uploads/uploads.service';
 import { LessonProgressService } from '../progress/lesson-progress.service';
+import { computeResumeLessonSlug } from '../progress/resume-lesson.util';
 import { ensureFound } from '../../common/utils/ensure-found.util';
+import { buildCsvStream } from '../../common/utils/csv-stream';
+import type { AcademyCourseStats } from '@tge/types/schemas/academy';
 import { ensureSlugUnique } from '../../common/utils/ensure-slug-unique.util';
 import { toJson } from '../../common/utils/prisma-json';
+import { applyDraftMode } from '../../common/utils/entry-draft';
 import { paginate } from '../../common/utils/pagination.util';
 import type { CreateCourseDto, UpdateCourseDto, QueryCourseDto } from './dto/courses.dto';
 
@@ -54,10 +58,15 @@ export class CoursesService {
   }
 
   async findById(id: string) {
+    // Admin path used by the edit page to pre-populate the form. Opt back
+    // into the `draft` column (PrismaService omits it by default) so the
+    // editor can render any pending unpublished snapshot + the
+    // "Draft pending" chip.
     return ensureFound(
       this.prisma.course.findUnique({
         where: { id },
         include: { _count: { select: { lessons: true } } },
+        omit: { draft: false },
       }),
       'Course',
     );
@@ -129,7 +138,7 @@ export class CoursesService {
           totalLessons: stat.totalLessons,
           completedLessons: stat.completedLessons,
           lastSeenAt: stat.lastSeenAt,
-          resumeLessonSlug: this.computeResumeLessonSlug(
+          resumeLessonSlug: computeResumeLessonSlug(
             lessons.get(c.id) ?? [],
             progressPerCourse.get(c.id) ?? new Map(),
           ),
@@ -224,7 +233,7 @@ export class CoursesService {
           totalLessons: stat.totalLessons,
           completedLessons: stat.completedLessons,
           lastSeenAt: stat.lastSeenAt,
-          resumeLessonSlug: this.computeResumeLessonSlug(
+          resumeLessonSlug: computeResumeLessonSlug(
             lessons.get(c.id) ?? [],
             progressPerCourse.get(c.id) ?? new Map(),
           ),
@@ -278,7 +287,7 @@ export class CoursesService {
       completedLessons: 0,
       lastSeenAt: null,
     };
-    const resumeLessonSlug = this.computeResumeLessonSlug(
+    const resumeLessonSlug = computeResumeLessonSlug(
       publishedLessonMeta,
       userProgress,
     );
@@ -339,9 +348,14 @@ export class CoursesService {
       }
       data.slug = dto.slug;
     }
-    if (dto.title !== undefined) data.title = toJson(dto.title);
-    if (dto.description !== undefined)
-      data.description = toJson(dto.description);
+    const { live, draft } = applyDraftMode(
+      dto,
+      ['title', 'description'] as const,
+      dto.mode,
+    );
+    if (live.title !== undefined) data.title = live.title;
+    if (live.description !== undefined) data.description = live.description;
+    if (draft !== undefined) data.draft = draft;
     if (dto.coverImage !== undefined) data.coverImage = dto.coverImage;
     if (dto.visibility !== undefined) data.visibility = dto.visibility;
     if (dto.order !== undefined) data.order = dto.order;
@@ -363,6 +377,115 @@ export class CoursesService {
     await this.ensureExists(id);
     // Cascade takes out lessons + enrollments targeting this course.
     return this.prisma.course.delete({ where: { id } });
+  }
+
+  /**
+   * Clone a course into a fresh draft. The new row carries:
+   *  - status = draft (regardless of the source's status)
+   *  - publishedAt = null
+   *  - localized title/description copied verbatim from the source
+   *  - the source's `draft` JSON column copied so unsaved edits the
+   *    editor was working on continue on the clone
+   *  - coverImage URL referenced (not duplicated in storage); first
+   *    image edit on the clone will upload to its own per-course-id
+   *    storage prefix
+   *  - order placed after the highest existing course (next sparse slot)
+   *
+   * When `copyLessons: true`, every lesson on the source is cloned with
+   * a new id and status = draft, preserving the original `order` so the
+   * sequence reads identically to the source (still sparse-int).
+   *
+   * The whole thing is one transaction so a half-cloned course never
+   * leaks into the catalog.
+   */
+  async duplicate(
+    sourceId: string,
+    args: { slug: string; copyLessons?: boolean },
+  ) {
+    await this.ensureExists(sourceId);
+    await ensureSlugUnique(args.slug, 'Course', (slug) =>
+      this.prisma.course.findUnique({
+        where: { slug },
+        select: { id: true },
+      }),
+    );
+
+    const source = await ensureFound(
+      this.prisma.course.findUnique({
+        where: { id: sourceId },
+        omit: { draft: false },
+      }),
+      'Course',
+    );
+    const lessonsToClone = args.copyLessons
+      ? await this.prisma.lesson.findMany({
+          where: { courseId: sourceId },
+          orderBy: { order: 'asc' },
+          select: {
+            slug: true,
+            order: true,
+            title: true,
+            excerpt: true,
+            content: true,
+            type: true,
+            videoUrl: true,
+            videoDurationSeconds: true,
+          },
+        })
+      : [];
+    const nextOrder = await this.nextCourseOrder();
+
+    return this.prisma.$transaction(async (tx) => {
+      const created = await tx.course.create({
+        data: {
+          slug: args.slug,
+          title: source.title as Prisma.InputJsonValue,
+          description: source.description as Prisma.InputJsonValue,
+          coverImage: source.coverImage,
+          visibility: source.visibility,
+          // Always start as a draft — the editor decides when the
+          // clone is ready to publish. Don't copy publishedAt.
+          status: CourseStatus.draft,
+          publishedAt: null,
+          order: nextOrder,
+          // Carry over any pending unsaved edits the editor was
+          // working on. Null/undefined-safe; the column is nullable.
+          draft:
+            source.draft === null
+              ? Prisma.JsonNull
+              : (source.draft as Prisma.InputJsonValue),
+        },
+      });
+
+      if (lessonsToClone.length) {
+        // createMany would be cheaper, but Prisma's batch syntax
+        // doesn't accept JSON columns inside SQLite; we're on
+        // Postgres so it works. Keep the loop for clarity though —
+        // courses rarely exceed ~50 lessons and the transaction is
+        // already open, so the extra round-trips don't matter.
+        for (const l of lessonsToClone) {
+          await tx.lesson.create({
+            data: {
+              courseId: created.id,
+              slug: l.slug,
+              order: l.order,
+              title: l.title as Prisma.InputJsonValue,
+              excerpt: l.excerpt as Prisma.InputJsonValue,
+              content: l.content as Prisma.InputJsonValue,
+              type: l.type,
+              videoUrl: l.videoUrl,
+              videoDurationSeconds: l.videoDurationSeconds,
+              // Match course: the clone's lessons start as drafts so
+              // a half-translated course doesn't surface accidentally.
+              status: 'draft',
+              publishedAt: null,
+            },
+          });
+        }
+      }
+
+      return created;
+    });
   }
 
   /**
@@ -432,6 +555,380 @@ export class CoursesService {
     const idx = url.indexOf(marker);
     if (idx < 0) return null;
     return url.slice(idx);
+  }
+
+  /**
+   * Course-level completion stats for the admin course detail page.
+   * Reads only — no writes. Counts:
+   *  - `enrolledCount`: distinct users reachable by either an active
+   *    wildcard or an active per-course enrollment for this course
+   *    (deduplicated, so a user with both still counts once).
+   *  - `startedCount`: distinct users with at least one LessonProgress
+   *    row in this course.
+   *  - `completedCount`: users whose `completedAt`-stamped LessonProgress
+   *    rows in this course equal the count of currently-published lessons.
+   *  - `lessonCompletionDistribution`: per-lesson completed counts in
+   *    course order, useful for spotting drop-off cliffs.
+   *
+   * Wildcard semantics match read access: a wildcard grants access to
+   * every published course, so wildcard holders count toward `enrolled`
+   * here. Archived/draft lessons are excluded from `total` and `completed`
+   * so the rate doesn't drop the moment a lesson is archived.
+   */
+  async computeStats(id: string): Promise<AcademyCourseStats> {
+    await this.ensureExists(id);
+
+    const publishedLessons = await this.prisma.lesson.findMany({
+      where: { courseId: id, status: LessonStatus.published },
+      orderBy: { order: 'asc' },
+      select: { id: true, slug: true },
+    });
+    const totalPublishedLessons = publishedLessons.length;
+    const publishedLessonIds = publishedLessons.map((l) => l.id);
+
+    // Read-only rollup; Promise.all suffices (no transactional invariant
+    // across these queries since the page is a snapshot anyway).
+    const [enrolledCountRows, startedCountRows, distribution] =
+      await Promise.all([
+        // Distinct users reachable by either an active wildcard or an
+        // active per-course enrollment for this course. groupBy gives us
+        // the dedup we need (a user with both rows yields one userId).
+        this.prisma.academyEnrollment.groupBy({
+          by: ['userId'],
+          where: {
+            revokedAt: null,
+            OR: [{ courseId: null }, { courseId: id }],
+          },
+        }),
+        // Distinct users who've opened at least one published lesson.
+        publishedLessonIds.length === 0
+          ? Promise.resolve([] as Array<{ userId: string }>)
+          : this.prisma.lessonProgress.groupBy({
+              by: ['userId'],
+              where: { lessonId: { in: publishedLessonIds } },
+            }),
+        // Per-lesson completed count. Empty when no published lessons.
+        publishedLessonIds.length === 0
+          ? Promise.resolve(
+              [] as Array<{
+                lessonId: string;
+                _count: { lessonId: number };
+              }>,
+            )
+          : this.prisma.lessonProgress.groupBy({
+              by: ['lessonId'],
+              where: {
+                lessonId: { in: publishedLessonIds },
+                completedAt: { not: null },
+              },
+              _count: { lessonId: true },
+            }),
+      ]);
+
+    const enrolledCount = enrolledCountRows.length;
+    const startedCount = startedCountRows.length;
+
+    // Users who've completed ALL currently-published lessons. groupBy
+    // with `having` would be ideal but Prisma's groupBy + having doesn't
+    // support an equality on an aggregate count for `lessonId` cleanly.
+    // Instead: pull users whose completed-lesson rows in this course
+    // number `totalPublishedLessons` exactly.
+    let completedUserIds: string[] = [];
+    if (totalPublishedLessons > 0) {
+      const completedAggregates = await this.prisma.lessonProgress.groupBy({
+        by: ['userId'],
+        where: {
+          lessonId: { in: publishedLessonIds },
+          completedAt: { not: null },
+        },
+        _count: { lessonId: true },
+      });
+      completedUserIds = completedAggregates
+        .filter((row) => row._count.lessonId === totalPublishedLessons)
+        .map((row) => row.userId);
+    }
+    const completedCount = completedUserIds.length;
+
+    const completionRate =
+      enrolledCount === 0
+        ? 0
+        : Math.round((completedCount / enrolledCount) * 100);
+
+    // Average days from earliest startedAt to latest completedAt for users
+    // who completed everything. Null when no one has finished yet.
+    let avgDaysToFirstCompletion: number | null = null;
+    if (completedCount > 0) {
+      const rows = await this.prisma.lessonProgress.findMany({
+        where: {
+          userId: { in: completedUserIds },
+          lessonId: { in: publishedLessonIds },
+        },
+        select: { userId: true, startedAt: true, completedAt: true },
+      });
+      const perUser = new Map<
+        string,
+        { earliestStart: Date; latestComplete: Date | null }
+      >();
+      for (const r of rows) {
+        const entry = perUser.get(r.userId);
+        if (!entry) {
+          perUser.set(r.userId, {
+            earliestStart: r.startedAt,
+            latestComplete: r.completedAt,
+          });
+          continue;
+        }
+        if (r.startedAt < entry.earliestStart) entry.earliestStart = r.startedAt;
+        if (
+          r.completedAt &&
+          (!entry.latestComplete || r.completedAt > entry.latestComplete)
+        ) {
+          entry.latestComplete = r.completedAt;
+        }
+      }
+      const dayMs = 1000 * 60 * 60 * 24;
+      let sumDays = 0;
+      let count = 0;
+      for (const { earliestStart, latestComplete } of perUser.values()) {
+        if (!latestComplete) continue;
+        const diffDays =
+          (latestComplete.getTime() - earliestStart.getTime()) / dayMs;
+        if (diffDays >= 0) {
+          sumDays += diffDays;
+          count += 1;
+        }
+      }
+      if (count > 0) {
+        avgDaysToFirstCompletion = Math.round((sumDays / count) * 10) / 10;
+      }
+    }
+
+    const distributionByLessonId = new Map<string, number>();
+    for (const row of distribution) {
+      distributionByLessonId.set(row.lessonId, row._count.lessonId);
+    }
+    const lessonCompletionDistribution = publishedLessons.map((l) => ({
+      lessonId: l.id,
+      slug: l.slug,
+      completedCount: distributionByLessonId.get(l.id) ?? 0,
+    }));
+
+    return {
+      enrolledCount,
+      startedCount,
+      completedCount,
+      completionRate,
+      avgDaysToFirstCompletion,
+      totalPublishedLessons,
+      lessonCompletionDistribution,
+    };
+  }
+
+  /**
+   * Streamed CSV of every active per-course enrollment for this course.
+   * Wildcard enrollments are NOT included — by design, the export is a
+   * roster you can hand off as "students who explicitly have access to
+   * THIS course". Wildcard holders are visible separately on the
+   * student-detail page.
+   */
+  async enrollmentsCsv(id: string) {
+    await this.ensureExists(id);
+    const slug = (
+      await this.prisma.course.findUnique({
+        where: { id },
+        select: { slug: true },
+      })
+    )?.slug;
+
+    const prisma = this.prisma;
+    async function* rows() {
+      const pageSize = 500;
+      let cursor: string | undefined;
+      // Cache for AdminUser email lookups — granted-by ids repeat across
+      // rows in any reasonably-sized course roster, so caching the email
+      // pulls down round-trips dramatically.
+      const granterEmailCache = new Map<string, string | null>();
+
+      while (true) {
+        const batch = await prisma.academyEnrollment.findMany({
+          where: { courseId: id, revokedAt: null },
+          orderBy: { enrolledAt: 'asc' },
+          take: pageSize,
+          ...(cursor ? { skip: 1, cursor: { id: cursor } } : {}),
+          include: {
+            user: { select: { id: true, email: true, name: true } },
+          },
+        });
+        if (batch.length === 0) break;
+
+        // Resolve any new granter ids in a single round-trip per page.
+        const unknownGranterIds = Array.from(
+          new Set(
+            batch
+              .map((r) => r.grantedById)
+              .filter((g): g is string => !!g && !granterEmailCache.has(g)),
+          ),
+        );
+        if (unknownGranterIds.length) {
+          const granters = await prisma.adminUser.findMany({
+            where: { id: { in: unknownGranterIds } },
+            select: { id: true, email: true },
+          });
+          for (const g of granters) granterEmailCache.set(g.id, g.email);
+          // Stash misses so we don't re-query them.
+          for (const id of unknownGranterIds) {
+            if (!granterEmailCache.has(id)) granterEmailCache.set(id, null);
+          }
+        }
+
+        for (const r of batch) {
+          yield [
+            r.user.id,
+            r.user.email,
+            r.user.name,
+            r.enrolledAt,
+            r.grantedById ?? '',
+            r.grantedById
+              ? (granterEmailCache.get(r.grantedById) ?? '')
+              : '',
+          ];
+        }
+        if (batch.length < pageSize) break;
+        cursor = batch[batch.length - 1]!.id;
+      }
+    }
+    const filename = `academy-${slug ?? 'course'}-enrollments-${new Date()
+      .toISOString()
+      .slice(0, 10)}.csv`;
+    return buildCsvStream(
+      ['studentId', 'email', 'name', 'enrolledAt', 'grantedById', 'grantedByEmail'],
+      rows(),
+      filename,
+    );
+  }
+
+  /**
+   * Streamed CSV of per-student progress against this course. Includes
+   * wildcard holders (they can read the course, so their progress
+   * counts). Stats are point-in-time — repeated downloads will see
+   * deltas as students complete more lessons.
+   */
+  async progressCsv(id: string) {
+    await this.ensureExists(id);
+    const course = await this.prisma.course.findUnique({
+      where: { id },
+      select: { slug: true },
+    });
+
+    const publishedLessons = await this.prisma.lesson.findMany({
+      where: { courseId: id, status: LessonStatus.published },
+      orderBy: { order: 'asc' },
+      select: { id: true, slug: true },
+    });
+    const totalLessons = publishedLessons.length;
+
+    // All users with active access (wildcard or per-course).
+    const enrollments = await this.prisma.academyEnrollment.findMany({
+      where: {
+        revokedAt: null,
+        OR: [{ courseId: null }, { courseId: id }],
+      },
+      select: {
+        userId: true,
+        user: { select: { id: true, email: true, name: true } },
+      },
+    });
+    const userMap = new Map<
+      string,
+      { id: string; email: string; name: string }
+    >();
+    for (const e of enrollments) {
+      userMap.set(e.userId, {
+        id: e.user.id,
+        email: e.user.email,
+        name: e.user.name,
+      });
+    }
+    const userIds = Array.from(userMap.keys());
+
+    // Per-user progress: completedLessons + lastSeenAt; pre-bucketed.
+    const progressRows = userIds.length
+      ? await this.prisma.lessonProgress.findMany({
+          where: {
+            userId: { in: userIds },
+            lesson: { courseId: id, status: LessonStatus.published },
+          },
+          select: {
+            userId: true,
+            lessonId: true,
+            completedAt: true,
+            lastSeenAt: true,
+          },
+        })
+      : [];
+    type UserStat = {
+      completed: number;
+      lastSeenAt: Date | null;
+      progressByLessonId: Map<string, { completedAt: Date | null; lastSeenAt: Date }>;
+    };
+    const stats = new Map<string, UserStat>();
+    for (const id of userIds)
+      stats.set(id, { completed: 0, lastSeenAt: null, progressByLessonId: new Map() });
+    for (const r of progressRows) {
+      const s = stats.get(r.userId)!;
+      if (r.completedAt) s.completed += 1;
+      if (!s.lastSeenAt || r.lastSeenAt > s.lastSeenAt) s.lastSeenAt = r.lastSeenAt;
+      s.progressByLessonId.set(r.lessonId, {
+        completedAt: r.completedAt,
+        lastSeenAt: r.lastSeenAt,
+      });
+    }
+
+    const lessonsForResume = publishedLessons.map((l) => ({
+      id: l.id,
+      slug: l.slug,
+    }));
+
+    const slug = course?.slug ?? 'course';
+    const filename = `academy-${slug}-progress-${new Date()
+      .toISOString()
+      .slice(0, 10)}.csv`;
+
+    const rows = userIds.map((uid) => {
+      const u = userMap.get(uid)!;
+      const s = stats.get(uid)!;
+      const completionRate =
+        totalLessons === 0
+          ? 0
+          : Math.round((s.completed / totalLessons) * 100);
+      const resumeSlug = computeResumeLessonSlug(
+        lessonsForResume,
+        s.progressByLessonId,
+      );
+      return [
+        u.id,
+        u.email,
+        s.completed,
+        totalLessons,
+        completionRate,
+        s.lastSeenAt,
+        resumeSlug ?? '',
+      ];
+    });
+
+    return buildCsvStream(
+      [
+        'studentId',
+        'email',
+        'completedLessons',
+        'totalLessons',
+        'completionRate',
+        'lastSeenAt',
+        'resumeLessonSlug',
+      ],
+      rows,
+      filename,
+    );
   }
 
   /**
@@ -591,44 +1088,4 @@ export class CoursesService {
     return buckets;
   }
 
-  /**
-   * Picks the lesson the `Continuă` CTA should land on for a single
-   * course. Prefers in-progress lessons (non-null `lastSeenAt` with
-   * null `completedAt`) ordered by most-recent lastSeenAt; falls back
-   * to the first never-opened lesson; falls back to the first lesson
-   * of the course when everything is already completed. Returns null
-   * when the course has no published lessons.
-   */
-  private computeResumeLessonSlug(
-    lessons: Array<{ id: string; slug: string }>,
-    progress: Map<string, { completedAt: Date | null; lastSeenAt: Date }>,
-  ): string | null {
-    if (lessons.length === 0) return null;
-
-    // In-progress: started but not completed. Pick most recent lastSeen.
-    let mostRecentInProgress: {
-      slug: string;
-      lastSeenAt: Date;
-    } | null = null;
-    for (const l of lessons) {
-      const row = progress.get(l.id);
-      if (!row) continue;
-      if (row.completedAt) continue;
-      if (
-        !mostRecentInProgress ||
-        row.lastSeenAt > mostRecentInProgress.lastSeenAt
-      ) {
-        mostRecentInProgress = { slug: l.slug, lastSeenAt: row.lastSeenAt };
-      }
-    }
-    if (mostRecentInProgress) return mostRecentInProgress.slug;
-
-    // First never-opened lesson.
-    for (const l of lessons) {
-      if (!progress.has(l.id)) return l.slug;
-    }
-
-    // Everything's done — start over.
-    return lessons[0].slug;
-  }
 }

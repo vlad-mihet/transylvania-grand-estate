@@ -6,10 +6,8 @@ export { SiteModule } from './site.module';
 export { CurrentSite } from './site.decorator';
 export { tierScopeFilter, scopedPropertiesInclude } from './tier-scope.util';
 export {
-  resolveGeoScope,
-  cityGeoWhere,
-  propertyGeoWhere,
-  isCountyInScope,
-  isCityVisible,
-} from './geo-scope.util';
-export type { GeoScope } from './geo-scope.util';
+  brandFromSiteId,
+  cityBrandWhere,
+  propertyBrandWhere,
+  isCityInBrand,
+} from './brand-where.util';

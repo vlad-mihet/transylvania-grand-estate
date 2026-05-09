@@ -1,6 +1,11 @@
 import { z } from "zod";
 import { ArticleStatus } from "@prisma/client";
-import { localizedStringSchema, paginationSchema, slugSchema } from "./_primitives";
+import {
+  entryModeSchema,
+  localizedStringSchema,
+  paginationSchema,
+  slugSchema,
+} from "./_primitives";
 
 /**
  * Article category — kept as a string literal union rather than a Prisma
@@ -36,6 +41,7 @@ export const updateArticleSchema = createArticleSchema
   .partial()
   .extend({
     status: z.nativeEnum(ArticleStatus).optional(),
+    mode: entryModeSchema,
   })
   .strict();
 

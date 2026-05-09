@@ -110,7 +110,7 @@ export function LanguageSwitcher({
     variant === "compact" ? locale.toUpperCase() : localeAutonyms[locale];
 
   return (
-    <DropdownMenu>
+    <DropdownMenu modal={false}>
       <DropdownMenuTrigger asChild>
         <Button
           type="button"

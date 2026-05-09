@@ -80,5 +80,13 @@ export default function middleware(req: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/((?!_next/static|_next/image|favicon.ico).*)"],
+  // Skip Next.js internals AND every static-asset path under public/. Without
+  // the `images` exclusion, requests for `/images/cities/<slug>.jpg` (synced
+  // from @tge/assets at dev/build) hit the auth gate above, fail the
+  // refreshToken check (next/image's server-side fetch carries no cookies),
+  // and 307 → /login. The browser then sees a redirect chain and gives up
+  // on the image. The trailing `\\..*` clause catches future extension-
+  // bearing static files (sitemap.xml, robots.txt, *.svg, etc.) so adding a
+  // new public/ folder doesn't reproduce the same bug.
+  matcher: ["/((?!_next/static|_next/image|images|favicon.ico|.*\\..*).*)"],
 };

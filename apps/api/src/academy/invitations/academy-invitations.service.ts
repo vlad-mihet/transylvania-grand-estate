@@ -24,6 +24,7 @@ import {
 import type { AcademyInvitationLocale } from '../../email/templates/academy-invitation.template';
 import { pickLocalized } from '../utils/locale-fallback';
 import { withAdvisoryLock } from '../../common/utils/advisory-lock.util';
+import { buildCsvStream } from '../../common/utils/csv-stream';
 
 const DEFAULT_EXPIRES_DAYS = 7;
 const BCRYPT_COST = 12;
@@ -283,6 +284,134 @@ export class AcademyInvitationsService {
         total,
         totalPages: Math.ceil(total / params.limit),
       },
+    };
+  }
+
+  /**
+   * Streamed CSV export of invitations matching the same status/email
+   * filters used by `list()`. Honours admin's filter state so what they
+   * see in the table is what they download. Streams in 500-row pages.
+   */
+  exportCsv(params: { status?: string; email?: string }) {
+    const statusMap: Record<string, InvitationStatus> = {
+      pending: InvitationStatus.PENDING,
+      accepted: InvitationStatus.ACCEPTED,
+      expired: InvitationStatus.EXPIRED,
+      revoked: InvitationStatus.REVOKED,
+      bounced: InvitationStatus.BOUNCED,
+    };
+    const where: Prisma.AcademyInvitationWhereInput = {};
+    if (params.status) where.status = statusMap[params.status];
+    if (params.email) {
+      where.email = { contains: params.email.trim(), mode: 'insensitive' };
+    }
+
+    const prisma = this.prisma;
+    async function* rows() {
+      const pageSize = 500;
+      let cursor: string | undefined;
+      while (true) {
+        const batch = await prisma.academyInvitation.findMany({
+          where,
+          orderBy: { createdAt: 'desc' },
+          take: pageSize,
+          ...(cursor ? { skip: 1, cursor: { id: cursor } } : {}),
+          select: {
+            id: true,
+            email: true,
+            status: true,
+            createdAt: true,
+            expiresAt: true,
+            acceptedAt: true,
+            acceptedVia: true,
+            bouncedAt: true,
+            bounceReason: true,
+            initialCourse: { select: { slug: true } },
+          },
+        });
+        if (batch.length === 0) break;
+        for (const r of batch) {
+          yield [
+            r.email,
+            r.status,
+            r.initialCourse?.slug ?? '',
+            r.createdAt,
+            r.expiresAt,
+            r.acceptedAt,
+            r.acceptedVia ?? '',
+            r.bouncedAt,
+            r.bounceReason ?? '',
+          ];
+        }
+        if (batch.length < pageSize) break;
+        cursor = batch[batch.length - 1]!.id;
+      }
+    }
+    const filename = `academy-invitations-${new Date()
+      .toISOString()
+      .slice(0, 10)}.csv`;
+    return buildCsvStream(
+      [
+        'email',
+        'status',
+        'initialCourseSlug',
+        'createdAt',
+        'expiresAt',
+        'acceptedAt',
+        'acceptedVia',
+        'bouncedAt',
+        'bounceReason',
+      ],
+      rows(),
+      filename,
+    );
+  }
+
+  /**
+   * Mint a new accept URL for an existing invitation and return it
+   * without sending email. Use case: the email bounced, the admin wants
+   * to hand the link off through Slack/SMS instead of resending. Rotates
+   * the underlying token (the previous email link 410s on the next
+   * verify), and refreshes the expiry to the configured TTL so the new
+   * URL has a sensible lifetime regardless of how stale the original was.
+   */
+  async rotateAcceptLink(id: string) {
+    const invitation = await this.prisma.academyInvitation.findUnique({
+      where: { id },
+    });
+    if (!invitation) throw new NotFoundException('Invitation not found');
+    if (invitation.status === InvitationStatus.ACCEPTED) {
+      throw new ConflictException({
+        message: 'Invitation has already been accepted',
+        code: 'ALREADY_ACCEPTED',
+      });
+    }
+    if (invitation.status === InvitationStatus.REVOKED) {
+      throw new ConflictException({
+        message: 'Invitation has been revoked',
+        code: 'REVOKED',
+      });
+    }
+
+    const { plaintext, hash } = this.generateToken();
+    const expiresAt = new Date(
+      Date.now() + DEFAULT_EXPIRES_DAYS * 24 * 60 * 60 * 1000,
+    );
+    await this.prisma.academyInvitation.update({
+      where: { id },
+      data: {
+        tokenHash: hash,
+        expiresAt,
+        // Stay PENDING so the admin can subsequently resend or revoke
+        // through the standard flows. EXPIRED → PENDING is the natural
+        // transition: a new link with a new TTL.
+        status: InvitationStatus.PENDING,
+      },
+    });
+    this.metrics.academyInvitations.inc({ outcome: 'link_rotated' });
+    return {
+      url: this.buildAcceptUrl(plaintext),
+      expiresAt: expiresAt.toISOString(),
     };
   }
 

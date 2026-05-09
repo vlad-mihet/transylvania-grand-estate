@@ -5,7 +5,6 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useTranslations } from "next-intl";
 import { Button } from "@tge/ui";
 import { apiClient } from "@/lib/api-client";
-import { Link } from "@/i18n/navigation";
 import { Can } from "@/components/shared/can";
 import { Mono } from "@/components/shared/mono";
 import { RelativeTime } from "@/components/shared/relative-time";
@@ -18,7 +17,10 @@ import {
 import { ResourceListPage } from "@/components/resource/resource-list-page";
 import { type ColumnDef } from "@/components/resource/resource-table";
 import { useResourceList } from "@/hooks/use-resource-list";
+import { ExportCsvButton } from "@/components/shared/export-csv-button";
+import { BulkGrantDialog } from "./_components/bulk-grant-dialog";
 import { InviteStudentDialog } from "./_components/invite-student-dialog";
+import { StudentPeekSheet } from "./_components/student-peek-sheet";
 import { flags } from "@/lib/flags";
 
 type Student = {
@@ -45,6 +47,8 @@ export default function AcademyStudentsPage() {
   const t = useTranslations("Academy.students");
   const tc = useTranslations("Common");
   const [inviteOpen, setInviteOpen] = useState(false);
+  const [bulkGrantOpen, setBulkGrantOpen] = useState(false);
+  const [peekId, setPeekId] = useState<string | null>(null);
   const [verifiedFilters, setVerifiedFilters] = useState<Set<VerifiedFilter>>(
     () => new Set(),
   );
@@ -77,7 +81,7 @@ export default function AcademyStudentsPage() {
       apiClient<{ data: Course[] }>("/admin/academy/courses?limit=100", {
         envelope: true,
       }),
-    enabled: inviteOpen,
+    enabled: inviteOpen || bulkGrantOpen,
   });
 
   const columns: ColumnDef<Student, unknown>[] = [
@@ -85,13 +89,16 @@ export default function AcademyStudentsPage() {
       id: "name",
       header: t("columnName"),
       cell: ({ row }) => (
-        <Link
-          href={`/academy/students/${row.original.id}`}
-          className="font-medium hover:underline"
-          onClick={(e) => e.stopPropagation()}
+        <button
+          type="button"
+          onClick={(e) => {
+            e.stopPropagation();
+            setPeekId(row.original.id);
+          }}
+          className="text-left font-medium hover:text-copper hover:underline"
         >
           {row.original.name}
-        </Link>
+        </button>
       ),
     },
     {
@@ -203,11 +210,23 @@ export default function AcademyStudentsPage() {
         }
         headerActions={
           <Can action="academy.user.manage">
+            <ExportCsvButton path="/admin/academy/users/export.csv" />
             <Button size="sm" onClick={() => setInviteOpen(true)}>
               {t("inviteLabel")}
             </Button>
           </Can>
         }
+        bulkActions={(selection) => (
+          <Can action="academy.user.manage">
+            <Button
+              size="sm"
+              onClick={() => setBulkGrantOpen(true)}
+              disabled={selection.size === 0}
+            >
+              {t("bulkGrantAction", { count: selection.size })}
+            </Button>
+          </Can>
+        )}
       />
 
       <InviteStudentDialog
@@ -217,6 +236,25 @@ export default function AcademyStudentsPage() {
         onSuccess={() => {
           queryClient.invalidateQueries({ queryKey: ["academy-students"] });
           setInviteOpen(false);
+        }}
+      />
+
+      <BulkGrantDialog
+        open={bulkGrantOpen}
+        onOpenChange={setBulkGrantOpen}
+        userIds={Array.from(list.selection)}
+        courses={coursesQuery.data?.data ?? []}
+        onSuccess={() => {
+          queryClient.invalidateQueries({ queryKey: ["academy-students"] });
+          list.clearSelection();
+          setBulkGrantOpen(false);
+        }}
+      />
+
+      <StudentPeekSheet
+        studentId={peekId}
+        onOpenChange={(open) => {
+          if (!open) setPeekId(null);
         }}
       />
     </>

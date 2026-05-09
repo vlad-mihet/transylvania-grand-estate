@@ -1,7 +1,8 @@
 "use client";
 
 import { Button, Tooltip, TooltipContent, TooltipTrigger } from "@tge/ui";
-import { Eye, EyeOff } from "lucide-react";
+import { Archive, Send } from "lucide-react";
+import { Link } from "@/i18n/navigation";
 import type { ColumnDef } from "@/components/resource/resource-table";
 import { Can } from "@/components/shared/can";
 import { Mono, MonoTag } from "@/components/shared/mono";
@@ -42,14 +43,17 @@ export function buildArticleColumns({
       id: "title",
       header: t("columnTitle"),
       cell: ({ row }) => (
-        <div className="min-w-0">
-          <p className="truncate text-sm font-medium text-foreground">
+        <Link
+          href={`/articles/${row.original.slug}/edit`}
+          className="block min-w-0"
+        >
+          <p className="truncate text-sm font-medium text-foreground hover:text-copper">
             {getTitle(row.original)}
           </p>
           <Mono className="truncate text-[11px] text-muted-foreground">
             {row.original.slug}
           </Mono>
-        </div>
+        </Link>
       ),
     },
     {
@@ -109,9 +113,11 @@ export function buildArticleColumns({
         const publishLabel = published ? t("unpublish") : t("publish");
         return (
           <RowActions
-            editHref={`/articles/${row.original.id}`}
+            viewHref={`/articles/${row.original.slug}`}
+            editHref={`/articles/${row.original.slug}/edit`}
             onDelete={() => onDelete(row.original.id)}
             permissions={{
+              view: "article.read",
               edit: "article.update",
               delete: "article.delete",
             }}
@@ -131,9 +137,9 @@ export function buildArticleColumns({
                       }
                     >
                       {published ? (
-                        <EyeOff className="text-muted-foreground" />
+                        <Archive className="text-muted-foreground" />
                       ) : (
-                        <Eye className="text-[var(--color-success)]" />
+                        <Send className="text-[var(--color-success)]" />
                       )}
                     </Button>
                   </TooltipTrigger>

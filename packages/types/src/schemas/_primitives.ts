@@ -20,6 +20,28 @@ export const localizedStringSchema = z.object({
 
 export type LocalizedStringInput = z.infer<typeof localizedStringSchema>;
 
+/**
+ * Save mode for entry editors with draft + publish support. Optional on the
+ * wire — when omitted, the API treats the request as a publish (back-compat
+ * with callers that don't know about drafts).
+ *
+ *   "draft":   localized fields go to the entity's `draft` JSON column,
+ *              non-localized fields are written to live as usual; the
+ *              published localized values are unchanged.
+ *   "publish": localized fields are written to live and any pending draft
+ *              is cleared; non-localized fields are written to live.
+ */
+export const entryModeSchema = z.enum(["draft", "publish"]).optional();
+export type EntryMode = z.infer<typeof entryModeSchema>;
+
+/**
+ * Brand membership for cities and counties. The two values mirror the
+ * `Brand` Prisma enum and the public-site identities (TGE_LUXURY ↔ tge,
+ * REVERY ↔ revery). Admin / academy contexts never carry a brand.
+ */
+export const brandSchema = z.enum(["tge", "revery"]);
+export type Brand = z.infer<typeof brandSchema>;
+
 export const paginationSchema = z.object({
   page: z.coerce.number().int().min(1).default(1),
   limit: z.coerce.number().int().min(1).max(100).default(12),

@@ -1,35 +1,41 @@
 "use client";
 
-import { useForm } from "react-hook-form";
+import type { ReactNode } from "react";
+import { FormProvider, useForm, useFormContext } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import {
-  testimonialSchema,
-  TestimonialFormValues,
-} from "@/lib/validations/testimonial";
-import { useApiFormErrors } from "@tge/hooks";
-import { toast } from "@/lib/toast";
-import { BilingualTextarea } from "@/components/shared/bilingual-textarea";
+import { useTranslations } from "next-intl";
 import {
   Input,
-  Label,
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
 } from "@tge/ui";
-import { SectionCard } from "@/components/shared/section-card";
+import {
+  EntryEditorShell,
+  EntryLocaleProvider,
+  LocalizedTextarea,
+  MetaField,
+  useLocaleCompleteness,
+} from "@/components/entry-editor";
 import { FormActions } from "@/components/shared/form-actions";
+import {
+  testimonialSchema,
+  TestimonialFormValues,
+} from "@/lib/validations/testimonial";
+import { useApiFormErrors } from "@tge/hooks";
 import { useUnsavedChangesWarning } from "@/hooks/use-unsaved-changes-warning";
-import { useTranslations } from "next-intl";
+import { toast } from "@/lib/toast";
 
 interface TestimonialFormProps {
   defaultValues?: Partial<TestimonialFormValues>;
   onSubmit: (data: TestimonialFormValues) => void;
   loading?: boolean;
   submissionError?: unknown;
-  /** Where Cancel navigates (detail page on edit, list on create). */
   cancelHref: string;
+  title: ReactNode;
+  breadcrumb?: ReactNode;
 }
 
 export function TestimonialForm({
@@ -38,8 +44,9 @@ export function TestimonialForm({
   loading,
   submissionError,
   cancelHref,
+  title,
+  breadcrumb,
 }: TestimonialFormProps) {
-  const t = useTranslations("TestimonialForm");
   const tc = useTranslations("Common");
 
   const form = useForm<TestimonialFormValues>({
@@ -57,70 +64,108 @@ export function TestimonialForm({
   useApiFormErrors(form, submissionError, (err) => {
     toast.error(err instanceof Error ? err.message : tc("saveFailed"));
   });
-
   useUnsavedChangesWarning(form.formState.isDirty);
 
   return (
-    <form
-      onSubmit={form.handleSubmit(onSubmit)}
-      className="w-full space-y-5"
-    >
-      <SectionCard title={t("title")}>
-        <div className="space-y-4">
-          <div className="grid gap-4 sm:grid-cols-2">
-            <div className="space-y-1.5">
-              <Label>{t("clientName")}</Label>
-              <Input {...form.register("clientName")} />
-            </div>
-            <div className="space-y-1.5">
-              <Label>{t("location")}</Label>
-              <Input {...form.register("location")} />
-            </div>
-          </div>
-          <div className="grid gap-4 sm:grid-cols-2">
-            <div className="space-y-1.5">
-              <Label>{t("propertyType")}</Label>
-              <Input {...form.register("propertyType")} />
-            </div>
-            <div className="space-y-1.5">
-              <Label>{t("rating")}</Label>
-              <Select
-                value={String(form.watch("rating"))}
-                onValueChange={(v) => form.setValue("rating", Number(v))}
-              >
-                <SelectTrigger>
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  {[1, 2, 3, 4, 5].map((r) => (
-                    <SelectItem key={r} value={String(r)}>
-                      {t("star", { count: r })}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-          </div>
-          <BilingualTextarea
-            label={t("quote")}
-            valueEn={form.watch("quote.en")}
-            valueRo={form.watch("quote.ro")}
-            onChangeEn={(v) => form.setValue("quote.en", v)}
-            onChangeRo={(v) => form.setValue("quote.ro", v)}
-            valueFr={form.watch("quote.fr") ?? ""}
-            valueDe={form.watch("quote.de") ?? ""}
-            onChangeFr={(v) => form.setValue("quote.fr", v)}
-            onChangeDe={(v) => form.setValue("quote.de", v)}
-            required
-            rows={4}
+    <FormProvider {...form}>
+      <EntryLocaleProvider>
+        <form onSubmit={form.handleSubmit(onSubmit)}>
+          <TestimonialFormBody
+            cancelHref={cancelHref}
+            loading={loading}
+            dirty={form.formState.isDirty}
+            title={title}
+            breadcrumb={breadcrumb}
           />
-        </div>
-      </SectionCard>
-      <FormActions
-        cancelHref={cancelHref}
-        loading={loading}
-        dirty={form.formState.isDirty}
-      />
-    </form>
+        </form>
+      </EntryLocaleProvider>
+    </FormProvider>
+  );
+}
+
+interface BodyProps {
+  cancelHref: string;
+  loading?: boolean;
+  dirty: boolean;
+  title: ReactNode;
+  breadcrumb?: ReactNode;
+}
+
+function TestimonialFormBody({
+  cancelHref,
+  loading,
+  dirty,
+  title,
+  breadcrumb,
+}: BodyProps) {
+  const t = useTranslations("TestimonialForm");
+  const { completeness, errorCounts } =
+    useLocaleCompleteness<TestimonialFormValues>(["quote"]);
+
+  return (
+    <EntryEditorShell
+      title={title}
+      breadcrumb={breadcrumb}
+      unsavedDirty={dirty}
+      switcherCompleteness={completeness}
+      switcherErrorCounts={errorCounts}
+      actions={
+        <FormActions cancelHref={cancelHref} loading={loading} dirty={dirty} />
+      }
+      localizedFields={
+        <LocalizedTextarea<TestimonialFormValues>
+          name="quote"
+          label={t("quote")}
+          required
+          rows={6}
+        />
+      }
+      metadataFields={<TestimonialMetadataFields t={t} />}
+    />
+  );
+}
+
+function TestimonialMetadataFields({
+  t,
+}: {
+  t: ReturnType<typeof useTranslations>;
+}) {
+  const form = useFormContext<TestimonialFormValues>();
+
+  return (
+    <>
+      <MetaField id="testimonial-client-name" label={t("clientName")}>
+        <Input
+          id="testimonial-client-name"
+          {...form.register("clientName")}
+        />
+      </MetaField>
+      <MetaField id="testimonial-location" label={t("location")}>
+        <Input id="testimonial-location" {...form.register("location")} />
+      </MetaField>
+      <MetaField id="testimonial-property-type" label={t("propertyType")}>
+        <Input
+          id="testimonial-property-type"
+          {...form.register("propertyType")}
+        />
+      </MetaField>
+      <MetaField id="testimonial-rating" label={t("rating")}>
+        <Select
+          value={String(form.watch("rating"))}
+          onValueChange={(v) => form.setValue("rating", Number(v))}
+        >
+          <SelectTrigger id="testimonial-rating">
+            <SelectValue />
+          </SelectTrigger>
+          <SelectContent>
+            {[1, 2, 3, 4, 5].map((r) => (
+              <SelectItem key={r} value={String(r)}>
+                {t("star", { count: r })}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+      </MetaField>
+    </>
   );
 }

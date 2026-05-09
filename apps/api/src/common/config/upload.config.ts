@@ -32,3 +32,39 @@ export const IMAGE_UPLOAD_MULTIPLE: MulterOptions = {
 };
 
 export const IMAGE_UPLOAD_MAX_FILES = 10;
+
+/**
+ * Document allowlist for academy lesson attachments — handouts, slide
+ * decks, exercise zips. Office formats are admitted because Romanian
+ * agency content commonly ships as .docx / .pptx; PDFs and ZIPs cover
+ * the rest. Plain text is included for completeness (cheat sheets,
+ * checklists). Excel-style .xlsx is intentionally OUT until there's a
+ * concrete academy use case — every additional format expands the
+ * magic-byte validator's surface area.
+ */
+const DOCUMENT_MIME_REGEX =
+  /^(application\/(pdf|zip|x-zip-compressed|msword|vnd\.ms-powerpoint|vnd\.openxmlformats-officedocument\.(presentationml\.presentation|wordprocessingml\.document))|text\/plain)$/;
+
+/**
+ * 25 MB cap matches the Resend attachment limit, keeps the upload UX
+ * snappy on residential connections, and stays well clear of the
+ * platform's request body limit. Lesson attachments are deliberately
+ * single-file uploads — admins add more by repeating the action,
+ * which keeps the magic-byte validator's failure mode obvious.
+ */
+export const DOCUMENT_UPLOAD_SINGLE: MulterOptions = {
+  limits: { fileSize: 25 * 1024 * 1024 },
+  fileFilter: (_req, file, cb) => {
+    if (!DOCUMENT_MIME_REGEX.test(file.mimetype)) {
+      return cb(
+        new BadRequestException(
+          'Unsupported attachment format. Allowed: PDF, ZIP, PPT/PPTX, DOC/DOCX, TXT.',
+        ),
+        false,
+      );
+    }
+    cb(null, true);
+  },
+};
+
+export const ATTACHMENTS_PER_LESSON_CAP = 10;

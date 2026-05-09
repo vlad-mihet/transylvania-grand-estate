@@ -1,9 +1,15 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import {
+  forwardRef,
+  Inject,
+  Injectable,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { PassportStrategy } from '@nestjs/passport';
 import { ExtractJwt, Strategy } from 'passport-jwt';
 import { AdminRole } from '@prisma/client';
 import type { AuthRealm } from '../../common/auth/realm';
+import { AuthService } from '../auth.service';
 
 /**
  * Admin-realm JWT strategy. Verifies tokens with `JWT_ADMIN_ACCESS_SECRET`,
@@ -14,7 +20,11 @@ import type { AuthRealm } from '../../common/auth/realm';
  */
 @Injectable()
 export class JwtAccessStrategy extends PassportStrategy(Strategy, 'jwt-access') {
-  constructor(configService: ConfigService) {
+  constructor(
+    configService: ConfigService,
+    @Inject(forwardRef(() => AuthService))
+    private readonly authService: AuthService,
+  ) {
     super({
       jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
       ignoreExpiration: false,
@@ -38,6 +48,15 @@ export class JwtAccessStrategy extends PassportStrategy(Strategy, 'jwt-access') 
       // through, or a default-role bypass could surface later.
       throw new UnauthorizedException('Admin token is missing role claim');
     }
+    // Suspension lookup: cheap PK fetch on a hot row, but still one DB hit
+    // per request. Acceptable at admin's traffic shape (handful of users,
+    // O(req/s)). The throttle in touchLastSeen amortises the write side; the
+    // status read is unbatched. If this grows we move it into a memoised
+    // signed-cookie session check.
+    await this.authService.assertUserNotSuspended(payload.sub);
+    // Stamp lastSeenAt — write is throttled to once per 5 min per user, so
+    // the read above is the dominant cost.
+    void this.authService.touchLastSeen(payload.sub);
     return {
       id: payload.sub,
       email: payload.email,

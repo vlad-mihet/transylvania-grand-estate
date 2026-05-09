@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { localizedStringSchema } from "./_primitives";
+import { entryModeSchema, localizedStringSchema } from "./_primitives";
 
 /**
  * Testimonial — a client quote about a property or the brand. Mirrors
@@ -16,7 +16,10 @@ export const createTestimonialSchema = z
   })
   .strict();
 
-export const updateTestimonialSchema = createTestimonialSchema.partial();
+export const updateTestimonialSchema = createTestimonialSchema
+  .partial()
+  .extend({ mode: entryModeSchema })
+  .strict();
 
 export type CreateTestimonialInput = z.infer<typeof createTestimonialSchema>;
 export type UpdateTestimonialInput = z.infer<typeof updateTestimonialSchema>;

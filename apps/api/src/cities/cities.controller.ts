@@ -13,7 +13,7 @@ import {
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { ApiTags } from '@nestjs/swagger';
-import { AdminRole } from '@prisma/client';
+import { AdminRole, Brand } from '@prisma/client';
 import { IMAGE_UPLOAD_SINGLE } from '../common/config/upload.config';
 import { ValidateUploadInterceptor } from '../common/interceptors/validate-upload.interceptor';
 import { CitiesService } from './cities.service';
@@ -38,13 +38,27 @@ export class CitiesController {
     @Query('page') page?: number,
     @Query('limit') limit?: number,
     @Query('featured') featured?: string,
+    @Query('brand') brand?: string,
   ) {
     // `featured` arrives as a string ("true"/"false") via Express query parsing.
     // Coerce to boolean only on the affirmative literal so a missing or
     // arbitrary value falls through to the default unfiltered listing.
     const featuredFlag = featured === 'true';
+    // Admin-only brand override. "all" is the explicit no-op (matches the
+    // admin BrandContextProvider's "all" state); anything else is validated
+    // on the way in to keep the SQL safe.
+    const brandFilter =
+      brand === 'tge' || brand === 'revery' ? brand : undefined;
     return this.citiesService.findAll(
-      { county, search, sort, page, limit, featured: featuredFlag },
+      {
+        county,
+        search,
+        sort,
+        page,
+        limit,
+        featured: featuredFlag,
+        brand: brandFilter,
+      },
       site,
     );
   }
@@ -105,5 +119,23 @@ export class CitiesController {
     @UploadedFile() file: Express.Multer.File,
   ) {
     return this.citiesService.uploadImage(id, file);
+  }
+
+  @Roles(AdminRole.ADMIN, AdminRole.SUPER_ADMIN)
+  @Post(':id/brands/:brand')
+  async addBrand(
+    @Param('id', ParseUUIDPipe) id: string,
+    @Param('brand') brand: Brand,
+  ) {
+    return this.citiesService.addBrand(id, brand);
+  }
+
+  @Roles(AdminRole.ADMIN, AdminRole.SUPER_ADMIN)
+  @Delete(':id/brands/:brand')
+  async removeBrand(
+    @Param('id', ParseUUIDPipe) id: string,
+    @Param('brand') brand: Brand,
+  ) {
+    return this.citiesService.removeBrand(id, brand);
   }
 }

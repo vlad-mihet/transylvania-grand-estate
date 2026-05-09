@@ -1,30 +1,36 @@
 "use client";
 
-import { useForm } from "react-hook-form";
+import type { ReactNode } from "react";
+import { useState } from "react";
+import { FormProvider, useForm, useFormContext } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useQuery } from "@tanstack/react-query";
-import { citySchema, CityFormValues } from "@/lib/validations/city";
-import { useApiFormErrors } from "@tge/hooks";
-import { apiClient } from "@/lib/api-client";
-import { toast } from "@/lib/toast";
-import { BilingualTextarea } from "@/components/shared/bilingual-textarea";
-import { ImageUpload } from "@/components/shared/image-upload";
+import { useTranslations } from "next-intl";
 import {
   Button,
   Input,
-  Label,
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
 } from "@tge/ui";
-import { SectionCard } from "@/components/shared/section-card";
+import {
+  EntryEditorShell,
+  EntryLocaleProvider,
+  LocalizedTextarea,
+  MetaField,
+  useLocaleCompleteness,
+} from "@/components/entry-editor";
 import { FormActions } from "@/components/shared/form-actions";
+import { ImageUpload } from "@/components/shared/image-upload";
+import { useApiFormErrors } from "@tge/hooks";
 import { useUnsavedChangesWarning } from "@/hooks/use-unsaved-changes-warning";
-import type { ApiCounty } from "@tge/types";
-import { useState } from "react";
-import { useTranslations } from "next-intl";
+import { toast } from "@/lib/toast";
+import { apiClient } from "@/lib/api-client";
+import { citySchema, CityFormValues } from "@/lib/validations/city";
+import type { ApiBrand, ApiCounty } from "@tge/types";
+import { BrandBadges } from "@/components/shared/brand-badges";
 
 interface CityFormProps {
   defaultValues?: Partial<CityFormValues>;
@@ -34,11 +40,21 @@ interface CityFormProps {
   submissionError?: unknown;
   /** Where Cancel navigates (detail page on edit, list on create). */
   cancelHref: string;
+  title: ReactNode;
+  breadcrumb?: ReactNode;
 }
 
-export function CityForm({ defaultValues, imageUrl, onSubmit, loading, submissionError, cancelHref }: CityFormProps) {
+export function CityForm({
+  defaultValues,
+  imageUrl,
+  onSubmit,
+  loading,
+  submissionError,
+  cancelHref,
+  title,
+  breadcrumb,
+}: CityFormProps) {
   const [imageFile, setImageFile] = useState<File | null>(null);
-  const t = useTranslations("CityForm");
   const tc = useTranslations("Common");
 
   const form = useForm<CityFormValues>({
@@ -49,6 +65,7 @@ export function CityForm({ defaultValues, imageUrl, onSubmit, loading, submissio
       countySlug: "",
       description: { en: "", ro: "", fr: "", de: "" },
       propertyCount: 0,
+      brands: [],
       ...defaultValues,
     },
   });
@@ -59,10 +76,88 @@ export function CityForm({ defaultValues, imageUrl, onSubmit, loading, submissio
 
   useUnsavedChangesWarning(form.formState.isDirty);
 
-  // Counties feed the select below. React Query caches the result per
-  // session so opening /cities/new repeatedly doesn't refetch, and all
-  // 42 Romanian județe comfortably fit in one page — no pagination
-  // needed.
+  return (
+    <FormProvider {...form}>
+      <EntryLocaleProvider>
+        <form onSubmit={form.handleSubmit((data) => onSubmit(data, imageFile))}>
+          <CityFormBody
+            cancelHref={cancelHref}
+            loading={loading}
+            dirty={form.formState.isDirty}
+            imageUrl={imageUrl}
+            onImageFileChange={setImageFile}
+            title={title}
+            breadcrumb={breadcrumb}
+          />
+        </form>
+      </EntryLocaleProvider>
+    </FormProvider>
+  );
+}
+
+interface BodyProps {
+  cancelHref: string;
+  loading?: boolean;
+  dirty: boolean;
+  imageUrl?: string | null;
+  onImageFileChange: (file: File | null) => void;
+  title: ReactNode;
+  breadcrumb?: ReactNode;
+}
+
+function CityFormBody({
+  cancelHref,
+  loading,
+  dirty,
+  imageUrl,
+  onImageFileChange,
+  title,
+  breadcrumb,
+}: BodyProps) {
+  const t = useTranslations("CityForm");
+  const { completeness, errorCounts } = useLocaleCompleteness<CityFormValues>(
+    ["description"],
+  );
+
+  return (
+    <EntryEditorShell
+      title={title}
+      breadcrumb={breadcrumb}
+      unsavedDirty={dirty}
+      switcherCompleteness={completeness}
+      switcherErrorCounts={errorCounts}
+      actions={
+        <FormActions cancelHref={cancelHref} loading={loading} dirty={dirty} />
+      }
+      localizedFields={
+        <LocalizedTextarea<CityFormValues>
+          name="description"
+          label={t("description")}
+          required
+          rows={8}
+        />
+      }
+      extraSection={
+        <div>
+          <p className="mb-3 text-[11px] font-semibold tracking-[0.08em] uppercase text-muted-foreground">
+            {t("cityImage")}
+          </p>
+          <ImageUpload value={imageUrl} onChange={onImageFileChange} />
+        </div>
+      }
+      metadataFields={<CityMetadataFields t={t} />}
+    />
+  );
+}
+
+function CityMetadataFields({
+  t,
+}: {
+  t: ReturnType<typeof useTranslations>;
+}) {
+  const tc = useTranslations("Common");
+  const form = useFormContext<CityFormValues>();
+
   const { data: counties, isLoading: countiesLoading } = useQuery({
     queryKey: ["counties-select"],
     queryFn: () => apiClient<ApiCounty[]>("/counties"),
@@ -77,96 +172,86 @@ export function CityForm({ defaultValues, imageUrl, onSubmit, loading, submissio
   };
 
   return (
-    <form
-      onSubmit={form.handleSubmit((data) => onSubmit(data, imageFile))}
-      className="w-full space-y-5"
-    >
-      <SectionCard title={t("title")}>
-        <div className="space-y-4">
-          <div className="grid gap-4 sm:grid-cols-2">
-            <div className="space-y-1.5">
-              <Label>{t("name")}</Label>
-              <Input {...form.register("name")} />
-            </div>
-            <div className="flex items-end gap-2">
-              <div className="flex-1 space-y-1.5">
-                <Label>{t("slug")}</Label>
-                <Input {...form.register("slug")} className="mono" />
-              </div>
-              <Button
-                type="button"
-                variant="outline"
-                size="sm"
-                onClick={generateSlug}
-              >
-                {tc("generate")}
-              </Button>
-            </div>
-          </div>
-          <div className="space-y-1.5">
-            <Label>{t("county")}</Label>
-            <Select
-              value={form.watch("countySlug") || undefined}
-              onValueChange={(v) =>
-                form.setValue("countySlug", v, { shouldValidate: true })
-              }
-              disabled={countiesLoading}
-            >
-              <SelectTrigger
-                aria-invalid={!!form.formState.errors.countySlug}
-              >
-                <SelectValue
-                  placeholder={
-                    countiesLoading ? tc("loading") : t("selectCounty")
-                  }
-                />
-              </SelectTrigger>
-              <SelectContent>
-                {(counties ?? []).map((c) => (
-                  <SelectItem key={c.slug} value={c.slug}>
-                    {c.name} ({c.code})
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-            {form.formState.errors.countySlug && (
-              <p className="text-[11px] text-[var(--color-danger)]">
-                {form.formState.errors.countySlug.message}
-              </p>
-            )}
-          </div>
-          <BilingualTextarea
-            label={t("description")}
-            valueEn={form.watch("description.en")}
-            valueRo={form.watch("description.ro")}
-            onChangeEn={(v) => form.setValue("description.en", v)}
-            onChangeRo={(v) => form.setValue("description.ro", v)}
-            valueFr={form.watch("description.fr") ?? ""}
-            valueDe={form.watch("description.de") ?? ""}
-            onChangeFr={(v) => form.setValue("description.fr", v)}
-            onChangeDe={(v) => form.setValue("description.de", v)}
-            required
+    <>
+      <MetaField id="city-name" label={t("name")}>
+        <Input id="city-name" {...form.register("name")} />
+      </MetaField>
+
+      <MetaField id="city-slug" label={t("slug")}>
+        <div className="flex gap-2">
+          <Input
+            id="city-slug"
+            {...form.register("slug")}
+            className="mono flex-1"
           />
-          <div className="space-y-1.5">
-            <Label>{t("propertyCount")}</Label>
-            <Input
-              type="number"
-              {...form.register("propertyCount", { valueAsNumber: true })}
-              className="mono max-w-[200px]"
-            />
-          </div>
-          <ImageUpload
-            label={t("cityImage")}
-            value={imageUrl}
-            onChange={setImageFile}
-          />
+          <Button
+            type="button"
+            variant="outline"
+            size="sm"
+            onClick={generateSlug}
+          >
+            {tc("generate")}
+          </Button>
         </div>
-      </SectionCard>
-      <FormActions
-        cancelHref={cancelHref}
-        loading={loading}
-        dirty={form.formState.isDirty}
-      />
-    </form>
+      </MetaField>
+
+      <MetaField
+        id="city-county"
+        label={t("county")}
+        error={form.formState.errors.countySlug?.message}
+      >
+        <Select
+          value={form.watch("countySlug") || undefined}
+          onValueChange={(v) =>
+            form.setValue("countySlug", v, { shouldValidate: true })
+          }
+          disabled={countiesLoading}
+        >
+          <SelectTrigger
+            id="city-county"
+            aria-invalid={!!form.formState.errors.countySlug}
+          >
+            <SelectValue
+              placeholder={countiesLoading ? tc("loading") : t("selectCounty")}
+            />
+          </SelectTrigger>
+          <SelectContent>
+            {(counties ?? []).map((c) => (
+              <SelectItem key={c.slug} value={c.slug}>
+                {c.name} ({c.code})
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+      </MetaField>
+
+      <MetaField id="city-property-count" label={t("propertyCount")}>
+        <Input
+          id="city-property-count"
+          type="number"
+          {...form.register("propertyCount", { valueAsNumber: true })}
+          className="mono"
+        />
+      </MetaField>
+
+      <MetaField
+        id="city-brands"
+        label={t("brands")}
+        helper={t("brandsHelper")}
+      >
+        <BrandBadges
+          size="md"
+          brands={form.watch("brands") ?? []}
+          onToggle={({ brand, next }) => {
+            const current = new Set<ApiBrand>(form.getValues("brands") ?? []);
+            if (next) current.add(brand);
+            else current.delete(brand);
+            form.setValue("brands", Array.from(current), {
+              shouldDirty: true,
+            });
+          }}
+        />
+      </MetaField>
+    </>
   );
 }

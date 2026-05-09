@@ -3,6 +3,7 @@ import {
   Controller,
   Delete,
   Get,
+  Header,
   Param,
   ParseUUIDPipe,
   Post,
@@ -63,6 +64,20 @@ export class AcademyInvitationsController {
     });
   }
 
+  /**
+   * Streamed CSV of invitations using the same status+email filters as
+   * `list()`. Streamed in 500-row batches so big catalogs don't OOM.
+   */
+  @Roles(AdminRole.ADMIN, AdminRole.SUPER_ADMIN)
+  @Get('admin/academy/invitations/export.csv')
+  @Header('Cache-Control', 'no-store')
+  exportCsv(
+    @Query('status') status?: string,
+    @Query('email') email?: string,
+  ) {
+    return this.invitationsService.exportCsv({ status, email });
+  }
+
   @Roles(AdminRole.ADMIN, AdminRole.SUPER_ADMIN)
   @Post('admin/academy/invitations/:id/resend')
   async resend(
@@ -70,6 +85,18 @@ export class AcademyInvitationsController {
     @Param('id', ParseUUIDPipe) id: string,
   ) {
     return this.invitationsService.resend(id, req.user.id);
+  }
+
+  /**
+   * Mint a fresh accept URL without sending email. Used by the "Copy
+   * link" admin action when delivery bounced or the admin wants to hand
+   * the link off through another channel. Rotates the token — the
+   * previous email link will 410 on the next verify.
+   */
+  @Roles(AdminRole.ADMIN, AdminRole.SUPER_ADMIN)
+  @Get('admin/academy/invitations/:id/accept-link')
+  async acceptLink(@Param('id', ParseUUIDPipe) id: string) {
+    return this.invitationsService.rotateAcceptLink(id);
   }
 
   @Roles(AdminRole.ADMIN, AdminRole.SUPER_ADMIN)

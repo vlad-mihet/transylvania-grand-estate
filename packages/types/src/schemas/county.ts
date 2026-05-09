@@ -4,6 +4,9 @@ import { coordinatesSchema, slugSchema } from "./_primitives";
 /**
  * County — Romania's `județ` administrative unit. Lat/lng is the county's
  * centroid, used for defaulting maps when no narrower location is picked.
+ * Counties are universal across brands (TGE/Revery both consume the full
+ * set as a filter facet), so there's no `brands` field here — that
+ * membership lives on cities only.
  * Mirrors `apps/api/src/counties/dto/create-county.dto.ts`.
  */
 export const createCountySchema = z

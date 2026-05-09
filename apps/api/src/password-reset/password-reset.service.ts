@@ -132,6 +132,74 @@ export class PasswordResetService {
     return { ok: true as const };
   }
 
+  /**
+   * Admin-triggered reset. Bypasses the per-email cooldown (the actor is a
+   * SUPER_ADMIN clicking explicitly, not a scraper) and surfaces real errors
+   * to the caller (target-not-found / SSO-only / no-password) instead of the
+   * silent 202 the public path uses for non-enumeration. Audited as
+   * `user.password-reset-requested` against the target.
+   */
+  async adminTriggerReset(
+    actorId: string,
+    targetId: string,
+    locale?: AgentInvitationLocale,
+  ) {
+    const user = await this.prisma.adminUser.findUnique({
+      where: { id: targetId },
+      select: { id: true, email: true, passwordHash: true, name: true },
+    });
+    if (!user) throw new NotFoundException('User not found');
+    if (!user.passwordHash) {
+      // SSO-only — no local password to reset. Surface this so the UI can
+      // suggest "ask the user to sign in with Google" instead of pretending
+      // the email went out.
+      throw new ConflictException({
+        message: 'This account signs in with Google and has no password',
+        code: 'NO_PASSWORD',
+      });
+    }
+
+    // Invalidate any outstanding tokens for this user; admin-issued resets
+    // override anything in flight.
+    await this.prisma.passwordResetToken.updateMany({
+      where: { adminUserId: user.id, usedAt: null },
+      data: { usedAt: new Date() },
+    });
+
+    const { plaintext, hash } = this.generateToken();
+    const expiresAt = new Date(Date.now() + TOKEN_TTL_MS);
+    await this.prisma.passwordResetToken.create({
+      data: {
+        tokenHash: hash,
+        adminUserId: user.id,
+        expiresAt,
+      },
+    });
+    this.metrics.passwordResetsIssued.inc();
+
+    const resetUrl = this.buildResetUrl(plaintext);
+    const firstName = user.name?.split(/\s+/)[0] ?? null;
+    const mail = await this.emailService.sendPasswordReset(user.email, {
+      firstName,
+      resetUrl,
+      expiresAt,
+      locale: locale ?? 'ro',
+    });
+
+    void this.audit.recordCustom({
+      actorId,
+      action: 'user.password-reset-requested',
+      resource: 'AdminUser',
+      resourceId: user.id,
+    });
+
+    return {
+      ok: true as const,
+      emailDelivered: mail.ok,
+      expiresAt,
+    };
+  }
+
   /** Called by the verify endpoint on page mount to check the token. */
   async verify(token: string) {
     const record = await this.findValidByToken(token);

@@ -49,6 +49,10 @@ next-env.d.ts
 # API
 apps/api/uploads/
 
+# Assets synced from @tge/assets at the start of each app's dev/build.
+# The single source of truth lives in packages/assets/public/.
+apps/*/public/images/cities/
+
 # Local tool caches
 .claude/
 

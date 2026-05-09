@@ -9,7 +9,6 @@ import { toast } from "@/lib/toast";
 import { Link } from "@/i18n/navigation";
 import { usePermissions } from "@/components/auth/auth-provider";
 import { LessonForm } from "@/components/forms/lesson-form";
-import { FormPageShell } from "@/components/resource/form-page-shell";
 import { LoadingState } from "@tge/ui";
 import type { LessonFormValues } from "@/lib/validations/academy";
 
@@ -59,9 +58,14 @@ export default function NewAcademyLessonPage() {
   const order = nextOrderQuery.data?.order ?? 10;
 
   return (
-    <FormPageShell
+    <LessonForm
+      mode="create"
+      defaultValues={{ order }}
+      onSubmit={(values) => createMutation.mutate(values)}
+      loading={createMutation.isPending}
+      submissionError={createMutation.error}
+      cancelHref={`/academy/courses/${params.id}`}
       title={t("createTitle")}
-      description={t("createDescription", { order })}
       breadcrumb={
         <Link
           href={`/academy/courses/${params.id}`}
@@ -70,15 +74,6 @@ export default function NewAcademyLessonPage() {
           {tCourse("detailBackToList")}
         </Link>
       }
-    >
-      <LessonForm
-        mode="create"
-        defaultValues={{ order }}
-        onSubmit={(values) => createMutation.mutate(values)}
-        loading={createMutation.isPending}
-        submissionError={createMutation.error}
-        cancelHref={`/academy/courses/${params.id}`}
-      />
-    </FormPageShell>
+    />
   );
 }

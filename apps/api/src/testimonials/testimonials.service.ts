@@ -6,6 +6,7 @@ import { UpdateTestimonialDto } from './dto/update-testimonial.dto';
 import { ensureFound } from '../common/utils/ensure-found.util';
 import { paginate } from '../common/utils/pagination.util';
 import { toJson } from '../common/utils/prisma-json';
+import { applyDraftMode } from '../common/utils/entry-draft';
 
 // Cap on the legacy unpaginated path so a bloated testimonials table can't
 // ever return unbounded rows. Intentionally generous since callers have no
@@ -112,11 +113,13 @@ export class TestimonialsService {
     await this.ensureExists(id);
     const data: Prisma.TestimonialUpdateInput = {};
 
+    const { live, draft } = applyDraftMode(dto, ['quote'] as const, dto.mode);
+    if (live.quote !== undefined) data.quote = live.quote;
+    if (draft !== undefined) data.draft = draft;
+
     if (dto.clientName !== undefined) data.clientName = dto.clientName;
     if (dto.location !== undefined) data.location = dto.location;
     if (dto.propertyType !== undefined) data.propertyType = dto.propertyType;
-    if (dto.quote !== undefined)
-      data.quote = toJson(dto.quote);
     if (dto.rating !== undefined) data.rating = dto.rating;
 
     return this.prisma.testimonial.update({ where: { id }, data });

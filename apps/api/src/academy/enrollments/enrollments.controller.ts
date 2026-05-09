@@ -13,6 +13,7 @@ import { ApiTags } from '@nestjs/swagger';
 import { AdminRole } from '@prisma/client';
 import { EnrollmentsService } from './enrollments.service';
 import {
+  BulkGrantEnrollmentDto,
   GrantEnrollmentDto,
   ListEnrollmentsDto,
 } from './dto/enrollments.dto';
@@ -42,6 +43,22 @@ export class EnrollmentsController {
     @Body() dto: GrantEnrollmentDto,
   ) {
     return this.enrollmentsService.grant(dto, req.user.id);
+  }
+
+  /**
+   * Bulk-grant access for many students at once. Two complementary
+   * inputs: pre-resolved userIds (from a list selection) and emails
+   * (pasted CSV/list). Set `inviteUnknownEmails: true` to mint a fresh
+   * invitation for addresses without an existing AcademyUser. Returns
+   * a per-row outcome envelope so the admin UI can render a summary.
+   */
+  @Roles(AdminRole.ADMIN, AdminRole.SUPER_ADMIN)
+  @Post('bulk')
+  async bulkGrant(
+    @Request() req: { user: { id: string } },
+    @Body() dto: BulkGrantEnrollmentDto,
+  ) {
+    return this.enrollmentsService.bulkGrant(dto, req.user.id);
   }
 
   @Roles(AdminRole.ADMIN, AdminRole.SUPER_ADMIN)

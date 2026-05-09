@@ -10,12 +10,15 @@ import {
   Patch,
   Post,
   Query,
+  Req,
   UseGuards,
 } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { AdminRole } from '@prisma/client';
 import { computeReadingTimeMinutes } from '@tge/types/utils/reading-time';
 import { LessonsService } from './lessons.service';
+import { AcademyAuthService } from '../auth/academy-auth.service';
+import { LessonAttachmentsService } from '../attachments/lesson-attachments.service';
 import { MetricsService } from '../../metrics/metrics.service';
 import {
   CreateLessonDto,
@@ -36,7 +39,10 @@ import { normalizeLocale, pickLocalized } from '../utils/locale-fallback';
 @ApiTags('Academy Lessons (Admin)')
 @Controller('admin/academy/courses/:courseId/lessons')
 export class AdminLessonsController {
-  constructor(private readonly lessonsService: LessonsService) {}
+  constructor(
+    private readonly lessonsService: LessonsService,
+    private readonly academyAuth: AcademyAuthService,
+  ) {}
 
   @Roles(AdminRole.EDITOR, AdminRole.ADMIN, AdminRole.SUPER_ADMIN)
   @Get()
@@ -103,6 +109,29 @@ export class AdminLessonsController {
   async remove(@Param('id', ParseUUIDPipe) id: string) {
     return this.lessonsService.remove(id);
   }
+
+  /**
+   * Mint a one-shot preview link for this lesson. The admin opens the
+   * URL in a new tab; the academy app reads `previewToken=` from the
+   * query string and renders the lesson via the dedicated preview
+   * endpoint. 5-min TTL.
+   */
+  @Roles(AdminRole.EDITOR, AdminRole.ADMIN, AdminRole.SUPER_ADMIN)
+  @Post(':id/preview-token')
+  @HttpCode(200)
+  async previewToken(
+    @Param('id', ParseUUIDPipe) id: string,
+    @Body() _body: unknown,
+    @Req() req: { user: { id: string } },
+  ) {
+    // Verify the lesson exists so the editor doesn't get back a token
+    // that 404s the moment they click it.
+    await this.lessonsService.assertExists(id);
+    return this.academyAuth.mintPreviewToken({
+      lessonId: id,
+      adminId: req.user.id,
+    });
+  }
 }
 
 @ApiTags('Academy Lessons (Student)')
@@ -112,6 +141,7 @@ export class AdminLessonsController {
 export class StudentLessonsController {
   constructor(
     private readonly lessonsService: LessonsService,
+    private readonly attachmentsService: LessonAttachmentsService,
     private readonly metrics: MetricsService,
   ) {}
 
@@ -189,6 +219,12 @@ export class StudentLessonsController {
     const title = pickLocalized(lesson.title, locale);
     const excerpt = pickLocalized(lesson.excerpt, locale);
     const content = pickLocalized(lesson.content, locale);
+    // Composed in parallel with the lesson read so the response stays
+    // single-round-trip for the student. Empty array is fine when the
+    // lesson has no attachments — no special-casing on the client.
+    const attachments = await this.attachmentsService.listForLesson(
+      lesson.id,
+    );
     // Label by the served locale, not the requested one — the fallback
     // chain picks `ro` when the requested locale's content is empty,
     // and dashboards should reflect what students actually read.
@@ -228,6 +264,115 @@ export class StudentLessonsController {
             localizedTitle: pickLocalized(next.title, locale).text,
           }
         : null,
+      attachments,
+    };
+  }
+}
+
+/**
+ * Preview-only read for an admin-minted preview token. The strategy
+ * stamps `req.user.preview = { lessonId }` for these tokens; we
+ * verify the path lessonId matches and return the lesson detail with
+ * draft content overlaid on the live row. Visibility / enrollment
+ * gates are deliberately bypassed — the whole point of preview is to
+ * see the student-side render before publishing.
+ */
+@ApiTags('Academy Lesson Preview (Student)')
+@Controller('academy/preview/lessons')
+@Realm('academy')
+@UseGuards(JwtAcademyAuthGuard)
+export class LessonPreviewController {
+  constructor(
+    private readonly lessonsService: LessonsService,
+    private readonly attachmentsService: LessonAttachmentsService,
+  ) {}
+
+  @Get(':lessonId')
+  async findOne(
+    @CurrentAcademyUser() user: AcademyUserPayload & {
+      preview?: { lessonId: string };
+    },
+    @Param('lessonId', ParseUUIDPipe) lessonId: string,
+    @Query('locale') localeRaw?: string,
+  ) {
+    if (!user.preview || user.preview.lessonId !== lessonId) {
+      throw new NotFoundException('Preview token does not authorize this lesson');
+    }
+    const result = await this.lessonsService.findForPreview(lessonId);
+    if (!result) throw new NotFoundException('Lesson not found');
+    const { lesson, prev, next } = result;
+    const locale = normalizeLocale(localeRaw);
+    const attachments = await this.attachmentsService.listForLesson(
+      lesson.id,
+    );
+
+    // Overlay the lesson's `draft` JSON column on the live fields so
+    // unpublished edits are visible. The shape mirrors the student
+    // findOne response so the academy preview page can reuse the same
+    // renderer with no special-cased branches.
+    const draft = (lesson.draft ?? null) as
+      | Record<string, unknown>
+      | null;
+    const titleData = (draft?.title as Record<string, string | undefined>) ??
+      (lesson.title as Record<string, string | undefined>);
+    const excerptData =
+      (draft?.excerpt as Record<string, string | undefined>) ??
+      (lesson.excerpt as Record<string, string | undefined>);
+    const contentData =
+      (draft?.content as Record<string, string | undefined>) ??
+      (lesson.content as Record<string, string | undefined>);
+
+    const title = pickLocalized(titleData, locale);
+    const excerpt = pickLocalized(excerptData, locale);
+    const content = pickLocalized(contentData, locale);
+
+    return {
+      id: lesson.id,
+      slug: lesson.slug,
+      order: lesson.order,
+      title: titleData,
+      excerpt: excerptData,
+      type: lesson.type,
+      readingTimeMinutes:
+        lesson.type === 'text'
+          ? // Inline import — avoids dragging the helper into every
+            // module that touches lessons.
+            require('@tge/types/utils/reading-time').computeReadingTimeMinutes(
+              content.text,
+            )
+          : null,
+      videoDurationSeconds:
+        lesson.type === 'video' ? lesson.videoDurationSeconds : null,
+      publishedAt: lesson.publishedAt?.toISOString() ?? null,
+      videoUrl: lesson.videoUrl,
+      content: content.text,
+      servedLocale: content.servedLocale,
+      localizedTitle: title.text,
+      localizedExcerpt: excerpt.text,
+      // Preview surfaces don't carry student progress.
+      completed: false,
+      completedAt: null,
+      prev: prev
+        ? {
+            slug: prev.slug,
+            localizedTitle: pickLocalized(
+              prev.title as Record<string, string | undefined>,
+              locale,
+            ).text,
+          }
+        : null,
+      next: next
+        ? {
+            slug: next.slug,
+            localizedTitle: pickLocalized(
+              next.title as Record<string, string | undefined>,
+              locale,
+            ).text,
+          }
+        : null,
+      attachments,
+      // Sentinel the student app reads to render the yellow banner.
+      preview: true,
     };
   }
 }

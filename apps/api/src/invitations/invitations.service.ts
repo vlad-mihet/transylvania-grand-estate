@@ -26,6 +26,7 @@ import { toJson } from '../common/utils/prisma-json';
 import { withAdvisoryLock } from '../common/utils/advisory-lock.util';
 import type { InviteAgentDto } from './dto/invite-agent.dto';
 import type { InviteExistingAgentDto } from './dto/invite-existing-agent.dto';
+import type { InviteUserDto } from './dto/invite-user.dto';
 import type { AcceptInvitationPasswordDto } from './dto/accept-invitation-password.dto';
 import type { ListInvitationsDto } from './dto/list-invitations.dto';
 import type { AgentInvitationLocale } from '../email/templates/agent-invitation.template';
@@ -106,6 +107,75 @@ export class InvitationsService {
       id: invitation.id,
       agentId: agent.id,
       email: invitation.email,
+      expiresAt: invitation.expiresAt,
+      emailDelivered: mailResult.ok,
+    };
+  }
+
+  /**
+   * Invite a non-AGENT platform user (SUPER_ADMIN, ADMIN, or EDITOR). Skips
+   * the Agent profile creation that inviteAgent does — the AdminUser is
+   * created at accept-time without an Agent linkage. Email + token discipline
+   * is identical (sha256-only persistence, single-use atomic claim).
+   */
+  async inviteUser(dto: InviteUserDto, actorId: string) {
+    // The Zod schema (inviteUserSchema) restricts `role` to non-AGENT values,
+    // so an AGENT here would only arrive via SmartValidationPipe being
+    // bypassed. We don't add a runtime cast-and-check here because the type
+    // system already proves it; if validation is ever disabled on this
+    // route, that's the bug to fix, not a defensive check downstream.
+
+    // Email-already-an-account guard. Two PENDING invites for the same
+    // email aren't blocked here (the unique constraint on tokenHash already
+    // prevents duplicates by token; multiple invites by email are fine for
+    // resend-after-bounce flows). The accept path's email-uniqueness check
+    // catches an active duplicate at acceptance time.
+    const existingUser = await this.prisma.adminUser.findUnique({
+      where: { email: dto.email },
+      select: { id: true },
+    });
+    if (existingUser) {
+      throw new ConflictException({
+        message: 'An admin account with this email already exists',
+        code: 'EMAIL_TAKEN',
+      });
+    }
+
+    const ttlDays = dto.expiresInDays ?? DEFAULT_EXPIRES_DAYS;
+    const expiresAt = new Date(Date.now() + ttlDays * 24 * 60 * 60 * 1000);
+    const { plaintext, hash } = this.generateToken();
+
+    const invitation = await this.prisma.invitation.create({
+      data: {
+        email: dto.email,
+        name: dto.name,
+        tokenHash: hash,
+        role: dto.role,
+        expiresAt,
+        invitedById: actorId,
+      },
+    });
+
+    const firstName = dto.name.split(/\s+/)[0] ?? dto.name;
+    const mailResult = await this.sendInvitationEmail({
+      invitationId: invitation.id,
+      to: dto.email,
+      firstName,
+      plaintext,
+      expiresAt,
+      actorId,
+      locale: dto.locale,
+    });
+
+    this.metrics.invitationsCreated.inc({
+      role: dto.role,
+      flow: 'invite_user',
+    });
+
+    return {
+      id: invitation.id,
+      email: invitation.email,
+      role: invitation.role,
       expiresAt: invitation.expiresAt,
       emailDelivered: mailResult.ok,
     };
@@ -341,10 +411,20 @@ export class InvitationsService {
    */
   async verify(token: string) {
     const invitation = await this.findValidByToken(token);
+    let firstName = invitation.agent?.firstName ?? '';
+    let lastName = invitation.agent?.lastName ?? '';
+    if (!firstName && invitation.name) {
+      // Non-AGENT invitation: split the stored display name on first space.
+      // The accept-invite UI greets the user by firstName, so we want a
+      // non-empty value even when the invitee is just "Maria" (no surname).
+      const parts = invitation.name.trim().split(/\s+/);
+      firstName = parts[0] ?? '';
+      lastName = parts.slice(1).join(' ');
+    }
     return {
       email: invitation.email,
-      firstName: invitation.agent?.firstName ?? '',
-      lastName: invitation.agent?.lastName ?? '',
+      firstName,
+      lastName,
       role: invitation.role,
       expiresAt: invitation.expiresAt.toISOString(),
     };
@@ -357,15 +437,19 @@ export class InvitationsService {
    */
   async acceptWithPassword(dto: AcceptInvitationPasswordDto) {
     const invitation = await this.findValidByToken(dto.token);
-    if (!invitation.agentId || !invitation.agent) {
-      // AGENT invitations always have an agent; other roles aren't
-      // invitable in v1 so this is effectively unreachable. Fail loudly
-      // so it doesn't silently produce an orphan AdminUser.
-      throw new ConflictException('Invitation is missing its linked Agent');
-    }
 
+    // Two valid invitation shapes:
+    //  - AGENT: linked Agent (firstName/lastName), no `name` column.
+    //  - SUPER_ADMIN/ADMIN/EDITOR: no Agent, `name` carries the display name.
+    // A non-AGENT invitation missing `name` is corrupt; a non-AGENT
+    // invitation with an Agent linkage is also corrupt (slot reuse). Both
+    // surface a 409 so debugging is loud rather than silently producing an
+    // orphan AdminUser.
+    const fullName = this.resolveInviteeName(invitation);
+    if (!fullName) {
+      throw new ConflictException('Invitation is missing recipient name');
+    }
     const passwordHash = await bcrypt.hash(dto.password, BCRYPT_COST);
-    const fullName = `${invitation.agent.firstName} ${invitation.agent.lastName}`.trim();
 
     const endTimer = this.metrics.invitationAcceptDuration.startTimer({
       method: 'password',
@@ -400,10 +484,13 @@ export class InvitationsService {
           role: invitation.role,
         },
       });
-      await tx.agent.update({
-        where: { id: invitation.agentId! },
-        data: { adminUserId: user.id },
-      });
+      // Only AGENT invitations carry an Agent linkage to reconcile.
+      if (invitation.agentId) {
+        await tx.agent.update({
+          where: { id: invitation.agentId },
+          data: { adminUserId: user.id },
+        });
+      }
       return user;
     });
     endTimer();
@@ -427,9 +514,6 @@ export class InvitationsService {
     },
   ) {
     const invitation = await this.findValidByToken(token);
-    if (!invitation.agentId || !invitation.agent) {
-      throw new ConflictException('Invitation is missing its linked Agent');
-    }
     if (invitation.email.toLowerCase() !== profile.email.toLowerCase()) {
       throw new ForbiddenException({
         message:
@@ -438,8 +522,15 @@ export class InvitationsService {
       });
     }
 
+    // Same dual shape as acceptWithPassword (AGENT-with-Agent vs non-AGENT
+    // with stored name). Fall back to the Google profile's name only if the
+    // invitation has neither — keeps the AdminUser.name field non-empty.
     const fullName =
-      `${invitation.agent.firstName} ${invitation.agent.lastName}`.trim();
+      this.resolveInviteeName(invitation) ||
+      `${profile.firstName} ${profile.lastName}`.trim();
+    if (!fullName) {
+      throw new ConflictException('Invitation is missing recipient name');
+    }
 
     const endTimer = this.metrics.invitationAcceptDuration.startTimer({
       method: 'google',
@@ -473,16 +564,34 @@ export class InvitationsService {
           email: profile.email,
         },
       });
-      await tx.agent.update({
-        where: { id: invitation.agentId! },
-        data: { adminUserId: user.id },
-      });
+      if (invitation.agentId) {
+        await tx.agent.update({
+          where: { id: invitation.agentId },
+          data: { adminUserId: user.id },
+        });
+      }
       return user;
     });
     endTimer();
     this.metrics.invitationsAccepted.inc({ method: 'google' });
 
     return this.authService.issueTokensForUserId(created.id);
+  }
+
+  /**
+   * Resolve the display name for an invitation. AGENT invites pull from the
+   * linked Agent (firstName + lastName); other roles fall back to the
+   * Invitation.name column. Returns the empty string if neither path yields
+   * a name — caller decides whether to fail or use a profile fallback.
+   */
+  private resolveInviteeName(invitation: {
+    agent?: { firstName: string; lastName: string } | null;
+    name?: string | null;
+  }): string {
+    if (invitation.agent) {
+      return `${invitation.agent.firstName} ${invitation.agent.lastName}`.trim();
+    }
+    return (invitation.name ?? '').trim();
   }
 
   async list(filters: ListInvitationsDto) {
@@ -515,6 +624,10 @@ export class InvitationsService {
       data: rows.map((r) => ({
         id: r.id,
         email: r.email,
+        // Non-AGENT invites carry their display name on the invitation; AGENT
+        // invites derive it from the linked Agent record. Surface both shapes
+        // here so the admin invitations table doesn't need to branch.
+        name: r.name ?? (r.agent ? `${r.agent.firstName} ${r.agent.lastName}` : null),
         role: r.role,
         status: r.status,
         expiresAt: r.expiresAt,
@@ -566,7 +679,7 @@ export class InvitationsService {
     const mailResult = await this.sendInvitationEmail({
       invitationId: updated.id,
       to: invitation.email,
-      firstName: invitation.agent?.firstName ?? '',
+      firstName: this.firstNameFor(invitation),
       plaintext,
       expiresAt,
       actorId,
@@ -578,6 +691,21 @@ export class InvitationsService {
       expiresAt: updated.expiresAt,
       emailDelivered: mailResult.ok,
     };
+  }
+
+  /**
+   * Email-greeting helper. AGENT invites use the linked Agent's firstName;
+   * non-AGENT invites split the stored display name. Empty string when
+   * neither path resolves so callers can pass it straight to the template
+   * without conditional logic.
+   */
+  private firstNameFor(invitation: {
+    agent?: { firstName: string } | null;
+    name?: string | null;
+  }): string {
+    if (invitation.agent?.firstName) return invitation.agent.firstName;
+    if (invitation.name) return invitation.name.trim().split(/\s+/)[0] ?? '';
+    return '';
   }
 
   async revoke(id: string) {
@@ -656,7 +784,7 @@ export class InvitationsService {
       await this.sendInvitationEmail({
         invitationId: inv.id,
         to: inv.email,
-        firstName: inv.agent?.firstName ?? '',
+        firstName: this.firstNameFor(inv),
         plaintext,
         expiresAt: inv.expiresAt,
         actorId: inv.invitedById,
@@ -716,7 +844,7 @@ export class InvitationsService {
       });
       const acceptUrl = this.buildAcceptUrl(plaintext);
       const result = await this.emailService.sendInvitationReminder(inv.email, {
-        firstName: inv.agent?.firstName ?? '',
+        firstName: this.firstNameFor(inv),
         acceptUrl,
         expiresAt: inv.expiresAt,
         locale: 'ro',

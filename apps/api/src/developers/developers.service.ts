@@ -8,13 +8,12 @@ import { ensureFound } from '../common/utils/ensure-found.util';
 import { ensureSlugUnique } from '../common/utils/ensure-slug-unique.util';
 import { paginate } from '../common/utils/pagination.util';
 import { toJson } from '../common/utils/prisma-json';
+import { applyDraftMode } from '../common/utils/entry-draft';
 import {
   SiteContext,
-  propertyGeoWhere,
-  resolveGeoScope,
+  propertyBrandWhere,
   scopedPropertiesInclude,
 } from '../common/site';
-import { SiteConfigService } from '../site-config/site-config.service';
 
 const UNPAGINATED_CAP = 100;
 
@@ -54,7 +53,6 @@ export class DevelopersService {
   constructor(
     private prisma: PrismaService,
     private uploadsService: UploadsService,
-    private siteConfig: SiteConfigService,
   ) {}
 
   async findAll(
@@ -80,9 +78,7 @@ export class DevelopersService {
       ];
     }
 
-    const geo = propertyGeoWhere(
-      await resolveGeoScope(site, this.siteConfig),
-    );
+    const geo = propertyBrandWhere(site);
     const include = {
       properties: scopedPropertiesInclude(
         site,
@@ -136,9 +132,7 @@ export class DevelopersService {
   }
 
   async findById(id: string, site: SiteContext) {
-    const geo = propertyGeoWhere(
-      await resolveGeoScope(site, this.siteConfig),
-    );
+    const geo = propertyBrandWhere(site);
     return ensureFound(
       this.prisma.developer.findUnique({
         where: { id },
@@ -159,9 +153,7 @@ export class DevelopersService {
   }
 
   async findBySlug(slug: string, site: SiteContext) {
-    const geo = propertyGeoWhere(
-      await resolveGeoScope(site, this.siteConfig),
-    );
+    const geo = propertyBrandWhere(site);
     return ensureFound(
       this.prisma.developer.findUnique({
         where: { slug },
@@ -209,13 +201,19 @@ export class DevelopersService {
     await this.ensureExists(id);
     const data: Prisma.DeveloperUpdateInput = {};
 
+    const { live, draft } = applyDraftMode(
+      dto,
+      ['description', 'shortDescription'] as const,
+      dto.mode,
+    );
+    if (live.description !== undefined) data.description = live.description;
+    if (live.shortDescription !== undefined)
+      data.shortDescription = live.shortDescription;
+    if (draft !== undefined) data.draft = draft;
+
     if (dto.slug !== undefined) data.slug = dto.slug;
     if (dto.name !== undefined) data.name = dto.name;
     if (dto.logo !== undefined) data.logo = dto.logo;
-    if (dto.description !== undefined)
-      data.description = toJson(dto.description);
-    if (dto.shortDescription !== undefined)
-      data.shortDescription = toJson(dto.shortDescription);
     if (dto.city !== undefined) data.city = dto.city;
     if (dto.citySlug !== undefined) data.citySlug = dto.citySlug;
     if (dto.website !== undefined) data.website = dto.website;

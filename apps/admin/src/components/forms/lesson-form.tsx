@@ -1,10 +1,10 @@
 "use client";
 
-import { useForm } from "react-hook-form";
+import type { ReactNode } from "react";
+import { FormProvider, useForm, useFormContext } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
   Input,
-  Label,
   Select,
   SelectContent,
   SelectItem,
@@ -12,10 +12,15 @@ import {
   SelectValue,
 } from "@tge/ui";
 import { useTranslations } from "next-intl";
-import { BilingualInput } from "@/components/shared/bilingual-input";
-import { BilingualTextarea } from "@/components/shared/bilingual-textarea";
-import { BilingualMarkdownEditor } from "@/components/shared/bilingual-markdown-editor";
-import { SectionCard } from "@/components/shared/section-card";
+import {
+  EntryEditorShell,
+  EntryLocaleProvider,
+  LocalizedInput,
+  LocalizedMarkdownEditor,
+  LocalizedTextarea,
+  MetaField,
+  useLocaleCompleteness,
+} from "@/components/entry-editor";
 import { FormActions } from "@/components/shared/form-actions";
 import { EmbedPreview } from "@/components/forms/embed-preview";
 import { useApiFormErrors } from "@tge/hooks";
@@ -31,7 +36,10 @@ import {
 interface LessonFormProps {
   mode: "create" | "edit";
   defaultValues?: Partial<LessonFormValues>;
-  onSubmit: (data: LessonFormValues) => void;
+  onSubmit: (
+    data: LessonFormValues,
+    saveMode?: "draft" | "publish",
+  ) => void;
   /**
    * Optional secondary submit handler — when provided, renders a "Save & next"
    * button alongside the regular Save. Useful for sequential editing when
@@ -42,6 +50,9 @@ interface LessonFormProps {
   loading?: boolean;
   submissionError?: unknown;
   cancelHref: string;
+  title: ReactNode;
+  breadcrumb?: ReactNode;
+  hasPendingDraft?: boolean;
 }
 
 const EMPTY_DEFAULTS: LessonFormValues = {
@@ -64,11 +75,12 @@ export function LessonForm({
   loading,
   submissionError,
   cancelHref,
+  title,
+  breadcrumb,
+  hasPendingDraft,
 }: LessonFormProps) {
   const t = useTranslations("Academy.lessonForm");
   const tLessons = useTranslations("Academy.lessons");
-  const tStatus = useTranslations("Academy.statuses");
-  const tType = useTranslations("Academy.lessonTypes");
   const form = useForm<LessonFormValues>({
     resolver: zodResolver(lessonFormSchema),
     defaultValues: { ...EMPTY_DEFAULTS, ...defaultValues },
@@ -80,8 +92,6 @@ export function LessonForm({
   });
   useUnsavedChangesWarning(form.formState.isDirty && !loading);
 
-  const type = form.watch("type") ?? "text";
-
   // Cleans payload before invoking either submit handler. Text lessons
   // never carry a videoUrl or videoDurationSeconds; reading time is
   // derived from content on the server. Strip both here so a stale value
@@ -89,9 +99,7 @@ export function LessonForm({
   // (the service rejects them anyway, but we surface a clean form
   // payload regardless). On create, also drop `status` — newly created
   // lessons start in `draft` server-side.
-  const buildPayload = (
-    values: LessonFormValues,
-  ): LessonFormValues => {
+  const buildPayload = (values: LessonFormValues): LessonFormValues => {
     const cleaned: LessonFormValues =
       values.type === "video"
         ? values
@@ -104,232 +112,281 @@ export function LessonForm({
     return cleaned;
   };
 
-  const submit = form.handleSubmit((values) => onSubmit(buildPayload(values)));
+  const submitWithMode = (saveMode: "draft" | "publish") =>
+    form.handleSubmit((values) => {
+      const payload = buildPayload(values);
+      if (mode === "create") {
+        onSubmit(payload);
+      } else {
+        onSubmit(payload, saveMode);
+      }
+    });
+
+  const submitDraft = submitWithMode("draft");
+  const submitPublish = submitWithMode("publish");
   const submitAndNext = onSubmitAndNext
     ? form.handleSubmit((values) => onSubmitAndNext(buildPayload(values)))
     : null;
 
   return (
-    <form onSubmit={submit} className="flex flex-col gap-5">
-      <SectionCard title={t("basicsTitle")} description={t("basicsDescription")}>
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-          <div>
-            <Label htmlFor="lesson-slug">{t("slugLabel")}</Label>
-            <Input
-              id="lesson-slug"
-              {...form.register("slug")}
-              placeholder={t("slugPlaceholder")}
-              className="mono mt-1.5"
-            />
-            {form.formState.errors.slug ? (
-              <p className="mt-1 text-xs text-[var(--color-danger)]">
-                {form.formState.errors.slug.message}
-              </p>
-            ) : null}
-          </div>
+    <FormProvider {...form}>
+      <EntryLocaleProvider>
+        <form onSubmit={mode === "edit" ? submitDraft : submitPublish}>
+          <LessonFormBody
+            mode={mode}
+            t={t}
+            tLessons={tLessons}
+            cancelHref={cancelHref}
+            loading={loading}
+            dirty={form.formState.isDirty}
+            submitAndNext={submitAndNext}
+            title={title}
+            breadcrumb={breadcrumb}
+            hasPendingDraft={hasPendingDraft}
+            onPublish={() => void submitPublish()}
+          />
+        </form>
+      </EntryLocaleProvider>
+    </FormProvider>
+  );
+}
 
-          <div>
-            <Label htmlFor="lesson-order">{t("orderLabel")}</Label>
-            <Input
-              id="lesson-order"
-              type="number"
-              min={0}
-              {...form.register("order", { valueAsNumber: true })}
-              className="mono mt-1.5"
-            />
-            <p className="mt-1 text-xs text-muted-foreground">
-              {t("orderHelper")}
-            </p>
-          </div>
+interface LessonFormBodyProps {
+  mode: "create" | "edit";
+  t: ReturnType<typeof useTranslations>;
+  tLessons: ReturnType<typeof useTranslations>;
+  cancelHref: string;
+  loading?: boolean;
+  dirty: boolean;
+  submitAndNext: (() => Promise<void>) | null;
+  title: ReactNode;
+  breadcrumb?: ReactNode;
+  hasPendingDraft?: boolean;
+  onPublish: () => void;
+}
 
-          <div>
-            <Label htmlFor="lesson-type">{t("typeLabel")}</Label>
-            <Select
-              value={type}
-              onValueChange={(v) =>
-                form.setValue("type", v as LessonFormValues["type"], {
-                  shouldDirty: true,
-                })
-              }
-            >
-              <SelectTrigger id="lesson-type" className="mt-1.5">
-                <SelectValue placeholder={t("typePlaceholder")} />
-              </SelectTrigger>
-              <SelectContent>
-                {LESSON_TYPES.map((lt) => (
-                  <SelectItem key={lt} value={lt}>
-                    {tType(lt)}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
+function LessonFormBody({
+  mode,
+  t,
+  tLessons,
+  cancelHref,
+  loading,
+  dirty,
+  submitAndNext,
+  title,
+  breadcrumb,
+  hasPendingDraft,
+  onPublish,
+}: LessonFormBodyProps) {
+  const tc = useTranslations("Common");
+  const form = useFormContext<LessonFormValues>();
+  const lessonType = form.watch("type") ?? "text";
+  const videoUrl = form.watch("videoUrl");
+  const videoTitle =
+    form.watch("title.en") ||
+    form.watch("title.ro") ||
+    t("videoTitleFallback");
+  const { completeness, errorCounts } = useLocaleCompleteness<LessonFormValues>(
+    ["title", "excerpt", "content"],
+  );
+  const isEdit = mode === "edit";
 
-          {type === "video" ? (
-            <>
-              <div className="sm:col-span-2">
-                <Label htmlFor="lesson-video-url">{t("videoUrlLabel")}</Label>
-                <Input
-                  id="lesson-video-url"
-                  type="url"
-                  {...form.register("videoUrl")}
-                  placeholder={t("videoUrlPlaceholder")}
-                  className="mt-1.5"
-                />
-                <p className="mt-1 text-xs text-muted-foreground">
-                  {t("videoUrlHelper")}
-                </p>
-                <EmbedPreview
-                  url={form.watch("videoUrl")}
-                  title={
-                    form.watch("title.en") ||
-                    form.watch("title.ro") ||
-                    t("videoTitleFallback")
-                  }
-                />
-              </div>
-
-              <div className="sm:col-span-2">
-                <Label htmlFor="lesson-video-duration">
-                  {t("videoDurationLabel")}
-                </Label>
-                <Input
-                  id="lesson-video-duration"
-                  type="number"
-                  min={1}
-                  max={14400}
-                  {...form.register("videoDurationSeconds", {
-                    setValueAs: (v) =>
-                      v === "" || v === null || v === undefined
-                        ? null
-                        : Number(v),
-                  })}
-                  placeholder={t("videoDurationPlaceholder")}
-                  className="mono mt-1.5 max-w-[160px]"
-                />
-                <p className="mt-1 text-xs text-muted-foreground">
-                  {t("videoDurationHelper")}
-                </p>
-              </div>
-            </>
+  return (
+    <EntryEditorShell
+      title={
+        <span className="flex items-center gap-2">
+          {title}
+          {hasPendingDraft ? (
+            <span className="inline-flex items-center rounded-sm bg-warning-bg px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-[0.08em] text-warning">
+              {tc("draftPending")}
+            </span>
           ) : null}
-        </div>
-      </SectionCard>
-
-      <SectionCard title={t("copyTitle")} description={t("copyDescription")}>
-        <div className="flex flex-col gap-5">
-          <BilingualInput
+        </span>
+      }
+      breadcrumb={breadcrumb}
+      unsavedDirty={dirty}
+      switcherCompleteness={completeness}
+      switcherErrorCounts={errorCounts}
+      actions={
+        <FormActions
+          cancelHref={cancelHref}
+          loading={loading}
+          dirty={dirty}
+          submitLabel={
+            isEdit ? tc("saveDraft") : t("submitCreate")
+          }
+          publishAction={
+            isEdit ? { label: tc("publish"), onClick: onPublish } : undefined
+          }
+          secondarySubmit={
+            submitAndNext
+              ? {
+                  label: tLessons("saveAndNext"),
+                  onClick: () => void submitAndNext(),
+                }
+              : undefined
+          }
+        />
+      }
+      localizedFields={
+        <>
+          <LocalizedInput<LessonFormValues>
+            name="title"
             label={t("titleLabel")}
-            valueRo={form.watch("title.ro") ?? ""}
-            valueEn={form.watch("title.en") ?? ""}
-            valueFr={form.watch("title.fr") ?? ""}
-            valueDe={form.watch("title.de") ?? ""}
-            onChangeRo={(v) =>
-              form.setValue("title.ro", v, { shouldValidate: true, shouldDirty: true })
-            }
-            onChangeEn={(v) =>
-              form.setValue("title.en", v, { shouldValidate: true, shouldDirty: true })
-            }
-            onChangeFr={(v) =>
-              form.setValue("title.fr", v, { shouldValidate: true, shouldDirty: true })
-            }
-            onChangeDe={(v) =>
-              form.setValue("title.de", v, { shouldValidate: true, shouldDirty: true })
-            }
             required
           />
-
-          <BilingualTextarea
+          <LocalizedTextarea<LessonFormValues>
+            name="excerpt"
             label={t("excerptLabel")}
-            valueRo={form.watch("excerpt.ro") ?? ""}
-            valueEn={form.watch("excerpt.en") ?? ""}
-            valueFr={form.watch("excerpt.fr") ?? ""}
-            valueDe={form.watch("excerpt.de") ?? ""}
-            onChangeRo={(v) =>
-              form.setValue("excerpt.ro", v, { shouldValidate: true, shouldDirty: true })
-            }
-            onChangeEn={(v) =>
-              form.setValue("excerpt.en", v, { shouldValidate: true, shouldDirty: true })
-            }
-            onChangeFr={(v) =>
-              form.setValue("excerpt.fr", v, { shouldValidate: true, shouldDirty: true })
-            }
-            onChangeDe={(v) =>
-              form.setValue("excerpt.de", v, { shouldValidate: true, shouldDirty: true })
-            }
             required
             rows={2}
           />
-
-          <BilingualMarkdownEditor
+          <LocalizedMarkdownEditor<LessonFormValues>
+            name="content"
             label={t("contentLabel")}
-            valueRo={form.watch("content.ro") ?? ""}
-            valueEn={form.watch("content.en") ?? ""}
-            valueFr={form.watch("content.fr") ?? ""}
-            valueDe={form.watch("content.de") ?? ""}
-            onChangeRo={(v) =>
-              form.setValue("content.ro", v, { shouldValidate: true, shouldDirty: true })
-            }
-            onChangeEn={(v) =>
-              form.setValue("content.en", v, { shouldValidate: true, shouldDirty: true })
-            }
-            onChangeFr={(v) =>
-              form.setValue("content.fr", v, { shouldValidate: true, shouldDirty: true })
-            }
-            onChangeDe={(v) =>
-              form.setValue("content.de", v, { shouldValidate: true, shouldDirty: true })
-            }
             required
             rows={14}
           />
-        </div>
-      </SectionCard>
-
-      {mode === "edit" ? (
-        <SectionCard
-          title={t("publishingTitle")}
-          description={t("publishingDescription")}
-        >
+        </>
+      }
+      extraSection={
+        lessonType === "video" ? (
           <div>
-            <Label htmlFor="lesson-status">{t("statusLabel")}</Label>
-            <Select
-              value={form.watch("status") ?? "draft"}
-              onValueChange={(v) =>
-                form.setValue("status", v as LessonFormValues["status"], {
-                  shouldDirty: true,
-                })
-              }
-            >
-              <SelectTrigger id="lesson-status" className="mt-1.5 sm:max-w-xs">
-                <SelectValue placeholder={t("statusPlaceholder")} />
-              </SelectTrigger>
-              <SelectContent>
-                {LESSON_STATUSES.map((s) => (
-                  <SelectItem key={s} value={s}>
-                    {tStatus(s)}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+            <p className="mb-2 text-[11px] font-semibold tracking-[0.08em] uppercase text-muted-foreground">
+              {t("videoUrlLabel")} preview
+            </p>
+            <EmbedPreview url={videoUrl} title={videoTitle} />
           </div>
-        </SectionCard>
+        ) : undefined
+      }
+      metadataFields={<LessonMetadataFields mode={mode} t={t} />}
+    />
+  );
+}
+
+function LessonMetadataFields({
+  mode,
+  t,
+}: {
+  mode: "create" | "edit";
+  t: ReturnType<typeof useTranslations>;
+}) {
+  const tStatus = useTranslations("Academy.statuses");
+  const tType = useTranslations("Academy.lessonTypes");
+  const form = useFormContext<LessonFormValues>();
+  const lessonType = form.watch("type") ?? "text";
+
+  return (
+    <>
+      <MetaField
+        id="lesson-slug"
+        label={t("slugLabel")}
+        error={form.formState.errors.slug?.message}
+      >
+        <Input
+          id="lesson-slug"
+          {...form.register("slug")}
+          placeholder={t("slugPlaceholder")}
+          className="mono"
+        />
+      </MetaField>
+
+      <MetaField
+        id="lesson-order"
+        label={t("orderLabel")}
+        helper={t("orderHelper")}
+      >
+        <Input
+          id="lesson-order"
+          type="number"
+          min={0}
+          {...form.register("order", { valueAsNumber: true })}
+          className="mono"
+        />
+      </MetaField>
+
+      <MetaField id="lesson-type" label={t("typeLabel")}>
+        <Select
+          value={lessonType}
+          onValueChange={(v) =>
+            form.setValue("type", v as LessonFormValues["type"], {
+              shouldDirty: true,
+            })
+          }
+        >
+          <SelectTrigger id="lesson-type">
+            <SelectValue placeholder={t("typePlaceholder")} />
+          </SelectTrigger>
+          <SelectContent>
+            {LESSON_TYPES.map((lt) => (
+              <SelectItem key={lt} value={lt}>
+                {tType(lt)}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+      </MetaField>
+
+      {lessonType === "video" ? (
+        <>
+          <MetaField
+            id="lesson-video-url"
+            label={t("videoUrlLabel")}
+            helper={t("videoUrlHelper")}
+          >
+            <Input
+              id="lesson-video-url"
+              type="url"
+              {...form.register("videoUrl")}
+              placeholder={t("videoUrlPlaceholder")}
+            />
+          </MetaField>
+
+          <MetaField
+            id="lesson-video-duration"
+            label={t("videoDurationLabel")}
+            helper={t("videoDurationHelper")}
+          >
+            <Input
+              id="lesson-video-duration"
+              type="number"
+              min={1}
+              max={14400}
+              {...form.register("videoDurationSeconds", {
+                setValueAs: (v) =>
+                  v === "" || v === null || v === undefined ? null : Number(v),
+              })}
+              placeholder={t("videoDurationPlaceholder")}
+              className="mono"
+            />
+          </MetaField>
+        </>
       ) : null}
 
-      <FormActions
-        cancelHref={cancelHref}
-        loading={loading}
-        dirty={form.formState.isDirty}
-        submitLabel={mode === "create" ? t("submitCreate") : t("submitEdit")}
-        secondarySubmit={
-          submitAndNext
-            ? {
-                label: tLessons("saveAndNext"),
-                onClick: () => void submitAndNext(),
-              }
-            : undefined
-        }
-      />
-    </form>
+      {mode === "edit" ? (
+        <MetaField id="lesson-status" label={t("statusLabel")}>
+          <Select
+            value={form.watch("status") ?? "draft"}
+            onValueChange={(v) =>
+              form.setValue("status", v as LessonFormValues["status"], {
+                shouldDirty: true,
+              })
+            }
+          >
+            <SelectTrigger id="lesson-status">
+              <SelectValue placeholder={t("statusPlaceholder")} />
+            </SelectTrigger>
+            <SelectContent>
+              {LESSON_STATUSES.map((s) => (
+                <SelectItem key={s} value={s}>
+                  {tStatus(s)}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </MetaField>
+      ) : null}
+    </>
   );
 }
 

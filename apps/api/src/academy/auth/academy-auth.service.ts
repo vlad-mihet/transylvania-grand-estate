@@ -73,6 +73,17 @@ export class AcademyAuthService {
         code: 'USE_SSO',
       });
     }
+    if (user.suspendedAt) {
+      // Suspended accounts can't log in regardless of credentials. Return
+      // a polite 403 with a code the academy login form can branch on so
+      // the user gets a clear message instead of a generic auth failure.
+      this.metrics.academyLogins.inc({ result: 'failure' });
+      throw new ForbiddenException({
+        message: 'Account is suspended',
+        code: 'SUSPENDED',
+        reason: user.suspendedReason ?? null,
+      });
+    }
     const ok = await bcrypt.compare(dto.password, user.passwordHash);
     if (!ok) {
       this.metrics.academyLogins.inc({ result: 'failure' });
@@ -92,6 +103,15 @@ export class AcademyAuthService {
       where: { id: userId },
     });
     if (!user) throw new UnauthorizedException('User not found');
+    if (user.suspendedAt) {
+      // Refresh path mirrors login: don't mint new access tokens for a
+      // suspended account. The strategy already rejects existing tokens,
+      // so denying refresh closes the loop.
+      throw new UnauthorizedException({
+        message: 'Account is suspended',
+        code: 'SUSPENDED',
+      });
+    }
     return this.generateTokens(this.shape(user));
   }
 
@@ -312,6 +332,100 @@ export class AcademyAuthService {
     }
     this.metrics.academyPasswordResets.inc({ outcome: 'requested' });
     return { ok: true };
+  }
+
+  /**
+   * Admin-triggered password reset. Mirrors the self-service path
+   * structurally but doesn't silently swallow unknown users — the admin
+   * is authenticated and deserves a real error. Sends the same email
+   * template the student would have received from the public endpoint.
+   * Returns the expiry so the admin UI can render "the student has 1h
+   * to act" without a follow-up call.
+   */
+  async adminSendPasswordReset(userId: string) {
+    const user = await this.prisma.academyUser.findUnique({
+      where: { id: userId },
+      select: { id: true, email: true, name: true, locale: true },
+    });
+    if (!user) throw new NotFoundException('Academy user not found');
+
+    const plaintext = randomBytes(32).toString('base64url');
+    const tokenHash = createHash('sha256').update(plaintext).digest('hex');
+    const expiresAt = new Date(Date.now() + 60 * 60 * 1000); // 1 hour
+
+    // Invalidate any unused tokens so older self-service links the
+    // student may have triggered are superseded by the admin's action.
+    await this.prisma.academyPasswordResetToken.updateMany({
+      where: { userId: user.id, usedAt: null },
+      data: { usedAt: new Date() },
+    });
+    await this.prisma.academyPasswordResetToken.create({
+      data: { userId: user.id, tokenHash, expiresAt },
+    });
+
+    const resetUrl = this.buildResetUrl(plaintext);
+    const mailResult = await this.emailService.sendAcademyPasswordReset(
+      user.email,
+      {
+        name: user.name,
+        resetUrl,
+        expiresAt,
+        locale: user.locale === 'ro' ? 'ro' : 'en',
+      },
+    );
+    this.metrics.academyPasswordResets.inc({
+      outcome: mailResult.ok ? 'admin_sent' : 'admin_send_failed',
+    });
+    this.logger.log({
+      event: 'academy.password_reset.admin_sent',
+      userId: user.id,
+      delivered: mailResult.ok,
+    });
+    return {
+      sent: mailResult.ok,
+      expiresAt: expiresAt.toISOString(),
+    };
+  }
+
+  /**
+   * Mint a short-lived academy-realm JWT scoped to a single lesson so
+   * an admin can preview the student-facing render without an actual
+   * AcademyUser account. The strategy short-circuits the user lookup
+   * and the EnrolledGuard sees `preview: true` and skips its check;
+   * the dedicated preview endpoint then serves the lesson detail
+   * (including any pending draft content) without enrollment gating.
+   *
+   * 5-minute TTL: enough to inspect a lesson, short enough that a leaked
+   * URL doesn't unlock content for long. The JWT is signed with the
+   * same `JWT_ACADEMY_ACCESS_SECRET` so the existing strategy can
+   * validate it without secret-management churn.
+   */
+  mintPreviewToken(args: { lessonId: string; adminId: string }) {
+    const expiresIn = 5 * 60; // seconds
+    const expiresAt = new Date(Date.now() + expiresIn * 1000);
+    const token = this.jwtService.sign(
+      {
+        // `sub` is namespaced so it can't collide with a real user id.
+        // Strategy detects `preview: true` and skips DB lookups, so the
+        // value here is pure identifier — never used to look up a row.
+        sub: `preview:${args.adminId}:${args.lessonId}`,
+        realm: 'academy' as const,
+        preview: true,
+        previewLessonId: args.lessonId,
+      },
+      {
+        secret: this.configService.get('JWT_ACADEMY_ACCESS_SECRET'),
+        expiresIn,
+      },
+    );
+    const academyBase = this.configService
+      .getOrThrow<string>('ACADEMY_PUBLIC_URL')
+      .replace(/\/$/, '');
+    return {
+      token,
+      url: `${academyBase}/preview/${args.lessonId}?previewToken=${encodeURIComponent(token)}`,
+      expiresAt: expiresAt.toISOString(),
+    };
   }
 
   /**

@@ -106,6 +106,8 @@ export interface ApiProperty {
   updatedAt: string;
 }
 
+export type ApiBrand = "tge" | "revery";
+
 export interface ApiCounty {
   id: string;
   name: string;
@@ -128,6 +130,7 @@ export interface ApiCity {
   countyId?: string | null;
   countySlug?: string | null;
   county?: Pick<ApiCounty, "id" | "name" | "slug" | "code"> | null;
+  brands?: ApiBrand[];
 }
 
 export interface ApiDeveloper {

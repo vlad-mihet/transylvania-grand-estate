@@ -28,7 +28,7 @@ export function tierScopeFilter(
  * properties). Returns the base unchanged when nothing restricts the view so
  * we don't add a no-op filter for REVERY/ADMIN callers.
  *
- * `geo` is resolved up-front by the caller via `propertyGeoWhere(scope)` so
+ * `geo` is resolved up-front by the caller via `propertyBrandWhere(site)` so
  * this helper stays synchronous — async plumbing shouldn't propagate into
  * every include shape.
  */

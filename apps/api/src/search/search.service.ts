@@ -1,12 +1,10 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { AdminRole, Prisma } from '@prisma/client';
 import { PrismaService } from '../prisma/prisma.service';
-import { SiteConfigService } from '../site-config/site-config.service';
 import {
   SiteContext,
-  cityGeoWhere,
-  propertyGeoWhere,
-  resolveGeoScope,
+  cityBrandWhere,
+  propertyBrandWhere,
   tierScopeFilter,
 } from '../common/site';
 import type { CurrentUserPayload } from '../common/decorators/user.decorator';
@@ -95,10 +93,7 @@ function applyOverflow<T>(rows: T[], limit: number): { items: T[]; hasMore: bool
 export class SearchService {
   private readonly logger = new Logger(SearchService.name);
 
-  constructor(
-    private readonly prisma: PrismaService,
-    private readonly siteConfig: SiteConfigService,
-  ) {}
+  constructor(private readonly prisma: PrismaService) {}
 
   async search(
     dto: SearchQueryInput,
@@ -123,9 +118,8 @@ export class SearchService {
         ? new Set(dto.types.filter((t) => allowed.has(t)))
         : allowed;
 
-    const scope = await resolveGeoScope(site, this.siteConfig);
-    const propertyGeo = propertyGeoWhere(scope);
-    const cityGeo = cityGeoWhere(scope);
+    const propertyGeo = propertyBrandWhere(site);
+    const cityGeo = cityBrandWhere(site);
 
     const tasks: Array<{
       entity: SearchEntityType;

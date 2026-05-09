@@ -1,5 +1,10 @@
 import { z } from "zod";
-import { localizedStringSchema, slugSchema } from "./_primitives";
+import {
+  brandSchema,
+  entryModeSchema,
+  localizedStringSchema,
+  slugSchema,
+} from "./_primitives";
 
 /**
  * City — a populated place that properties and developers anchor to.
@@ -15,10 +20,14 @@ export const createCitySchema = z
     description: localizedStringSchema,
     image: z.string().max(500).optional(),
     propertyCount: z.coerce.number().int().min(0).optional(),
+    brands: z.array(brandSchema).optional(),
   })
   .strict();
 
-export const updateCitySchema = createCitySchema.partial();
+export const updateCitySchema = createCitySchema
+  .partial()
+  .extend({ mode: entryModeSchema })
+  .strict();
 
 export type CreateCityInput = z.infer<typeof createCitySchema>;
 export type UpdateCityInput = z.infer<typeof updateCitySchema>;

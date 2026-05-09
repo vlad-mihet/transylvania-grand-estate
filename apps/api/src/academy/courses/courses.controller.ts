@@ -4,6 +4,7 @@ import {
   Controller,
   Delete,
   Get,
+  Header,
   HttpCode,
   NotFoundException,
   Param,
@@ -22,6 +23,7 @@ import { CoursesService } from './courses.service';
 import { EnrollmentsService } from '../enrollments/enrollments.service';
 import {
   CreateCourseDto,
+  DuplicateCourseDto,
   UpdateCourseDto,
   QueryCourseDto,
   StudentCatalogQueryDto,
@@ -71,10 +73,59 @@ export class AdminCoursesController {
     return this.coursesService.deleteImpact(id);
   }
 
+  /**
+   * Course-level completion stats for the admin course detail page.
+   * EDITOR+ matches the read-side floor: anyone allowed to view course
+   * metadata can see how it's performing.
+   */
+  @Roles(AdminRole.EDITOR, AdminRole.ADMIN, AdminRole.SUPER_ADMIN)
+  @Get(':id/stats')
+  async stats(@Param('id', ParseUUIDPipe) id: string) {
+    return this.coursesService.computeStats(id);
+  }
+
+  /**
+   * CSV roster of per-course enrollments. ADMIN+ matches the level needed
+   * to manage enrollments — readers shouldn't be able to download a list
+   * of a course's students.
+   */
+  @Roles(AdminRole.ADMIN, AdminRole.SUPER_ADMIN)
+  @Get(':id/enrollments.csv')
+  @Header('Cache-Control', 'no-store')
+  enrollmentsCsv(@Param('id', ParseUUIDPipe) id: string) {
+    return this.coursesService.enrollmentsCsv(id);
+  }
+
+  /**
+   * CSV of per-student progress against this course (completion ratio,
+   * last seen, resume lesson). Wildcard holders are included since they
+   * can read the course.
+   */
+  @Roles(AdminRole.ADMIN, AdminRole.SUPER_ADMIN)
+  @Get(':id/progress.csv')
+  @Header('Cache-Control', 'no-store')
+  progressCsv(@Param('id', ParseUUIDPipe) id: string) {
+    return this.coursesService.progressCsv(id);
+  }
+
   @Roles(AdminRole.EDITOR, AdminRole.ADMIN, AdminRole.SUPER_ADMIN)
   @Post()
   async create(@Body() dto: CreateCourseDto) {
     return this.coursesService.create(dto);
+  }
+
+  /**
+   * Clone an existing course into a fresh draft. Use case: editor
+   * wants to mirror a course's structure (e.g. start the German
+   * version from the Romanian one). Lessons opt-in via `copyLessons`.
+   */
+  @Roles(AdminRole.EDITOR, AdminRole.ADMIN, AdminRole.SUPER_ADMIN)
+  @Post(':id/duplicate')
+  async duplicate(
+    @Param('id', ParseUUIDPipe) id: string,
+    @Body() dto: DuplicateCourseDto,
+  ) {
+    return this.coursesService.duplicate(id, dto);
   }
 
   @Roles(AdminRole.EDITOR, AdminRole.ADMIN, AdminRole.SUPER_ADMIN)

@@ -11,13 +11,12 @@ import { ensureFound } from '../common/utils/ensure-found.util';
 import { ensureRef } from '../common/utils/ensure-ref.util';
 import { ensureSlugUnique } from '../common/utils/ensure-slug-unique.util';
 import { toJson } from '../common/utils/prisma-json';
+import { applyDraftMode } from '../common/utils/entry-draft';
 import {
   SITE_TIER_SCOPE,
   SiteContext,
-  isCityVisible,
-  isCountyInScope,
-  propertyGeoWhere,
-  resolveGeoScope,
+  isCityInBrand,
+  propertyBrandWhere,
   tierScopeFilter,
 } from '../common/site';
 import { SiteConfigService } from '../site-config/site-config.service';
@@ -115,7 +114,7 @@ export class PropertiesService {
   ): Promise<Prisma.PropertyWhereInput> {
     const where: Prisma.PropertyWhereInput = {};
     this.applyScopeFilters(where, query, site);
-    await this.applyBrandGeoScope(where, site);
+    this.applyBrandGeoScope(where, site);
     this.applyRangeFilters(where, query);
     this.applyClassificationFilters(where, query);
     this.applyAmenityFilters(where, query);
@@ -127,38 +126,19 @@ export class PropertiesService {
   }
 
   /**
-   * Brand-level geo scope (TGE ≡ Transylvania). Sourced from the admin-editable
-   * SiteConfig via SiteConfigService. AND-composed so it layers cleanly onto
-   * the OR-based search filter and any future top-level clauses. `cityRef`
-   * nested path is used (not the deprecated `countySlug` column) so the fix
-   * doesn't re-entrench a field already flagged for removal.
-   *
-   * Featured-curation widening: cities the admin has curated onto the home
-   * page (SiteConfig.{tge,revery}HomepageCities) are layered in as an OR
-   * branch — properties in those cities pass the geo gate even when their
-   * county sits outside the default allowlist. This keeps the listing path
-   * consistent with the single-row override on `assertGeoInScope` and with
-   * the cities listing's `?featured=true` short-circuit. Tier scope is
-   * unaffected, so a Revery property in a TGE-curated city stays invisible
-   * on TGE.
+   * Brand-scoped property visibility, gated via the city's `city_brands`
+   * membership (the same join table that drives the cities/counties brand
+   * filter). AND-composed so the clause layers cleanly onto OR-based search
+   * filters and future top-level fields. ADMIN gets `undefined` (no clause).
+   * Tier scope is enforced separately via `tierScopeFilter`, so a Revery
+   * property in a TGE-tagged city still stays invisible on TGE.
    */
-  private async applyBrandGeoScope(
+  private applyBrandGeoScope(
     where: Prisma.PropertyWhereInput,
     site: SiteContext,
-  ): Promise<void> {
-    const scope = await resolveGeoScope(site, this.siteConfig);
-    const baseClause = propertyGeoWhere(scope);
-    if (!baseClause) return;
-    const featured = await this.siteConfig.getHomepageCities(site.id);
-    const clause: Prisma.PropertyWhereInput =
-      featured.length > 0
-        ? {
-            OR: [
-              baseClause,
-              { cityRef: { slug: { in: [...featured] } } },
-            ],
-          }
-        : baseClause;
+  ): void {
+    const clause = propertyBrandWhere(site);
+    if (!clause) return;
     where.AND = Array.isArray(where.AND)
       ? [...where.AND, clause]
       : where.AND
@@ -609,11 +589,7 @@ export class PropertiesService {
       'Property',
     );
     this.assertTierInScope(property.tier, site);
-    await this.assertGeoInScope(
-      property.cityRef?.county.slug ?? null,
-      property.cityRef?.slug ?? null,
-      site,
-    );
+    await this.assertGeoInScope(property.cityRef?.slug ?? null, site);
     this.assertAgentOwns(property.agentId, user);
     return property;
   }
@@ -636,45 +612,27 @@ export class PropertiesService {
       'Property',
     );
     this.assertTierInScope(property.tier, site);
-    await this.assertGeoInScope(
-      property.cityRef?.county.slug ?? null,
-      property.cityRef?.slug ?? null,
-      site,
-    );
+    await this.assertGeoInScope(property.cityRef?.slug ?? null, site);
     this.assertAgentOwns(property.agentId, user);
     return property;
   }
 
   /**
-   * 404 when the property's location is gated out of the caller's brand —
-   * either the county isn't on the allowlist (e.g. a Constanța villa on TGE)
-   * or the city is on the per-brand hidden list (e.g. Târnăveni on TGE).
-   * 404 rather than 403 for the same reason as `assertTierInScope`: don't
-   * leak existence of rows outside the brand's advertised reach.
-   *
-   * Featured-curation override: properties in cities the admin has curated
-   * onto the home page (SiteConfig.{tge,revery}HomepageCities) are reachable
-   * even when their county sits outside the default geo allowlist. Mirrors
-   * the same override on cities.assertInScope and on the cities listing's
-   * `?featured=true` path — once the home page features a city, every
-   * tile-and-listing path leading from it must work end to end.
-   * `assertTierInScope` still enforces brand-tier separation, so a Revery
-   * property in a TGE-curated city stays invisible on TGE.
+   * 404 when the property's city isn't tagged for the caller's brand.
+   * Mirrors `cities.assertInBrand` — `city_brands` membership is the single
+   * gate. 404 (not 403) avoids leaking existence of out-of-brand rows.
+   * ADMIN/ACADEMY (no brand) and a missing citySlug both fall through to
+   * `isCityInBrand`, which returns true for unbranded callers — same behavior
+   * as the legacy geo helper. `assertTierInScope` still enforces brand-tier
+   * separation independently.
    */
   private async assertGeoInScope(
-    countySlug: string | null,
     citySlug: string | null,
     site: SiteContext,
   ): Promise<void> {
-    const scope = await resolveGeoScope(site, this.siteConfig);
-    if (isCountyInScope(countySlug, scope) && isCityVisible(citySlug, scope)) {
-      return;
-    }
-    if (citySlug) {
-      const featured = await this.siteConfig.getHomepageCities(site.id);
-      if (featured.includes(citySlug)) return;
-    }
-    throw new NotFoundException('Property not found');
+    if (!citySlug) return;
+    const inBrand = await isCityInBrand(site, citySlug, this.prisma);
+    if (!inBrand) throw new NotFoundException('Property not found');
   }
 
   /**
@@ -779,14 +737,19 @@ export class PropertiesService {
 
     const data: Prisma.PropertyUpdateInput = {};
 
+    const { live, draft } = applyDraftMode(
+      effective,
+      ['title', 'description', 'shortDescription', 'address'] as const,
+      effective.mode,
+    );
+    if (live.title !== undefined) data.title = live.title;
+    if (live.description !== undefined) data.description = live.description;
+    if (live.shortDescription !== undefined)
+      data.shortDescription = live.shortDescription;
+    if (live.address !== undefined) data.address = live.address;
+    if (draft !== undefined) data.draft = draft;
+
     if (effective.slug !== undefined) data.slug = effective.slug;
-    if (effective.title !== undefined)
-      data.title = toJson(effective.title);
-    if (effective.description !== undefined)
-      data.description = toJson(effective.description);
-    if (effective.shortDescription !== undefined)
-      data.shortDescription =
-        toJson(effective.shortDescription);
     if (effective.price !== undefined) data.price = effective.price;
     if (effective.currency !== undefined) data.currency = effective.currency;
     if (effective.type !== undefined) data.type = effective.type;
@@ -796,8 +759,6 @@ export class PropertiesService {
     if (effective.citySlug !== undefined) data.citySlug = effective.citySlug;
     if (effective.neighborhood !== undefined)
       data.neighborhood = effective.neighborhood;
-    if (effective.address !== undefined)
-      data.address = toJson(effective.address);
     if (effective.coordinates !== undefined) {
       data.latitude = effective.coordinates.lat;
       data.longitude = effective.coordinates.lng;

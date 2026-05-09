@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { localizedStringSchema, slugSchema } from "./_primitives";
+import { entryModeSchema, localizedStringSchema, slugSchema } from "./_primitives";
 
 /**
  * Developer — a real-estate developer building the listed properties.
@@ -22,7 +22,10 @@ export const createDeveloperSchema = z
   })
   .strict();
 
-export const updateDeveloperSchema = createDeveloperSchema.partial();
+export const updateDeveloperSchema = createDeveloperSchema
+  .partial()
+  .extend({ mode: entryModeSchema })
+  .strict();
 
 export type CreateDeveloperInput = z.infer<typeof createDeveloperSchema>;
 export type UpdateDeveloperInput = z.infer<typeof updateDeveloperSchema>;

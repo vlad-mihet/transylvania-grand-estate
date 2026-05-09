@@ -6,6 +6,7 @@ import { Providers } from "@/components/providers";
 import { SidebarProvider } from "@/components/layout/sidebar-context";
 import { AdminSidebar } from "@/components/layout/admin-sidebar";
 import { AdminHeader } from "@/components/layout/admin-header";
+import { BrandContextProvider } from "@/components/layout/brand-context-provider";
 
 export default function DashboardLayout({
   children,
@@ -16,6 +17,7 @@ export default function DashboardLayout({
     <AuthProvider>
       <AuthGuard>
         <Providers>
+          <BrandContextProvider>
           <SidebarProvider>
             <a
               href="#main"
@@ -38,6 +40,7 @@ export default function DashboardLayout({
               </div>
             </div>
           </SidebarProvider>
+          </BrandContextProvider>
         </Providers>
       </AuthGuard>
     </AuthProvider>

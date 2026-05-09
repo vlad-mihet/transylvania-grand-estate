@@ -197,7 +197,7 @@ export default function ArticlesPage() {
         )}
         mobileCard={(article) => (
           <Link
-            href={`/articles/${article.id}`}
+            href={`/articles/${article.slug}/edit`}
             className="card-hover block space-y-2 rounded-md border border-border bg-card p-3"
           >
             <div className="flex gap-3">

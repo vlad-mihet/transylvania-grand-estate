@@ -1,24 +1,14 @@
 "use client";
 
-import { useForm } from "react-hook-form";
+import type { ReactNode } from "react";
+import { useEffect, useState } from "react";
+import { FormProvider, useForm, useFormContext } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import {
-  propertySchema,
-  PropertyFormValues,
-} from "@/lib/validations/property";
-import { useApiFormErrors } from "@tge/hooks";
-import { useUnsavedChangesWarning } from "@/hooks/use-unsaved-changes-warning";
-import { toast } from "@/lib/toast";
-import { BilingualInput } from "@/components/shared/bilingual-input";
-import { BilingualTextarea } from "@/components/shared/bilingual-textarea";
-import {
-  ImageGalleryManager,
-  GalleryImage,
-} from "@/components/shared/image-gallery-manager";
+import { useQuery } from "@tanstack/react-query";
+import { useTranslations } from "next-intl";
 import {
   Button,
   Input,
-  Label,
   Select,
   SelectContent,
   SelectItem,
@@ -26,13 +16,29 @@ import {
   SelectValue,
   Switch,
 } from "@tge/ui";
-import { SectionCard } from "@/components/shared/section-card";
+import {
+  EntryEditorShell,
+  EntryLocaleProvider,
+  LocalizedInput,
+  LocalizedTextarea,
+  MetaField,
+  MetaSection,
+  useLocaleCompleteness,
+} from "@/components/entry-editor";
 import { FormActions } from "@/components/shared/form-actions";
-import { useState, useEffect } from "react";
-import { useQuery } from "@tanstack/react-query";
+import {
+  ImageGalleryManager,
+  GalleryImage,
+} from "@/components/shared/image-gallery-manager";
+import { useApiFormErrors } from "@tge/hooks";
+import { useUnsavedChangesWarning } from "@/hooks/use-unsaved-changes-warning";
+import { toast } from "@/lib/toast";
 import { apiClient } from "@/lib/api-client";
+import {
+  propertySchema,
+  PropertyFormValues,
+} from "@/lib/validations/property";
 import type { ApiAgent, ApiCity, ApiDeveloper } from "@tge/types";
-import { useTranslations } from "next-intl";
 
 // react-hook-form's <input type="number"> still emits string values; without
 // a converter, the form state holds "275000" while the Zod schema expects
@@ -53,12 +59,18 @@ const optionalNumber = {
 } as const;
 
 const PROPERTY_TYPE_VALUES = [
-  "apartment", "house", "villa", "terrain", "penthouse", "estate", "chalet", "mansion", "palace",
+  "apartment",
+  "house",
+  "villa",
+  "terrain",
+  "penthouse",
+  "estate",
+  "chalet",
+  "mansion",
+  "palace",
 ] as const;
 
-const PROPERTY_STATUS_VALUES = [
-  "available", "reserved", "sold",
-] as const;
+const PROPERTY_STATUS_VALUES = ["available", "reserved", "sold"] as const;
 
 interface PropertyFormProps {
   defaultValues?: Partial<PropertyFormValues>;
@@ -68,6 +80,8 @@ interface PropertyFormProps {
   submissionError?: unknown;
   /** Where Cancel navigates (detail page on edit, list on create). */
   cancelHref: string;
+  title: ReactNode;
+  breadcrumb?: ReactNode;
 }
 
 export function PropertyForm({
@@ -77,10 +91,11 @@ export function PropertyForm({
   loading,
   submissionError,
   cancelHref,
+  title,
+  breadcrumb,
 }: PropertyFormProps) {
   const [galleryImages, setGalleryImages] =
     useState<GalleryImage[]>(initialImages);
-  const t = useTranslations("PropertyForm");
   const tc = useTranslations("Common");
 
   const form = useForm<PropertyFormValues>({
@@ -120,6 +135,54 @@ export function PropertyForm({
   // catches the common footgun.
   useUnsavedChangesWarning(form.formState.isDirty);
 
+  const handleFormSubmit = form.handleSubmit((data) => {
+    onSubmit(data, galleryImages);
+  });
+
+  return (
+    <FormProvider {...form}>
+      <EntryLocaleProvider>
+        <form onSubmit={handleFormSubmit}>
+          <PropertyFormBody
+            cancelHref={cancelHref}
+            loading={loading}
+            dirty={form.formState.isDirty}
+            galleryImages={galleryImages}
+            onGalleryChange={setGalleryImages}
+            title={title}
+            breadcrumb={breadcrumb}
+          />
+        </form>
+      </EntryLocaleProvider>
+    </FormProvider>
+  );
+}
+
+interface BodyProps {
+  cancelHref: string;
+  loading?: boolean;
+  dirty: boolean;
+  galleryImages: GalleryImage[];
+  onGalleryChange: (next: GalleryImage[]) => void;
+  title: ReactNode;
+  breadcrumb?: ReactNode;
+}
+
+function PropertyFormBody({
+  cancelHref,
+  loading,
+  dirty,
+  galleryImages,
+  onGalleryChange,
+  title,
+  breadcrumb,
+}: BodyProps) {
+  const t = useTranslations("PropertyForm");
+  const form = useFormContext<PropertyFormValues>();
+  const { completeness, errorCounts } = useLocaleCompleteness<PropertyFormValues>(
+    ["title", "description", "shortDescription", "address"],
+  );
+
   const watchedType = form.watch("type");
   const isTerrain = watchedType === "terrain";
 
@@ -133,16 +196,91 @@ export function PropertyForm({
     }
   }, [isTerrain, form]);
 
+  return (
+    <EntryEditorShell
+      title={title}
+      breadcrumb={breadcrumb}
+      unsavedDirty={dirty}
+      switcherCompleteness={completeness}
+      switcherErrorCounts={errorCounts}
+      actions={
+        <FormActions cancelHref={cancelHref} loading={loading} dirty={dirty} />
+      }
+      localizedFields={
+        <>
+          <LocalizedInput<PropertyFormValues>
+            name="title"
+            label={t("title")}
+            required
+          />
+          <LocalizedTextarea<PropertyFormValues>
+            name="shortDescription"
+            label={t("shortDescription")}
+            required
+            rows={2}
+          />
+          <LocalizedTextarea<PropertyFormValues>
+            name="description"
+            label={t("description")}
+            required
+            rows={5}
+          />
+          <LocalizedInput<PropertyFormValues>
+            name="address"
+            label={t("address")}
+            required
+          />
+        </>
+      }
+      extraSection={
+        <PropertyGallerySection
+          label={t("images")}
+          images={galleryImages}
+          onChange={onGalleryChange}
+        />
+      }
+      metadataFields={<PropertyMetadataFields isTerrain={isTerrain} t={t} />}
+    />
+  );
+}
+
+function PropertyGallerySection({
+  label,
+  images,
+  onChange,
+}: {
+  label: string;
+  images: GalleryImage[];
+  onChange: (next: GalleryImage[]) => void;
+}) {
+  return (
+    <div>
+      <p className="mb-3 text-[11px] font-semibold tracking-[0.08em] uppercase text-muted-foreground">
+        {label}
+      </p>
+      <ImageGalleryManager images={images} onChange={onChange} />
+    </div>
+  );
+}
+
+function PropertyMetadataFields({
+  isTerrain,
+  t,
+}: {
+  isTerrain: boolean;
+  t: ReturnType<typeof useTranslations>;
+}) {
+  const tc = useTranslations("Common");
+  const form = useFormContext<PropertyFormValues>();
+
   const { data: developers } = useQuery({
     queryKey: ["developers-select"],
     queryFn: () => apiClient<ApiDeveloper[]>("/developers"),
   });
-
   const { data: agents } = useQuery({
     queryKey: ["agents-select"],
     queryFn: () => apiClient<ApiAgent[]>("/agents?active=true"),
   });
-
   const { data: cities } = useQuery({
     queryKey: ["cities-select"],
     queryFn: () => apiClient<ApiCity[]>("/cities"),
@@ -167,312 +305,267 @@ export function PropertyForm({
     form.setValue("slug", slug);
   };
 
-  const handleFormSubmit = form.handleSubmit((data) => {
-    onSubmit(data, galleryImages);
-  });
-
   return (
-    <form
-      onSubmit={handleFormSubmit}
-      className="w-full space-y-6"
-    >
-      {/* Images — first so the gallery is what users see on open */}
-      <SectionCard title={t("images")}>
-        <ImageGalleryManager
-          images={galleryImages}
-          onChange={setGalleryImages}
-        />
-      </SectionCard>
-
-      {/* Basic Info */}
-      <SectionCard title={t("basicInfo")}>
-        <div className="space-y-4">
-          <BilingualInput
-            label={t("title")}
-            valueEn={form.watch("title.en")}
-            valueRo={form.watch("title.ro")}
-            onChangeEn={(v) => form.setValue("title.en", v)}
-            onChangeRo={(v) => form.setValue("title.ro", v)}
-            valueFr={form.watch("title.fr") ?? ""}
-            valueDe={form.watch("title.de") ?? ""}
-            onChangeFr={(v) => form.setValue("title.fr", v)}
-            onChangeDe={(v) => form.setValue("title.de", v)}
-            required
-          />
-          <div className="flex gap-3 items-end">
-            <div className="flex-1 space-y-2">
-              <Label>{t("slug")}</Label>
-              <Input {...form.register("slug")} />
-            </div>
-            <Button type="button" variant="outline" onClick={generateSlug}>
+    <div className="flex flex-col gap-5">
+      <MetaSection title={t("basicInfo")}>
+        <MetaField id="property-slug" label={t("slug")}>
+          <div className="flex gap-2">
+            <Input
+              id="property-slug"
+              {...form.register("slug")}
+              className="mono flex-1"
+            />
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              onClick={generateSlug}
+            >
               {tc("generate")}
             </Button>
           </div>
-          <BilingualTextarea
-            label={t("description")}
-            valueEn={form.watch("description.en")}
-            valueRo={form.watch("description.ro")}
-            onChangeEn={(v) => form.setValue("description.en", v)}
-            onChangeRo={(v) => form.setValue("description.ro", v)}
-            valueFr={form.watch("description.fr") ?? ""}
-            valueDe={form.watch("description.de") ?? ""}
-            onChangeFr={(v) => form.setValue("description.fr", v)}
-            onChangeDe={(v) => form.setValue("description.de", v)}
-            required
-            rows={5}
+        </MetaField>
+        <MetaField id="property-type" label={t("type")}>
+          <Select
+            value={form.watch("type")}
+            onValueChange={(v) =>
+              form.setValue("type", v as PropertyFormValues["type"])
+            }
+          >
+            <SelectTrigger id="property-type">
+              <SelectValue placeholder={t("selectType")} />
+            </SelectTrigger>
+            <SelectContent>
+              {PROPERTY_TYPE_VALUES.map((type) => (
+                <SelectItem key={type} value={type}>
+                  {t(`types.${type}`)}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </MetaField>
+        <MetaField id="property-status" label={t("status")}>
+          <Select
+            value={form.watch("status")}
+            onValueChange={(v) =>
+              form.setValue("status", v as PropertyFormValues["status"])
+            }
+          >
+            <SelectTrigger id="property-status">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              {PROPERTY_STATUS_VALUES.map((status) => (
+                <SelectItem key={status} value={status}>
+                  {t(`statuses.${status}`)}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </MetaField>
+      </MetaSection>
+
+      <MetaSection title={t("details")}>
+        <MetaField id="property-price" label={t("price")}>
+          <Input
+            id="property-price"
+            type="number"
+            {...form.register("price", requiredNumber)}
+            className="mono"
           />
-          <BilingualTextarea
-            label={t("shortDescription")}
-            valueEn={form.watch("shortDescription.en")}
-            valueRo={form.watch("shortDescription.ro")}
-            onChangeEn={(v) => form.setValue("shortDescription.en", v)}
-            onChangeRo={(v) => form.setValue("shortDescription.ro", v)}
-            valueFr={form.watch("shortDescription.fr") ?? ""}
-            valueDe={form.watch("shortDescription.de") ?? ""}
-            onChangeFr={(v) => form.setValue("shortDescription.fr", v)}
-            onChangeDe={(v) => form.setValue("shortDescription.de", v)}
-            required
-            rows={2}
+        </MetaField>
+        <MetaField id="property-currency" label={t("currency")}>
+          <Select
+            value={form.watch("currency")}
+            onValueChange={(v) => form.setValue("currency", v)}
+          >
+            <SelectTrigger id="property-currency">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="EUR">EUR</SelectItem>
+              <SelectItem value="USD">USD</SelectItem>
+              <SelectItem value="RON">RON</SelectItem>
+            </SelectContent>
+          </Select>
+        </MetaField>
+        <SwitchRow
+          label={t("featured")}
+          checked={form.watch("featured")}
+          onCheckedChange={(v) => form.setValue("featured", v)}
+        />
+        <SwitchRow
+          label={t("newListing")}
+          checked={form.watch("isNew")}
+          onCheckedChange={(v) => form.setValue("isNew", v)}
+        />
+      </MetaSection>
+
+      <MetaSection title={tc("relations") ?? "Relations"}>
+        <MetaField id="property-developer" label={t("developer")}>
+          <Select
+            value={form.watch("developerId") ?? "__none__"}
+            onValueChange={(v) =>
+              form.setValue("developerId", v === "__none__" ? null : v)
+            }
+          >
+            <SelectTrigger id="property-developer">
+              <SelectValue placeholder={t("noDeveloper")} />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="__none__">{t("none")}</SelectItem>
+              {(developers ?? []).map((d) => (
+                <SelectItem key={d.id} value={d.id}>
+                  {d.name}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </MetaField>
+        <MetaField id="property-agent" label={t("agent")}>
+          <Select
+            value={form.watch("agentId") ?? "__none__"}
+            onValueChange={(v) =>
+              form.setValue("agentId", v === "__none__" ? null : v)
+            }
+          >
+            <SelectTrigger id="property-agent">
+              <SelectValue placeholder={t("noAgent")} />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="__none__">{t("none")}</SelectItem>
+              {(agents ?? []).map((a) => (
+                <SelectItem key={a.id} value={a.id}>
+                  {a.firstName} {a.lastName}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </MetaField>
+      </MetaSection>
+
+      <MetaSection title={t("location")}>
+        <MetaField id="property-city" label={t("city")}>
+          <Select value={form.watch("citySlug")} onValueChange={handleCityChange}>
+            <SelectTrigger id="property-city">
+              <SelectValue placeholder={t("selectCity")} />
+            </SelectTrigger>
+            <SelectContent>
+              {(cities ?? []).map((c) => (
+                <SelectItem key={c.slug} value={c.slug}>
+                  {c.name}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </MetaField>
+        <MetaField id="property-neighborhood" label={t("neighborhood")}>
+          <Input id="property-neighborhood" {...form.register("neighborhood")} />
+        </MetaField>
+        <MetaField id="property-latitude" label={t("latitude")}>
+          <Input
+            id="property-latitude"
+            type="number"
+            step="any"
+            {...form.register("latitude", optionalNumber)}
+            className="mono"
           />
-        </div>
-      </SectionCard>
-
-      {/* Type, Status, Price */}
-      <SectionCard title={t("details")}>
-        <div className="space-y-4">
-          <div className="grid gap-4 sm:grid-cols-3">
-            <div className="space-y-2">
-              <Label>{t("type")}</Label>
-              <Select
-                value={form.watch("type")}
-                onValueChange={(v) => form.setValue("type", v as PropertyFormValues["type"])}
-              >
-                <SelectTrigger>
-                  <SelectValue placeholder={t("selectType")} />
-                </SelectTrigger>
-                <SelectContent>
-                  {PROPERTY_TYPE_VALUES.map((type) => (
-                    <SelectItem key={type} value={type}>
-                      {t(`types.${type}`)}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-            <div className="space-y-2">
-              <Label>{t("status")}</Label>
-              <Select
-                value={form.watch("status")}
-                onValueChange={(v) => form.setValue("status", v as PropertyFormValues["status"])}
-              >
-                <SelectTrigger>
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  {PROPERTY_STATUS_VALUES.map((status) => (
-                    <SelectItem key={status} value={status}>
-                      {t(`statuses.${status}`)}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-            <div className="space-y-2">
-              <Label>{t("developer")}</Label>
-              <Select
-                value={form.watch("developerId") ?? "__none__"}
-                onValueChange={(v) =>
-                  form.setValue("developerId", v === "__none__" ? null : v)
-                }
-              >
-                <SelectTrigger>
-                  <SelectValue placeholder={t("noDeveloper")} />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="__none__">{t("none")}</SelectItem>
-                  {(developers ?? []).map((d) => (
-                    <SelectItem key={d.id} value={d.id}>
-                      {d.name}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-          </div>
-          <div className="grid gap-4 sm:grid-cols-2">
-            <div className="space-y-2">
-              <Label>{t("agent")}</Label>
-              <Select
-                value={form.watch("agentId") ?? "__none__"}
-                onValueChange={(v) =>
-                  form.setValue("agentId", v === "__none__" ? null : v)
-                }
-              >
-                <SelectTrigger>
-                  <SelectValue placeholder={t("noAgent")} />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="__none__">{t("none")}</SelectItem>
-                  {(agents ?? []).map((a) => (
-                    <SelectItem key={a.id} value={a.id}>
-                      {a.firstName} {a.lastName}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-          </div>
-          <div className="grid gap-4 sm:grid-cols-3">
-            <div className="space-y-2">
-              <Label>{t("price")}</Label>
-              <Input type="number" {...form.register("price", requiredNumber)} />
-            </div>
-            <div className="space-y-2">
-              <Label>{t("currency")}</Label>
-              <Select
-                value={form.watch("currency")}
-                onValueChange={(v) => form.setValue("currency", v)}
-              >
-                <SelectTrigger>
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="EUR">EUR</SelectItem>
-                  <SelectItem value="USD">USD</SelectItem>
-                  <SelectItem value="RON">RON</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-          </div>
-          <div className="flex gap-6">
-            <label className="flex items-center gap-2 text-sm">
-              <Switch
-                checked={form.watch("featured")}
-                onCheckedChange={(v) => form.setValue("featured", v)}
-              />
-              {t("featured")}
-            </label>
-            <label className="flex items-center gap-2 text-sm">
-              <Switch
-                checked={form.watch("isNew")}
-                onCheckedChange={(v) => form.setValue("isNew", v)}
-              />
-              {t("newListing")}
-            </label>
-          </div>
-        </div>
-      </SectionCard>
-
-      {/* Location */}
-      <SectionCard title={t("location")}>
-        <div className="space-y-4">
-          <div className="grid gap-4 sm:grid-cols-2">
-            <div className="space-y-2">
-              <Label>{t("city")}</Label>
-              <Select
-                value={form.watch("citySlug")}
-                onValueChange={handleCityChange}
-              >
-                <SelectTrigger>
-                  <SelectValue placeholder={t("selectCity")} />
-                </SelectTrigger>
-                <SelectContent>
-                  {(cities ?? []).map((c) => (
-                    <SelectItem key={c.slug} value={c.slug}>
-                      {c.name}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-            <div className="space-y-2">
-              <Label>{t("neighborhood")}</Label>
-              <Input {...form.register("neighborhood")} />
-            </div>
-          </div>
-          <BilingualInput
-            label={t("address")}
-            valueEn={form.watch("address.en")}
-            valueRo={form.watch("address.ro")}
-            onChangeEn={(v) => form.setValue("address.en", v)}
-            onChangeRo={(v) => form.setValue("address.ro", v)}
-            valueFr={form.watch("address.fr") ?? ""}
-            valueDe={form.watch("address.de") ?? ""}
-            onChangeFr={(v) => form.setValue("address.fr", v)}
-            onChangeDe={(v) => form.setValue("address.de", v)}
-            required
+        </MetaField>
+        <MetaField id="property-longitude" label={t("longitude")}>
+          <Input
+            id="property-longitude"
+            type="number"
+            step="any"
+            {...form.register("longitude", optionalNumber)}
+            className="mono"
           />
-          <div className="grid gap-4 sm:grid-cols-2">
-            <div className="space-y-2">
-              <Label>{t("latitude")}</Label>
-              <Input type="number" step="any" {...form.register("latitude", optionalNumber)} />
-            </div>
-            <div className="space-y-2">
-              <Label>{t("longitude")}</Label>
-              <Input type="number" step="any" {...form.register("longitude", optionalNumber)} />
-            </div>
-          </div>
-        </div>
-      </SectionCard>
+        </MetaField>
+      </MetaSection>
 
-      {/* Specs */}
-      <SectionCard title={t("specifications")}>
-        <div>
-          <div className="grid gap-4 sm:grid-cols-3 lg:grid-cols-4">
-            {!isTerrain && (
-              <div className="space-y-2">
-                <Label>{t("bedrooms")}</Label>
-                <Input type="number" {...form.register("bedrooms", requiredNumber)} />
-              </div>
-            )}
-            {!isTerrain && (
-              <div className="space-y-2">
-                <Label>{t("bathrooms")}</Label>
-                <Input type="number" {...form.register("bathrooms", requiredNumber)} />
-              </div>
-            )}
-            <div className="space-y-2">
-              <Label>{t("area")}</Label>
-              <Input type="number" {...form.register("area", requiredNumber)} />
-            </div>
-            <div className="space-y-2">
-              <Label>{t("landArea")}</Label>
-              <Input type="number" {...form.register("landArea", optionalNullableNumber)} />
-            </div>
-            {!isTerrain && (
-              <div className="space-y-2">
-                <Label>{t("floors")}</Label>
-                <Input type="number" {...form.register("floors", requiredNumber)} />
-              </div>
-            )}
-            {!isTerrain && (
-              <div className="space-y-2">
-                <Label>{t("yearBuilt")}</Label>
-                <Input type="number" {...form.register("yearBuilt", requiredNumber)} />
-              </div>
-            )}
-            {!isTerrain && (
-              <div className="space-y-2">
-                <Label>{t("garageSpots")}</Label>
-                <Input type="number" {...form.register("garage", optionalNullableNumber)} />
-              </div>
-            )}
-            <label className="flex items-center gap-2 pt-7 text-sm">
-              <Switch
-                checked={form.watch("pool")}
-                onCheckedChange={(v) => form.setValue("pool", v)}
+      <MetaSection title={t("specifications")}>
+        {!isTerrain ? (
+          <>
+            <MetaField id="property-bedrooms" label={t("bedrooms")}>
+              <Input
+                id="property-bedrooms"
+                type="number"
+                {...form.register("bedrooms", requiredNumber)}
+                className="mono"
               />
-              {t("pool")}
-            </label>
-          </div>
-        </div>
-      </SectionCard>
+            </MetaField>
+            <MetaField id="property-bathrooms" label={t("bathrooms")}>
+              <Input
+                id="property-bathrooms"
+                type="number"
+                {...form.register("bathrooms", requiredNumber)}
+                className="mono"
+              />
+            </MetaField>
+            <MetaField id="property-floors" label={t("floors")}>
+              <Input
+                id="property-floors"
+                type="number"
+                {...form.register("floors", requiredNumber)}
+                className="mono"
+              />
+            </MetaField>
+            <MetaField id="property-year-built" label={t("yearBuilt")}>
+              <Input
+                id="property-year-built"
+                type="number"
+                {...form.register("yearBuilt", requiredNumber)}
+                className="mono"
+              />
+            </MetaField>
+            <MetaField id="property-garage" label={t("garageSpots")}>
+              <Input
+                id="property-garage"
+                type="number"
+                {...form.register("garage", optionalNullableNumber)}
+                className="mono"
+              />
+            </MetaField>
+          </>
+        ) : null}
+        <MetaField id="property-area" label={t("area")}>
+          <Input
+            id="property-area"
+            type="number"
+            {...form.register("area", requiredNumber)}
+            className="mono"
+          />
+        </MetaField>
+        <MetaField id="property-land-area" label={t("landArea")}>
+          <Input
+            id="property-land-area"
+            type="number"
+            {...form.register("landArea", optionalNullableNumber)}
+            className="mono"
+          />
+        </MetaField>
+        <SwitchRow
+          label={t("pool")}
+          checked={form.watch("pool")}
+          onCheckedChange={(v) => form.setValue("pool", v)}
+        />
+      </MetaSection>
+    </div>
+  );
+}
 
-      <FormActions
-        cancelHref={cancelHref}
-        loading={loading}
-        dirty={form.formState.isDirty}
-      />
-    </form>
+function SwitchRow({
+  label,
+  checked,
+  onCheckedChange,
+}: {
+  label: string;
+  checked: boolean | undefined;
+  onCheckedChange: (v: boolean) => void;
+}) {
+  return (
+    <label className="flex items-center justify-between gap-3 text-xs">
+      <span className="font-medium tracking-[0.04em]">{label}</span>
+      <Switch checked={!!checked} onCheckedChange={onCheckedChange} />
+    </label>
   );
 }

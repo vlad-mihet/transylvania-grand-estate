@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import {
   Button,
   Dialog,
@@ -18,8 +18,10 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@tge/ui";
+import { RotateCcw, ShieldCheck, ShieldOff } from "lucide-react";
 import { useTranslations } from "next-intl";
-import { apiClient } from "@/lib/api-client";
+import { apiClient, ApiError } from "@/lib/api-client";
+import { toast } from "@/lib/toast";
 import type { AuthUser } from "@/components/auth/auth-provider";
 import type { AdminRole } from "@/lib/permissions";
 import { ROLES } from "./constants";
@@ -50,6 +52,7 @@ export function EditUserDialog({
 }: EditUserDialogProps) {
   const t = useTranslations("Users");
   const tc = useTranslations("Common");
+  const queryClient = useQueryClient();
 
   const [editName, setEditName] = useState("");
   const [editRole, setEditRole] = useState<AdminRole>("EDITOR");
@@ -61,6 +64,59 @@ export function EditUserDialog({
     setEditRole(editing.role);
     setEditAgentId(editing.agentId ?? "");
   }, [editing]);
+
+  const invalidate = () => {
+    queryClient.invalidateQueries({ queryKey: ["users"] });
+    if (editing?.id) {
+      queryClient.invalidateQueries({
+        queryKey: ["user-activity", editing.id],
+      });
+    }
+  };
+
+  const suspendMutation = useMutation({
+    mutationFn: () =>
+      apiClient(`/auth/users/${editing!.id}/suspend`, { method: "POST" }),
+    onSuccess: () => {
+      toast.success(t("suspendedToast"));
+      invalidate();
+      onClose();
+    },
+    onError: (err) =>
+      toast.error(err instanceof ApiError ? err.message : t("suspendFailed")),
+  });
+
+  const reactivateMutation = useMutation({
+    mutationFn: () =>
+      apiClient(`/auth/users/${editing!.id}/reactivate`, { method: "POST" }),
+    onSuccess: () => {
+      toast.success(t("reactivatedToast"));
+      invalidate();
+      onClose();
+    },
+    onError: (err) =>
+      toast.error(
+        err instanceof ApiError ? err.message : t("reactivateFailed"),
+      ),
+  });
+
+  const resetPasswordMutation = useMutation({
+    mutationFn: () =>
+      apiClient<{ ok: true; emailDelivered: boolean }>(
+        `/auth/users/${editing!.id}/reset-password`,
+        { method: "POST" },
+      ),
+    onSuccess: (res) =>
+      toast.success(
+        res.emailDelivered
+          ? t("passwordResetSent")
+          : t("passwordResetQueued"),
+      ),
+    onError: (err) =>
+      toast.error(
+        err instanceof ApiError ? err.message : t("passwordResetFailed"),
+      ),
+  });
 
   const editingCurrentAgent = useQuery({
     queryKey: ["agent", editing?.agentId],
@@ -81,7 +137,9 @@ export function EditUserDialog({
 
   if (!editing) return null;
 
-  const lockSelfDemote = editing.id === self?.id && editing.role === "SUPER_ADMIN";
+  const isSelf = editing.id === self?.id;
+  const lockSelfDemote = isSelf && editing.role === "SUPER_ADMIN";
+  const isSuspended = editing.status === "SUSPENDED";
   const unchanged =
     editName === editing.name &&
     editRole === editing.role &&
@@ -177,6 +235,48 @@ export function EditUserDialog({
               </p>
             </div>
           )}
+
+          <div className="rounded-md border border-border bg-muted/40 p-2.5">
+            <div className="flex flex-wrap items-center gap-1.5">
+              {isSuspended ? (
+                <Button
+                  type="button"
+                  size="sm"
+                  variant="outline"
+                  disabled={reactivateMutation.isPending}
+                  onClick={() => reactivateMutation.mutate()}
+                >
+                  <ShieldCheck className="mr-1.5 h-3.5 w-3.5" />
+                  {t("reactivate")}
+                </Button>
+              ) : (
+                <Button
+                  type="button"
+                  size="sm"
+                  variant="outline"
+                  disabled={isSelf || suspendMutation.isPending}
+                  title={isSelf ? t("cannotSuspendSelf") : undefined}
+                  onClick={() => suspendMutation.mutate()}
+                >
+                  <ShieldOff className="mr-1.5 h-3.5 w-3.5" />
+                  {t("suspend")}
+                </Button>
+              )}
+              <Button
+                type="button"
+                size="sm"
+                variant="outline"
+                disabled={resetPasswordMutation.isPending}
+                onClick={() => resetPasswordMutation.mutate()}
+              >
+                <RotateCcw className="mr-1.5 h-3.5 w-3.5" />
+                {t("sendPasswordReset")}
+              </Button>
+            </div>
+            <p className="mt-1.5 text-[11px] text-muted-foreground">
+              {t("lifecycleHint")}
+            </p>
+          </div>
         </div>
         <DialogFooter>
           <Button

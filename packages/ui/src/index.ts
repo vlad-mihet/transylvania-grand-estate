@@ -59,3 +59,6 @@ export {
   type InquiryType,
   type InquiryTone,
 } from "./components/inquiry";
+
+// Markdown
+export { MarkdownView, type MarkdownViewProps } from "./markdown/markdown-view";

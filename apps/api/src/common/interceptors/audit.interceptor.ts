@@ -284,9 +284,9 @@ export class AuditInterceptor implements NestInterceptor {
           },
         });
       case 'SiteConfig':
-        // Singleton row — id is always 'singleton'. Brand-scope changes
-        // (tgeCountyScope array) are the headline reason to audit this
-        // resource, so capture the full row to diff cleanly.
+        // Singleton row — id is always 'singleton'. Capture the full row
+        // so the homepage-cities reorder + other site-config diffs come
+        // out cleanly in the audit feed.
         return this.prisma.siteConfig.findUnique({
           where: { id: 'singleton' },
         });

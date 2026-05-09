@@ -3,10 +3,13 @@
 import { useTranslations } from "next-intl";
 import type { ApiAgent } from "@tge/types";
 import { Avatar } from "@/components/shared/avatar";
-import { SectionCard } from "@/components/shared/section-card";
-import { DefinitionList } from "@/components/shared/definition-list";
 import { BilingualView } from "@/components/shared/bilingual-view";
 import { StatusBadge } from "@/components/shared/status-badge";
+import {
+  DetailLayout,
+  DetailMetaCard,
+  MetaRow,
+} from "@/components/shared/detail-layout";
 
 interface AgentDetailViewProps {
   agent: ApiAgent;
@@ -14,12 +17,13 @@ interface AgentDetailViewProps {
 
 export function AgentDetailView({ agent }: AgentDetailViewProps) {
   const t = useTranslations("AgentForm");
+  const tc = useTranslations("Common");
 
   return (
-    <>
-      <SectionCard title={t("title")}>
-        <div className="space-y-4">
-          <div className="flex items-center gap-4">
+    <DetailLayout
+      main={
+        <>
+          <div className="flex items-center gap-4 rounded-md border border-border bg-card p-5">
             <Avatar
               src={agent.photo}
               alt={`${agent.firstName} ${agent.lastName}`}
@@ -34,33 +38,32 @@ export function AgentDetailView({ agent }: AgentDetailViewProps) {
               </div>
             </div>
           </div>
-          <DefinitionList
-            items={[
-              { label: t("firstName"), value: agent.firstName },
-              { label: t("lastName"), value: agent.lastName },
-              {
-                label: t("slug"),
-                value: (
-                  <code className="mono text-xs text-muted-foreground">
-                    {agent.slug}
-                  </code>
-                ),
-                wide: true,
-              },
-              { label: t("email"), value: agent.email || null },
-              { label: t("phone"), value: agent.phone || null },
-            ]}
+          <div className="rounded-md border border-border bg-card p-5">
+            <BilingualView
+              label={t("bio")}
+              valueEn={agent.bio?.en}
+              valueRo={agent.bio?.ro}
+              valueFr={agent.bio?.fr}
+              valueDe={agent.bio?.de}
+              multiline
+            />
+          </div>
+        </>
+      }
+      meta={
+        <DetailMetaCard title={tc("meta")}>
+          <MetaRow
+            label={t("slug")}
+            value={
+              <code className="mono text-xs text-muted-foreground">
+                {agent.slug}
+              </code>
+            }
           />
-          <BilingualView
-            label={t("bio")}
-            valueEn={agent.bio?.en}
-            valueRo={agent.bio?.ro}
-            valueFr={agent.bio?.fr}
-            valueDe={agent.bio?.de}
-            multiline
-          />
-        </div>
-      </SectionCard>
-    </>
+          <MetaRow label={t("email")} value={agent.email || null} />
+          <MetaRow label={t("phone")} value={agent.phone || null} />
+        </DetailMetaCard>
+      }
+    />
   );
 }

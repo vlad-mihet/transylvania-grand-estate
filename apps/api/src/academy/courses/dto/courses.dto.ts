@@ -1,6 +1,7 @@
 import { createZodDto } from 'nestjs-zod';
 import {
   createCourseSchema,
+  duplicateCourseSchema,
   updateCourseSchema,
   queryCourseSchema,
   studentCatalogQuerySchema,
@@ -12,3 +13,4 @@ export class QueryCourseDto extends createZodDto(queryCourseSchema) {}
 export class StudentCatalogQueryDto extends createZodDto(
   studentCatalogQuerySchema,
 ) {}
+export class DuplicateCourseDto extends createZodDto(duplicateCourseSchema) {}

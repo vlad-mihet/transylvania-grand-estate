@@ -7,7 +7,7 @@ import { Button } from "@tge/ui";
 import { Trash2 } from "lucide-react";
 import { useMemo, useState } from "react";
 import { useTranslations } from "next-intl";
-import type { ApiCity, ApiCounty } from "@tge/types";
+import type { ApiBrand, ApiCity, ApiCounty } from "@tge/types";
 
 import { Link } from "@/i18n/navigation";
 import { ResourceListPage } from "@/components/resource/resource-list-page";
@@ -18,11 +18,14 @@ import { Mono, MonoTag } from "@/components/shared/mono";
 import { Thumbnail } from "@/components/shared/thumbnail";
 import { RelativeTime } from "@/components/shared/relative-time";
 import { Can } from "@/components/shared/can";
+import { BrandBadges } from "@/components/shared/brand-badges";
 import {
   FilterCheckbox,
   FilterGroup,
   FilterRail,
 } from "@/components/shared/filter-rail";
+import { BrandContextSwitcher } from "@/components/layout/brand-context-switcher";
+import { useBrandContext } from "@/components/layout/brand-context-provider";
 import { useResourceList } from "@/hooks/use-resource-list";
 
 type City = ApiCity & { id: string; createdAt?: string; updatedAt?: string };
@@ -37,6 +40,7 @@ export default function CitiesPage() {
   const queryClient = useQueryClient();
   const t = useTranslations("Cities");
   const tc = useTranslations("Common");
+  const { active: activeBrand, apiBrand } = useBrandContext();
 
   const [deleteId, setDeleteId] = useState<string | null>(null);
   const [bulkDeleteOpen, setBulkDeleteOpen] = useState(false);
@@ -57,7 +61,45 @@ export default function CitiesPage() {
     resource: "cities",
     defaultSort: "name_asc",
     defaultLimit: 20,
-    extraParams: { county: countyFilter || undefined },
+    extraParams: { county: countyFilter || undefined, brand: apiBrand },
+  });
+
+  // Per-row brand toggle — POSTs/DELETEs the dedicated `/cities/:id/brands/:brand`
+  // endpoint so concurrent toggles can't clobber each other. Optimistic update
+  // patches the cached list rows; rollback on error.
+  const toggleBrand = useMutation({
+    mutationFn: ({
+      id,
+      brand,
+      next,
+    }: {
+      id: string;
+      brand: ApiBrand;
+      next: boolean;
+    }) =>
+      apiClient(`/cities/${id}/brands/${brand}`, {
+        method: next ? "POST" : "DELETE",
+      }),
+    onMutate: async ({ id, brand, next }) => {
+      await queryClient.cancelQueries({ queryKey: ["cities"] });
+      const snapshots = queryClient.getQueriesData<unknown>({
+        queryKey: ["cities"],
+      });
+      for (const [key, value] of snapshots) {
+        queryClient.setQueryData(key, patchCityBrands(value, id, brand, next));
+      }
+      return { snapshots };
+    },
+    onError: (_err, _vars, ctx) => {
+      if (!ctx) return;
+      for (const [key, value] of ctx.snapshots) {
+        queryClient.setQueryData(key, value);
+      }
+      toast.error(t("brandToggleFailed"));
+    },
+    onSettled: () => {
+      queryClient.invalidateQueries({ queryKey: ["cities"] });
+    },
   });
 
   const deleteMutation = useMutation({
@@ -129,6 +171,25 @@ export default function CitiesPage() {
           <Mono>—</Mono>
         ),
     },
+    ...(activeBrand === "all"
+      ? [
+          {
+            id: "brands",
+            header: t("columnBrands"),
+            enableSorting: false,
+            size: 140,
+            cell: ({ row }) => (
+              <BrandBadges
+                brands={row.original.brands}
+                disabled={toggleBrand.isPending}
+                onToggle={({ brand, next }) =>
+                  toggleBrand.mutate({ id: row.original.id, brand, next })
+                }
+              />
+            ),
+          } satisfies ColumnDef<City, unknown>,
+        ]
+      : []),
     {
       id: "propertyCount",
       header: t("columnProperties"),
@@ -178,6 +239,7 @@ export default function CitiesPage() {
         createAction="city.create"
         list={list}
         columns={columns}
+        headerActions={<BrandContextSwitcher />}
         sortTokens={SORT_TOKENS}
         sortOptions={[
           { value: "name_asc", label: tc("sortNameAsc") },
@@ -270,4 +332,35 @@ export default function CitiesPage() {
       />
     </>
   );
+}
+
+/**
+ * Optimistic-update helper. Walks an arbitrary cached cities response
+ * (paginated `{ data, meta }` or a flat array) and rewrites the matching
+ * row's `brands` field. Cache shape is whatever the API last returned;
+ * unknown shapes pass through untouched so we never throw on cache hits we
+ * can't recognize.
+ */
+function patchCityBrands(
+  value: unknown,
+  id: string,
+  brand: ApiBrand,
+  next: boolean,
+): unknown {
+  if (!value) return value;
+  const patchRow = (row: City): City => {
+    if (row.id !== id) return row;
+    const current = new Set<ApiBrand>(row.brands ?? []);
+    if (next) current.add(brand);
+    else current.delete(brand);
+    return { ...row, brands: Array.from(current) };
+  };
+  if (Array.isArray(value)) {
+    return value.map((row) => patchRow(row as City));
+  }
+  if (typeof value === "object" && "data" in value && Array.isArray((value as { data: unknown }).data)) {
+    const v = value as { data: City[] };
+    return { ...v, data: v.data.map(patchRow) };
+  }
+  return value;
 }

@@ -9,6 +9,7 @@ import {
   HardHat,
   Landmark,
   LayoutDashboard,
+  LayoutGrid,
   Mail,
   Map,
   MapPin,
@@ -16,6 +17,7 @@ import {
   Newspaper,
   Settings,
   Shield,
+  Sparkles,
   TrendingUp,
   UserCircle,
   Users,
@@ -101,6 +103,12 @@ const NAV_GROUPS: NavGroup[] = [
         icon: MapPin,
         requires: "city.read",
       },
+      {
+        href: "/brand-visibility",
+        labelKey: "brandVisibility",
+        icon: Sparkles,
+        requires: "site-config.update",
+      },
       // Neighborhoods nav item deferred — API currently only supports nested
       // reads via `/cities/:slug/neighborhoods` with no standalone CRUD. When
       // neighborhood write endpoints land, add a dedicated /neighborhoods route.
@@ -110,10 +118,21 @@ const NAV_GROUPS: NavGroup[] = [
     labelKey: "content",
     items: [
       {
+        href: "/content",
+        labelKey: "contentOverview",
+        icon: LayoutGrid,
+      },
+      {
         href: "/articles",
         labelKey: "articles",
         icon: Newspaper,
         requires: "article.read",
+      },
+      {
+        href: "/academy",
+        labelKey: "academyOverview",
+        icon: Gauge,
+        requires: "academy.user.manage",
       },
       {
         href: "/academy/courses",
@@ -275,10 +294,13 @@ function SidebarContent() {
             </p>
             <div className="flex flex-col gap-0.5">
               {group.items.map((item) => {
-                const isActive =
-                  item.href === "/"
-                    ? pathname === "/"
-                    : pathname.startsWith(item.href);
+                // Exact-match the root and the /academy overview because
+                // both have prefixes of more specific siblings (every /…
+                // page; /academy/courses, /academy/students, …).
+                const exactMatchHrefs = new Set(["/", "/academy"]);
+                const isActive = exactMatchHrefs.has(item.href)
+                  ? pathname === item.href
+                  : pathname.startsWith(item.href);
                 const Icon = item.icon;
                 return (
                   <Link

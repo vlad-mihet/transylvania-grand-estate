@@ -27,6 +27,18 @@ interface FormActionsProps {
     label: string;
     onClick: () => void;
   };
+  /**
+   * Opt-in draft + publish dual-action mode. When set, the primary submit
+   * (`type="submit"`) saves a draft (the form's regular handler is
+   * responsible for sending `mode: "draft"`); the extra Publish button is
+   * rendered as a separate primary action that calls `publishAction.onClick`
+   * — typically the form routes that callback through `form.handleSubmit`
+   * with `mode: "publish"`.
+   */
+  publishAction?: {
+    label: string;
+    onClick: () => void;
+  };
 }
 
 /**
@@ -42,6 +54,7 @@ export function FormActions({
   submitLabel,
   cancelLabel,
   secondarySubmit,
+  publishAction,
 }: FormActionsProps) {
   const tc = useTranslations("Common");
   const router = useRouter();
@@ -86,6 +99,7 @@ export function FormActions({
         <Button
           type="submit"
           size="sm"
+          variant={publishAction ? "outline" : "default"}
           disabled={loading}
           aria-busy={loading}
         >
@@ -98,6 +112,16 @@ export function FormActions({
             submitLabel ?? tc("save")
           )}
         </Button>
+        {publishAction ? (
+          <Button
+            type="button"
+            size="sm"
+            disabled={loading}
+            onClick={publishAction.onClick}
+          >
+            {publishAction.label}
+          </Button>
+        ) : null}
       </div>
 
       <ConfirmDialog

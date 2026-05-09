@@ -2,7 +2,6 @@ import { Logger } from '@nestjs/common';
 import { AdminRole } from '@prisma/client';
 import { SearchService } from './search.service';
 import { SiteId, type SiteContext } from '../common/site';
-import type { SiteConfigService } from '../site-config/site-config.service';
 import type { PrismaService } from '../prisma/prisma.service';
 import type { CurrentUserPayload } from '../common/decorators/user.decorator';
 
@@ -47,10 +46,6 @@ function makePrisma(overrides: Partial<Record<string, FindManyFn>> = {}) {
   return { prisma, calls };
 }
 
-const siteConfigStub = {
-  getTgeCountyScope: async () => [],
-} as unknown as SiteConfigService;
-
 const adminSite: SiteContext = { id: SiteId.ADMIN, origin: null };
 
 const adminUser: CurrentUserPayload = {
@@ -83,7 +78,7 @@ describe('SearchService', () => {
       // users' accounts in global search, even if they spoof `types=user` in
       // the URL. The role filter is applied *before* `types` intersects.
       const { prisma, calls } = makePrisma();
-      const svc = new SearchService(prisma, siteConfigStub);
+      const svc = new SearchService(prisma);
 
       await svc.search(
         { q: 'foo', limit: 5, types: undefined },
@@ -105,7 +100,7 @@ describe('SearchService', () => {
       // The `types` filter intersects with the role allowlist — crafting
       // `types=[user,bankRate]` should yield an empty search, not a backdoor.
       const { prisma, calls } = makePrisma();
-      const svc = new SearchService(prisma, siteConfigStub);
+      const svc = new SearchService(prisma);
 
       const result = await svc.search(
         { q: 'foo', limit: 5, types: ['user', 'bankRate'] },
@@ -119,7 +114,7 @@ describe('SearchService', () => {
 
     it('ADMIN queries every entity when no types filter is passed', async () => {
       const { prisma, calls } = makePrisma();
-      const svc = new SearchService(prisma, siteConfigStub);
+      const svc = new SearchService(prisma);
 
       await svc.search(
         { q: 'foo', limit: 5, types: undefined },
@@ -149,7 +144,7 @@ describe('SearchService', () => {
       // already, but the service mustn't rely on that — unauthenticated ==
       // empty, never "fall through to ADMIN".
       const { prisma, calls } = makePrisma();
-      const svc = new SearchService(prisma, siteConfigStub);
+      const svc = new SearchService(prisma);
 
       const result = await svc.search({ q: 'x', limit: 5 }, adminSite, null);
 
@@ -161,7 +156,7 @@ describe('SearchService', () => {
   describe('AGENT ownership clamps', () => {
     it('AGENT property query is pinned to their own agentId', async () => {
       const { prisma, calls } = makePrisma();
-      const svc = new SearchService(prisma, siteConfigStub);
+      const svc = new SearchService(prisma);
 
       await svc.search({ q: 'foo', limit: 5 }, adminSite, agentUser);
 
@@ -173,7 +168,7 @@ describe('SearchService', () => {
 
     it('AGENT with no linked agent is clamped to a sentinel (no leak of full catalog)', async () => {
       const { prisma, calls } = makePrisma();
-      const svc = new SearchService(prisma, siteConfigStub);
+      const svc = new SearchService(prisma);
 
       const unlinked: CurrentUserPayload = {
         ...agentUser,
@@ -191,7 +186,7 @@ describe('SearchService', () => {
 
     it('AGENT inquiry query is joined through property.agentId', async () => {
       const { prisma, calls } = makePrisma();
-      const svc = new SearchService(prisma, siteConfigStub);
+      const svc = new SearchService(prisma);
 
       await svc.search({ q: 'foo', limit: 5 }, adminSite, agentUser);
 
@@ -218,7 +213,7 @@ describe('SearchService', () => {
       const { prisma, calls } = makePrisma({
         agent: () => Promise.resolve(sixAgents),
       });
-      const svc = new SearchService(prisma, siteConfigStub);
+      const svc = new SearchService(prisma);
 
       const result = await svc.search(
         { q: 'F', limit: 5, types: ['agent'] },
@@ -246,7 +241,7 @@ describe('SearchService', () => {
       const { prisma } = makePrisma({
         agent: () => Promise.resolve(threeAgents),
       });
-      const svc = new SearchService(prisma, siteConfigStub);
+      const svc = new SearchService(prisma);
 
       const result = await svc.search(
         { q: 'F', limit: 5, types: ['agent'] },
@@ -279,7 +274,7 @@ describe('SearchService', () => {
         property: () => Promise.reject(new Error('index corrupt')),
         agent: () => Promise.resolve(oneAgent),
       });
-      const svc = new SearchService(prisma, siteConfigStub);
+      const svc = new SearchService(prisma);
 
       const result = await svc.search({ q: 'a', limit: 5 }, adminSite, adminUser);
 
@@ -295,7 +290,7 @@ describe('SearchService', () => {
       // array, not ten empty groups. This keeps the wire payload small and
       // the UI's "No results" branch simple to author.
       const { prisma } = makePrisma();
-      const svc = new SearchService(prisma, siteConfigStub);
+      const svc = new SearchService(prisma);
 
       const result = await svc.search({ q: 'nope', limit: 5 }, adminSite, adminUser);
 

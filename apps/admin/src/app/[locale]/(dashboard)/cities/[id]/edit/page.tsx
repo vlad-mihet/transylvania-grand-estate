@@ -6,14 +6,13 @@ import { useParams } from "next/navigation";
 import { useTranslations } from "next-intl";
 import type { ApiCity } from "@tge/types";
 
-import { useRouter } from "@/i18n/navigation";
+import { Link, useRouter } from "@/i18n/navigation";
 import { toast } from "@/lib/toast";
 import { apiClient } from "@/lib/api-client";
 import { usePermissions } from "@/components/auth/auth-provider";
 import { CityForm } from "@/components/forms/city-form";
 import { EntityDeleteButton } from "@/components/shared/entity-delete-button";
 import { DetailPageShell } from "@/components/resource/detail-page-shell";
-import { FormPageShell } from "@/components/resource/form-page-shell";
 import { CityFormValues } from "@/lib/validations/city";
 
 export default function EditCityPage() {
@@ -21,6 +20,7 @@ export default function EditCityPage() {
   const router = useRouter();
   const queryClient = useQueryClient();
   const t = useTranslations("Cities");
+  const tc = useTranslations("Common");
   const { can } = usePermissions();
 
   useEffect(() => {
@@ -66,9 +66,8 @@ export default function EditCityPage() {
       enabled={!!id}
       notFoundTitle={t("notFound")}
       render={(city) => (
-        <FormPageShell
-          title={t("editCity")}
-          actions={
+        <div>
+          <div className="flex items-center justify-end gap-2 px-4 pt-3 md:px-6">
             <EntityDeleteButton
               apiPath={`/cities/${id}`}
               permission="city.delete"
@@ -78,8 +77,7 @@ export default function EditCityPage() {
               successMessage={t("deleted")}
               errorMessage={t("deleteFailed")}
             />
-          }
-        >
+          </div>
           <CityForm
             cancelHref={`/cities/${id}`}
             defaultValues={{
@@ -91,8 +89,17 @@ export default function EditCityPage() {
             onSubmit={(data, image) => updateMutation.mutate({ data, image })}
             loading={updateMutation.isPending}
             submissionError={updateMutation.error}
+            title={city.name}
+            breadcrumb={
+              <Link
+                href={`/cities/${id}`}
+                className="hover:text-foreground hover:underline"
+              >
+                {tc("back")}
+              </Link>
+            }
           />
-        </FormPageShell>
+        </div>
       )}
     />
   );

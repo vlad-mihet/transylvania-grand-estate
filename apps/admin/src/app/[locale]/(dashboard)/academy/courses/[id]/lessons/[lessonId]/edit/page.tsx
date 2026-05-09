@@ -4,14 +4,15 @@ import { useEffect } from "react";
 import { useParams, useRouter, notFound } from "next/navigation";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useLocale, useTranslations } from "next-intl";
+import { Eye } from "lucide-react";
 import { apiClient, ApiError } from "@/lib/api-client";
 import { toast } from "@/lib/toast";
 import { Link } from "@/i18n/navigation";
 import { usePermissions } from "@/components/auth/auth-provider";
 import { LessonForm } from "@/components/forms/lesson-form";
-import { FormPageShell } from "@/components/resource/form-page-shell";
+import { LessonAttachmentsSection } from "@/components/forms/lesson-attachments-section";
 import { LessonPrevNext } from "@/components/academy/lesson-prev-next";
-import { LoadingState } from "@tge/ui";
+import { Button, LoadingState } from "@tge/ui";
 import type { LessonFormValues } from "@/lib/validations/academy";
 import type { LessonStatus, LessonType } from "@prisma/client";
 
@@ -37,6 +38,11 @@ type Lesson = {
   total: number;
   prev: LessonSibling | null;
   next: LessonSibling | null;
+  draft?: {
+    title?: Record<string, string | undefined>;
+    excerpt?: Record<string, string | undefined>;
+    content?: Record<string, string | undefined>;
+  } | null;
 };
 
 export default function EditAcademyLessonPage() {
@@ -44,11 +50,30 @@ export default function EditAcademyLessonPage() {
   const router = useRouter();
   const locale = useLocale();
   const queryClient = useQueryClient();
-  const t = useTranslations("Academy.lessonForm");
   const tCourse = useTranslations("Academy.courses");
+  const tLessons = useTranslations("Academy.lessons");
   const tc = useTranslations("Common");
   const tt = useTranslations("Academy.toasts");
   const { can } = usePermissions();
+
+  const previewMutation = useMutation({
+    mutationFn: () =>
+      apiClient<{ url: string; expiresAt: string }>(
+        `/admin/academy/courses/${params.id}/lessons/${params.lessonId}/preview-token`,
+        { method: "POST", body: {} },
+      ),
+    onSuccess: (result) => {
+      // Open in a new tab so the editor can flip back to keep editing.
+      // Brief popup-blocker dance: most browsers permit window.open from
+      // a click handler, but the mutation is async so we open *after*
+      // the response — accept a one-time prompt for that case.
+      window.open(result.url, "_blank", "noopener,noreferrer");
+    },
+    onError: (err) =>
+      toast.error(
+        err instanceof ApiError ? err.message : tt("previewMintFailed"),
+      ),
+  });
 
   useEffect(() => {
     if (!can("academy.lesson.update")) router.replace(`/${locale}/403`);
@@ -63,7 +88,10 @@ export default function EditAcademyLessonPage() {
   });
 
   const updateMutation = useMutation({
-    mutationFn: (vars: { input: LessonFormValues; advanceTo: string | null }) =>
+    mutationFn: (vars: {
+      input: LessonFormValues & { mode?: "draft" | "publish" };
+      advanceTo: string | null;
+    }) =>
       apiClient<Lesson>(
         `/admin/academy/courses/${params.id}/lessons/${params.lessonId}`,
         {
@@ -103,26 +131,30 @@ export default function EditAcademyLessonPage() {
   }
 
   const lesson = lessonQuery.data;
+  const draft = lesson.draft ?? null;
+  const titleSource = draft?.title ?? lesson.title;
+  const excerptSource = draft?.excerpt ?? lesson.excerpt;
+  const contentSource = draft?.content ?? lesson.content;
   const defaults: Partial<LessonFormValues> = {
     slug: lesson.slug,
     order: lesson.order,
     title: {
-      ro: lesson.title.ro ?? "",
-      en: lesson.title.en ?? "",
-      fr: lesson.title.fr,
-      de: lesson.title.de,
+      ro: titleSource.ro ?? "",
+      en: titleSource.en ?? "",
+      fr: titleSource.fr,
+      de: titleSource.de,
     },
     excerpt: {
-      ro: lesson.excerpt.ro ?? "",
-      en: lesson.excerpt.en ?? "",
-      fr: lesson.excerpt.fr,
-      de: lesson.excerpt.de,
+      ro: excerptSource.ro ?? "",
+      en: excerptSource.en ?? "",
+      fr: excerptSource.fr,
+      de: excerptSource.de,
     },
     content: {
-      ro: lesson.content.ro ?? "",
-      en: lesson.content.en ?? "",
-      fr: lesson.content.fr,
-      de: lesson.content.de,
+      ro: contentSource.ro ?? "",
+      en: contentSource.en ?? "",
+      fr: contentSource.fr,
+      de: contentSource.de,
     },
     type: lesson.type,
     videoUrl: lesson.videoUrl,
@@ -130,37 +162,51 @@ export default function EditAcademyLessonPage() {
     status: lesson.status,
   };
 
+  const headline = lesson.title.ro || lesson.title.en || lesson.slug;
+
   return (
-    <FormPageShell
-      title={t("editTitle")}
-      description={t("editDescription")}
-      breadcrumb={
-        <Link
-          href={`/academy/courses/${params.id}`}
-          className="hover:text-foreground hover:underline"
+    <div className="space-y-3">
+      <div className="flex items-center justify-between gap-3 px-4 pt-3 md:px-6">
+        <LessonPrevNext
+          courseId={params.id}
+          position={lesson.position}
+          total={lesson.total}
+          prev={lesson.prev}
+          next={lesson.next}
+        />
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={() => previewMutation.mutate()}
+          disabled={previewMutation.isPending}
         >
-          {tCourse("detailBackToList")}
-        </Link>
-      }
-    >
-      <LessonPrevNext
-        courseId={params.id}
-        position={lesson.position}
-        total={lesson.total}
-        prev={lesson.prev}
-        next={lesson.next}
-      />
+          <Eye className="mr-1.5 h-3.5 w-3.5" />
+          {previewMutation.isPending
+            ? tLessons("previewMinting")
+            : tLessons("previewAction")}
+        </Button>
+      </div>
+      <div className="px-4 md:px-6">
+        <LessonAttachmentsSection lessonId={lesson.id} />
+      </div>
+
       <LessonForm
         mode="edit"
         defaultValues={defaults}
-        onSubmit={(values) =>
-          updateMutation.mutate({ input: values, advanceTo: null })
+        onSubmit={(values, saveMode) =>
+          updateMutation.mutate({
+            input: { ...values, mode: saveMode },
+            advanceTo: null,
+          })
         }
         onSubmitAndNext={
           lesson.next
             ? (values) =>
                 updateMutation.mutate({
-                  input: values,
+                  // "Save & next" promotes the entry to live (publish) since
+                  // the editor is moving forward in the sequence and would
+                  // otherwise leave a stale draft behind.
+                  input: { ...values, mode: "publish" },
                   advanceTo: lesson.next!.id,
                 })
             : undefined
@@ -168,7 +214,17 @@ export default function EditAcademyLessonPage() {
         loading={updateMutation.isPending}
         submissionError={updateMutation.error}
         cancelHref={`/academy/courses/${params.id}`}
+        title={headline}
+        hasPendingDraft={draft !== null}
+        breadcrumb={
+          <Link
+            href={`/academy/courses/${params.id}`}
+            className="hover:text-foreground hover:underline"
+          >
+            {tCourse("detailBackToList")}
+          </Link>
+        }
       />
-    </FormPageShell>
+    </div>
   );
 }
