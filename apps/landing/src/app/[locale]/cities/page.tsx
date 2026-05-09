@@ -22,11 +22,21 @@ export default async function CitiesPage() {
   const t = await getTranslations("CitiesPage");
   const tBreadcrumb = await getTranslations("Breadcrumb");
 
-  const [citiesRaw, developers] = await Promise.all([
+  // Fetch both the curated homepage list and the brand-scoped listing, then
+  // union them so the /cities page leads with the curated order (matching the
+  // hero rail) and tails into the rest of the brand's tagged cities. Both
+  // endpoints already filter by `city_brands`, so the union stays inside the
+  // brand's visibility — featured ⊂ all-tagged. Dedupe preserves first
+  // occurrence so curated order wins for the overlap.
+  const [featuredRaw, defaultRaw, developers] = await Promise.all([
+    fetchApi<ApiCity[]>("/cities?featured=true"),
     fetchApi<ApiCity[]>("/cities"),
     fetchApi<Developer[]>("/developers"),
   ]);
-  const cities = citiesRaw.map(mapApiCity);
+  const seen = new Set<string>();
+  const cities = [...featuredRaw, ...defaultRaw]
+    .filter((c) => (seen.has(c.slug) ? false : (seen.add(c.slug), true)))
+    .map(mapApiCity);
 
   // Compute developer count per city
   const developerCountByCity = developers.reduce(

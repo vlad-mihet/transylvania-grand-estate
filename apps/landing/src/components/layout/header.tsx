@@ -25,21 +25,25 @@ const propertyTypes = [
   { key: "chalet", slug: "chalet" },
 ] as const;
 
-const cities = [
-  { name: "Cluj-Napoca", slug: "cluj-napoca" },
-  { name: "Oradea", slug: "oradea" },
-  { name: "Timișoara", slug: "timisoara" },
-  { name: "Brașov", slug: "brasov" },
-  { name: "Sibiu", slug: "sibiu" },
-] as const;
-
 type MenuId = "forSale" | "newDevelopments" | "developers" | null;
+
+const CITIES_PER_COLUMN = 6;
+
+function chunk<T>(arr: readonly T[], size: number): T[][] {
+  const out: T[][] = [];
+  for (let i = 0; i < arr.length; i += size) out.push(arr.slice(i, i + size));
+  return out;
+}
 
 interface HeaderProps {
   developers: { name: string; slug: string }[];
+  // Curated featured-cities list (from `/cities?featured=true`). The header
+  // mirrors what the homepage's CityShowcase renders so the nav and the page
+  // never drift. Empty fallback keeps the nav usable when the API is down.
+  cities: { name: string; slug: string }[];
 }
 
-export function Header({ developers }: HeaderProps) {
+export function Header({ developers, cities }: HeaderProps) {
   const t = useTranslations("Navigation");
   const tTypes = useTranslations("Common.propertyTypes");
   const pathname = usePathname();
@@ -52,6 +56,8 @@ export function Header({ developers }: HeaderProps) {
 
   const [activeMenu, setActiveMenu] = useState<MenuId>(null);
   const [hoverTimeout, setHoverTimeout] = useState<NodeJS.Timeout | null>(null);
+
+  const cityColumns = chunk(cities, CITIES_PER_COLUMN);
 
   const openMenu = useCallback(
     (menu: MenuId) => {
@@ -125,12 +131,12 @@ export function Header({ developers }: HeaderProps) {
         <div className="hidden xl:grid grid-cols-[1fr_auto_1fr] items-center h-20">
           {/* Left: logo */}
           <div className="flex items-center gap-3">
-            <div id="header-diamond" className="relative -translate-y-[3px] opacity-70">
+            <div id="header-diamond" className="relative opacity-70">
               <div className="absolute inset-0 -m-2 rounded-full animate-diamond-glow bg-amethyst/20 blur-md" />
-              <DiamondSvg className="relative w-8 h-8" />
+              <DiamondSvg className="relative block w-8 h-8" />
             </div>
             <Link href="/" className="flex items-center gap-4 group">
-              <span className="font-serif xl:text-[22px] 2xl:text-[26px] font-medium text-cream tracking-[0.03em] leading-none whitespace-nowrap transition-colors duration-300">
+              <span className="font-serif xl:text-[17px] 2xl:text-[20px] font-medium text-cream tracking-[0.03em] leading-none whitespace-nowrap transition-colors duration-300">
                 Transylvania
                 <span className="text-copper logo-glow group-hover:text-copper-light">
                   {" "}Grand Estate
@@ -165,9 +171,9 @@ export function Header({ developers }: HeaderProps) {
           <div className="flex items-center justify-end">
             <InquiryTrigger context={{ type: "general" }}>
               <AccentButton
-                accentVariant="solid"
+                accentVariant="splash"
                 size="sm"
-                className="text-xs h-9 px-5"
+                className="h-9 px-6"
               >
                 {t("scheduleViewing")}
               </AccentButton>
@@ -177,7 +183,7 @@ export function Header({ developers }: HeaderProps) {
 
         {/* Mobile nav (<lg) — centered logo with hamburger */}
         <div className="flex xl:hidden items-center justify-between h-16">
-          <MobileNav />
+          <MobileNav cities={cities} />
           <Link href="/" className="absolute left-1/2 -translate-x-1/2">
             <span className="font-serif text-lg sm:text-xl text-cream tracking-[0.03em] leading-none whitespace-nowrap">
               Transylvania
@@ -196,7 +202,7 @@ export function Header({ developers }: HeaderProps) {
       >
         {/* For Sale mega-menu */}
         <MegaMenu isOpen={activeMenu === "forSale"} onClose={closeMenuImmediate}>
-          <div className="grid grid-cols-3 gap-16">
+          <div className="grid grid-cols-[1fr_2fr_1fr] gap-16">
             <MegaMenuColumn title={t("propertyTypes")}>
               {propertyTypes.map((type) => (
                 <MegaMenuLink
@@ -209,15 +215,11 @@ export function Header({ developers }: HeaderProps) {
               ))}
             </MegaMenuColumn>
             <MegaMenuColumn title={t("popularCities")}>
-              {cities.map((city) => (
-                <MegaMenuLink
-                  key={city.slug}
-                  href={`/cities/${city.slug}`}
-                  onClick={closeMenuImmediate}
-                >
-                  {city.name}
-                </MegaMenuLink>
-              ))}
+              <CityGrid
+                columns={cityColumns}
+                hrefFor={(c) => `/cities/${c.slug}`}
+                onClick={closeMenuImmediate}
+              />
               <MegaMenuLink href="/cities" onClick={closeMenuImmediate}>
                 {t("viewAllCities")}
               </MegaMenuLink>
@@ -238,7 +240,7 @@ export function Header({ developers }: HeaderProps) {
 
         {/* New Developments mega-menu */}
         <MegaMenu isOpen={activeMenu === "newDevelopments"} onClose={closeMenuImmediate}>
-          <div className="grid grid-cols-3 gap-16">
+          <div className="grid grid-cols-[1fr_2fr_1fr] gap-16">
             <MegaMenuColumn title={t("propertyTypes")}>
               <MegaMenuLink href="/properties?type=apartment" onClick={closeMenuImmediate}>
                 {tTypes("apartment")}
@@ -248,15 +250,11 @@ export function Header({ developers }: HeaderProps) {
               </MegaMenuLink>
             </MegaMenuColumn>
             <MegaMenuColumn title={t("popularCities")}>
-              {cities.map((city) => (
-                <MegaMenuLink
-                  key={city.slug}
-                  href={`/cities/${city.slug}`}
-                  onClick={closeMenuImmediate}
-                >
-                  {city.name}
-                </MegaMenuLink>
-              ))}
+              <CityGrid
+                columns={cityColumns}
+                hrefFor={(c) => `/cities/${c.slug}`}
+                onClick={closeMenuImmediate}
+              />
               <MegaMenuLink href="/cities" onClick={closeMenuImmediate}>
                 {t("viewAllCities")}
               </MegaMenuLink>
@@ -280,7 +278,7 @@ export function Header({ developers }: HeaderProps) {
 
         {/* Developers mega-menu */}
         <MegaMenu isOpen={activeMenu === "developers"} onClose={closeMenuImmediate}>
-          <div className="grid grid-cols-2 gap-16">
+          <div className="grid grid-cols-[1fr_2fr] gap-16">
             <MegaMenuColumn title={t("popularDevelopers")}>
               {developers.slice(0, 5).map((dev) => (
                 <MegaMenuLink
@@ -296,15 +294,11 @@ export function Header({ developers }: HeaderProps) {
               </MegaMenuLink>
             </MegaMenuColumn>
             <MegaMenuColumn title={t("byCity")}>
-              {cities.map((city) => (
-                <MegaMenuLink
-                  key={city.slug}
-                  href={`/developers?city=${city.slug}`}
-                  onClick={closeMenuImmediate}
-                >
-                  {city.name}
-                </MegaMenuLink>
-              ))}
+              <CityGrid
+                columns={cityColumns}
+                hrefFor={(c) => `/developers?city=${c.slug}`}
+                onClick={closeMenuImmediate}
+              />
             </MegaMenuColumn>
           </div>
         </MegaMenu>
@@ -341,6 +335,48 @@ function NavDropdown({
           )}
         />
       </button>
+    </div>
+  );
+}
+
+/* Renders an array-of-arrays of cities as side-by-side sub-columns inside a
+   MegaMenuColumn. Caller decides chunk size (CITIES_PER_COLUMN) and the
+   per-city href via `hrefFor`. */
+function CityGrid({
+  columns,
+  hrefFor,
+  onClick,
+}: {
+  columns: { name: string; slug: string }[][];
+  hrefFor: (city: { name: string; slug: string }) => string;
+  onClick?: () => void;
+}) {
+  if (columns.length === 0) return null;
+  return (
+    <div
+      className="grid gap-x-12 gap-y-3"
+      style={{
+        gridTemplateColumns: `repeat(${columns.length}, minmax(0, 1fr))`,
+      }}
+    >
+      {columns.map((col, i) => (
+        // mega-menu-items class re-anchors the staggered fade-in (defined in
+        // packages/tailwind-config/src/theme.css) for the cities inside this
+        // sub-column. The shared rule targets direct children only, so without
+        // this each city would skip the entrance animation that the rest of
+        // the menu items receive.
+        <div key={i} className="mega-menu-items flex flex-col gap-2.5">
+          {col.map((city) => (
+            <MegaMenuLink
+              key={city.slug}
+              href={hrefFor(city)}
+              onClick={onClick}
+            >
+              {city.name}
+            </MegaMenuLink>
+          ))}
+        </div>
+      ))}
     </div>
   );
 }

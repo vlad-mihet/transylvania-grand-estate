@@ -133,7 +133,7 @@ export function VideoHeroSection({
               transitionDelay: "350ms",
             }}
           >
-            <AccentButton size="lg" asChild>
+            <AccentButton accentVariant="splash" size="lg" className="px-10" asChild>
               <Link href={ctaHref}>{ctaText}</Link>
             </AccentButton>
           </div>

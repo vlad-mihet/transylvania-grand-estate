@@ -421,9 +421,9 @@
         "3plus": "€3M+"
       }
     },
-    "offices": {
-      "subtitle": "Visit Our Offices",
-      "title": "Our Locations"
+    "office": {
+      "subtitle": "Visit Us in Cluj-Napoca",
+      "title": "Our Office"
     }
   },
   "InquiryModal": {

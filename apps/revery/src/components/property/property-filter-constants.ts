@@ -20,18 +20,11 @@ export const PROPERTY_TYPES = [
 
 export type PropertyTypeKey = (typeof PROPERTY_TYPES)[number];
 
-// Cities available in Revery. Must be kept in sync with the city slugs
-// seeded on the API side (apps/api/prisma/seed.ts).
-export const CITY_SLUGS = [
-  "cluj-napoca",
-  "oradea",
-  "timisoara",
-  "brasov",
-  "sibiu",
-] as const;
-
 // Display labels for city slugs. Uses proper Romanian diacritics — this is
-// the Revery brand requirement.
+// the Revery brand requirement. Used purely as a slug-to-label lookup for the
+// filter bar; the source-of-truth city set comes from `/cities?brand=revery`
+// at the layer above. New Revery-tagged cities should get a label entry here
+// (or migrate the lookup to API-driven labels in a follow-up).
 export const CITY_LABELS: Record<string, string> = {
   "cluj-napoca": "Cluj-Napoca",
   oradea: "Oradea",

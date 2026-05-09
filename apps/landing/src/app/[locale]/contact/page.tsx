@@ -6,7 +6,7 @@ import { mapApiProperties } from "@tge/api-client";
 import { HeroSection } from "@/components/sections/hero-section";
 import { Container } from "@/components/layout/container";
 import { ContactForm } from "@/components/contact/contact-form";
-import { OfficeLocations } from "@/components/contact/office-locations";
+import { ContactOffice } from "@/components/contact/contact-office";
 import type { Metadata } from "next";
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -34,7 +34,7 @@ export default async function ContactPage() {
           <ContactForm properties={properties.map(p => ({ id: p.id, slug: p.slug, title: localize(p.title, locale) }))} />
         </Container>
       </section>
-      <OfficeLocations />
+      <ContactOffice />
     </>
   );
 }

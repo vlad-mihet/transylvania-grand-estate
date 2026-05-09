@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 import { Playfair_Display, Inter, Montserrat } from "next/font/google";
 import { routing } from "@tge/i18n/routing";
 import { fetchApi } from "@tge/api-client";
+import type { City } from "@tge/types";
 import { Header } from "@/components/layout/header";
 import { FloatingDiamond } from "@/components/layout/floating-diamond";
 import { Footer } from "@/components/layout/footer";
@@ -51,10 +52,16 @@ export default async function LocaleLayout({
   const messages = await getMessages();
 
   let developers: { name: string; slug: string }[] = [];
+  let featuredCities: { name: string; slug: string }[] = [];
   try {
-    developers = await fetchApi<{ name: string; slug: string }[]>("/developers");
+    const [devs, cities] = await Promise.all([
+      fetchApi<{ name: string; slug: string }[]>("/developers"),
+      fetchApi<City[]>("/cities?featured=true"),
+    ]);
+    developers = devs;
+    featuredCities = cities.map((c) => ({ name: c.name, slug: c.slug }));
   } catch {
-    // fallback to empty — nav still works without developer links
+    // fallback to empty — nav still works without dynamic links
   }
 
   return (
@@ -63,7 +70,7 @@ export default async function LocaleLayout({
         <NextIntlClientProvider messages={messages}>
           <QueryProvider>
             <InquiryProvider>
-              <Header developers={developers} />
+              <Header developers={developers} cities={featuredCities} />
               <FloatingDiamond />
               <main className="min-h-screen">{children}</main>
               <Footer />

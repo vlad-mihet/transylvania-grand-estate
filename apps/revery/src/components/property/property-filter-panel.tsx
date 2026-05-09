@@ -19,7 +19,6 @@ import { LocationPicker } from "./location-picker";
 import type { LocationSelection } from "./location-picker";
 import type { County } from "@tge/types";
 import {
-  CITY_SLUGS,
   CITY_LABELS,
   PROPERTY_TYPES,
   locationSelectionsFromSearchParams,
@@ -29,7 +28,6 @@ import { applyLocationToParams } from "./filter/filter-location-params";
 
 // Re-exported under the old names so downstream callers keep working without
 // a migration. New code should import from ./property-filter-constants.
-export const cities = CITY_SLUGS;
 export const cityLabels = CITY_LABELS;
 export const propertyTypes = PROPERTY_TYPES;
 

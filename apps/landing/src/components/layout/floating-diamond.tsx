@@ -81,6 +81,11 @@ const prefersReducedMotionInitial = () =>
   typeof window !== "undefined" &&
   window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
+// Floating diamond bounding box (w-11 = 44px). Centered on the header
+// diamond's bounding-box center at rest so the two overlap regardless of
+// header-diamond size.
+const FLOATING_BOX = 44;
+
 export function FloatingDiamond() {
   const elementRef = useRef<HTMLDivElement>(null);
   const rafRef = useRef<number>(0);
@@ -95,9 +100,13 @@ export function FloatingDiamond() {
       const headerDiamond = document.getElementById("header-diamond");
       if (headerDiamond && elementRef.current) {
         const rect = headerDiamond.getBoundingClientRect();
-        elementRef.current.style.left = `${rect.left}px`;
-        elementRef.current.style.top = `${rect.top}px`;
-        initialLeftRef.current = rect.left;
+        // Center the floating box on the header diamond's center so the two
+        // overlap regardless of size differences.
+        const headerCenterX = rect.left + rect.width / 2;
+        const headerCenterY = rect.top + rect.height / 2;
+        elementRef.current.style.left = `${headerCenterX - FLOATING_BOX / 2}px`;
+        elementRef.current.style.top = `${headerCenterY - FLOATING_BOX / 2}px`;
+        initialLeftRef.current = headerCenterX - FLOATING_BOX / 2;
       } else if (elementRef.current) {
         initialLeftRef.current = elementRef.current.getBoundingClientRect().left;
       }
@@ -126,16 +135,32 @@ export function FloatingDiamond() {
       const vh = window.innerHeight;
       const vw = window.innerWidth;
 
+      // Re-anchor every frame to the live header-diamond rect. The header is
+      // fixed, but its inner layout shifts when the utility bar collapses on
+      // scroll (`isScrolled` flips at scrollY > 50), which moves the header
+      // diamond's viewport position. Without this, the floating diamond's
+      // top/left freeze at mount-time and slip out of overlap as soon as the
+      // user scrolls past the threshold.
+      const headerDiamond = document.getElementById("header-diamond");
+      if (headerDiamond) {
+        const rect = headerDiamond.getBoundingClientRect();
+        const headerCenterX = rect.left + rect.width / 2;
+        const headerCenterY = rect.top + rect.height / 2;
+        elementRef.current.style.left = `${headerCenterX - FLOATING_BOX / 2}px`;
+        elementRef.current.style.top = `${headerCenterY - FLOATING_BOX / 2}px`;
+        initialLeftRef.current = headerCenterX - FLOATING_BOX / 2;
+      }
+
       // --- Normal floating values ---
       const floatY = Math.min(y * 0.06, vh - 80);
       const floatX = Math.sin(y * 0.0015) * 10;
       const floatRotation = y * 0.008 + Math.sin(y * 0.003) * 5;
-      // Size/opacity tuned so at scrollY=0 this diamond sits exactly on top of
-      // the header-diamond (w-8 at opacity-70): 32 / 44 = 0.727, opacity 0.7.
-      // Stacking the two makes the homepage read as a single diamond at rest;
-      // as the page scrolls the header one leaves with the document flow and
-      // this floating one descends via floatY, producing the "diamant coboară"
-      // effect. CTA arrival still lerps scale->1 and opacity->1 below.
+      // Size/opacity tuned so at scrollY=0 this diamond sits exactly on top
+      // of the header diamond (44 * 0.727 = 32, opacity 0.7). Stacking the
+      // two makes the homepage read as a single diamond at rest; as the page
+      // scrolls the header one leaves with the document flow and this
+      // floating one descends via floatY, producing the "diamant coboară"
+      // effect. CTA arrival lerps scale -> 1 and opacity -> 1 below.
       const floatOpacity = 0.7;
       const floatScale = 0.727;
 
@@ -196,9 +221,41 @@ export function FloatingDiamond() {
     // Run immediately to set correct position for current scroll offset
     update();
 
+    // The diamond's *position* shifts whenever the header reflows (utility
+    // bar h-8↔h-0 on isScrolled, isHidden translate, font/image loads,
+    // browser zoom, viewport resize), but its *box* stays 32×32 — so a
+    // ResizeObserver on the diamond catches none of that. Observe the
+    // header element instead: its height genuinely changes when the utility
+    // bar collapses, which fires RO callbacks once per frame during the
+    // 500ms transition. Without this, stopping scroll mid-transition leaves
+    // the floating anchor frozen at the transient mid-transition value
+    // because no further scroll events arrive to re-run update().
+    //
+    // transitionend backstops the RO: it fires exactly once per animated
+    // property when the transition fully settles, guaranteeing one final
+    // re-anchor after the layout has stabilised — covers any frame the RO
+    // throttle might skip.
+    const headerDiamondEl = document.getElementById("header-diamond");
+    const headerEl = headerDiamondEl?.closest("header") ?? null;
+    const ro =
+      typeof ResizeObserver !== "undefined"
+        ? new ResizeObserver(() => handleScroll())
+        : null;
+    if (headerEl) ro?.observe(headerEl);
+    if (headerDiamondEl) ro?.observe(headerDiamondEl);
+    headerEl?.addEventListener("transitionend", handleScroll, true);
+
     window.addEventListener("scroll", handleScroll, { passive: true });
+    window.addEventListener("resize", handleScroll);
+    window.visualViewport?.addEventListener("resize", handleScroll);
+    window.visualViewport?.addEventListener("scroll", handleScroll);
     return () => {
       window.removeEventListener("scroll", handleScroll);
+      window.removeEventListener("resize", handleScroll);
+      window.visualViewport?.removeEventListener("resize", handleScroll);
+      window.visualViewport?.removeEventListener("scroll", handleScroll);
+      headerEl?.removeEventListener("transitionend", handleScroll, true);
+      ro?.disconnect();
       cancelAnimationFrame(rafRef.current);
     };
   }, [reducedMotion, isHomepage]);
@@ -218,7 +275,7 @@ export function FloatingDiamond() {
       aria-hidden="true"
     >
       <div className="absolute inset-0 -m-2 rounded-full animate-diamond-glow bg-amethyst/20 blur-md" />
-      <DiamondSvg className="relative w-11 h-11" />
+      <DiamondSvg className="relative block w-11 h-11" />
     </div>
   );
 }

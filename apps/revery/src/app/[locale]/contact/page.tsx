@@ -51,7 +51,7 @@ export default async function ContactPage({
 
             <div className="lg:col-span-2">
               <h2 className="text-2xl font-bold text-foreground mb-6 md:mb-8">
-                {t("offices.title")}
+                {t("office.title")}
               </h2>
               <div className="bg-card border border-border rounded-xl shadow-sm p-5 md:p-8 space-y-6">
                 <div className="flex items-start gap-4">

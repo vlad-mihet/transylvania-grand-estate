@@ -22,15 +22,13 @@ const propertyTypes = [
   { key: "chalet", slug: "chalet" },
 ] as const;
 
-const cities = [
-  { name: "Cluj-Napoca", slug: "cluj-napoca" },
-  { name: "Oradea", slug: "oradea" },
-  { name: "Timișoara", slug: "timisoara" },
-  { name: "Brașov", slug: "brasov" },
-  { name: "Sibiu", slug: "sibiu" },
-] as const;
+interface MobileNavProps {
+  // Curated featured-cities list, mirrored from the desktop header so the
+  // two stay in lockstep. Sourced from `/cities?featured=true` in the layout.
+  cities: { name: string; slug: string }[];
+}
 
-export function MobileNav() {
+export function MobileNav({ cities }: MobileNavProps) {
   const [open, setOpen] = useState(false);
   const [expandedSection, setExpandedSection] = useState<string | null>(null);
   const t = useTranslations("Navigation");

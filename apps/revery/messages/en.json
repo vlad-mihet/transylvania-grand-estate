@@ -690,9 +690,9 @@
         "500kTo1m": "€500,000 – €1,000,000"
       }
     },
-    "offices": {
+    "office": {
       "subtitle": "Visit Us",
-      "title": "Our Offices"
+      "title": "Our Office"
     }
   },
   "InquiryModal": {

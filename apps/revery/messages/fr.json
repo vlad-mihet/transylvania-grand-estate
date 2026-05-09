@@ -690,9 +690,9 @@
         "generic": "Votre message n'a pas pu être envoyé. Veuillez réessayer dans un instant."
       }
     },
-    "offices": {
-      "subtitle": "Visit Us",
-      "title": "Our Offices"
+    "office": {
+      "subtitle": "Rendez-nous Visite",
+      "title": "Notre Bureau"
     }
   },
   "InquiryModal": {

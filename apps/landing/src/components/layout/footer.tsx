@@ -1,9 +1,8 @@
 "use client";
 
-import { useTranslations, useLocale } from "next-intl";
+import { useTranslations } from "next-intl";
 import { Link } from "@tge/i18n/navigation";
 import { Container } from "./container";
-import { Locale } from "@tge/types";
 import { Instagram, Facebook, Linkedin, Youtube, Phone, Mail } from "lucide-react";
 import { CONTACT_PHONE } from "@/lib/contact";
 
@@ -20,12 +19,7 @@ const contact = {
   email: "contact@transylvaniagrandestate.ro",
 };
 
-const mainOfficeAddress: Record<string, string> = {
-  en: "21 Eroilor Boulevard, Cluj-Napoca 400129, Cluj County",
-  ro: "Bulevardul Eroilor 21, Cluj-Napoca 400129, Judetul Cluj",
-  fr: "Boulevard Eroilor 21, Cluj-Napoca 400129, Département de Cluj",
-  de: "Eroilor Boulevard 21, Cluj-Napoca 400129, Kreis Cluj",
-};
+const MAIN_OFFICE_LOCATION = "Cluj-Napoca, Cluj, România";
 
 const socialLinks = [
   { platform: "instagram" as const, url: "https://instagram.com/tge" },
@@ -37,7 +31,6 @@ const socialLinks = [
 export function Footer() {
   const t = useTranslations("Footer");
   const tNav = useTranslations("Navigation");
-  const locale = useLocale() as Locale;
 
   return (
     <footer className="bg-[#101014] border-t border-copper/10">
@@ -100,9 +93,7 @@ export function Footer() {
                 <Mail className="h-4 w-4 text-copper" />
                 {contact.email}
               </a>
-              <p className="mt-2">
-                {mainOfficeAddress[locale] ?? mainOfficeAddress.en}
-              </p>
+              <p className="mt-2">{MAIN_OFFICE_LOCATION}</p>
             </div>
           </div>
 
