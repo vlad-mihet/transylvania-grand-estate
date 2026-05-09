@@ -19,27 +19,6 @@
     "lint": "nx lint landing",
     "lint:all": "nx run-many --target=lint"
   },
-  "pnpm": {
-    "onlyBuiltDependencies": [
-      "@nestjs/core",
-      "@parcel/watcher",
-      "@prisma/client",
-      "@prisma/engines",
-      "@scarf/scarf",
-      "@swc/core",
-      "bcrypt",
-      "cpu-features",
-      "esbuild",
-      "less",
-      "msw",
-      "nx",
-      "prisma",
-      "protobufjs",
-      "sharp",
-      "ssh2",
-      "unrs-resolver"
-    ]
-  },
   "devDependencies": {
     "nx": "^21.0.0",
     "@nx/next": "^21.0.0",
