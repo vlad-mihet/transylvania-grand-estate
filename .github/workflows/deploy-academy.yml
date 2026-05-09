@@ -6,6 +6,8 @@ on:
     paths:
       - 'apps/academy/**'
       - 'packages/**'
+      - 'package.json'
+      - 'pnpm-lock.yaml'
   workflow_dispatch:
 
 concurrency:

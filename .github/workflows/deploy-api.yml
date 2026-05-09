@@ -6,6 +6,9 @@ on:
     paths:
       - 'apps/api/**'
       - 'packages/**'
+      - 'package.json'
+      - 'pnpm-lock.yaml'
+  workflow_dispatch:
 
 concurrency:
   group: deploy-api-${{ github.ref }}
