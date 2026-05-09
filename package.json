@@ -21,11 +21,23 @@
   },
   "pnpm": {
     "onlyBuiltDependencies": [
-      "bcrypt",
-      "prisma",
+      "@nestjs/core",
+      "@parcel/watcher",
       "@prisma/client",
       "@prisma/engines",
-      "@nestjs/core"
+      "@scarf/scarf",
+      "@swc/core",
+      "bcrypt",
+      "cpu-features",
+      "esbuild",
+      "less",
+      "msw",
+      "nx",
+      "prisma",
+      "protobufjs",
+      "sharp",
+      "ssh2",
+      "unrs-resolver"
     ]
   },
   "devDependencies": {
