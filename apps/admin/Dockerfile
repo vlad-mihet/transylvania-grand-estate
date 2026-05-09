@@ -18,6 +18,11 @@ COPY packages/api-client/package.json ./packages/api-client/
 COPY packages/branding/package.json ./packages/branding/
 COPY packages/tailwind-config/package.json ./packages/tailwind-config/
 COPY packages/assets/package.json ./packages/assets/
+# pnpm needs the actual sync.mjs to exist at install time so it can create
+# the .bin/tge-sync-assets symlink that apps/admin's build script invokes.
+# Public assets (the heavy .jpg files) are copied later via the broader
+# COPY . . in the builder stage.
+COPY packages/assets/scripts ./packages/assets/scripts
 RUN pnpm install --frozen-lockfile
 
 # --- Build ---
