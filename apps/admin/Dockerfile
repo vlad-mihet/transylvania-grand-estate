@@ -17,6 +17,7 @@ COPY packages/i18n/package.json ./packages/i18n/
 COPY packages/api-client/package.json ./packages/api-client/
 COPY packages/branding/package.json ./packages/branding/
 COPY packages/tailwind-config/package.json ./packages/tailwind-config/
+COPY packages/assets/package.json ./packages/assets/
 RUN pnpm install --frozen-lockfile
 
 # --- Build ---
