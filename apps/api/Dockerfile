@@ -1,6 +1,6 @@
 FROM node:22-alpine AS base
 RUN apk add --no-cache libc6-compat openssl
-RUN corepack enable && corepack prepare pnpm@latest --activate
+RUN corepack enable && corepack prepare pnpm@10.13.1 --activate
 WORKDIR /app
 
 # --- Install dependencies ---
@@ -36,7 +36,7 @@ RUN apk add --no-cache libc6-compat openssl
 # the documented `fly ssh console -a tge-api -C "… npx prisma db seed"`
 # runbook in CONTRIBUTING.md fails with `spawn pnpm ENOENT` without it.
 # Mirrors the same activation in the base stage.
-RUN corepack enable && corepack prepare pnpm@latest --activate
+RUN corepack enable && corepack prepare pnpm@10.13.1 --activate
 WORKDIR /app
 
 ENV NODE_ENV=production
