@@ -2,10 +2,12 @@ import { validateEnv } from './env.schema';
 
 /**
  * Pins the production env contract. The contact-flow audit (2026-05-10)
- * promoted RESEND_API_KEY, EMAIL_FROM, and INQUIRIES_NOTIFY_TO from
- * "optional, silent stdout fallback" to hard boot-time requirements —
- * regressing any of them would re-introduce the silent-failure mode where
- * customer confirmations and admin lead alerts vanish.
+ * originally promoted RESEND_API_KEY, EMAIL_FROM, and INQUIRIES_NOTIFY_TO
+ * to hard boot-time requirements, but the first prod deploy outpaced
+ * secret provisioning and crashlooped the API. They are now soft-required:
+ * the API still boots, but emits a clearly-named boot-time warn so ops
+ * notices the customer-facing degradation. Promote back to `.min(1)` once
+ * the secrets are set on Fly.
  */
 describe('validateEnv', () => {
   // Minimal valid prod env. Each test mutates a copy.
@@ -22,6 +24,8 @@ describe('validateEnv', () => {
     ADMIN_PUBLIC_URL: 'https://admin.tge.com',
     ACADEMY_PUBLIC_URL: 'https://academy.tge.com',
     STORAGE_TYPE: 'local',
+    SENTRY_DSN: 'https://abc@sentry.io/1',
+    METRICS_BEARER_TOKEN: 'metrics-token',
     RESEND_API_KEY: 're_realkey',
     EMAIL_FROM: 'TGE <no-reply@tge.com>',
     INQUIRIES_NOTIFY_TO: 'ops@tge.com',
@@ -36,23 +40,20 @@ describe('validateEnv', () => {
     ['RESEND_API_KEY'],
     ['EMAIL_FROM'],
     ['INQUIRIES_NOTIFY_TO'],
-  ])('hard-fails when %s is unset in production', (key) => {
-    const env = validProdEnv();
-    delete env[key];
-    expect(() => validateEnv(env)).toThrow(
-      new RegExp(`Environment validation failed[\\s\\S]*${key}`),
-    );
-  });
-
-  it.each([
-    ['RESEND_API_KEY', 'RESEND_API_KEY required in production'],
-    ['EMAIL_FROM', 'EMAIL_FROM required in production'],
-    ['INQUIRIES_NOTIFY_TO', 'INQUIRIES_NOTIFY_TO required in production'],
   ])(
-    'hard-fails with the helpful custom message when %s is set to empty string in production',
-    (key, expectedSnippet) => {
-      const env = { ...validProdEnv(), [key]: '' };
-      expect(() => validateEnv(env)).toThrow(new RegExp(expectedSnippet));
+    'boots (does not throw) when %s is unset in production and warns about contact-flow degradation',
+    (key) => {
+      const warn = jest.spyOn(console, 'warn').mockImplementation(() => {});
+      const env = validProdEnv();
+      delete env[key];
+      expect(() => validateEnv(env)).not.toThrow();
+      const messages = warn.mock.calls.map((c) => c[0] as string);
+      const contactWarn = messages.find((m) =>
+        m.includes('degraded contact flow'),
+      );
+      expect(contactWarn).toBeDefined();
+      expect(contactWarn).toContain(key);
+      warn.mockRestore();
     },
   );
 
@@ -69,11 +70,11 @@ describe('validateEnv', () => {
     delete env.SENTRY_DSN;
     delete env.METRICS_BEARER_TOKEN;
     expect(() => validateEnv(env)).not.toThrow();
-    expect(warn).toHaveBeenCalledTimes(1);
-    const message = warn.mock.calls[0]?.[0];
-    expect(message).toMatch(/degraded observability/);
-    expect(message).toMatch(/SENTRY_DSN/);
-    expect(message).toMatch(/METRICS_BEARER_TOKEN/);
+    const messages = warn.mock.calls.map((c) => c[0] as string);
+    const obsWarn = messages.find((m) => m.includes('degraded observability'));
+    expect(obsWarn).toBeDefined();
+    expect(obsWarn).toContain('SENTRY_DSN');
+    expect(obsWarn).toContain('METRICS_BEARER_TOKEN');
     warn.mockRestore();
   });
 

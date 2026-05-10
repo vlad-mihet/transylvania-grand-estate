@@ -117,33 +117,15 @@ const productionSchema = baseSchema.extend({
   R2_SECRET_ACCESS_KEY: z.string().optional(),
   R2_PUBLIC_URL: z.string().url().optional(),
 
-  // Email is required in production. EmailService degrades to stdout-only
-  // when RESEND_API_KEY is unset, which means new-inquiry confirmations to
-  // real customers and admin lead alerts both silently disappear. The
-  // contact-flow audit (2026-05-10) found this was the most expensive
-  // silent-failure mode in the system, so production now hard-fails at
-  // boot rather than swallowing it.
-  RESEND_API_KEY: z
-    .string()
-    .min(1, 'RESEND_API_KEY required in production (set via flyctl secrets)'),
-  EMAIL_FROM: z
-    .string()
-    .min(
-      1,
-      'EMAIL_FROM required in production (e.g. "TGE <no-reply@tge.com>")',
-    ),
-  // Comma-separated list of admin/sales recipients for the new-inquiry
-  // alert. Required in production \u2014 without it, ops never see incoming
-  // leads (the service still warn-logs the skip, but nobody monitors that).
-  INQUIRIES_NOTIFY_TO: z
-    .string()
-    .min(
-      1,
-      'INQUIRIES_NOTIFY_TO required in production (comma-separated admin emails)',
-    ),
-  // Optional in prod too \u2014 if unset, the webhook endpoint rejects all
-  // traffic so we fail closed. Operators should set it after provisioning
-  // a Resend webhook.
+  // Email vars are soft-required in production: when unset, EmailService
+  // degrades to stdout-only and InquiriesService skips the admin alert with
+  // a warn. That means real-customer confirmations and lead notifications
+  // silently disappear, which is the worst failure mode the contact-flow
+  // audit (2026-05-10) identified. We *want* to hard-fail here, but the
+  // initial prod-readiness deploy outpaced secret provisioning and the API
+  // crashlooped on boot \u2014 so the requirement is currently softened to a
+  // boot-time warn (see `softMissing` below). Promote back to `.min(1)` once
+  // RESEND_API_KEY / EMAIL_FROM / INQUIRIES_NOTIFY_TO are set on Fly.
   RESEND_WEBHOOK_SECRET: z.string().optional(),
   // Optional but strongly recommended; an unset value silently disables the
   // /metrics scrape endpoint. validateEnv emits a warn-log at boot when
@@ -232,6 +214,19 @@ export function validateEnv(
       // eslint-disable-next-line no-console
       console.warn(
         `[env] production boot with degraded observability — missing: ${softMissing.join(', ')}. Errors will not reach Sentry / Prometheus until set.`,
+      );
+    }
+    // Contact-flow vars are tracked separately so the warn message names the
+    // real customer-facing degradation (vanishing lead emails) rather than
+    // burying it inside an "observability" line.
+    const contactMissing: string[] = [];
+    if (!d.RESEND_API_KEY) contactMissing.push('RESEND_API_KEY');
+    if (!d.EMAIL_FROM) contactMissing.push('EMAIL_FROM');
+    if (!d.INQUIRIES_NOTIFY_TO) contactMissing.push('INQUIRIES_NOTIFY_TO');
+    if (contactMissing.length > 0) {
+      // eslint-disable-next-line no-console
+      console.warn(
+        `[env] production boot with degraded contact flow — missing: ${contactMissing.join(', ')}. Inquiry confirmations and admin lead alerts will be logged to stdout instead of sent.`,
       );
     }
   }
