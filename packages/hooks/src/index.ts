@@ -1,7 +1,10 @@
 export { useIntersectionObserver } from "./use-intersection-observer";
 export { useParallax } from "./use-parallax";
 export { useScrollDirection } from "./use-scroll-direction";
-export { useInquirySubmission } from "./use-inquiry-submission";
+export {
+  useInquirySubmission,
+  PRIVACY_POLICY_VERSION,
+} from "./use-inquiry-submission";
 export type {
   InquiryType,
   InquiryPayload,
