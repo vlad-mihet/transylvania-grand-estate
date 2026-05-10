@@ -5,6 +5,8 @@ import { useTranslations } from "next-intl";
 import { useInquirySubmission } from "@tge/hooks";
 import {
   Button,
+  GdprConsentCheckbox,
+  HoneypotField,
   Input,
   Label,
   Textarea,
@@ -26,6 +28,7 @@ const BUDGET_OPTIONS = [
 
 export function ContactForm() {
   const t = useTranslations("ContactPage");
+  const tConsent = useTranslations("GdprConsent");
   const { submit, isSubmitting, isSuccess, error } = useInquirySubmission();
   const [formData, setFormData] = useState({
     name: "",
@@ -34,19 +37,29 @@ export function ContactForm() {
     budget: "",
     message: "",
   });
+  const [consent, setConsent] = useState(false);
+  const [consentError, setConsentError] = useState<string | null>(null);
 
   const updateField = (field: keyof typeof formData, value: string) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    if (!consent) {
+      setConsentError(tConsent("requiredError"));
+      return;
+    }
+    setConsentError(null);
+    const fd = new FormData(e.currentTarget);
     await submit({
       name: formData.name,
       email: formData.email,
       phone: formData.phone,
       budget: formData.budget,
       message: formData.message,
+      gdprConsent: true,
+      website: String(fd.get("website") ?? ""),
     });
   };
 
@@ -68,12 +81,17 @@ export function ContactForm() {
 
   return (
     <form onSubmit={handleSubmit} aria-busy={isSubmitting} className="space-y-6">
+      <HoneypotField />
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
         <div className="space-y-2">
-          <Label className="text-[11px] text-muted-foreground uppercase tracking-[0.18em] font-medium">
+          <Label
+            htmlFor="contact-name"
+            className="text-[11px] text-muted-foreground uppercase tracking-[0.18em] font-medium"
+          >
             {t("form.fullName")}
           </Label>
           <Input
+            id="contact-name"
             required
             value={formData.name}
             onChange={(e) => updateField("name", e.target.value)}
@@ -81,10 +99,14 @@ export function ContactForm() {
           />
         </div>
         <div className="space-y-2">
-          <Label className="text-[11px] text-muted-foreground uppercase tracking-[0.18em] font-medium">
+          <Label
+            htmlFor="contact-email"
+            className="text-[11px] text-muted-foreground uppercase tracking-[0.18em] font-medium"
+          >
             {t("form.email")}
           </Label>
           <Input
+            id="contact-email"
             required
             type="email"
             value={formData.email}
@@ -96,25 +118,41 @@ export function ContactForm() {
 
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
         <div className="space-y-2">
-          <Label className="text-[11px] text-muted-foreground uppercase tracking-[0.18em] font-medium">
+          <Label
+            htmlFor="contact-phone"
+            className="text-[11px] text-muted-foreground uppercase tracking-[0.18em] font-medium"
+          >
             {t("form.phone")}
           </Label>
           <Input
+            id="contact-phone"
             type="tel"
+            inputMode="tel"
+            autoComplete="tel"
+            pattern="^\+?[0-9 ]{8,15}$"
+            placeholder="+40 712 345 678"
+            title={t("form.phonePlaceholder")}
             value={formData.phone}
             onChange={(e) => updateField("phone", e.target.value)}
             className="h-11 rounded-lg border-border text-foreground placeholder:text-muted-foreground hover:border-primary focus-visible:border-primary focus-visible:ring-primary focus-visible:ring-[3px]"
           />
         </div>
         <div className="space-y-2">
-          <Label className="text-[11px] text-muted-foreground uppercase tracking-[0.18em] font-medium">
+          <Label
+            htmlFor="contact-budget"
+            className="text-[11px] text-muted-foreground uppercase tracking-[0.18em] font-medium"
+          >
             {t("form.budget")}
           </Label>
           <Select
             value={formData.budget}
             onValueChange={(value) => updateField("budget", value)}
           >
-            <SelectTrigger className="w-full h-11 rounded-lg border-border text-foreground hover:border-primary focus-visible:border-primary focus-visible:ring-primary focus-visible:ring-[3px]">
+            <SelectTrigger
+              id="contact-budget"
+              aria-label={t("form.budget")}
+              className="w-full h-11 rounded-lg border-border text-foreground hover:border-primary focus-visible:border-primary focus-visible:ring-primary focus-visible:ring-[3px]"
+            >
               <SelectValue placeholder={t("form.selectBudget")} />
             </SelectTrigger>
             <SelectContent>
@@ -129,10 +167,14 @@ export function ContactForm() {
       </div>
 
       <div className="space-y-2">
-        <Label className="text-[11px] text-muted-foreground uppercase tracking-[0.18em] font-medium">
+        <Label
+          htmlFor="contact-message"
+          className="text-[11px] text-muted-foreground uppercase tracking-[0.18em] font-medium"
+        >
           {t("form.message")}
         </Label>
         <Textarea
+          id="contact-message"
           required
           rows={5}
           value={formData.message}
@@ -141,6 +183,17 @@ export function ContactForm() {
           className="rounded-lg border-border text-foreground placeholder:text-muted-foreground hover:border-primary focus-visible:border-primary focus-visible:ring-primary focus-visible:ring-[3px] resize-none"
         />
       </div>
+
+      <GdprConsentCheckbox
+        id="contact-consent"
+        checked={consent}
+        onCheckedChange={(next) => {
+          setConsent(next);
+          if (next) setConsentError(null);
+        }}
+        error={consentError}
+        tone="light"
+      />
 
       {submitError && (
         <div
@@ -154,7 +207,7 @@ export function ContactForm() {
       <Button
         type="submit"
         size="lg"
-        disabled={isSubmitting}
+        disabled={isSubmitting || !consent}
         className="w-full sm:w-auto bg-primary text-primary-foreground hover:bg-primary/90"
       >
         {isSubmitting ? "..." : t("form.submit")}

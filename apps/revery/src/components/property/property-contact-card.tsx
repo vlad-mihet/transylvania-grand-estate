@@ -9,6 +9,8 @@ import {
   Button,
   Card,
   CardContent,
+  GdprConsentCheckbox,
+  HoneypotField,
   Input,
   Label,
   Textarea,
@@ -52,11 +54,14 @@ export function PropertyContactCard({
   defaultMessage,
 }: PropertyContactCardProps) {
   const t = useTranslations("PropertyDetail");
+  const tConsent = useTranslations("GdprConsent");
 
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
   const [message, setMessage] = useState(defaultMessage);
+  const [consent, setConsent] = useState(false);
+  const [consentError, setConsentError] = useState<string | null>(null);
   const {
     submit,
     isSubmitting: submitting,
@@ -67,9 +72,15 @@ export function PropertyContactCard({
     sourceSuffix: "property-detail",
   });
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (!name.trim() || !email.trim() || !message.trim()) return;
+    if (!consent) {
+      setConsentError(tConsent("requiredError"));
+      return;
+    }
+    setConsentError(null);
+    const fd = new FormData(e.currentTarget);
     await submit({
       name,
       email,
@@ -78,6 +89,8 @@ export function PropertyContactCard({
       entityName: propertyTitle,
       entitySlug: propertySlug,
       propertySlug,
+      gdprConsent: true,
+      website: String(fd.get("website") ?? ""),
     });
   };
 
@@ -132,6 +145,7 @@ export function PropertyContactCard({
             </div>
           ) : (
             <form onSubmit={handleSubmit} className="space-y-3">
+              <HoneypotField />
               <div className="space-y-1.5">
                 <RequiredLabel htmlFor="quick-name">
                   {t("inlineInquiry.name")}
@@ -198,13 +212,20 @@ export function PropertyContactCard({
               {error && (
                 <p className="text-xs text-destructive">{error}</p>
               )}
-              <p className="text-[11px] text-muted-foreground leading-snug">
-                {t("inlineInquiry.privacy")}
-              </p>
+              <GdprConsentCheckbox
+                id="quick-consent"
+                checked={consent}
+                onCheckedChange={(next) => {
+                  setConsent(next);
+                  if (next) setConsentError(null);
+                }}
+                error={consentError}
+                tone="light"
+              />
               <Button
                 type="submit"
                 className="w-full h-12 bg-primary text-primary-foreground hover:bg-primary/90 text-base font-semibold"
-                disabled={submitting}
+                disabled={submitting || !consent}
               >
                 {submitting ? (
                   <Loader2 className="h-5 w-5 animate-spin" />

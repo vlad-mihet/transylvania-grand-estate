@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useTranslations } from "next-intl";
-import { mutateApi } from "@tge/api-client";
+import { useInquirySubmission } from "@tge/hooks";
 import { CheckCircle, AlertCircle, Loader2 } from "lucide-react";
 import { cn } from "@tge/utils";
 import {
@@ -17,6 +17,8 @@ import { Label } from "../ui/label";
 import { Textarea } from "../ui/textarea";
 import { AccentButton } from "../shared/accent-button";
 import { useInquiryModal } from "./inquiry-context";
+import { GdprConsentCheckbox } from "./gdpr-consent-checkbox";
+import { HoneypotField } from "./honeypot-field";
 
 export type InquiryTone = "luxury" | "light";
 
@@ -64,42 +66,48 @@ interface InquiryModalProps {
 export function InquiryModal({ tone = "light" }: InquiryModalProps) {
   const { isOpen, context, closeInquiry } = useInquiryModal();
   const t = useTranslations("InquiryModal");
+  const tConsent = useTranslations("GdprConsent");
   const palette = toneClasses[tone];
-  const [status, setStatus] = useState<
-    "idle" | "loading" | "success" | "error"
-  >("idle");
-  const [errorMessage, setErrorMessage] = useState("");
+  // Delegate the submit + analytics-stamping triad to the shared hook so the
+  // global modal produces the same `source: "${brand.key}-contact"` and
+  // `sourceUrl: window.location.href` payload that the contact-page form does.
+  // Without this, every modal-driven inquiry stored `source = NULL` and the
+  // dominant lead-capture surface was unattributable.
+  const { submit, isSubmitting, isSuccess, error, reset } = useInquirySubmission();
+  const [consent, setConsent] = useState(false);
+  const [consentError, setConsentError] = useState<string | null>(null);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    setStatus("loading");
-
-    const formData = new FormData(e.currentTarget);
-
-    try {
-      await mutateApi("/inquiries", {
-        body: {
-          type: context.type,
-          name: formData.get("name"),
-          email: formData.get("email"),
-          message: formData.get("message"),
-          entityName: context.entityName,
-          entitySlug: context.entitySlug,
-        },
-      });
-      setStatus("success");
-    } catch (err) {
-      setErrorMessage(err instanceof Error ? err.message : "Unknown error");
-      setStatus("error");
+    if (!consent) {
+      setConsentError(tConsent("requiredError"));
+      return;
     }
+    setConsentError(null);
+    const formData = new FormData(e.currentTarget);
+    await submit({
+      type: context.type,
+      name: String(formData.get("name") ?? ""),
+      email: String(formData.get("email") ?? ""),
+      message: String(formData.get("message") ?? ""),
+      entityName: context.entityName,
+      entitySlug: context.entitySlug,
+      gdprConsent: true,
+      // Honeypot — humans never see this field; bots that auto-fill every
+      // input land here. The API silently drops the row when non-empty.
+      website: String(formData.get("website") ?? ""),
+    });
   };
 
   const handleOpenChange = (open: boolean) => {
     if (!open) {
       closeInquiry();
+      // Defer reset until after the close transition so the success state
+      // doesn't visibly snap back to the form mid-fade.
       setTimeout(() => {
-        setStatus("idle");
-        setErrorMessage("");
+        reset();
+        setConsent(false);
+        setConsentError(null);
       }, 300);
     }
   };
@@ -117,7 +125,7 @@ export function InquiryModal({ tone = "light" }: InquiryModalProps) {
         className={cn("sm:max-w-md", palette.dialogContent)}
         overlayClassName="bg-black/70 backdrop-blur-sm"
       >
-        {status === "success" ? (
+        {isSuccess ? (
           <div role="status" aria-live="polite" className="text-center py-4">
             <CheckCircle
               aria-hidden="true"
@@ -154,9 +162,10 @@ export function InquiryModal({ tone = "light" }: InquiryModalProps) {
 
             <form
               onSubmit={handleSubmit}
-              aria-busy={status === "loading"}
+              aria-busy={isSubmitting}
               className="space-y-4"
             >
+              <HoneypotField />
               <div className="space-y-2">
                 <Label
                   htmlFor="inquiry-name"
@@ -206,22 +215,33 @@ export function InquiryModal({ tone = "light" }: InquiryModalProps) {
                 />
               </div>
 
-              {status === "error" && (
+              <GdprConsentCheckbox
+                id="inquiry-consent"
+                checked={consent}
+                onCheckedChange={(next) => {
+                  setConsent(next);
+                  if (next) setConsentError(null);
+                }}
+                error={consentError}
+                tone={tone === "luxury" ? "luxury" : "light"}
+              />
+
+              {error && (
                 <div
                   role="alert"
                   className="flex items-center gap-2 text-sm text-destructive"
                 >
                   <AlertCircle className="h-4 w-4 shrink-0" aria-hidden="true" />
-                  {errorMessage || t("error")}
+                  {error || t("error")}
                 </div>
               )}
 
               <AccentButton
                 type="submit"
                 className="w-full"
-                disabled={status === "loading"}
+                disabled={isSubmitting || !consent}
               >
-                {status === "loading" ? (
+                {isSubmitting ? (
                   <Loader2 className="h-4 w-4 animate-spin" />
                 ) : (
                   t("submit")
