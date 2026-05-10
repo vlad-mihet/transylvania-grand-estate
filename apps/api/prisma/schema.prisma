@@ -55,6 +55,13 @@ enum InquiryType {
   general
   property
   developer
+  // viewing — user wants to schedule an in-person visit; tracked separately
+  // so agents can filter the queue by intent. Added 2026-05-10 (M-4 in the
+  // contact-flow audit closed the client/server type drift).
+  viewing
+  // valuation — user wants their own property assessed; lead funnel for the
+  // listing-acquisition side rather than the buyer-acquisition side.
+  valuation
 }
 
 enum InquiryStatus {
@@ -628,6 +635,31 @@ model Inquiry {
   source    String? @db.VarChar(120)
   sourceUrl String? @map("source_url") @db.VarChar(500)
 
+  // GDPR Art.7 consent record. `consentedAt` is the server-stamped timestamp
+  // of when the user ticked the required privacy checkbox; `gdprConsentVersion`
+  // is the policy version they agreed to (so we can prove what was shown to
+  // them at submission time). Both nullable for legacy rows that pre-date the
+  // checkbox. `marketingConsent` is a separate optional opt-in for promotional
+  // emails — must be unticked by default per GDPR.
+  gdprConsentVersion String?   @map("gdpr_consent_version") @db.VarChar(40)
+  marketingConsent   Boolean   @default(false) @map("marketing_consent")
+  consentedAt        DateTime? @map("consented_at")
+
+  // Brand isolation primitive. Stamped server-side from `req.site.id` at
+  // create time so admin queries can scope to a single brand without trusting
+  // the client-set `source` string. Nullable for legacy rows; the migration
+  // backfills from `source` with a tge fallback for unknown patterns. App is
+  // the originating surface (landing | revery | academy) so a unified queue
+  // can show "where did this come from" at a glance — useful once academy
+  // adds its support form (C-1).
+  siteId String? @map("site_id") @db.VarChar(20)
+  app    String? @map("app") @db.VarChar(20)
+
+  // Soft-delete. DELETE flips this timestamp instead of dropping the row;
+  // reads filter `deletedAt: null` by default. A 90-day cron purges rows
+  // beyond that window for GDPR right-to-erasure compliance.
+  deletedAt DateTime? @map("deleted_at")
+
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
 
@@ -636,6 +668,8 @@ model Inquiry {
   @@index([createdAt])
   @@index([source])
   @@index([propertySlug])
+  @@index([siteId])
+  @@index([deletedAt])
   @@map("inquiries")
 }
 

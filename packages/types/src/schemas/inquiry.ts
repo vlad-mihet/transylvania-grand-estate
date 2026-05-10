@@ -23,12 +23,49 @@ export const createInquirySchema = z
     // accept it so the API can attribute inquiries.
     source: z.string().max(120).optional(),
     sourceUrl: z.string().url().max(500).optional(),
+    // GDPR Art.7 consent. The privacy checkbox must be ticked — `z.literal(true)`
+    // rejects any submission missing the explicit opt-in. `gdprConsentVersion`
+    // identifies the policy revision the user agreed to so we can prove later
+    // exactly what they were shown. `marketingConsent` is the separate
+    // (optional) opt-in for promotional emails; must default false per GDPR.
+    gdprConsent: z.literal(true, {
+      message: "You must accept the privacy policy to send your message.",
+    }),
+    gdprConsentVersion: z.string().max(40).optional(),
+    marketingConsent: z.boolean().optional().default(false),
+    // Honeypot. The form renders a hidden `<input name="website">` with
+    // tabindex=-1 + display:none. Humans never see it, bots that auto-fill
+    // every field will. The service accepts the submission shape but skips
+    // persistence + emails when this is non-empty, returning a fabricated
+    // 201 so a probing bot can't detect the trap. Permissive at the schema
+    // layer (any short string) so we don't 4xx and tip the bot off.
+    website: z.string().max(120).optional(),
   })
   .strict();
+
+/**
+ * SiteId values stored on the Inquiry row (see prisma migration
+ * 20260510140000_add_inquiry_site_app_softdelete). Mirrors the public-facing
+ * subset of common/site/site.types.ts SiteId — ADMIN/UNKNOWN never persist.
+ */
+export const inquirySiteIdSchema = z.enum(["TGE_LUXURY", "REVERY", "ACADEMY"]);
+
+/**
+ * Originating-app code for the unified queue's source filter chips.
+ */
+export const inquiryAppSchema = z.enum(["landing", "revery", "academy", "admin"]);
 
 export const queryInquirySchema = paginationSchema.extend({
   type: z.nativeEnum(InquiryType).optional(),
   status: z.nativeEnum(InquiryStatus).optional(),
+  siteId: inquirySiteIdSchema.optional(),
+  app: inquiryAppSchema.optional(),
+  // Admin-only escape hatch: include soft-deleted rows (deletedAt IS NOT NULL).
+  // Coerced from string because query strings serialise everything as text.
+  includeDeleted: z
+    .union([z.boolean(), z.enum(["0", "1", "true", "false"])])
+    .transform((v) => v === true || v === "1" || v === "true")
+    .optional(),
 });
 
 export const updateInquiryStatusSchema = z
