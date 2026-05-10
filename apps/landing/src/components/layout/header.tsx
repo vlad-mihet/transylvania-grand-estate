@@ -81,8 +81,11 @@ export function Header({ developers, cities }: HeaderProps) {
 
   return (
     <header
+      // pt-[var(--header-safe-top)] gives the utility bar an 8px breathing
+      // gutter from the viewport edge (8pt-grid baseline) and auto-extends
+      // past the notch on iOS PWA. Token defined in theme.css.
       className={cn(
-        "fixed top-0 left-0 right-0 z-50 transition-all duration-500 overflow-visible",
+        "fixed top-0 left-0 right-0 z-50 pt-[var(--header-safe-top)] transition-all duration-500 overflow-visible",
         isHidden ? "-translate-y-full" : "translate-y-0",
         showSolidBg
           ? "bg-background/95 backdrop-blur-md border-b border-copper/10 header-glow"
@@ -170,11 +173,7 @@ export function Header({ developers, cities }: HeaderProps) {
           {/* Right: CTA */}
           <div className="flex items-center justify-end">
             <InquiryTrigger context={{ type: "general" }}>
-              <AccentButton
-                accentVariant="splash"
-                size="sm"
-                className="h-9 px-6"
-              >
+              <AccentButton size="sm" className="h-9 px-6">
                 {t("scheduleViewing")}
               </AccentButton>
             </InquiryTrigger>
@@ -323,14 +322,14 @@ function NavDropdown({
     <div className="relative" onMouseEnter={onMouseEnter} onMouseLeave={onMouseLeave}>
       <button
         className={cn(
-          "nav-underline flex items-center gap-1 text-sm font-medium uppercase tracking-[0.06em] whitespace-nowrap cursor-pointer transition-colors duration-500 ease-luxury py-2",
+          "nav-underline flex items-center gap-1 text-[12px] font-medium uppercase tracking-[0.08em] whitespace-nowrap cursor-pointer transition-colors duration-500 ease-luxury py-2",
           isActive ? "text-copper active" : "text-cream/60 hover:text-cream"
         )}
       >
         {label}
         <ChevronDown
           className={cn(
-            "h-3 w-3 transition-transform duration-500 ease-luxury ml-0.5",
+            "h-2.5 w-2.5 transition-transform duration-500 ease-luxury ml-0.5",
             isActive && "rotate-180"
           )}
         />

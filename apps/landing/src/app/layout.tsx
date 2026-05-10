@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
 import { getBrand } from "@tge/branding";
+import { LoaderProvider } from "@/components/loader/loader-context";
+import { GlobalLoader } from "@/components/loader/global-loader";
 
 const brand = getBrand();
 
@@ -17,5 +19,10 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  return children;
+  return (
+    <LoaderProvider>
+      {children}
+      <GlobalLoader />
+    </LoaderProvider>
+  );
 }

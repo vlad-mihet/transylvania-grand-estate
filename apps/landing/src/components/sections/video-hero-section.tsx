@@ -57,6 +57,45 @@ export function VideoHeroSection({
     };
   }, [onUnmuteRef]);
 
+  // Persist hero video position across re-mounts (e.g. locale switches re-mount
+  // the [locale] segment, which would otherwise restart the video from frame 0).
+  // The global loader covers the brief seek before the saved time is applied.
+  useEffect(() => {
+    const video = videoRef.current;
+    if (!video) return;
+    const KEY = `tge:hero-video-time:${videoSrc}`;
+
+    const saved = sessionStorage.getItem(KEY);
+    if (saved) {
+      const t = parseFloat(saved);
+      if (Number.isFinite(t) && t > 0) {
+        const apply = () => {
+          try {
+            video.currentTime = t;
+          } catch {
+            // ignore — some browsers throw if video isn't seekable yet
+          }
+        };
+        if (video.readyState >= 1) apply();
+        else video.addEventListener("loadedmetadata", apply, { once: true });
+      }
+    }
+
+    let last = 0;
+    const onTime = () => {
+      const now = performance.now();
+      if (now - last < 1000) return;
+      last = now;
+      sessionStorage.setItem(KEY, String(video.currentTime));
+    };
+    video.addEventListener("timeupdate", onTime);
+
+    return () => {
+      sessionStorage.setItem(KEY, String(video.currentTime));
+      video.removeEventListener("timeupdate", onTime);
+    };
+  }, [videoSrc]);
+
   const scrollToContent = useCallback(() => {
     window.scrollTo({ top: window.innerHeight, behavior: "smooth" });
   }, []);
