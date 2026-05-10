@@ -790,6 +790,9 @@
     "deleteTitle": "Delete inquiry",
     "deleted": "Inquiry deleted",
     "deleteFailed": "Failed to delete inquiry",
+    "undo": "Undo",
+    "restored": "Inquiry restored",
+    "restoreFailed": "Failed to restore inquiry",
     "viewList": "List",
     "viewKanban": "Kanban",
     "typeLabel": {

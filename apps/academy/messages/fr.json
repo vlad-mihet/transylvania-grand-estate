@@ -1,4 +1,61 @@
 {
+  "Support": {
+    "title": "Besoin d'aide ?",
+    "subtitle": "Envoyez-nous un message et l'équipe vous répondra sous 24 heures.",
+    "form": {
+      "name": "Nom complet",
+      "email": "Adresse e-mail",
+      "topic": "À propos de quoi ?",
+      "topicPlaceholder": "Choisissez un sujet (facultatif)",
+      "topics": {
+        "account": "Mon compte",
+        "course": "Contenu du cours",
+        "payment": "Paiements et factures",
+        "bug": "Bug ou problème technique",
+        "other": "Autre"
+      },
+      "message": "Votre message",
+      "messagePlaceholder": "Décrivez votre question en détail pour que nous puissions vous aider plus rapidement.",
+      "submit": "Envoyer le message"
+    },
+    "success": {
+      "title": "Message reçu",
+      "message": "Merci. Nous avons enregistré votre demande et un membre de l'équipe vous répondra sous 24 heures."
+    },
+    "genericError": "Votre message n'a pas pu être envoyé. Veuillez réessayer dans un instant."
+  },
+  "GdprConsent": {
+    "requiredLabel": "J'accepte la <link>politique de confidentialité</link>.",
+    "requiredError": "Vous devez accepter la politique de confidentialité pour envoyer votre message."
+  },
+  "PrivacyPolicy": {
+    "title": "Politique de confidentialité",
+    "lastUpdatedLabel": "Mise à jour",
+    "lastUpdated": "10 mai 2026",
+    "intro": "Nous respectons votre vie privée et nous engageons à traiter vos données personnelles de manière responsable. Ce résumé décrit ce que nous collectons lorsque vous nous contactez via le support Academy et comment nous l'utilisons.",
+    "sections": {
+      "collect": {
+        "title": "Ce que nous collectons",
+        "body": "Lorsque vous soumettez un formulaire de support, nous enregistrons votre nom, votre adresse e-mail, le sujet choisi et le message que vous rédigez. Nous conservons aussi l'URL de la page d'où vous avez envoyé le formulaire pour replacer la demande dans son contexte."
+      },
+      "use": {
+        "title": "Comment nous utilisons ces données",
+        "body": "Nous utilisons vos informations uniquement pour répondre à votre demande. Nous ne vendons ni ne partageons vos données avec des tiers à des fins de marketing."
+      },
+      "retention": {
+        "title": "Durée de conservation",
+        "body": "Les demandes de support sont conservées pendant la durée de la relation active et jusqu'à deux ans après, pour des raisons de qualité de service et d'audit."
+      },
+      "rights": {
+        "title": "Vos droits",
+        "body": "Vous pouvez à tout moment demander une copie des données que nous détenons à votre sujet, leur correction ou leur suppression. Envoyez-nous un e-mail et nous vous répondrons dans un délai de 30 jours."
+      },
+      "contact": {
+        "title": "Contact",
+        "body": "Pour toute question relative à la confidentialité, contactez privacy@tge.com."
+      }
+    }
+  },
   "Preview": {
     "bannerTitle": "Mode aperçu",
     "bannerSubtitle": "Aperçu administrateur — le contenu inclut les modifications en brouillon. Les étudiants ne voient pas cette vue.",

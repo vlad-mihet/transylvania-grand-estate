@@ -403,6 +403,7 @@
       "fullName": "Nom Complet",
       "email": "Adresse E-mail",
       "phone": "Numéro de Téléphone",
+      "phonePlaceholder": "Saisissez un numéro valide (8 à 15 chiffres, indicatif + facultatif).",
       "property": "Propriété d'Intérêt (Optionnel)",
       "selectProperty": "Sélectionnez une propriété...",
       "budget": "Gamme de Budget",
@@ -443,6 +444,38 @@
       "message": "Nous avons reçu votre demande et vous répondrons sous 24 heures."
     },
     "error": "Une erreur est survenue. Veuillez réessayer."
+  },
+  "GdprConsent": {
+    "requiredLabel": "J'accepte la <link>politique de confidentialité</link>.",
+    "requiredError": "Vous devez accepter la politique de confidentialité pour envoyer votre message."
+  },
+  "PrivacyPolicy": {
+    "title": "Politique de confidentialité",
+    "lastUpdatedLabel": "Mise à jour",
+    "lastUpdated": "10 mai 2026",
+    "intro": "Nous respectons votre vie privée et nous engageons à traiter vos données personnelles de manière responsable. Ce résumé décrit ce que nous collectons lorsque vous nous contactez et comment nous l'utilisons.",
+    "sections": {
+      "collect": {
+        "title": "Ce que nous collectons",
+        "body": "Lorsque vous soumettez un formulaire de contact, nous enregistrons votre nom, votre adresse e-mail, votre numéro de téléphone (facultatif) et le message que vous rédigez. Si vous mentionnez une propriété ou un promoteur, nous enregistrons également ce lien. Nous conservons aussi l'URL de la page d'où vous avez envoyé le formulaire pour replacer la demande dans son contexte."
+      },
+      "use": {
+        "title": "Comment nous utilisons ces données",
+        "body": "Nous utilisons vos informations uniquement pour répondre à votre demande. Nous ne vendons ni ne partageons vos données avec des tiers à des fins de marketing. Si vous avez accepté de recevoir des e-mails promotionnels, votre adresse ne servira qu'à des actualités occasionnelles et vous pouvez vous désinscrire à tout moment."
+      },
+      "retention": {
+        "title": "Durée de conservation",
+        "body": "Les demandes sont conservées pendant la durée de la relation active et jusqu'à deux ans après, pour des raisons de qualité de service et d'audit. Au-delà, nous supprimons ou anonymisons l'enregistrement."
+      },
+      "rights": {
+        "title": "Vos droits",
+        "body": "Vous pouvez à tout moment demander une copie des données que nous détenons à votre sujet, leur correction ou leur suppression. Envoyez-nous un e-mail et nous vous répondrons dans un délai de 30 jours."
+      },
+      "contact": {
+        "title": "Contact",
+        "body": "Pour toute question relative à la confidentialité ou pour exercer vos droits, contactez privacy@tge.com."
+      }
+    }
   },
   "Breadcrumb": {
     "home": "Accueil",

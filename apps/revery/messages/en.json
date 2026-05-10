@@ -15,7 +15,8 @@
     "menuTitle": "Menu",
     "menuDescription": "Site navigation and language selection",
     "closeMenu": "Close menu",
-    "skipToMain": "Skip to main content"
+    "skipToMain": "Skip to main content",
+    "openMenu": "Open menu"
   },
   "HomePage": {
     "hero": {
@@ -70,7 +71,9 @@
     "featured": {
       "subtitle": "Hand-Picked For You",
       "title": "Featured Properties",
-      "viewAll": "View All"
+      "viewAll": "View All",
+      "scrollPrevious": "Previous",
+      "scrollNext": "Next"
     },
     "usefulTools": {
       "title": "Useful Tools",
@@ -140,7 +143,9 @@
     },
     "articles": {
       "title": "Recent Articles",
-      "viewAll": "View All Articles"
+      "viewAll": "View All Articles",
+      "scrollPrevious": "Previous",
+      "scrollNext": "Next"
     },
     "cta": {
       "title": "Ready to Find Your Home?",
@@ -668,6 +673,7 @@
       "fullName": "Full Name",
       "email": "Email Address",
       "phone": "Phone Number",
+      "phonePlaceholder": "Enter a valid phone number (8–15 digits, optional leading +).",
       "property": "Interested Property (Optional)",
       "selectProperty": "Select a property...",
       "budget": "Budget Range",
@@ -712,6 +718,38 @@
       "message": "We've received your inquiry and will respond within 24 hours."
     },
     "error": "Something went wrong. Please try again."
+  },
+  "GdprConsent": {
+    "requiredLabel": "I agree to the <link>privacy policy</link>.",
+    "requiredError": "You must accept the privacy policy to send your message."
+  },
+  "PrivacyPolicy": {
+    "title": "Privacy Policy",
+    "lastUpdatedLabel": "Last updated",
+    "lastUpdated": "10 May 2026",
+    "intro": "We respect your privacy and are committed to handling your personal data responsibly. This summary describes what we collect when you contact us and how we use it.",
+    "sections": {
+      "collect": {
+        "title": "What we collect",
+        "body": "When you submit a contact form we record your name, email address, optional phone number, and the message you write. If you reference a specific property, we record that link too. We also store the URL of the page you submitted from so a member of our team can return to your context."
+      },
+      "use": {
+        "title": "How we use it",
+        "body": "We use your information solely to respond to your inquiry. We do not sell or share your data with third parties for marketing purposes. If you opted in to marketing emails, we use your email address only for occasional updates and you can opt out at any time."
+      },
+      "retention": {
+        "title": "How long we keep it",
+        "body": "Inquiries are retained for as long as the relationship is active and for up to two years thereafter for service-quality and audit reasons. After that, we delete or anonymise the record."
+      },
+      "rights": {
+        "title": "Your rights",
+        "body": "You can request a copy of the data we hold about you, ask us to correct it, or request deletion at any time. Email us and we will respond within 30 days."
+      },
+      "contact": {
+        "title": "Contact",
+        "body": "For any privacy-related question or to exercise your rights, contact privacy@reveria.com."
+      }
+    }
   },
   "MapView": {
     "listView": "List",

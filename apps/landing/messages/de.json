@@ -403,6 +403,7 @@
       "fullName": "Vollständiger Name",
       "email": "E-Mail-Adresse",
       "phone": "Telefonnummer",
+      "phonePlaceholder": "Geben Sie eine gültige Nummer ein (8–15 Ziffern, Pluszeichen optional).",
       "property": "Interessierte Immobilie (Optional)",
       "selectProperty": "Immobilie auswählen...",
       "budget": "Budgetrahmen",
@@ -443,6 +444,38 @@
       "message": "Wir haben Ihre Anfrage erhalten und werden innerhalb von 24 Stunden antworten."
     },
     "error": "Etwas ist schiefgelaufen. Bitte versuchen Sie es erneut."
+  },
+  "GdprConsent": {
+    "requiredLabel": "Ich stimme der <link>Datenschutzerklärung</link> zu.",
+    "requiredError": "Sie müssen die Datenschutzerklärung akzeptieren, um Ihre Nachricht zu senden."
+  },
+  "PrivacyPolicy": {
+    "title": "Datenschutzerklärung",
+    "lastUpdatedLabel": "Stand",
+    "lastUpdated": "10. Mai 2026",
+    "intro": "Wir respektieren Ihre Privatsphäre und verpflichten uns, Ihre personenbezogenen Daten verantwortungsvoll zu verarbeiten. Diese Übersicht beschreibt, was wir bei einer Kontaktanfrage erheben und wie wir diese Daten verwenden.",
+    "sections": {
+      "collect": {
+        "title": "Welche Daten wir erheben",
+        "body": "Wenn Sie ein Kontaktformular absenden, erfassen wir Ihren Namen, Ihre E-Mail-Adresse, optional Ihre Telefonnummer und den Text Ihrer Nachricht. Wenn Sie eine bestimmte Immobilie oder einen Bauträger erwähnen, speichern wir auch diese Referenz. Außerdem speichern wir die URL der Seite, von der Sie das Formular gesendet haben, damit unser Team den Kontext nachvollziehen kann."
+      },
+      "use": {
+        "title": "Wofür wir Ihre Daten verwenden",
+        "body": "Wir verwenden Ihre Informationen ausschließlich, um auf Ihre Anfrage zu antworten. Wir verkaufen oder teilen Ihre Daten nicht zu Marketingzwecken mit Dritten. Wenn Sie dem Erhalt von Werbe-E-Mails zugestimmt haben, nutzen wir Ihre Adresse nur für gelegentliche Updates; Sie können sich jederzeit abmelden."
+      },
+      "retention": {
+        "title": "Wie lange wir Daten speichern",
+        "body": "Anfragen werden für die Dauer der aktiven Beziehung und bis zu zwei Jahre danach aus Gründen der Servicequalität und Auditierung aufbewahrt. Danach löschen oder anonymisieren wir den Datensatz."
+      },
+      "rights": {
+        "title": "Ihre Rechte",
+        "body": "Sie können jederzeit eine Kopie der über Sie gespeicherten Daten anfordern, deren Berichtigung oder Löschung verlangen. Schreiben Sie uns eine E-Mail; wir antworten innerhalb von 30 Tagen."
+      },
+      "contact": {
+        "title": "Kontakt",
+        "body": "Für datenschutzbezogene Fragen oder zur Ausübung Ihrer Rechte wenden Sie sich an privacy@tge.com."
+      }
+    }
   },
   "Breadcrumb": {
     "home": "Startseite",

@@ -1,4 +1,61 @@
 {
+  "Support": {
+    "title": "Brauchen Sie Hilfe?",
+    "subtitle": "Senden Sie uns eine Nachricht und das Team meldet sich innerhalb von 24 Stunden bei Ihnen.",
+    "form": {
+      "name": "Vollständiger Name",
+      "email": "E-Mail-Adresse",
+      "topic": "Worum geht es?",
+      "topicPlaceholder": "Thema auswählen (optional)",
+      "topics": {
+        "account": "Mein Konto",
+        "course": "Kursinhalte",
+        "payment": "Zahlungen und Rechnungen",
+        "bug": "Fehler oder technisches Problem",
+        "other": "Etwas anderes"
+      },
+      "message": "Ihre Nachricht",
+      "messagePlaceholder": "Beschreiben Sie Ihre Frage ausführlich, damit wir schneller helfen können.",
+      "submit": "Nachricht senden"
+    },
+    "success": {
+      "title": "Nachricht erhalten",
+      "message": "Vielen Dank. Wir haben Ihre Anfrage erfasst und ein Teammitglied antwortet innerhalb von 24 Stunden."
+    },
+    "genericError": "Ihre Nachricht konnte nicht gesendet werden. Bitte versuchen Sie es in einem Moment erneut."
+  },
+  "GdprConsent": {
+    "requiredLabel": "Ich stimme der <link>Datenschutzerklärung</link> zu.",
+    "requiredError": "Sie müssen die Datenschutzerklärung akzeptieren, um Ihre Nachricht zu senden."
+  },
+  "PrivacyPolicy": {
+    "title": "Datenschutzerklärung",
+    "lastUpdatedLabel": "Stand",
+    "lastUpdated": "10. Mai 2026",
+    "intro": "Wir respektieren Ihre Privatsphäre und verpflichten uns, Ihre personenbezogenen Daten verantwortungsvoll zu verarbeiten. Diese Übersicht beschreibt, was wir bei einer Kontaktanfrage über den Academy-Support erheben und wie wir diese Daten verwenden.",
+    "sections": {
+      "collect": {
+        "title": "Welche Daten wir erheben",
+        "body": "Wenn Sie ein Support-Formular absenden, erfassen wir Ihren Namen, Ihre E-Mail-Adresse, das gewählte Thema und den Text Ihrer Nachricht. Außerdem speichern wir die URL der Seite, von der Sie das Formular gesendet haben, damit unser Team den Kontext nachvollziehen kann."
+      },
+      "use": {
+        "title": "Wofür wir Ihre Daten verwenden",
+        "body": "Wir verwenden Ihre Informationen ausschließlich, um auf Ihre Anfrage zu antworten. Wir verkaufen oder teilen Ihre Daten nicht zu Marketingzwecken mit Dritten."
+      },
+      "retention": {
+        "title": "Wie lange wir Daten speichern",
+        "body": "Support-Anfragen werden für die Dauer der aktiven Beziehung und bis zu zwei Jahre danach aus Gründen der Servicequalität und Auditierung aufbewahrt."
+      },
+      "rights": {
+        "title": "Ihre Rechte",
+        "body": "Sie können jederzeit eine Kopie der über Sie gespeicherten Daten anfordern, deren Berichtigung oder Löschung verlangen. Schreiben Sie uns eine E-Mail; wir antworten innerhalb von 30 Tagen."
+      },
+      "contact": {
+        "title": "Kontakt",
+        "body": "Für datenschutzbezogene Fragen wenden Sie sich an privacy@tge.com."
+      }
+    }
+  },
   "Preview": {
     "bannerTitle": "Vorschaumodus",
     "bannerSubtitle": "Admin-Vorschau — Inhalt zeigt ausstehende Entwürfe. Studenten sehen diese Ansicht nicht.",

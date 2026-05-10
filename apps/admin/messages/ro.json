@@ -790,6 +790,9 @@
     "deleteTitle": "Șterge cererea",
     "deleted": "Cerere ștearsă",
     "deleteFailed": "Eroare la ștergerea cererii",
+    "undo": "Anulează",
+    "restored": "Cerere restaurată",
+    "restoreFailed": "Eroare la restaurarea cererii",
     "viewList": "Listă",
     "viewKanban": "Kanban",
     "typeLabel": {

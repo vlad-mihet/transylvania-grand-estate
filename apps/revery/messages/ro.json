@@ -15,7 +15,8 @@
     "menuTitle": "Meniu",
     "menuDescription": "Navigare pe site și selecția limbii",
     "closeMenu": "Închide meniul",
-    "skipToMain": "Sari la conținutul principal"
+    "skipToMain": "Sari la conținutul principal",
+    "openMenu": "Deschide meniul"
   },
   "HomePage": {
     "hero": {
@@ -70,7 +71,9 @@
     "featured": {
       "subtitle": "Selectate Pentru Tine",
       "title": "Proprietăți Recomandate",
-      "viewAll": "Vezi Toate"
+      "viewAll": "Vezi Toate",
+      "scrollPrevious": "Anterior",
+      "scrollNext": "Următor"
     },
     "usefulTools": {
       "title": "Instrumente Utile",
@@ -140,7 +143,9 @@
     },
     "articles": {
       "title": "Articole Recente",
-      "viewAll": "Vezi toate articolele"
+      "viewAll": "Vezi toate articolele",
+      "scrollPrevious": "Anterior",
+      "scrollNext": "Următor"
     },
     "cta": {
       "title": "Pregătit să-ți găsești casa?",
@@ -668,6 +673,7 @@
       "fullName": "Nume Complet",
       "email": "Adresă de Email",
       "phone": "Număr de Telefon",
+      "phonePlaceholder": "Introdu un număr valid (8–15 cifre, prefix + opțional).",
       "property": "Proprietate de Interes (Opțional)",
       "selectProperty": "Selectează o proprietate...",
       "budget": "Interval Buget",
@@ -712,6 +718,38 @@
       "message": "Am primit cererea ta și îți vom răspunde în 24 de ore."
     },
     "error": "Ceva nu a funcționat. Te rugăm încearcă din nou."
+  },
+  "GdprConsent": {
+    "requiredLabel": "Sunt de acord cu <link>politica de confidențialitate</link>.",
+    "requiredError": "Trebuie să accepți politica de confidențialitate pentru a trimite mesajul."
+  },
+  "PrivacyPolicy": {
+    "title": "Politica de Confidențialitate",
+    "lastUpdatedLabel": "Actualizat",
+    "lastUpdated": "10 mai 2026",
+    "intro": "Îți respectăm confidențialitatea și ne angajăm să prelucrăm datele tale personale în mod responsabil. Acest rezumat descrie ce colectăm când ne contactezi și cum folosim aceste informații.",
+    "sections": {
+      "collect": {
+        "title": "Ce colectăm",
+        "body": "Când completezi un formular de contact, înregistrăm numele tău, adresa de email, numărul de telefon (opțional) și mesajul scris. Dacă faci referire la o proprietate, înregistrăm și acea referință. De asemenea, stocăm adresa paginii de pe care ai trimis formularul, pentru a putea înțelege contextul cererii."
+      },
+      "use": {
+        "title": "Cum folosim datele",
+        "body": "Folosim informațiile tale exclusiv pentru a răspunde solicitării. Nu vindem și nu împărtășim datele cu terți în scopuri de marketing. Dacă ai bifat consimțământul pentru emailuri promoționale, vom folosi adresa ta doar pentru actualizări ocazionale și te poți dezabona oricând."
+      },
+      "retention": {
+        "title": "Cât timp păstrăm datele",
+        "body": "Cererile sunt păstrate pe durata relației active și până la doi ani după aceea, pentru motive de calitate a serviciilor și audit. După acest interval, ștergem sau anonimizăm înregistrarea."
+      },
+      "rights": {
+        "title": "Drepturile tale",
+        "body": "Poți solicita oricând o copie a datelor pe care le deținem despre tine, corectarea lor sau ștergerea. Trimite-ne un email și vom răspunde în maximum 30 de zile."
+      },
+      "contact": {
+        "title": "Contact",
+        "body": "Pentru orice întrebare legată de confidențialitate sau pentru a-ți exercita drepturile, contactează privacy@reveria.com."
+      }
+    }
   },
   "MapView": {
     "listView": "Listă",

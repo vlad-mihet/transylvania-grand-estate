@@ -790,6 +790,9 @@
     "deleteTitle": "Supprimer la demande",
     "deleted": "Demande supprimée",
     "deleteFailed": "Échec de la suppression",
+    "undo": "Annuler",
+    "restored": "Demande restaurée",
+    "restoreFailed": "Échec de la restauration",
     "viewList": "Liste",
     "viewKanban": "Kanban",
     "typeLabel": {

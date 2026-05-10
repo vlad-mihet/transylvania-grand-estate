@@ -1,4 +1,61 @@
 {
+  "Support": {
+    "title": "Ai nevoie de ajutor?",
+    "subtitle": "Trimite-ne un mesaj și echipa îți va răspunde în maximum 24 de ore.",
+    "form": {
+      "name": "Nume complet",
+      "email": "Adresă de email",
+      "topic": "Despre ce este vorba?",
+      "topicPlaceholder": "Alege un subiect (opțional)",
+      "topics": {
+        "account": "Contul meu",
+        "course": "Conținutul cursului",
+        "payment": "Plăți și facturi",
+        "bug": "Eroare sau problemă tehnică",
+        "other": "Altceva"
+      },
+      "message": "Mesajul tău",
+      "messagePlaceholder": "Descrie întrebarea în detaliu ca să te putem ajuta mai rapid.",
+      "submit": "Trimite mesajul"
+    },
+    "success": {
+      "title": "Mesaj primit",
+      "message": "Mulțumim. Am înregistrat solicitarea și un membru al echipei îți va răspunde în 24 de ore."
+    },
+    "genericError": "Mesajul nu a putut fi trimis. Te rugăm să încerci din nou în câteva momente."
+  },
+  "GdprConsent": {
+    "requiredLabel": "Sunt de acord cu <link>politica de confidențialitate</link>.",
+    "requiredError": "Trebuie să accepți politica de confidențialitate pentru a trimite mesajul."
+  },
+  "PrivacyPolicy": {
+    "title": "Politica de Confidențialitate",
+    "lastUpdatedLabel": "Actualizat",
+    "lastUpdated": "10 mai 2026",
+    "intro": "Îți respectăm confidențialitatea și ne angajăm să prelucrăm datele tale personale în mod responsabil. Acest rezumat descrie ce colectăm când ne contactezi prin suportul Academy și cum folosim aceste informații.",
+    "sections": {
+      "collect": {
+        "title": "Ce colectăm",
+        "body": "Când completezi un formular de suport, înregistrăm numele tău, adresa de email, subiectul ales și mesajul scris. De asemenea, stocăm adresa paginii de pe care ai trimis formularul, pentru a putea înțelege contextul cererii."
+      },
+      "use": {
+        "title": "Cum folosim datele",
+        "body": "Folosim informațiile tale exclusiv pentru a răspunde solicitării. Nu vindem și nu împărtășim datele cu terți în scopuri de marketing."
+      },
+      "retention": {
+        "title": "Cât timp păstrăm datele",
+        "body": "Cererile de suport sunt păstrate pe durata relației active și până la doi ani după aceea, pentru motive de calitate a serviciilor și audit."
+      },
+      "rights": {
+        "title": "Drepturile tale",
+        "body": "Poți solicita oricând o copie a datelor pe care le deținem despre tine, corectarea lor sau ștergerea. Trimite-ne un email și vom răspunde în maximum 30 de zile."
+      },
+      "contact": {
+        "title": "Contact",
+        "body": "Pentru orice întrebare legată de confidențialitate, contactează privacy@tge.com."
+      }
+    }
+  },
   "Preview": {
     "bannerTitle": "Mod previzualizare",
     "bannerSubtitle": "Previzualizare admin — conținutul include modificările în ciornă. Studenții nu văd această pagină.",

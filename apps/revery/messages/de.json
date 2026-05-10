@@ -15,7 +15,8 @@
     "menuTitle": "Menü",
     "menuDescription": "Seitennavigation und Sprachauswahl",
     "closeMenu": "Menü schließen",
-    "skipToMain": "Zum Hauptinhalt springen"
+    "skipToMain": "Zum Hauptinhalt springen",
+    "openMenu": "Menü öffnen"
   },
   "HomePage": {
     "hero": {
@@ -70,7 +71,9 @@
     "featured": {
       "subtitle": "Hand-Picked For You",
       "title": "Featured Properties",
-      "viewAll": "View All"
+      "viewAll": "View All",
+      "scrollPrevious": "Zurück",
+      "scrollNext": "Weiter"
     },
     "usefulTools": {
       "title": "Nützliche Werkzeuge",
@@ -140,7 +143,9 @@
     },
     "articles": {
       "title": "Recent Articles",
-      "viewAll": "View All Articles"
+      "viewAll": "View All Articles",
+      "scrollPrevious": "Zurück",
+      "scrollNext": "Weiter"
     },
     "cta": {
       "title": "Ready to Find Your Home?",
@@ -430,39 +435,39 @@
   },
   "CitiesPage": {
     "hero": {
-      "title": "Explore Cities",
-      "subtitle": "Discover Romania's most vibrant cities and find your ideal neighborhood."
+      "title": "Städte entdecken",
+      "subtitle": "Entdecken Sie die lebendigsten Städte Rumäniens und finden Sie Ihr ideales Viertel."
     },
-    "viewProperties": "View Properties",
-    "propertyCount": "{count} properties"
+    "viewProperties": "Immobilien ansehen",
+    "propertyCount": "{count} Immobilien"
   },
   "CityDetailPage": {
-    "propertiesIn": "Properties in {city}",
-    "browseAll": "Browse All Properties",
-    "propertyCount": "{count} properties available",
+    "propertiesIn": "Immobilien in {city}",
+    "browseAll": "Alle Immobilien ansehen",
+    "propertyCount": "{count} verfügbare Immobilien",
     "cta": {
-      "title": "Interested in {city}?",
-      "subtitle": "Get in touch with our local agents for personalized guidance.",
-      "button": "Contact Us"
+      "title": "Interesse an {city}?",
+      "subtitle": "Kontaktieren Sie unsere lokalen Agenten für eine persönliche Beratung.",
+      "button": "Kontaktieren Sie uns"
     }
   },
   "DevelopersPage": {
     "hero": {
-      "title": "Developers",
-      "subtitle": "Trusted developers building quality homes across Romania."
+      "title": "Bauträger",
+      "subtitle": "Vertrauenswürdige Bauträger, die hochwertige Wohnimmobilien in ganz Rumänien errichten."
     },
-    "viewProjects": "View Projects",
-    "projectCount": "{count} projects"
+    "viewProjects": "Projekte ansehen",
+    "projectCount": "{count} Projekte"
   },
   "DeveloperDetailPage": {
-    "about": "About {name}",
-    "projects": "Projects by {name}",
-    "visitWebsite": "Visit Website",
-    "projectCount": "{count} projects",
+    "about": "Über {name}",
+    "projects": "Projekte von {name}",
+    "visitWebsite": "Website besuchen",
+    "projectCount": "{count} Projekte",
     "cta": {
-      "title": "Interested in {name} Properties?",
-      "subtitle": "Contact us for more information about their developments.",
-      "button": "Get in Touch"
+      "title": "Interesse an Immobilien von {name}?",
+      "subtitle": "Kontaktieren Sie uns für weitere Informationen zu ihren Projekten.",
+      "button": "Kontakt aufnehmen"
     }
   },
   "AgentsPage": {
@@ -489,55 +494,55 @@
   },
   "FAQPage": {
     "hero": {
-      "title": "Frequently Asked Questions",
-      "subtitle": "Find answers to common questions about Revery and how we can help you."
+      "title": "Häufig gestellte Fragen",
+      "subtitle": "Hier finden Sie Antworten auf die wichtigsten Fragen zu Reveria und wie wir Ihnen helfen können."
     },
     "items": {
       "0": {
-        "question": "What is Revery and how can it help me?",
-        "answer": "Revery is a real estate platform focused on affordable, quality properties across Romania. We help buyers find carefully curated homes priced up to €999,999, with transparent listings and expert agent support throughout the process."
+        "question": "Was ist Reveria und wie kann es mir helfen?",
+        "answer": "Reveria ist eine Immobilienplattform für hochwertige, bezahlbare Wohnimmobilien in ganz Rumänien. Wir helfen Käufern, sorgfältig ausgewählte Häuser bis 999.999 € zu finden — mit transparenten Inseraten und der Unterstützung erfahrener Agenten während des gesamten Prozesses."
       },
       "1": {
-        "question": "What types of properties can I find on Revery?",
-        "answer": "You can find apartments, houses, villas, terrains, penthouses, and more. We cover a wide range of property types across multiple cities in Romania, all within the affordable price segment."
+        "question": "Welche Arten von Immobilien finde ich auf Reveria?",
+        "answer": "Sie finden Wohnungen, Häuser, Villen, Grundstücke, Penthouses und mehr. Wir decken ein breites Spektrum an Immobilientypen in mehreren Städten Rumäniens ab — alles im erschwinglichen Preissegment."
       },
       "2": {
-        "question": "In which cities are properties available?",
-        "answer": "We currently feature properties in Cluj-Napoca, Oradea, Timișoara, Brașov, and Sibiu — with more cities being added regularly."
+        "question": "In welchen Städten sind Immobilien verfügbar?",
+        "answer": "Derzeit bieten wir Immobilien in Cluj-Napoca, Oradea, Timișoara, Brașov und Sibiu — weitere Städte kommen regelmäßig hinzu."
       },
       "3": {
-        "question": "How does the buying process work through Revery?",
-        "answer": "Browse our listings, contact our agents for viewings, and get guided support through the entire purchase process including documentation, negotiations, and closing. Our agents are here to make it seamless."
+        "question": "Wie funktioniert der Kaufprozess über Reveria?",
+        "answer": "Stöbern Sie in unseren Inseraten, kontaktieren Sie unsere Agenten für Besichtigungen und lassen Sie sich durch den gesamten Kaufprozess begleiten — von der Dokumentation über die Verhandlung bis zum Abschluss. Unsere Agenten sorgen für einen reibungslosen Ablauf."
       },
       "4": {
-        "question": "Are Revery listings verified?",
-        "answer": "Yes. Every property listed on Revery goes through a review process. We verify ownership, accuracy of descriptions, and ensure photos accurately represent the property."
+        "question": "Sind die Inserate auf Reveria verifiziert?",
+        "answer": "Ja. Jede auf Reveria gelistete Immobilie durchläuft einen Prüfprozess. Wir prüfen die Eigentumsverhältnisse, die Genauigkeit der Beschreibungen und stellen sicher, dass die Fotos die Immobilie wahrheitsgetreu wiedergeben."
       },
       "5": {
-        "question": "Is it free to use Revery as a buyer?",
-        "answer": "Absolutely. Browsing properties, contacting agents, and scheduling viewings is completely free for buyers. There are no hidden fees or registration requirements."
+        "question": "Ist die Nutzung von Reveria für Käufer kostenlos?",
+        "answer": "Absolut. Das Durchsuchen von Immobilien, das Kontaktieren von Agenten und das Vereinbaren von Besichtigungen ist für Käufer komplett kostenlos. Keine versteckten Gebühren, keine Registrierungspflicht."
       },
       "6": {
-        "question": "Can I schedule a property viewing online?",
-        "answer": "Yes! You can request a viewing directly from any property listing page. Our agents will confirm the appointment and guide you through the visit."
+        "question": "Kann ich eine Besichtigung online vereinbaren?",
+        "answer": "Ja! Sie können eine Besichtigung direkt von jeder Inseratseite aus anfragen. Unsere Agenten bestätigen den Termin und begleiten Sie bei der Besichtigung."
       },
       "7": {
-        "question": "How do I contact an agent?",
-        "answer": "You can reach our agents through the contact form on any property page, via the inquiry modal, or by visiting our Agents page to find a specialist in your preferred city."
+        "question": "Wie nehme ich Kontakt zu einem Agenten auf?",
+        "answer": "Sie erreichen unsere Agenten über das Kontaktformular auf jeder Immobilienseite, über das Anfrage-Fenster oder über unsere Agenten-Seite, um einen Spezialisten für Ihre Wunschstadt zu finden."
       },
       "8": {
-        "question": "Does Revery offer properties for rent?",
-        "answer": "Currently, Revery focuses on properties for sale. We are considering expanding to rentals in the future — stay tuned for updates."
+        "question": "Bietet Reveria auch Mietobjekte an?",
+        "answer": "Derzeit konzentriert sich Reveria auf Kaufobjekte. Wir prüfen eine Erweiterung um Mietangebote — bleiben Sie für Neuigkeiten dran."
       },
       "9": {
-        "question": "What documents do I need to buy a property?",
-        "answer": "Typically you'll need a valid ID, proof of income or financing, and funds for the down payment. Our agents will guide you through all required documentation specific to your situation."
+        "question": "Welche Unterlagen benötige ich für den Kauf einer Immobilie?",
+        "answer": "In der Regel benötigen Sie einen gültigen Ausweis, Einkommens- oder Finanzierungsnachweise sowie die Anzahlung. Unsere Agenten begleiten Sie durch alle erforderlichen Dokumente, abgestimmt auf Ihre Situation."
       }
     },
     "cta": {
-      "title": "Still Have Questions?",
-      "subtitle": "Our team is happy to help with any questions you may have.",
-      "button": "Contact Us"
+      "title": "Noch Fragen?",
+      "subtitle": "Unser Team beantwortet gerne alle Ihre Fragen.",
+      "button": "Kontaktieren Sie uns"
     }
   },
   "BlogPage": {
@@ -563,87 +568,87 @@
     }
   },
   "ArticleDetailPage": {
-    "backToBlog": "Back to Blog",
-    "publishedOn": "Published on {date}",
-    "minRead": "{count} min read",
-    "by": "By {author}",
-    "relatedArticles": "Related Articles"
+    "backToBlog": "Zurück zum Blog",
+    "publishedOn": "Veröffentlicht am {date}",
+    "minRead": "{count} Min. Lesezeit",
+    "by": "Von {author}",
+    "relatedArticles": "Ähnliche Artikel"
   },
   "AboutPage": {
     "hero": {
-      "badge": "About Us",
-      "title": "Building the Path to Your Home in Romania",
-      "description": "Revery connects you with quality, affordable properties across Romania's most vibrant cities. No inflated prices, no hidden fees — just honest real estate for real people."
+      "badge": "Über uns",
+      "title": "Der Weg zu Ihrem neuen Zuhause in Rumänien",
+      "description": "Reveria verbindet Sie mit hochwertigen, bezahlbaren Immobilien in den lebendigsten Städten Rumäniens. Keine überhöhten Preise, keine versteckten Gebühren — einfach ehrliche Immobilien für echte Menschen."
     },
     "story": {
-      "badge": "Our Story",
-      "title": "Why We Started Revery",
-      "paragraph1": "We saw a problem that too many families in Romania were facing: a housing market full of overpriced listings, misleading photos, and agents who cared more about commission than finding the right fit. Good homes existed, but finding them felt like searching for a needle in a haystack.",
-      "paragraph2": "Revery was born from a simple idea — what if there was a platform that only listed quality properties at fair prices, backed by agents who actually know the neighborhoods? We started in Cluj-Napoca and grew to cover Brașov, Sibiu, Oradea, and Timișoara. Every property on Revery is reviewed before it goes live, because we believe you deserve to trust what you see.",
-      "imageAlt": "A charming neighborhood in Romania"
+      "badge": "Unsere Geschichte",
+      "title": "Warum wir Reveria gegründet haben",
+      "paragraph1": "Wir haben ein Problem erkannt, das zu viele Familien in Rumänien betrifft: ein Wohnungsmarkt voller überteuerter Inserate, irreführender Fotos und Agenten, denen Provision wichtiger war als das passende Zuhause. Gute Wohnungen gab es — sie zu finden glich allerdings der Suche nach der Nadel im Heuhaufen.",
+      "paragraph2": "Reveria entstand aus einer einfachen Idee: Was wäre, wenn es eine Plattform gäbe, die ausschließlich qualitativ hochwertige Immobilien zu fairen Preisen listet, unterstützt von Agenten, die die Viertel wirklich kennen? Wir haben in Cluj-Napoca begonnen und sind heute auch in Brașov, Sibiu, Oradea und Timișoara aktiv. Jede Immobilie auf Reveria wird vor der Veröffentlichung geprüft — denn Sie verdienen es, dem zu vertrauen, was Sie sehen.",
+      "imageAlt": "Ein charmantes Viertel in Rumänien"
     },
     "stats": {
       "cities": {
         "value": "5+",
-        "label": "Cities Covered"
+        "label": "Abgedeckte Städte"
       },
       "properties": {
-        "value": "2,000+",
-        "label": "Properties Listed"
+        "value": "2.000+",
+        "label": "Gelistete Immobilien"
       },
       "families": {
         "value": "500+",
-        "label": "Happy Families"
+        "label": "Zufriedene Familien"
       },
       "savings": {
-        "value": "15%",
-        "label": "Avg. Savings vs Market"
+        "value": "15 %",
+        "label": "Durchschnittliche Einsparung gegenüber dem Markt"
       }
     },
     "values": {
-      "badge": "What We Stand For",
-      "title": "Our Values",
-      "subtitle": "These aren't just words on a page. They shape every decision we make, every property we list, and every family we help.",
+      "badge": "Wofür wir stehen",
+      "title": "Unsere Werte",
+      "subtitle": "Das sind keine bloßen Schlagworte. Sie prägen jede unserer Entscheidungen, jede Immobilie, die wir listen, und jede Familie, der wir helfen.",
       "transparency": {
-        "title": "Transparency",
-        "description": "Clear pricing with no hidden costs. Honest descriptions that match reality. Real photos, real floor plans, and verified ownership. We believe trust starts with telling the truth."
+        "title": "Transparenz",
+        "description": "Klare Preise ohne versteckte Kosten. Ehrliche Beschreibungen, die der Realität entsprechen. Echte Fotos, echte Grundrisse und geprüfte Eigentumsverhältnisse. Vertrauen beginnt mit Wahrheit."
       },
       "accessibility": {
-        "title": "Accessibility",
-        "description": "Quality living shouldn't require a luxury budget. We focus exclusively on properties that offer genuine value — comfortable, well-built homes in great locations at prices that make sense."
+        "title": "Erschwinglichkeit",
+        "description": "Gut zu wohnen sollte kein Luxusbudget erfordern. Wir konzentrieren uns ausschließlich auf Immobilien mit echtem Wert — komfortable, gut gebaute Häuser an guten Standorten zu fairen Preisen."
       },
       "community": {
-        "title": "Community",
-        "description": "A home is more than four walls. We care about the neighborhoods, the schools nearby, the local cafes and parks. We help you find not just a property, but a place where your family belongs."
+        "title": "Gemeinschaft",
+        "description": "Ein Zuhause ist mehr als vier Wände. Wir achten auf die Viertel, die nahegelegenen Schulen, die örtlichen Cafés und Parks. Wir helfen Ihnen, nicht nur eine Immobilie zu finden, sondern einen Ort, an dem Ihre Familie zu Hause ist."
       },
       "support": {
-        "title": "Support",
-        "description": "From your first search to the day you get your keys, our local agents walk alongside you. Questions about financing, paperwork, or neighborhoods — we're a message away."
+        "title": "Begleitung",
+        "description": "Von Ihrer ersten Suche bis zur Schlüsselübergabe stehen unsere lokalen Agenten an Ihrer Seite. Fragen zu Finanzierung, Unterlagen oder Vierteln — eine Nachricht entfernt."
       }
     },
     "howItWorks": {
-      "badge": "Simple Process",
-      "title": "How It Works",
-      "subtitle": "Finding your home through Revery is straightforward. Three steps, no surprises.",
+      "badge": "Einfacher Prozess",
+      "title": "So funktioniert's",
+      "subtitle": "Über Reveria ein Zuhause zu finden, ist unkompliziert. Drei Schritte, keine Überraschungen.",
       "steps": {
         "browse": {
-          "title": "Browse & Discover",
-          "description": "Search by city, budget, or neighborhood. Filter by what matters to you — every listing is verified and photographed."
+          "title": "Stöbern und entdecken",
+          "description": "Suchen Sie nach Stadt, Budget oder Viertel. Filtern Sie nach Ihren Prioritäten — jedes Inserat ist verifiziert und mit echten Fotos versehen."
         },
         "connect": {
-          "title": "Connect with an Agent",
-          "description": "Our local agents know every street. Schedule viewings, ask questions, and get honest advice tailored to your needs."
+          "title": "Mit einem Agenten verbinden",
+          "description": "Unsere lokalen Agenten kennen jede Straße. Vereinbaren Sie Besichtigungen, stellen Sie Fragen und erhalten Sie ehrlichen Rat, der zu Ihren Bedürfnissen passt."
         },
         "moveIn": {
-          "title": "Move In",
-          "description": "From offer to keys, we handle the complexity. Documentation, negotiations, and closing — all guided by your agent."
+          "title": "Einziehen",
+          "description": "Vom Angebot bis zum Schlüssel kümmern wir uns um die Komplexität. Dokumentation, Verhandlungen und Abschluss — alles begleitet von Ihrem Agenten."
         }
       }
     },
     "cities": {
-      "badge": "Where We Operate",
-      "title": "Across Romania",
-      "subtitle": "From university hubs to historic gems, we cover the cities where life is good and property makes sense.",
+      "badge": "Wo wir arbeiten",
+      "title": "In ganz Rumänien",
+      "subtitle": "Von Universitätsstädten bis zu historischen Juwelen — wir decken die Städte ab, in denen sich gut leben lässt und Immobilien Sinn ergeben.",
       "items": {
         "clujNapoca": "Cluj-Napoca",
         "brasov": "Brașov",
@@ -653,65 +658,98 @@
       }
     },
     "cta": {
-      "title": "Ready to Find Your Home?",
-      "subtitle": "Browse our collection of verified properties or reach out — we're here to help you every step of the way.",
-      "button": "Browse Properties"
+      "title": "Bereit, Ihr Zuhause zu finden?",
+      "subtitle": "Stöbern Sie in unserer Sammlung verifizierter Immobilien oder kontaktieren Sie uns — wir begleiten Sie auf jedem Schritt.",
+      "button": "Immobilien ansehen"
     }
   },
   "ContactPage": {
     "hero": {
-      "title": "Contact Us",
-      "subtitle": "We're Here to Help"
+      "title": "Kontaktieren Sie uns",
+      "subtitle": "Wir sind für Sie da"
     },
     "form": {
-      "title": "Send Us a Message",
-      "fullName": "Full Name",
-      "email": "Email Address",
-      "phone": "Phone Number",
-      "property": "Interested Property (Optional)",
-      "selectProperty": "Select a property...",
-      "budget": "Budget Range",
-      "selectBudget": "Select budget range...",
-      "message": "Your Message",
-      "messagePlaceholder": "Tell us what you're looking for...",
-      "submit": "Send Message",
+      "title": "Senden Sie uns eine Nachricht",
+      "fullName": "Vollständiger Name",
+      "email": "E-Mail-Adresse",
+      "phone": "Telefonnummer",
+      "phonePlaceholder": "Geben Sie eine gültige Nummer ein (8–15 Ziffern, Pluszeichen optional).",
+      "property": "Gewünschte Immobilie (optional)",
+      "selectProperty": "Immobilie auswählen...",
+      "budget": "Budget-Bereich",
+      "selectBudget": "Budget-Bereich auswählen...",
+      "message": "Ihre Nachricht",
+      "messagePlaceholder": "Erzählen Sie uns, wonach Sie suchen...",
+      "submit": "Nachricht senden",
       "success": {
-        "title": "Thank You!",
-        "message": "We've received your message and will get back to you within 24 hours."
+        "title": "Vielen Dank!",
+        "message": "Wir haben Ihre Nachricht erhalten und melden uns innerhalb von 24 Stunden bei Ihnen."
       },
       "budgetOptions": {
-        "under50k": "Under €50,000",
-        "50kTo100k": "€50,000 – €100,000",
-        "100kTo200k": "€100,000 – €200,000",
-        "200kTo500k": "€200,000 – €500,000",
-        "500kTo1m": "€500,000 – €1,000,000"
+        "under50k": "Unter 50.000 €",
+        "50kTo100k": "50.000 € – 100.000 €",
+        "100kTo200k": "100.000 € – 200.000 €",
+        "200kTo500k": "200.000 € – 500.000 €",
+        "500kTo1m": "500.000 € – 1.000.000 €"
       },
       "error": {
         "generic": "Ihre Nachricht konnte nicht gesendet werden. Bitte versuchen Sie es in einem Moment erneut."
       }
     },
     "office": {
-      "subtitle": "Besuchen Sie Uns",
+      "subtitle": "Besuchen Sie uns",
       "title": "Unser Büro"
     }
   },
   "InquiryModal": {
-    "titleGeneral": "Get in Touch",
-    "titleProperty": "Inquire About {name}",
-    "titleDeveloper": "Contact About {name}",
-    "description": "Fill in the form below and we'll get back to you within 24 hours.",
-    "name": "Full Name",
-    "email": "Email Address",
-    "message": "Your Message",
-    "messagePlaceholder": "Tell us how we can help you...",
-    "regarding": "Regarding:",
-    "about": "About:",
-    "submit": "Send Inquiry",
+    "titleGeneral": "Kontakt aufnehmen",
+    "titleProperty": "Anfrage zu {name}",
+    "titleDeveloper": "Anfrage an {name}",
+    "description": "Füllen Sie das untenstehende Formular aus, und wir melden uns innerhalb von 24 Stunden bei Ihnen.",
+    "name": "Vollständiger Name",
+    "email": "E-Mail-Adresse",
+    "message": "Ihre Nachricht",
+    "messagePlaceholder": "Erzählen Sie uns, wie wir Ihnen helfen können...",
+    "regarding": "Betreff:",
+    "about": "Über:",
+    "submit": "Anfrage senden",
     "success": {
-      "title": "Thank You!",
-      "message": "We've received your inquiry and will respond within 24 hours."
+      "title": "Vielen Dank!",
+      "message": "Wir haben Ihre Anfrage erhalten und melden uns innerhalb von 24 Stunden bei Ihnen."
     },
-    "error": "Something went wrong. Please try again."
+    "error": "Etwas ist schiefgelaufen. Bitte versuchen Sie es erneut."
+  },
+  "GdprConsent": {
+    "requiredLabel": "Ich stimme der <link>Datenschutzerklärung</link> zu.",
+    "requiredError": "Sie müssen die Datenschutzerklärung akzeptieren, um Ihre Nachricht zu senden."
+  },
+  "PrivacyPolicy": {
+    "title": "Datenschutzerklärung",
+    "lastUpdatedLabel": "Stand",
+    "lastUpdated": "10. Mai 2026",
+    "intro": "Wir respektieren Ihre Privatsphäre und verpflichten uns, Ihre personenbezogenen Daten verantwortungsvoll zu verarbeiten. Diese Übersicht beschreibt, was wir bei einer Kontaktanfrage erheben und wie wir diese Daten verwenden.",
+    "sections": {
+      "collect": {
+        "title": "Welche Daten wir erheben",
+        "body": "Wenn Sie ein Kontaktformular absenden, erfassen wir Ihren Namen, Ihre E-Mail-Adresse, optional Ihre Telefonnummer und den Text Ihrer Nachricht. Wenn Sie eine bestimmte Immobilie erwähnen, speichern wir auch diese Referenz. Außerdem speichern wir die URL der Seite, von der Sie das Formular gesendet haben, damit unser Team den Kontext nachvollziehen kann."
+      },
+      "use": {
+        "title": "Wofür wir Ihre Daten verwenden",
+        "body": "Wir verwenden Ihre Informationen ausschließlich, um auf Ihre Anfrage zu antworten. Wir verkaufen oder teilen Ihre Daten nicht zu Marketingzwecken mit Dritten. Wenn Sie dem Erhalt von Werbe-E-Mails zugestimmt haben, nutzen wir Ihre Adresse nur für gelegentliche Updates; Sie können sich jederzeit abmelden."
+      },
+      "retention": {
+        "title": "Wie lange wir Daten speichern",
+        "body": "Anfragen werden für die Dauer der aktiven Beziehung und bis zu zwei Jahre danach aus Gründen der Servicequalität und Auditierung aufbewahrt. Danach löschen oder anonymisieren wir den Datensatz."
+      },
+      "rights": {
+        "title": "Ihre Rechte",
+        "body": "Sie können jederzeit eine Kopie der über Sie gespeicherten Daten anfordern, deren Berichtigung oder Löschung verlangen. Schreiben Sie uns eine E-Mail; wir antworten innerhalb von 30 Tagen."
+      },
+      "contact": {
+        "title": "Kontakt",
+        "body": "Für datenschutzbezogene Fragen oder zur Ausübung Ihrer Rechte wenden Sie sich an privacy@reveria.com."
+      }
+    }
   },
   "MapView": {
     "listView": "Liste",

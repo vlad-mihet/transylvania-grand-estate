@@ -403,6 +403,7 @@
       "fullName": "Nume Complet",
       "email": "Adresă de Email",
       "phone": "Număr de Telefon",
+      "phonePlaceholder": "Introduceți un număr valid (8–15 cifre, prefix + opțional).",
       "property": "Proprietate de Interes (Opțional)",
       "selectProperty": "Selectează o proprietate...",
       "budget": "Interval Buget",
@@ -443,6 +444,38 @@
       "message": "Am primit cererea dvs. și vă vom răspunde în 24 de ore."
     },
     "error": "Ceva nu a funcționat. Vă rugăm încercați din nou."
+  },
+  "GdprConsent": {
+    "requiredLabel": "Sunt de acord cu <link>politica de confidențialitate</link>.",
+    "requiredError": "Trebuie să acceptați politica de confidențialitate pentru a trimite mesajul."
+  },
+  "PrivacyPolicy": {
+    "title": "Politica de Confidențialitate",
+    "lastUpdatedLabel": "Actualizat",
+    "lastUpdated": "10 mai 2026",
+    "intro": "Vă respectăm confidențialitatea și ne angajăm să prelucrăm datele dvs. personale în mod responsabil. Acest rezumat descrie ce colectăm când ne contactați și cum folosim aceste informații.",
+    "sections": {
+      "collect": {
+        "title": "Ce colectăm",
+        "body": "Când completați un formular de contact, înregistrăm numele dvs., adresa de email, numărul de telefon (opțional) și mesajul scris. Dacă faceți referire la o proprietate sau un dezvoltator, înregistrăm și acea referință. De asemenea, stocăm adresa paginii de pe care ați trimis formularul, pentru a putea înțelege contextul cererii."
+      },
+      "use": {
+        "title": "Cum folosim datele",
+        "body": "Folosim informațiile dvs. exclusiv pentru a răspunde solicitării. Nu vindem și nu împărtășim datele cu terți în scopuri de marketing. Dacă ați acceptat să primiți emailuri promoționale, vom folosi adresa dvs. doar pentru actualizări ocazionale și vă puteți dezabona oricând."
+      },
+      "retention": {
+        "title": "Cât timp păstrăm datele",
+        "body": "Cererile sunt păstrate pe durata relației active și până la doi ani după aceea, pentru motive de calitate a serviciilor și audit. După acest interval, ștergem sau anonimizăm înregistrarea."
+      },
+      "rights": {
+        "title": "Drepturile dvs.",
+        "body": "Puteți solicita oricând o copie a datelor pe care le deținem despre dvs., corectarea lor sau ștergerea. Trimiteți-ne un email și vom răspunde în maximum 30 de zile."
+      },
+      "contact": {
+        "title": "Contact",
+        "body": "Pentru orice întrebare legată de confidențialitate sau pentru a vă exercita drepturile, contactați privacy@tge.com."
+      }
+    }
   },
   "Breadcrumb": {
     "home": "Acasă",

@@ -790,6 +790,9 @@
     "deleteTitle": "Anfrage löschen",
     "deleted": "Anfrage gelöscht",
     "deleteFailed": "Fehler beim Löschen",
+    "undo": "Rückgängig",
+    "restored": "Anfrage wiederhergestellt",
+    "restoreFailed": "Wiederherstellung fehlgeschlagen",
     "viewList": "Liste",
     "viewKanban": "Kanban",
     "typeLabel": {

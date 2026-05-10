@@ -1,4 +1,61 @@
 {
+  "Support": {
+    "title": "Need help?",
+    "subtitle": "Send us a message and the team will get back to you within 24 hours.",
+    "form": {
+      "name": "Full name",
+      "email": "Email address",
+      "topic": "What's this about?",
+      "topicPlaceholder": "Choose a topic (optional)",
+      "topics": {
+        "account": "My account",
+        "course": "Course content",
+        "payment": "Payments & invoices",
+        "bug": "Bug or technical issue",
+        "other": "Something else"
+      },
+      "message": "Your message",
+      "messagePlaceholder": "Describe your question in detail so we can help faster.",
+      "submit": "Send message"
+    },
+    "success": {
+      "title": "Message received",
+      "message": "Thank you. We've logged your request and a team member will reply within 24 hours."
+    },
+    "genericError": "Your message couldn't be sent. Please try again in a moment."
+  },
+  "GdprConsent": {
+    "requiredLabel": "I agree to the <link>privacy policy</link>.",
+    "requiredError": "You must accept the privacy policy to send your message."
+  },
+  "PrivacyPolicy": {
+    "title": "Privacy Policy",
+    "lastUpdatedLabel": "Last updated",
+    "lastUpdated": "10 May 2026",
+    "intro": "We respect your privacy and are committed to handling your personal data responsibly. This summary describes what we collect when you contact us through Academy support and how we use it.",
+    "sections": {
+      "collect": {
+        "title": "What we collect",
+        "body": "When you submit a support form we record your name, email address, the topic you selected, and the message you write. We also store the URL of the page you submitted from so a member of our team can return to your context."
+      },
+      "use": {
+        "title": "How we use it",
+        "body": "We use your information solely to respond to your inquiry. We do not sell or share your data with third parties for marketing purposes."
+      },
+      "retention": {
+        "title": "How long we keep it",
+        "body": "Support inquiries are retained for as long as the relationship is active and for up to two years thereafter for service-quality and audit reasons."
+      },
+      "rights": {
+        "title": "Your rights",
+        "body": "You can request a copy of the data we hold about you, ask us to correct it, or request deletion at any time. Email us and we will respond within 30 days."
+      },
+      "contact": {
+        "title": "Contact",
+        "body": "For any privacy-related question, contact privacy@tge.com."
+      }
+    }
+  },
   "Preview": {
     "bannerTitle": "Preview mode",
     "bannerSubtitle": "Admin preview — content is rendered with pending drafts. Students don't see this view.",
