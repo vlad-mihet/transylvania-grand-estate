@@ -30,6 +30,14 @@ import {
   renderAcademyInvitationReminder,
   type AcademyInvitationReminderInput,
 } from './templates/academy-invitation-reminder.template';
+import {
+  renderInquiryAdminAlert,
+  type InquiryAdminAlertInput,
+} from './templates/inquiry-admin-alert.template';
+import {
+  renderInquirySubmitterConfirmation,
+  type InquirySubmitterConfirmationInput,
+} from './templates/inquiry-submitter-confirmation.template';
 
 /**
  * Thin wrapper over Resend. Two design choices:
@@ -141,6 +149,52 @@ export class EmailService implements OnModuleInit {
       html,
       text,
       template: 'academy-invitation-reminder',
+    });
+  }
+
+  /**
+   * Sends the admin/sales alert when a new inquiry arrives. `to` accepts a
+   * single address or a comma-separated list (Resend handles arrays as
+   * multi-recipient — we forward as-is). Returns the Resend result for the
+   * caller to log; failures never throw.
+   */
+  async sendInquiryAdminAlert(
+    to: string | string[],
+    input: InquiryAdminAlertInput,
+  ): Promise<SendResult> {
+    const { subject, html, text } = renderInquiryAdminAlert(input);
+    const recipients = Array.isArray(to)
+      ? to
+      : to.split(',').map((s) => s.trim()).filter(Boolean);
+    if (recipients.length === 0) {
+      return { ok: false, reason: 'no recipients' };
+    }
+    return this.deliver({
+      to: recipients.join(','),
+      subject,
+      html,
+      text,
+      template: 'inquiry-admin-alert',
+    });
+  }
+
+  /**
+   * Sends the "we got your message" confirmation back to the form submitter.
+   * Locale defaults to en when not supplied; the inquiries service derives
+   * it from the request URL so the user gets a reply in their reading
+   * language.
+   */
+  async sendInquirySubmitterConfirmation(
+    to: string,
+    input: InquirySubmitterConfirmationInput,
+  ): Promise<SendResult> {
+    const { subject, html, text } = renderInquirySubmitterConfirmation(input);
+    return this.deliver({
+      to,
+      subject,
+      html,
+      text,
+      template: 'inquiry-submitter-confirmation',
     });
   }
 
