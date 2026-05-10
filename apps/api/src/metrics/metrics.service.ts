@@ -148,6 +148,50 @@ export class MetricsService {
     registers: [this.registry],
   });
 
+  // ── Inquiries (contact-flow audit, 2026-05-10) ─────────────────────────
+  // Five metrics covering the full submit → triage funnel. Cardinality is
+  // bounded: siteId ∈ {TGE_LUXURY, REVERY, ACADEMY}, app ∈ {landing, revery,
+  // academy}, result ∈ {success, honeypot, failed}. Origin label is
+  // deliberately omitted from the origin-blocked counter — attackers can
+  // set arbitrary Origin headers and we don't want to bloat the time
+  // series.
+
+  readonly inquiriesSubmitted = new Counter({
+    name: 'tge_inquiries_submitted_total',
+    help: 'Inquiry submissions, by site / app / outcome',
+    labelNames: ['siteId', 'app', 'result'] as const,
+    registers: [this.registry],
+  });
+
+  readonly inquiriesHoneypotTriggered = new Counter({
+    name: 'tge_inquiries_honeypot_triggered_total',
+    help: 'Honeypot trap fires (bot filled the hidden website field)',
+    labelNames: ['siteId'] as const,
+    registers: [this.registry],
+  });
+
+  readonly inquiriesOriginBlocked = new Counter({
+    name: 'tge_inquiries_origin_blocked_total',
+    help: 'POST /inquiries rejections by InquiryRateLimitGuard origin lock',
+    registers: [this.registry],
+  });
+
+  readonly inquiriesThrottled = new Counter({
+    name: 'tge_inquiries_throttled_total',
+    help: 'POST /inquiries 429 rejections by InquiryRateLimitGuard',
+    registers: [this.registry],
+  });
+
+  readonly inquiryTimeToRead = new Histogram({
+    name: 'tge_inquiry_time_to_read_seconds',
+    help: 'Seconds between inquiry creation and first status=read transition (SLA tracking)',
+    labelNames: ['app'] as const,
+    // 1 min, 5 min, 30 min, 1 h, 4 h, 24 h, +Inf — covers the 24-hour
+    // promise we make in the form copy plus the long tail.
+    buckets: [60, 300, 1800, 3600, 14400, 86400],
+    registers: [this.registry],
+  });
+
   constructor() {
     // Default Node.js process metrics (event loop lag, GC, heap, RSS). Cheap
     // to collect, invaluable for diagnosing "is it the app or the infra".
