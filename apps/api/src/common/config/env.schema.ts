@@ -41,6 +41,11 @@ const baseSchema = z.object({
   // account. Prod schema below promotes these to required).
   RESEND_API_KEY: z.string().optional(),
   EMAIL_FROM: z.string().optional(),
+  // Comma-separated list of admin/sales email addresses that receive a fresh
+  // inquiry alert. Optional everywhere — when unset, EmailService still
+  // sends the submitter their confirmation but skips the admin notification
+  // and logs a warn. Production should set this to ops@<brand>.com.
+  INQUIRIES_NOTIFY_TO: z.string().optional(),
   // Svix signing secret for Resend webhooks. Optional in dev; without it the
   // /webhooks/resend endpoint rejects all calls with 503.
   RESEND_WEBHOOK_SECRET: z.string().optional(),
@@ -112,17 +117,37 @@ const productionSchema = baseSchema.extend({
   R2_SECRET_ACCESS_KEY: z.string().optional(),
   R2_PUBLIC_URL: z.string().url().optional(),
 
-  // Email: optional in prod while Resend is not yet provisioned. EmailService
-  // degrades to stdout logging when RESEND_API_KEY is unset (same behavior as
-  // dev), so the API boots and non-email features work. Before inviting real
-  // users via the agent-invitations flow, these must be set — otherwise the
-  // acceptance URL only reaches the Fly logs.
-  RESEND_API_KEY: z.string().optional(),
-  EMAIL_FROM: z.string().optional(),
+  // Email is required in production. EmailService degrades to stdout-only
+  // when RESEND_API_KEY is unset, which means new-inquiry confirmations to
+  // real customers and admin lead alerts both silently disappear. The
+  // contact-flow audit (2026-05-10) found this was the most expensive
+  // silent-failure mode in the system, so production now hard-fails at
+  // boot rather than swallowing it.
+  RESEND_API_KEY: z
+    .string()
+    .min(1, 'RESEND_API_KEY required in production (set via flyctl secrets)'),
+  EMAIL_FROM: z
+    .string()
+    .min(
+      1,
+      'EMAIL_FROM required in production (e.g. "TGE <no-reply@tge.com>")',
+    ),
+  // Comma-separated list of admin/sales recipients for the new-inquiry
+  // alert. Required in production \u2014 without it, ops never see incoming
+  // leads (the service still warn-logs the skip, but nobody monitors that).
+  INQUIRIES_NOTIFY_TO: z
+    .string()
+    .min(
+      1,
+      'INQUIRIES_NOTIFY_TO required in production (comma-separated admin emails)',
+    ),
   // Optional in prod too \u2014 if unset, the webhook endpoint rejects all
   // traffic so we fail closed. Operators should set it after provisioning
   // a Resend webhook.
   RESEND_WEBHOOK_SECRET: z.string().optional(),
+  // Optional but strongly recommended; an unset value silently disables the
+  // /metrics scrape endpoint. validateEnv emits a warn-log at boot when
+  // missing in production so the operational degradation is visible.
   METRICS_BEARER_TOKEN: z.string().optional(),
   ADMIN_PUBLIC_URL: z
     .string()
@@ -195,6 +220,19 @@ export function validateEnv(
           `STORAGE_TYPE=r2 requires: ${missing.join(', ')}`,
         );
       }
+    }
+    // Soft-required vars: not boot-blocking, but ops should know if they're
+    // dark in production. The warn lands in stdout where pino-http will pick
+    // it up once the logger comes online; before that, console.warn is the
+    // only signal channel available.
+    const softMissing: string[] = [];
+    if (!d.SENTRY_DSN) softMissing.push('SENTRY_DSN');
+    if (!d.METRICS_BEARER_TOKEN) softMissing.push('METRICS_BEARER_TOKEN');
+    if (softMissing.length > 0) {
+      // eslint-disable-next-line no-console
+      console.warn(
+        `[env] production boot with degraded observability — missing: ${softMissing.join(', ')}. Errors will not reach Sentry / Prometheus until set.`,
+      );
     }
   }
 
