@@ -55,9 +55,12 @@ export {
   useInquiryModal,
   InquiryModal,
   InquiryTrigger,
+  GdprConsentCheckbox,
+  HoneypotField,
   type InquiryContext,
   type InquiryType,
   type InquiryTone,
+  type GdprConsentTone,
 } from "./components/inquiry";
 
 // Markdown
