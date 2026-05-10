@@ -89,6 +89,29 @@ export class MockEmailService {
     });
     return { ok: true as const, id: 'mock-id' };
   }
+
+  async sendInquiryAdminAlert(to: string | string[], input: { adminUrl: string }) {
+    const recipients = Array.isArray(to) ? to.join(',') : to;
+    this.captured.push({
+      to: recipients,
+      template: 'inquiry-admin-alert',
+      url: input.adminUrl,
+      subject: 'inquiry-admin',
+    });
+    return { ok: true as const, id: 'mock-id' };
+  }
+
+  async sendInquirySubmitterConfirmation(
+    to: string,
+    input: { brandName: string },
+  ) {
+    this.captured.push({
+      to,
+      template: 'inquiry-submitter-confirmation',
+      subject: `inquiry-confirmation:${input.brandName}`,
+    });
+    return { ok: true as const, id: 'mock-id' };
+  }
 }
 
 /**
