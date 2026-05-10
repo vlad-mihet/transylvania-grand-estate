@@ -7,6 +7,7 @@ import {
 } from "@tanstack/react-query";
 import { apiClient } from "@/lib/api-client";
 import { toast } from "@/lib/toast";
+import { toast as sonnerToast } from "sonner";
 import {
   Button,
   Tooltip,
@@ -83,6 +84,16 @@ interface Inquiry {
   source?: string | null;
   sourceUrl?: string | null;
   createdAt: string;
+  /** GDPR consent stamp + version (Wave A of contact-flow audit). */
+  consentedAt?: string | null;
+  gdprConsentVersion?: string | null;
+  marketingConsent?: boolean | null;
+  /** Brand isolation primitive (Wave B-1). */
+  siteId?: "TGE_LUXURY" | "REVERY" | "ACADEMY" | null;
+  /** Originating-app code for the unified queue's filter chips. */
+  app?: "landing" | "revery" | "academy" | "admin" | null;
+  /** Soft-delete timestamp (Wave B-4). null = live row. */
+  deletedAt?: string | null;
 }
 
 /**
@@ -183,12 +194,30 @@ export function InquiriesListPage({ title }: InquiriesListPageProps = {}) {
     queryClient.invalidateQueries({ queryKey: ["inquiries-unread"] });
   };
 
+  const restoreMutation = useMutation({
+    mutationFn: (id: string) =>
+      apiClient(`/inquiries/${id}/restore`, { method: "POST" }),
+    onSuccess: () => {
+      invalidate();
+      toast.success(t("restored"));
+    },
+    onError: () => toast.error(t("restoreFailed")),
+  });
+
   const deleteMutation = useMutation({
     mutationFn: (id: string) =>
       apiClient(`/inquiries/${id}`, { method: "DELETE" }),
-    onSuccess: () => {
+    onSuccess: (_data, id) => {
       invalidate();
-      toast.success(t("deleted"));
+      // Soft-delete + undo: surface the restore action right where the
+      // operator's attention already is. Five-second window matches the
+      // sonner default; longer would feel sticky.
+      sonnerToast.success(t("deleted"), {
+        action: {
+          label: t("undo"),
+          onClick: () => restoreMutation.mutate(id),
+        },
+      });
       setDeleteId(null);
     },
     onError: () => toast.error(t("deleteFailed")),
@@ -199,10 +228,19 @@ export function InquiriesListPage({ title }: InquiriesListPageProps = {}) {
       await Promise.all(
         ids.map((id) => apiClient(`/inquiries/${id}`, { method: "DELETE" })),
       );
+      return ids;
     },
-    onSuccess: () => {
+    onSuccess: (ids) => {
       invalidate();
-      toast.success(t("deleted"));
+      sonnerToast.success(t("deleted"), {
+        action: {
+          label: t("undo"),
+          onClick: () => {
+            // Restore each soft-deleted id in parallel.
+            for (const id of ids) restoreMutation.mutate(id);
+          },
+        },
+      });
       list.clearSelection();
       setBulkDeleteOpen(false);
     },
