@@ -99,6 +99,34 @@ const serveStaticModules =
             res.setHeader('x-request-id', id);
             return id;
           },
+          // Defense-in-depth redaction. pino-http does NOT log request bodies
+          // by default — but if a future debug log happens to include
+          // `req.body` (intentionally or via a typo), pino's redact pass
+          // replaces these paths with `[REDACTED]` before serialisation.
+          // Authorization + cookie are always redacted; PII paths cover the
+          // contact-flow surface. Add new paths here whenever a route
+          // accepts personal data in its body.
+          redact: {
+            paths: [
+              'req.headers.authorization',
+              'req.headers.cookie',
+              'req.body.name',
+              'req.body.email',
+              'req.body.phone',
+              'req.body.message',
+              'req.body.firstName',
+              'req.body.lastName',
+              'req.body.password',
+              'req.body.currentPassword',
+              'req.body.newPassword',
+              'res.body.name',
+              'res.body.email',
+              'res.body.phone',
+              'res.body.message',
+            ],
+            remove: false,
+            censor: '[REDACTED]',
+          },
           transport:
             process.env.NODE_ENV !== 'production'
               ? {

@@ -12,6 +12,11 @@
  *    "value differs" rather than walked recursively.
  *  - Secret-looking keys are dropped (defence in depth — the interceptor's
  *    sanitize() also strips passwordHash, but new fields might slip in).
+ *  - PII fields (name/email/phone/message/firstName/lastName/address) are
+ *    detected on raw inputs so we can still see THAT a field changed, then
+ *    their values are replaced with the `[REDACTED]` sentinel in the diff
+ *    output. The audit reviewer learns "email changed on 12:03" but never
+ *    sees the address itself — GDPR Art.5 (data minimisation) compliant.
  *  - Cap at MAX_FIELDS so a malicious payload with 10k changed fields can't
  *    bloat the audit row.
  *  - Returns null on create or delete (whole snapshot IS the diff in those
@@ -20,6 +25,63 @@
 
 const MAX_FIELDS = 50;
 const SECRET_KEY = /password|secret|token|hash/i;
+
+/**
+ * Field-name pattern for personal-data we never want stored in audit_logs in
+ * plaintext. Matches whole-field equality (so e.g. `displayName` is also
+ * caught by the `name` clause via the `(?:.*)?name$` shape).
+ *
+ * NOTE: this is a denylist by name. New PII-bearing fields (e.g. an iban,
+ * date-of-birth, ssn) MUST be added here when introduced — code review
+ * should flag any new schema field that holds personal data.
+ */
+export const PII_KEY =
+  /^(?:.*?(?:name|email|phone|message|address)|firstName|lastName|fullName)$/i;
+
+const PII_SENTINEL = '[REDACTED]';
+
+/**
+ * Replace any PII field value with `[REDACTED]`. Empty / null stays as null
+ * so a "row never had this PII set" doesn't look like "row had something
+ * redacted". Non-string scalars (rare for PII fields) collapse to the same
+ * sentinel.
+ */
+export function redactPiiValue(value: unknown): unknown {
+  if (value === null || value === undefined) return null;
+  if (typeof value === 'string' && value.length === 0) return null;
+  return PII_SENTINEL;
+}
+
+/**
+ * Recursively walk an object/array and redact PII fields by name. Used to
+ * sanitise the `before`/`after` JSON columns on AuditLog rows so a CSV export
+ * never leaks customer email/phone/message in plaintext. The structure of
+ * the object is preserved (so per-field comparison still works in admin UI),
+ * only the PII leaf values are replaced.
+ *
+ * Note: this works on *raw* inputs from the audit interceptor — it must run
+ * BEFORE `computeDiff` if both want PII redaction (otherwise the diff sees
+ * pre-redacted values and can't tell PII fields changed). The current call
+ * order in `audit.service.ts:buildData` runs computeDiff against raw inputs
+ * (which redacts PII inside its output) then redacts the snapshots
+ * separately.
+ */
+export function redactPiiObject(value: unknown): unknown {
+  if (value === null || value === undefined) return value;
+  if (Array.isArray(value)) return value.map(redactPiiObject);
+  if (typeof value !== 'object') return value;
+  const obj = value as Record<string, unknown>;
+  const out: Record<string, unknown> = {};
+  for (const [k, v] of Object.entries(obj)) {
+    if (SECRET_KEY.test(k)) continue;
+    if (PII_KEY.test(k)) {
+      out[k] = redactPiiValue(v);
+    } else {
+      out[k] = redactPiiObject(v);
+    }
+  }
+  return out;
+}
 
 export type DiffValue =
   | string
@@ -70,6 +132,17 @@ export function computeDiff(
       const afterArr = Array.isArray(a) ? a : [];
       const change = arrayDiff(key, beforeArr, afterArr);
       if (change) out.push(change);
+      continue;
+    }
+
+    // PII fields: detect change on raw values, but emit redacted sentinels
+    // so the audit row never carries the cleartext.
+    if (PII_KEY.test(key)) {
+      out.push({
+        field: key,
+        before: redactPiiValue(b) as DiffValue,
+        after: redactPiiValue(a) as DiffValue,
+      });
       continue;
     }
 
@@ -155,6 +228,10 @@ function toDiffValue(value: unknown): DiffValue {
     const obj: Record<string, DiffValue> = {};
     for (const [k, v] of Object.entries(value as Record<string, unknown>)) {
       if (SECRET_KEY.test(k)) continue;
+      if (PII_KEY.test(k)) {
+        obj[k] = redactPiiValue(v) as DiffValue;
+        continue;
+      }
       obj[k] = toDiffValue(v);
     }
     return obj;

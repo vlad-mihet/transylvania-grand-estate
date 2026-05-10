@@ -29,6 +29,27 @@ export function initSentry(): boolean {
         delete h.cookie;
         delete h['x-site'];
       }
+      // Scrub PII keys from request body (Sentry auto-captures req.body on
+      // some integrations). The contact-flow audit (2026-05-10) made this
+      // explicit because POST /inquiries bodies contain name/email/phone/
+      // message in cleartext and a misconfigured Sentry breadcrumb would
+      // ship them straight off-prem.
+      if (event.request?.data && typeof event.request.data === 'object') {
+        const body = event.request.data as Record<string, unknown>;
+        for (const piiKey of [
+          'name',
+          'email',
+          'phone',
+          'message',
+          'firstName',
+          'lastName',
+          'password',
+          'currentPassword',
+          'newPassword',
+        ]) {
+          if (piiKey in body) body[piiKey] = '[REDACTED]';
+        }
+      }
       return event;
     },
     beforeSendTransaction(event) {

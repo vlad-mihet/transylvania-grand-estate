@@ -7,7 +7,7 @@ import {
   CLS_REQUEST_CONTEXT,
   RequestContext,
 } from '../common/cls/request-context';
-import { computeDiff } from './utils/compute-diff';
+import { computeDiff, redactPiiObject } from './utils/compute-diff';
 import { AuditHealthService } from './audit.health';
 import { buildScopeWhere } from './audit.scope';
 import type { CurrentUserPayload } from '../common/decorators/user.decorator';
@@ -237,19 +237,28 @@ export class AuditService {
       input.retainUntil !== undefined
         ? input.retainUntil
         : resolveRetention(input.action);
+    // Snapshots are recorded for audit + admin diff-rendering, but they must
+    // never leak PII (Art.5 / Art.32 — and the streamForExport CSV path is
+    // a direct exfiltration vector). `redactPiiObject` walks the row and
+    // replaces name/email/phone/message values with the `[REDACTED]`
+    // sentinel; structure (and field-existed signal) is preserved.
+    // computeDiff already redacts PII in its own output, so the diff JSON
+    // is independent of this redaction step.
+    const beforeRedacted = redactPiiObject(input.before);
+    const afterRedacted = redactPiiObject(input.after);
     return {
       actorId: input.actorId ?? ctx.userId ?? null,
       action: input.action,
       resource: input.resource,
       resourceId: input.resourceId,
       before:
-        input.before == null
+        beforeRedacted == null
           ? Prisma.DbNull
-          : (input.before as Prisma.InputJsonValue),
+          : (beforeRedacted as Prisma.InputJsonValue),
       after:
-        input.after == null
+        afterRedacted == null
           ? Prisma.DbNull
-          : (input.after as Prisma.InputJsonValue),
+          : (afterRedacted as Prisma.InputJsonValue),
       diff:
         diff == null
           ? Prisma.DbNull
@@ -322,15 +331,23 @@ export class AuditService {
  * shorter default because they can be reconstructed from git/Prisma history
  * if needed. `null` means "keep forever" — used for nothing today, but
  * AuditService.record honours an explicit override.
+ *
+ * Inquiry rows align with the soft-delete window in InquiriesService (90
+ * days). The audit row's PII fields are already redacted (see
+ * `redactPiiObject` in compute-diff.ts), but we shorten the retention
+ * window anyway so the metadata trail (action / actor / ipHash) doesn't
+ * outlive the inquiry it describes — Art.5(1)(e) storage minimisation.
  */
 function resolveRetention(action: string): Date | null {
   const now = Date.now();
+  const days = (n: number) => new Date(now + n * 24 * 60 * 60 * 1000);
   const years = (n: number) => new Date(now + n * 365 * 24 * 60 * 60 * 1000);
   if (action.startsWith('auth.')) return years(7);
   if (action.startsWith('user.')) return years(3);
   if (action.startsWith('invitation.')) return years(3);
   if (action.startsWith('site-config.')) return years(3);
   if (action.startsWith('property.')) return years(2);
+  if (action.startsWith('inquiry.')) return days(90);
   return years(1);
 }
 
