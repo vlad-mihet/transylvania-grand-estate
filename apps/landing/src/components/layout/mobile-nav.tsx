@@ -45,7 +45,8 @@ export function MobileNav({ cities }: MobileNavProps) {
         <Button
           variant="ghost"
           size="icon"
-          className="lg:hidden text-cream hover:text-copper hover:bg-transparent"
+          aria-label="Menu"
+          className="xl:hidden text-cream hover:text-copper hover:bg-transparent"
         >
           <Menu className="h-5 w-5" />
         </Button>
@@ -223,7 +224,7 @@ export function MobileNav({ cities }: MobileNavProps) {
           {/* Bottom section */}
           <div className="px-6 py-6 border-t border-copper/10 space-y-5">
             {/* Language switcher */}
-            <LanguageSwitcher />
+            <LanguageSwitcher variant="drawer" />
 
             {/* Contact info */}
             <div className="flex flex-col gap-2 text-sm text-cream-muted/70">

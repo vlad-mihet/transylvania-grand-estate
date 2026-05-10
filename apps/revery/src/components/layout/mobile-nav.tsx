@@ -34,8 +34,13 @@ export function MobileNav() {
   return (
     <Sheet open={open} onOpenChange={setOpen}>
       <SheetTrigger asChild>
-        <Button variant="ghost" size="icon" className="lg:hidden">
-          <Menu className="h-5 w-5" />
+        <Button
+          variant="ghost"
+          size="icon"
+          className="lg:hidden"
+          aria-label={t("openMenu")}
+        >
+          <Menu className="h-5 w-5" aria-hidden="true" />
         </Button>
       </SheetTrigger>
       <SheetContent side="left" className="bg-background border-r border-border w-full sm:w-80 p-0">

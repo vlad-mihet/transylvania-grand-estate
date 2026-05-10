@@ -30,10 +30,10 @@ pnpm --filter @tge/types build                # required for @tge/api
 cd apps/api && npx prisma generate && npx prisma migrate dev && npx prisma db seed && cd ../..
 
 # In four separate terminals (or backgrounded):
-pnpm --filter @tge/api dev         # :3333  — API
-pnpm --filter @tge/admin dev       # :3001  — admin
-pnpm --filter @tge/landing dev     # :3000  — landing (TGE luxury)
-pnpm --filter @tge/revery dev     # :3002  — Revery
+pnpm --filter @tge/api dev         # :4000  — API
+pnpm --filter @tge/admin dev       # :3051  — admin
+pnpm --filter @tge/landing dev     # :3050  — landing (TGE luxury)
+pnpm --filter @tge/revery dev     # :3052  — Revery
 ```
 
 All four must be up before the suite runs. `qa-smoke.sh` aborts on preflight if API is unreachable.
@@ -181,19 +181,19 @@ curl -F "photo=@tiny.jpg;type=image/jpeg"           -> 200       # valid
 curl -F "photo=@test.svg;type=image/svg+xml"        -> 400       # SVG rejected by MIME filter
 curl -F "photo=@too-big.jpg;type=image/jpeg"        -> 413       # >5MB
 curl -F "photo=@test.svg;type=image/jpeg"           -> 201 ← BUG # Critical #3 (accepts SVG with lied MIME)
-curl http://localhost:3333/uploads/                 -> 404 ← BUG # Major #5 (static serving broken in dev)
+curl http://localhost:4000/uploads/                 -> 404 ← BUG # Major #5 (static serving broken in dev)
 ```
 
 ### Phase B.9 — CORS + Swagger + /health
 
 ```bash
 # Preflight from allowed origin → returns Access-Control-Allow-Origin
-curl -i -X OPTIONS "$API/properties" -H "Origin: http://localhost:3000" -H "Access-Control-Request-Method: GET"
+curl -i -X OPTIONS "$API/properties" -H "Origin: http://localhost:3050" -H "Access-Control-Request-Method: GET"
 # Preflight from disallowed origin → NO allow-origin header
 curl -i -X OPTIONS "$API/properties" -H "Origin: http://evil.com"       -H "Access-Control-Request-Method: GET"
 # Swagger
-curl -i "http://localhost:3333/api/docs"                    # 200
-curl "http://localhost:3333/api/docs-json" | jq '.paths | length'   # > 30
+curl -i "http://localhost:4000/api/docs"                    # 200
+curl "http://localhost:4000/api/docs-json" | jq '.paths | length'   # > 30
 # Health — KNOWN Major #8 (missing endpoint)
 curl -i "$API/health"                                       # 404
 ```

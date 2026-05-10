@@ -52,18 +52,22 @@ export function FeaturedProperties({ properties }: FeaturedPropertiesProps) {
             </Link>
             <div className="flex gap-1.5">
               <button
+                type="button"
                 onClick={() => scroll("left")}
                 disabled={!canScrollLeft}
+                aria-label={t("scrollPrevious")}
                 className="w-9 h-9 rounded-full border border-border flex items-center justify-center text-foreground hover:bg-muted disabled:opacity-30 disabled:cursor-not-allowed transition-colors cursor-pointer"
               >
-                <ChevronLeft className="h-4 w-4" />
+                <ChevronLeft className="h-4 w-4" aria-hidden="true" />
               </button>
               <button
+                type="button"
                 onClick={() => scroll("right")}
                 disabled={!canScrollRight}
+                aria-label={t("scrollNext")}
                 className="w-9 h-9 rounded-full border border-border flex items-center justify-center text-foreground hover:bg-muted disabled:opacity-30 disabled:cursor-not-allowed transition-colors cursor-pointer"
               >
-                <ChevronRight className="h-4 w-4" />
+                <ChevronRight className="h-4 w-4" aria-hidden="true" />
               </button>
             </div>
           </div>

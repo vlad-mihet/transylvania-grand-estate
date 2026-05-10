@@ -66,6 +66,10 @@ export class ApiError extends Error {
   }
 }
 
+// Dev-only flag so the missing-env warning fires once per process even when
+// getApiBase() is called from many SSR fetches.
+let warnedAboutApiBaseFallback = false;
+
 export function getApiBase(): string {
   const base = process.env.NEXT_PUBLIC_API_URL;
   if (base) return base;
@@ -75,7 +79,17 @@ export function getApiBase(): string {
       "NEXT_PUBLIC_API_URL is required in production but was not set.",
     );
   }
-  return "http://localhost:3333/api/v1";
+  // Dev fallback aligned with apps/api/.env (PORT=4000). The repo's apps each
+  // declare their own NEXT_PUBLIC_API_URL; this value is here so a fresh clone
+  // doesn't 500 in the moment between `pnpm install` and creating .env.local.
+  if (!warnedAboutApiBaseFallback) {
+    warnedAboutApiBaseFallback = true;
+    // eslint-disable-next-line no-console
+    console.warn(
+      "[api-client] NEXT_PUBLIC_API_URL not set — falling back to http://localhost:4000/api/v1. Add it to your app's .env.local to silence this warning.",
+    );
+  }
+  return "http://localhost:4000/api/v1";
 }
 
 // Site identifier sent as `X-Site` on every call. This is the authoritative

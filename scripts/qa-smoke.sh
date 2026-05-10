@@ -19,10 +19,10 @@
 set -uo pipefail
 
 # ─── Config ─────────────────────────────────────────────────────────
-API="${QA_API_URL:-http://localhost:3333/api/v1}"
-ADMIN="${QA_ADMIN_URL:-http://localhost:3001}"
-LANDING="${QA_LANDING_URL:-http://localhost:3000}"
-REVERY="${QA_REVERY_URL:-http://localhost:3002}"
+API="${QA_API_URL:-http://localhost:4000/api/v1}"
+ADMIN="${QA_ADMIN_URL:-http://localhost:3051}"
+LANDING="${QA_LANDING_URL:-http://localhost:3050}"
+REVERY="${QA_REVERY_URL:-http://localhost:3052}"
 PG_CONTAINER="${QA_PG_CONTAINER:-tge-postgres-1}"
 PG_DB="${QA_PG_DB:-tge_dev}"
 PG_USER="${QA_PG_USER:-postgres}"
@@ -457,7 +457,7 @@ b8_file_uploads() {
     warn "SVG with lied MIME accepted ($code) — KNOWN Critical #3 (magic-byte check missing)"
   fi
   # Static serving broken → KNOWN Major #5
-  code=$(curl -s -o /dev/null -w "%{http_code}" "http://localhost:3333/uploads/")
+  code=$(curl -s -o /dev/null -w "%{http_code}" "http://localhost:4000/uploads/")
   if [[ "$code" == "200" || "$code" == "403" ]]; then
     ok "Static uploads root served ($code) — bug fixed?"
   else
@@ -468,11 +468,11 @@ b8_file_uploads() {
 b9_cors_swagger() {
   section "B.9 CORS + Swagger"
   allow=$(curl -s -o /dev/null -D - -X OPTIONS "$API/properties" \
-    -H "Origin: http://localhost:3000" -H "Access-Control-Request-Method: GET" \
+    -H "Origin: http://localhost:3050" -H "Access-Control-Request-Method: GET" \
     -H "Access-Control-Request-Headers: X-Site,Content-Type" 2>&1 | grep -i "access-control-allow-origin:" | head -1)
-  [[ "$allow" == *"localhost:3000"* ]] \
-    && ok "CORS preflight from localhost:3000 → Allow-Origin returned" \
-    || fail "CORS preflight from localhost:3000 missing allow-origin"
+  [[ "$allow" == *"localhost:3050"* ]] \
+    && ok "CORS preflight from localhost:3050 (landing) → Allow-Origin returned" \
+    || fail "CORS preflight from localhost:3050 missing allow-origin"
   allow=$(curl -s -o /dev/null -D - -X OPTIONS "$API/properties" \
     -H "Origin: http://evil.com" -H "Access-Control-Request-Method: GET" 2>&1 | grep -i "access-control-allow-origin:" | head -1)
   [[ -z "$allow" ]] \
@@ -480,9 +480,9 @@ b9_cors_swagger() {
     || fail "CORS preflight from evil.com returned allow-origin: $allow"
   code=$(curl -s -o /dev/null -w "%{http_code}" "$API/../docs")
   # api/docs is outside /api/v1
-  code=$(curl -s -o /dev/null -w "%{http_code}" "http://localhost:3333/api/docs")
+  code=$(curl -s -o /dev/null -w "%{http_code}" "http://localhost:4000/api/docs")
   [[ "$code" == "200" ]] && ok "Swagger /api/docs renders" || fail "Swagger got $code"
-  paths=$(curl -s "http://localhost:3333/api/docs-json" | node -e "let d='';process.stdin.on('data',c=>d+=c).on('end',()=>{try{const j=JSON.parse(d);console.log(Object.keys(j.paths||{}).length)}catch(e){console.log(-1)}})")
+  paths=$(curl -s "http://localhost:4000/api/docs-json" | node -e "let d='';process.stdin.on('data',c=>d+=c).on('end',()=>{try{const j=JSON.parse(d);console.log(Object.keys(j.paths||{}).length)}catch(e){console.log(-1)}})")
   [[ "$paths" -gt 30 ]] && ok "Swagger docs-json has $paths paths" || fail "Swagger paths count=$paths"
   # No /health
   code=$(curl -s -o /dev/null -w "%{http_code}" "$API/health")
