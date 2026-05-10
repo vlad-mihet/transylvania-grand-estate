@@ -25,6 +25,9 @@ import {
 } from '../common/decorators/user.decorator';
 import { OwnsResource } from '../common/decorators/owns-resource.decorator';
 import { OwnershipGuard } from '../common/guards/ownership.guard';
+import { CurrentSite } from '../common/site/site.decorator';
+import type { SiteContext } from '../common/site/site.types';
+import { InquiryRateLimitGuard } from './inquiry-rate-limit.guard';
 import type { PrismaService } from '../prisma/prisma.service';
 
 /**
@@ -49,11 +52,21 @@ const inquiryOwnership = {
 export class InquiriesController {
   constructor(private inquiriesService: InquiriesService) {}
 
+  // Two layers of rate limiting on this public endpoint: the @Throttle
+  // decorator (Nest's global ThrottlerGuard) and InquiryRateLimitGuard, our
+  // dedicated synchronous bucket. The latter exists because the former
+  // silently degraded under bursts during QA — this is a high-spam-risk
+  // surface so defense-in-depth wins over relying on the third-party guard
+  // alone.
   @Public()
   @Throttle({ default: { ttl: 60_000, limit: 5 } })
+  @UseGuards(InquiryRateLimitGuard)
   @Post()
-  async create(@Body() dto: CreateInquiryDto) {
-    return this.inquiriesService.create(dto);
+  async create(
+    @Body() dto: CreateInquiryDto,
+    @CurrentSite() site: SiteContext,
+  ) {
+    return this.inquiriesService.create(dto, site);
   }
 
   @Roles(AdminRole.ADMIN, AdminRole.SUPER_ADMIN, AdminRole.AGENT)
@@ -61,8 +74,9 @@ export class InquiriesController {
   async findAll(
     @Query() query: QueryInquiryDto,
     @CurrentUser() user: CurrentUserPayload,
+    @CurrentSite() site: SiteContext,
   ) {
-    return this.inquiriesService.findAll(query, user);
+    return this.inquiriesService.findAll(query, user, site);
   }
 
   @Roles(AdminRole.ADMIN, AdminRole.SUPER_ADMIN, AdminRole.AGENT)
@@ -88,5 +102,16 @@ export class InquiriesController {
   @Delete(':id')
   async remove(@Param('id', ParseUUIDPipe) id: string) {
     return this.inquiriesService.remove(id);
+  }
+
+  /**
+   * Restores a soft-deleted inquiry. ADMIN+ only — AGENT triage can't undelete
+   * because they can't delete in the first place. Trash-can pattern: pair
+   * with `GET /inquiries?includeDeleted=1` in the admin operator UI.
+   */
+  @Roles(AdminRole.ADMIN, AdminRole.SUPER_ADMIN)
+  @Post(':id/restore')
+  async restore(@Param('id', ParseUUIDPipe) id: string) {
+    return this.inquiriesService.restore(id);
   }
 }

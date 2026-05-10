@@ -1,19 +1,104 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { AdminRole, Prisma } from '@prisma/client';
 import { PrismaService } from '../prisma/prisma.service';
+import { EmailService } from '../email/email.service';
+import { MetricsService } from '../metrics/metrics.service';
+import { Sentry } from '../common/sentry/sentry.init';
 import { CreateInquiryDto } from './dto/create-inquiry.dto';
 import { QueryInquiryDto } from './dto/query-inquiry.dto';
 import { UpdateInquiryStatusDto } from './dto/update-inquiry-status.dto';
 import { paginate } from '../common/utils/pagination.util';
 import { ensureFound } from '../common/utils/ensure-found.util';
 import { ensureRef } from '../common/utils/ensure-ref.util';
+import { SiteId, type SiteContext } from '../common/site/site.types';
 import type { CurrentUserPayload } from '../common/decorators/user.decorator';
+import type { InquirySubmitterLocale } from '../email/templates/inquiry-submitter-confirmation.template';
+
+const SUBMITTER_LOCALES: ReadonlySet<InquirySubmitterLocale> = new Set([
+  'en',
+  'ro',
+  'fr',
+  'de',
+]);
+
+/**
+ * SiteId → originating-app code stored in `inquiry.app`. Drives the unified
+ * admin queue's source filter chips. Kept separate from the SiteId enum so a
+ * future split (e.g. Reveria spawning its own iOS app) doesn't conflate the
+ * two dimensions.
+ */
+const SITE_TO_APP: Record<SiteId, 'landing' | 'revery' | 'academy' | 'admin' | null> = {
+  [SiteId.TGE_LUXURY]: 'landing',
+  [SiteId.REVERY]: 'revery',
+  [SiteId.ACADEMY]: 'academy',
+  [SiteId.ADMIN]: 'admin',
+  [SiteId.UNKNOWN]: null,
+};
+
+/**
+ * Public sites that are valid for stamping on a new inquiry. UNKNOWN/ADMIN
+ * are treated as "couldn't determine" and fall back to TGE_LUXURY (the
+ * historic default for legacy rows).
+ */
+const PUBLIC_SITE_IDS: ReadonlySet<SiteId> = new Set([
+  SiteId.TGE_LUXURY,
+  SiteId.REVERY,
+  SiteId.ACADEMY,
+]);
 
 @Injectable()
 export class InquiriesService {
-  constructor(private prisma: PrismaService) {}
+  private readonly logger = new Logger(InquiriesService.name);
 
-  async create(dto: CreateInquiryDto) {
+  constructor(
+    private prisma: PrismaService,
+    private email: EmailService,
+    private config: ConfigService,
+    private metrics: MetricsService,
+  ) {}
+
+  async create(dto: CreateInquiryDto, site: SiteContext) {
+    // Honeypot trap. The hidden `website` field is invisible to humans;
+    // bots auto-filling every input land here. We log the hit, skip
+    // persistence + emails, and return a fabricated success shape so the
+    // bot can't probe for "did the trap fire?" by comparing responses.
+    if (typeof dto.website === 'string' && dto.website.length > 0) {
+      this.logger.warn({
+        event: 'inquiry.honeypot.triggered',
+        siteId: site.id,
+        source: dto.source,
+        sourceUrl: dto.sourceUrl,
+        // Don't log the bot's full payload — could be huge / abusive.
+        websiteLength: dto.website.length,
+      });
+      this.metrics.inquiriesHoneypotTriggered.inc({ siteId: site.id });
+      this.metrics.inquiriesSubmitted.inc({
+        siteId: site.id,
+        app: SITE_TO_APP[site.id] ?? 'unknown',
+        result: 'honeypot',
+      });
+      // Structured breadcrumb so a Sentry issue (e.g. a downstream exception
+      // a few seconds later) carries the trap context. Not an exception
+      // itself — bots tripping the honeypot is expected steady-state noise.
+      Sentry.addBreadcrumb({
+        category: 'inquiry.security',
+        level: 'warning',
+        message: 'honeypot.triggered',
+        data: {
+          siteId: site.id,
+          source: dto.source ?? null,
+          sourceUrl: dto.sourceUrl ?? null,
+        },
+      });
+      return {
+        id: '00000000-0000-0000-0000-000000000000',
+        type: dto.type ?? 'general',
+        status: 'new',
+        createdAt: new Date(),
+      };
+    }
+
     await ensureRef(dto.propertySlug, 'propertySlug', (slug) =>
       this.prisma.property.findUnique({
         where: { slug },
@@ -21,7 +106,19 @@ export class InquiriesService {
       }),
     );
 
-    return this.prisma.inquiry.create({
+    // siteId stamped server-side from SiteMiddleware so admin queries can
+    // scope by brand without trusting the client `source` string. UNKNOWN
+    // (no Origin/X-Site/Referer) clamps to TGE_LUXURY — the historic default
+    // for orphan rows. The `app` column mirrors the originating surface for
+    // the admin queue's filter chips.
+    const stampedSiteId: SiteId = PUBLIC_SITE_IDS.has(site.id)
+      ? site.id
+      : SiteId.TGE_LUXURY;
+    const stampedApp = SITE_TO_APP[stampedSiteId];
+
+    // Server stamps `consentedAt` so the timestamp can't be backdated by a
+    // tampered client; `gdprConsent: true` is enforced by the Zod DTO.
+    const inquiry = await this.prisma.inquiry.create({
       data: {
         type: dto.type ?? 'general',
         name: dto.name,
@@ -34,15 +131,169 @@ export class InquiriesService {
         propertySlug: dto.propertySlug,
         source: dto.source,
         sourceUrl: dto.sourceUrl,
+        gdprConsentVersion: dto.gdprConsentVersion,
+        marketingConsent: dto.marketingConsent ?? false,
+        consentedAt: new Date(),
+        siteId: stampedSiteId,
+        app: stampedApp,
       },
     });
+
+    this.metrics.inquiriesSubmitted.inc({
+      siteId: stampedSiteId,
+      app: stampedApp ?? 'unknown',
+      result: 'success',
+    });
+
+    // Fire-and-forget the two notifications. Email failures must never break
+    // the HTTP response — the inquiry is already persisted, the operator can
+    // discover it via the admin queue even if Resend is down.
+    void this.dispatchInquiryEmails(inquiry, dto);
+
+    return inquiry;
   }
 
-  async findAll(query: QueryInquiryDto, user?: CurrentUserPayload | null) {
-    const { page = 1, limit = 12, type, status } = query;
+  private async dispatchInquiryEmails(
+    inquiry: { id: string; createdAt: Date; type: string },
+    dto: CreateInquiryDto,
+  ): Promise<void> {
+    const submitterLocale = this.deriveSubmitterLocale(dto.sourceUrl);
+    const brandName = this.deriveBrandName(dto.source);
+    const adminUrl = this.buildAdminUrl(inquiry.id);
+    const adminRecipients = this.config.get<string>('INQUIRIES_NOTIFY_TO');
+
+    const tasks: Array<Promise<unknown>> = [];
+
+    tasks.push(
+      this.email
+        .sendInquirySubmitterConfirmation(dto.email, {
+          submitterName: dto.name,
+          brandName,
+          message: dto.message,
+          entityName: dto.entityName,
+          locale: submitterLocale,
+        })
+        .catch((err) => {
+          this.logger.error({
+            event: 'inquiry.confirmation.threw',
+            inquiryId: inquiry.id,
+            reason: err instanceof Error ? err.message : String(err),
+          });
+          // Sentry sees the actual exception object so the stack trace and
+          // Resend's structured error survive. inquiryId is the only PII-
+          // free correlation handle; do NOT pass dto.email or dto.name as
+          // tags — beforeSend would scrub them but the breadcrumb might
+          // still leak in some Sentry transports.
+          Sentry.captureException(err, {
+            tags: {
+              template: 'inquiry-submitter-confirmation',
+              inquiryId: inquiry.id,
+            },
+          });
+        }),
+    );
+
+    if (adminRecipients) {
+      tasks.push(
+        this.email
+          .sendInquiryAdminAlert(adminRecipients, {
+            inquiryId: inquiry.id,
+            type: inquiry.type,
+            submitterName: dto.name,
+            submitterEmail: dto.email,
+            submitterPhone: dto.phone,
+            message: dto.message,
+            budget: dto.budget,
+            entityName: dto.entityName,
+            source: dto.source,
+            sourceUrl: dto.sourceUrl,
+            adminUrl,
+            receivedAt: inquiry.createdAt,
+            locale: 'en',
+          })
+          .catch((err) => {
+            this.logger.error({
+              event: 'inquiry.admin_alert.threw',
+              inquiryId: inquiry.id,
+              reason: err instanceof Error ? err.message : String(err),
+            });
+            Sentry.captureException(err, {
+              tags: {
+                template: 'inquiry-admin-alert',
+                inquiryId: inquiry.id,
+              },
+            });
+          }),
+      );
+    } else {
+      this.logger.warn({
+        event: 'inquiry.admin_alert.skipped',
+        inquiryId: inquiry.id,
+        reason: 'INQUIRIES_NOTIFY_TO unset',
+      });
+    }
+
+    await Promise.all(tasks);
+  }
+
+  private deriveSubmitterLocale(sourceUrl?: string): InquirySubmitterLocale {
+    if (!sourceUrl) return 'en';
+    const match = sourceUrl.match(/\/(en|ro|fr|de)(?:\/|$|\?)/);
+    const candidate = match?.[1];
+    return candidate && SUBMITTER_LOCALES.has(candidate as InquirySubmitterLocale)
+      ? (candidate as InquirySubmitterLocale)
+      : 'en';
+  }
+
+  /**
+   * Maps the client-stamped `source` (e.g. "tge-contact", "revery-property-detail",
+   * "academy-support") back to a human-readable brand name for the email
+   * signoff. Falls back to a neutral label so a malformed source string still
+   * produces a sensible email.
+   */
+  private deriveBrandName(source?: string): string {
+    if (!source) return 'Transylvania Grand Estate';
+    if (source.startsWith('revery-')) return 'Reveria';
+    if (source.startsWith('academy-')) return 'TGE Academy';
+    if (source.startsWith('tge-')) return 'Transylvania Grand Estate';
+    return 'Transylvania Grand Estate';
+  }
+
+  private buildAdminUrl(inquiryId: string): string {
+    const base = this.config
+      .get<string>('ADMIN_PUBLIC_URL', 'http://localhost:3051')
+      .replace(/\/$/, '');
+    return `${base}/inquiries?id=${inquiryId}`;
+  }
+
+  async findAll(
+    query: QueryInquiryDto,
+    user?: CurrentUserPayload | null,
+    site?: SiteContext,
+  ) {
+    const { page = 1, limit = 12, type, status, siteId, app, includeDeleted } =
+      query;
     const where: Prisma.InquiryWhereInput = {};
     if (type) where.type = type;
     if (status) where.status = status;
+    // Soft-delete: hide deleted rows by default. Admin operators can opt in
+    // via `?includeDeleted=1` when triaging deletion-restore requests.
+    if (!includeDeleted) where.deletedAt = null;
+
+    // Optional explicit site/app filters for the admin queue's chip filters.
+    // These narrow within whatever site scope the caller already has — they
+    // can't widen it.
+    if (siteId) where.siteId = siteId;
+    if (app) where.app = app;
+
+    // Brand isolation. The X-Site header drives `site.id`. Public-brand
+    // requests (TGE_LUXURY, REVERY) clamp the result to their own siteId
+    // even on the admin endpoints — that's the contract the brand model
+    // documents (project_brand_model.md). ADMIN/SUPER_ADMIN coming through
+    // the admin console see X-Site=ADMIN and stay unrestricted.
+    if (site && PUBLIC_SITE_IDS.has(site.id)) {
+      where.siteId = site.id;
+    }
 
     // AGENT users see only inquiries whose linked Property belongs to them.
     // Inquiries with no property (general contact) are excluded from AGENT view
@@ -81,9 +332,12 @@ export class InquiriesService {
   }
 
   async findById(id: string) {
+    // Reads exclude soft-deleted rows; admin operators wanting to restore
+    // them go through findAll with includeDeleted=1 and then trigger
+    // restore() directly.
     return ensureFound(
-      this.prisma.inquiry.findUnique({
-        where: { id },
+      this.prisma.inquiry.findFirst({
+        where: { id, deletedAt: null },
         include: { property: { select: { id: true, slug: true, title: true } } },
       }),
       'Inquiry',
@@ -91,21 +345,56 @@ export class InquiriesService {
   }
 
   async updateStatus(id: string, dto: UpdateInquiryStatusDto) {
-    await this.ensureExists(id);
-    return this.prisma.inquiry.update({
+    // Read the row before mutation so we can detect the new→read transition
+    // for SLA tracking. The histogram fires only on the FIRST transition
+    // (status was 'new' AND new value is 'read'); subsequent toggles
+    // (read↔archived↔read) don't update the SLA observation.
+    const before = await this.ensureExists(id);
+    const updated = await this.prisma.inquiry.update({
       where: { id },
       data: { status: dto.status },
     });
+    if (before.status === 'new' && dto.status === 'read') {
+      const elapsedSeconds =
+        (Date.now() - before.createdAt.getTime()) / 1000;
+      this.metrics.inquiryTimeToRead.observe(
+        { app: before.app ?? 'unknown' },
+        elapsedSeconds,
+      );
+    }
+    return updated;
   }
 
   async remove(id: string) {
     await this.ensureExists(id);
-    return this.prisma.inquiry.delete({ where: { id } });
+    // Soft-delete: flip `deletedAt` instead of dropping the row. A scheduled
+    // 90-day cron will hard-purge to satisfy GDPR right-to-erasure (TODO,
+    // tracked in Wave B-4 plan); for now the column gives operators a
+    // recoverable trash-can.
+    return this.prisma.inquiry.update({
+      where: { id },
+      data: { deletedAt: new Date() },
+    });
+  }
+
+  /** Restores a soft-deleted inquiry. Admin-only, used from the operator UI. */
+  async restore(id: string) {
+    const inquiry = await ensureFound(
+      this.prisma.inquiry.findUnique({ where: { id } }),
+      'Inquiry',
+    );
+    if (inquiry.deletedAt === null) return inquiry; // already live, no-op
+    return this.prisma.inquiry.update({
+      where: { id },
+      data: { deletedAt: null },
+    });
   }
 
   private ensureExists(id: string) {
     return ensureFound(
-      this.prisma.inquiry.findUnique({ where: { id } }),
+      this.prisma.inquiry.findFirst({
+        where: { id, deletedAt: null },
+      }),
       'Inquiry',
     );
   }
