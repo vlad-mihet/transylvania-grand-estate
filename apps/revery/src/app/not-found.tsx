@@ -1,12 +1,41 @@
 import Link from "next/link";
 import { defaultLocale } from "@tge/i18n/constants";
 
-/**
- * Root-level 404. Fires when Next can't resolve a URL to any route — most
- * commonly a locale-less path like `/` or `/blog`. The [locale]/layout.tsx
- * is what supplies <html>/<body> in this app, so this page must render them
- * itself and keep dependencies minimal (no next-intl context, no Providers).
- */
+// Multi-locale 404 — see the academy + landing siblings for rationale. This
+// fallback only fires for truly unmatched paths after middleware; the
+// per-locale [locale]/not-found.tsx handles most misses.
+const MESSAGES: Array<{
+  locale: string;
+  title: string;
+  description: string;
+  cta: string;
+}> = [
+  {
+    locale: "ro",
+    title: "Pagină negăsită",
+    description: "Această pagină nu există sau a fost mutată.",
+    cta: "Mergi la Revery",
+  },
+  {
+    locale: "en",
+    title: "Page not found",
+    description: "This page does not exist or was moved.",
+    cta: "Go to Revery",
+  },
+  {
+    locale: "fr",
+    title: "Page introuvable",
+    description: "Cette page n'existe pas ou a été déplacée.",
+    cta: "Aller à Revery",
+  },
+  {
+    locale: "de",
+    title: "Seite nicht gefunden",
+    description: "Diese Seite existiert nicht oder wurde verschoben.",
+    cta: "Zu Revery",
+  },
+];
+
 export default function RootNotFound() {
   return (
     <html lang={defaultLocale}>
@@ -24,7 +53,7 @@ export default function RootNotFound() {
           padding: "2rem",
         }}
       >
-        <div style={{ maxWidth: 480, textAlign: "center" }}>
+        <div style={{ maxWidth: 520, textAlign: "center" }}>
           <p
             aria-hidden="true"
             style={{
@@ -32,35 +61,40 @@ export default function RootNotFound() {
               lineHeight: 1,
               fontWeight: 700,
               color: "#7C3AED",
-              margin: "0 0 0.5rem 0",
+              margin: "0 0 1rem 0",
               userSelect: "none",
             }}
           >
             404
           </p>
-          <h1
-            style={{
-              fontSize: "1.5rem",
-              fontWeight: 700,
-              margin: "0 0 0.75rem 0",
-            }}
-          >
-            Page not found
-          </h1>
-          <p
-            style={{
-              fontSize: "0.95rem",
-              color: "#525252",
-              margin: "0 0 1.75rem 0",
-              lineHeight: 1.6,
-            }}
-          >
-            This page does not exist or was moved.
-          </p>
+          {MESSAGES.map((m) => (
+            <div key={m.locale} lang={m.locale} style={{ margin: "0 0 1rem 0" }}>
+              <h1
+                style={{
+                  fontSize: "1.05rem",
+                  fontWeight: 600,
+                  margin: "0 0 0.25rem 0",
+                }}
+              >
+                {m.title}
+              </h1>
+              <p
+                style={{
+                  fontSize: "0.85rem",
+                  color: "#525252",
+                  margin: 0,
+                  lineHeight: 1.5,
+                }}
+              >
+                {m.description}
+              </p>
+            </div>
+          ))}
           <Link
             href={`/${defaultLocale}`}
             style={{
               display: "inline-block",
+              marginTop: "0.75rem",
               background: "#7C3AED",
               color: "#ffffff",
               padding: "0.65rem 1.25rem",
@@ -70,7 +104,7 @@ export default function RootNotFound() {
               textDecoration: "none",
             }}
           >
-            Go to Revery
+            {MESSAGES[0]!.cta}
           </Link>
         </div>
       </body>

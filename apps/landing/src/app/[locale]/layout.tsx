@@ -3,6 +3,7 @@ import { getMessages } from "next-intl/server";
 import { notFound } from "next/navigation";
 import { Playfair_Display, Inter, Montserrat } from "next/font/google";
 import { routing } from "@tge/i18n/routing";
+import { localeMetadata, type Locale } from "@tge/i18n";
 import { fetchApi } from "@tge/api-client";
 import type { City } from "@tge/types";
 import { Header } from "@/components/layout/header";
@@ -65,7 +66,12 @@ export default async function LocaleLayout({
   }
 
   return (
-    <html lang={locale} className={`${playfair.variable} ${inter.variable} ${montserrat.variable}`} suppressHydrationWarning>
+    <html
+      lang={locale}
+      dir={localeMetadata[locale as Locale].dir}
+      className={`${playfair.variable} ${inter.variable} ${montserrat.variable}`}
+      suppressHydrationWarning
+    >
       <body className="font-sans antialiased bg-background text-foreground" suppressHydrationWarning>
         <NextIntlClientProvider messages={messages}>
           <QueryProvider>

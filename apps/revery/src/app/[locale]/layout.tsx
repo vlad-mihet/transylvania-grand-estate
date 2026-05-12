@@ -3,6 +3,7 @@ import { getMessages, getTranslations } from "next-intl/server";
 import { notFound } from "next/navigation";
 import { DM_Sans, Inter } from "next/font/google";
 import { routing } from "@/i18n/routing";
+import { localeMetadata } from "@tge/i18n";
 import type { Locale } from "@tge/types";
 import { Header } from "@/components/layout/header";
 import { Footer } from "@/components/layout/footer";
@@ -46,7 +47,12 @@ export default async function LocaleLayout({
   const tNav = await getTranslations({ locale, namespace: "Navigation" });
 
   return (
-    <html lang={locale} className={`${dmSans.variable} ${inter.variable}`} suppressHydrationWarning>
+    <html
+      lang={locale}
+      dir={localeMetadata[locale as Locale].dir}
+      className={`${dmSans.variable} ${inter.variable}`}
+      suppressHydrationWarning
+    >
       <body className="font-sans antialiased bg-background text-foreground" suppressHydrationWarning>
         <JsonLd schema={[organizationSchema(), websiteSchema(locale as Locale)]} />
         <a

@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 import { DM_Sans, Inter } from "next/font/google";
 import { Toaster } from "sonner";
 import { routing } from "@/i18n/routing";
+import { localeMetadata, type Locale } from "@tge/i18n";
 import { Providers } from "@/components/providers";
 import "../globals.css";
 
@@ -36,7 +37,12 @@ export default async function LocaleLayout({
   const messages = await getMessages();
 
   return (
-    <html lang={locale} className={`${dmSans.variable} ${inter.variable}`} suppressHydrationWarning>
+    <html
+      lang={locale}
+      dir={localeMetadata[locale as Locale].dir}
+      className={`${dmSans.variable} ${inter.variable}`}
+      suppressHydrationWarning
+    >
       <body className="font-sans antialiased bg-background text-foreground" suppressHydrationWarning>
         <NextIntlClientProvider messages={messages}>
           <Providers>
