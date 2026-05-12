@@ -1,0 +1,7 @@
+.vercel
+
+# Playwright
+playwright-report/
+test-results/
+.playwright-cache/
+.playwright-storage/

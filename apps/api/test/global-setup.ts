@@ -56,6 +56,11 @@ export default async function globalSetup(): Promise<void> {
   // pre-seeded counties and abort against an empty container. `db push`
   // syncs the schema without running migration history — tests that need
   // specific data seed it themselves.
+  //
+  // Phase 2 — Stage 2.0a tried switching to `migrate deploy` so every
+  // spec exercises the real migration sequence. That work-item is
+  // gated on making the Revery-cities seed migration idempotent (or
+  // splitting it from the schema chain). Reverted for now.
   const apiDir = path.resolve(__dirname, '..');
   execSync('npx prisma db push --skip-generate --accept-data-loss', {
     cwd: apiDir,
