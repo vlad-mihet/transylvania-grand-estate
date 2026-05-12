@@ -43,4 +43,25 @@ export class SearchController {
   ) {
     return this.searchService.search(query, site, user);
   }
+
+  /**
+   * Total entity counts for the palette's filter rail. Cheap (one indexed
+   * `count()` per allowed entity, fanned out). Tighter throttle than `/search`
+   * because the client caches aggressively (~5min staleTime) — high-volume
+   * traffic here would indicate either a bug or abuse.
+   */
+  @Throttle({ default: { ttl: 60_000, limit: 30 } })
+  @Roles(
+    AdminRole.SUPER_ADMIN,
+    AdminRole.ADMIN,
+    AdminRole.EDITOR,
+    AdminRole.AGENT,
+  )
+  @Get('counts')
+  async counts(
+    @CurrentSite() site: SiteContext,
+    @CurrentUser() user: CurrentUserPayload | null,
+  ) {
+    return this.searchService.getCounts(site, user);
+  }
 }

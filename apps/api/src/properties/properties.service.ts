@@ -814,7 +814,17 @@ export class PropertiesService {
 
   async remove(id: string) {
     await this.ensureExists(id);
-    return this.prisma.property.delete({ where: { id } });
+    // Snapshot image URLs before the cascade delete drops the rows; without
+    // this we can't reach back to the storage layer to clean up.
+    const images = await this.prisma.propertyImage.findMany({
+      where: { propertyId: id },
+      select: { src: true },
+    });
+    const deleted = await this.prisma.property.delete({ where: { id } });
+    for (const { src } of images) {
+      await this.uploadsService.deleteByPublicUrl(src, 'properties');
+    }
+    return deleted;
   }
 
   // Image management
@@ -865,7 +875,17 @@ export class PropertiesService {
 
   async removeImage(propertyId: string, imageId: string) {
     await this.ensureImageBelongs(propertyId, imageId);
-    return this.prisma.propertyImage.delete({ where: { id: imageId } });
+    const existing = await this.prisma.propertyImage.findUnique({
+      where: { id: imageId },
+      select: { src: true },
+    });
+    const deleted = await this.prisma.propertyImage.delete({
+      where: { id: imageId },
+    });
+    if (existing?.src) {
+      await this.uploadsService.deleteByPublicUrl(existing.src, 'properties');
+    }
+    return deleted;
   }
 
   private ensureExists(id: string) {

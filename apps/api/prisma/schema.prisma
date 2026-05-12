@@ -39,6 +39,22 @@ enum AdminUserStatus {
   SUSPENDED
 }
 
+/// Identity-pool discriminator. Two values: `admin` (back-office +
+/// catalog-agent users — managed via /people/team and /people/agents)
+/// and `academy` (study-platform students). Same value already lives in
+/// JWT payloads as the `realm` claim; this column makes it a first-class
+/// schema concept so post-fusion (Phase 2) the unified `users` table can
+/// be queried without application-layer filtering.
+///
+/// Stage 2.0a (additive): added with table-specific defaults so existing
+/// rows backfill correctly. AdminUser → 'admin', AcademyUser → 'academy'.
+/// Agents stay in the admin realm via their AdminUser link; no separate
+/// 'agent' value.
+enum Realm {
+  admin
+  academy
+}
+
 enum InvitationStatus {
   PENDING
   ACCEPTED
@@ -157,18 +173,60 @@ model AdminUser {
   // distinguish dormant accounts from active ones.
   lastLoginAt  DateTime?       @map("last_login_at")
   lastSeenAt   DateTime?       @map("last_seen_at")
+  // Phase 2 — Stage 2.0a (additive). Identity-pool discriminator that
+  // mirrors the `realm` JWT claim. Always 'admin' for rows in this
+  // table; the column exists so the future unified `users` table can
+  // partition without app-layer filtering. See `phase-2-schema-fusion.md`.
+  realm        Realm           @default(admin)
   createdAt    DateTime        @default(now()) @map("created_at")
   updatedAt    DateTime        @updatedAt @map("updated_at")
 
   // Reverse relations
-  agent               Agent?               @relation("AdminUserAgent")
-  auditLogs           AuditLog[]           @relation("AuditLogActor")
-  identities          OAuthIdentity[]
-  createdInvitations  Invitation[]         @relation("InvitationInviter")
-  passwordResetTokens PasswordResetToken[]
+  agent                     Agent?               @relation("AdminUserAgent")
+  auditLogs                 AuditLog[]           @relation("AuditLogActor")
+  identities                OAuthIdentity[]
+  createdInvitations        Invitation[]         @relation("InvitationInviter")
+  passwordResetTokens       PasswordResetToken[]
+  searchHistory             AdminSearchHistory[]
+  // Phase 2 — Stage 2.0c. Cross-realm FKs formalised. Existing
+  // service code uses these as bare string references; no behaviour
+  // change beyond DB-level integrity (SetNull on AdminUser delete).
+  grantedAcademyEnrollments AcademyEnrollment[]  @relation("AcademyEnrollmentGranter")
+  uploadedLessonAttachments LessonAttachment[]   @relation("LessonAttachmentUploader")
+  createdAcademyInvitations AcademyInvitation[]  @relation("AcademyInvitationInviter")
 
   @@index([status])
+  @@index([realm])
   @@map("admin_users")
+}
+
+/// Per-admin recent-search history. Populated when a user selects an entity
+/// from the unified ⌘K palette, surfaced as the empty-state "Recent" section
+/// next time they open it. Capped at 25 rows per user (oldest dropped in a
+/// follow-up delete after each upsert) — small enough that bouncing through
+/// the table to render the recent list is index-only.
+///
+/// `entity` is stored as a plain string (mirrors the `SearchEntityType` enum
+/// in `@tge/types/schemas/search`) so adding a new entity type to global
+/// search doesn't require a Prisma migration. The history controller
+/// re-validates the value against the user's role on read so a demotion
+/// between sessions can't leak rows the caller is no longer allowed to see.
+model AdminSearchHistory {
+  id         String    @id @default(uuid())
+  userId     String    @map("user_id")
+  user       AdminUser @relation(fields: [userId], references: [id], onDelete: Cascade)
+  entity     String
+  entityId   String    @map("entity_id")
+  title      String
+  subtitle   String?
+  href       String
+  imageUrl   String?   @map("image_url")
+  badge      String?
+  selectedAt DateTime  @default(now()) @map("selected_at")
+
+  @@unique([userId, entity, entityId])
+  @@index([userId, selectedAt(sort: Desc)])
+  @@map("admin_search_history")
 }
 
 // ─── Invitation ──────────────────────────────────────────
@@ -866,13 +924,17 @@ model AcademyUser {
   // `tokensRevokedAt` are rejected as well. Reactivating clears
   // `suspendedAt` but keeps `tokensRevokedAt` so old tokens stay
   // invalid until the user logs back in.
-  suspendedAt      DateTime? @map("suspended_at")
-  suspendedReason  String?   @map("suspended_reason")
+  suspendedAt     DateTime? @map("suspended_at")
+  suspendedReason String?   @map("suspended_reason")
   // Wall-clock cutoff for token validity. Any access/refresh token
   // whose `iat` is before this timestamp is treated as revoked. Set
   // by suspend(), preserved across reactivate() so a previously
   // suspended user can't reuse old tokens after reinstatement.
-  tokensRevokedAt  DateTime? @map("tokens_revoked_at")
+  tokensRevokedAt DateTime? @map("tokens_revoked_at")
+  // Phase 2 — Stage 2.0a (additive). Always 'academy' for rows in
+  // this table. See AdminUser.realm for the rationale and
+  // `phase-2-schema-fusion.md` for the full plan.
+  realm           Realm     @default(academy)
 
   identities         AcademyUserIdentity[]
   enrollments        AcademyEnrollment[]
@@ -882,6 +944,7 @@ model AcademyUser {
   lessonProgress     LessonProgress[]
 
   @@index([suspendedAt])
+  @@index([realm])
   @@map("academy_users")
 }
 
@@ -921,6 +984,11 @@ model AcademyInvitation {
   initialCourseId    String?          @map("initial_course_id")
   initialCourse      Course?          @relation("AcademyInvitationInitialCourse", fields: [initialCourseId], references: [id], onDelete: SetNull)
   invitedById        String?          @map("invited_by_id")
+  // Phase 2 — Stage 2.0c. FK formalisation of a previously-uncoupled
+  // cross-realm reference. SetNull on AdminUser delete preserves the
+  // invitation row + its acceptance history (matches the existing
+  // Invitation.invitedById semantics).
+  invitedBy          AdminUser?       @relation("AcademyInvitationInviter", fields: [invitedById], references: [id], onDelete: SetNull)
   emailSentAt        DateTime?        @map("email_sent_at")
   emailAttempts      Int              @default(0) @map("email_attempts")
   emailLastAttemptAt DateTime?        @map("email_last_attempt_at")
@@ -1070,6 +1138,8 @@ model LessonAttachment {
   // rewrites these to dense (0, 10, 20, …) on save.
   sortOrder    Int      @default(0) @map("sort_order")
   uploadedById String?  @map("uploaded_by_id")
+  // Phase 2 — Stage 2.0c. FK formalisation; see AcademyInvitation.invitedBy.
+  uploadedBy   AdminUser? @relation("LessonAttachmentUploader", fields: [uploadedById], references: [id], onDelete: SetNull)
   createdAt    DateTime @default(now()) @map("created_at")
 
   @@index([lessonId, sortOrder])
@@ -1113,6 +1183,8 @@ model AcademyEnrollment {
   // MUST populate this column — the invitations + enrollments services enforce
   // that invariant.
   grantedById String?     @map("granted_by_id")
+  // Phase 2 — Stage 2.0c. FK formalisation; see AcademyInvitation.invitedBy.
+  grantedBy   AdminUser?  @relation("AcademyEnrollmentGranter", fields: [grantedById], references: [id], onDelete: SetNull)
   enrolledAt  DateTime    @default(now()) @map("enrolled_at")
   revokedAt   DateTime?   @map("revoked_at")
 

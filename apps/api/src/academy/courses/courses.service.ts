@@ -336,6 +336,16 @@ export class CoursesService {
 
   async update(id: string, dto: UpdateCourseDto) {
     await this.ensureExists(id);
+    // ensureExists narrows the select to `{ id }` — fetch the old cover URL
+    // separately when the PATCH actually touches it so we know what to clean
+    // up. Skipped otherwise to avoid a wasted query.
+    const existing =
+      dto.coverImage !== undefined
+        ? await this.prisma.course.findUnique({
+            where: { id },
+            select: { coverImage: true },
+          })
+        : null;
     const data: Prisma.CourseUpdateInput = {};
     if (dto.slug !== undefined) {
       if (dto.slug !== (await this.slugOf(id))) {
@@ -370,7 +380,20 @@ export class CoursesService {
     if (dto.publishedAt !== undefined) {
       data.publishedAt = dto.publishedAt ? new Date(dto.publishedAt) : null;
     }
-    return this.prisma.course.update({ where: { id }, data });
+    const updated = await this.prisma.course.update({ where: { id }, data });
+    // PATCH path bypasses setCoverImage/clearCoverImage; mirror their cleanup
+    // here so a direct dto.coverImage swap doesn't orphan the prior asset.
+    if (
+      dto.coverImage !== undefined &&
+      existing?.coverImage &&
+      existing.coverImage !== dto.coverImage
+    ) {
+      await this.uploads.deleteByPublicUrl(
+        existing.coverImage,
+        `academy/courses/${id}`,
+      );
+    }
+    return updated;
   }
 
   async remove(id: string) {
@@ -502,19 +525,14 @@ export class CoursesService {
       where: { id },
       select: { coverImage: true },
     });
-    const result = await this.uploads.uploadFile(
-      file,
-      `academy/courses/${id}`,
-    );
+    const directory = `academy/courses/${id}`;
+    const result = await this.uploads.uploadFile(file, directory);
     const updated = await this.prisma.course.update({
       where: { id },
       data: { coverImage: result.publicUrl },
     });
-    if (previous?.coverImage) {
-      const oldPath = this.extractFilePathFromUrl(previous.coverImage);
-      if (oldPath) {
-        await this.uploads.deleteFile(oldPath).catch(() => undefined);
-      }
+    if (previous?.coverImage && previous.coverImage !== result.publicUrl) {
+      await this.uploads.deleteByPublicUrl(previous.coverImage, directory);
     }
     return { course: updated, upload: result };
   }
@@ -536,25 +554,11 @@ export class CoursesService {
       where: { id },
       data: { coverImage: null },
     });
-    const oldPath = this.extractFilePathFromUrl(existing.coverImage);
-    if (oldPath) {
-      await this.uploads.deleteFile(oldPath).catch(() => undefined);
-    }
+    await this.uploads.deleteByPublicUrl(
+      existing.coverImage,
+      `academy/courses/${id}`,
+    );
     return { course: updated };
-  }
-
-  /**
-   * Pull the storage path out of a public URL so we can hand it back to
-   * the storage layer for deletion. Returns null for external URLs (paste
-   * from elsewhere) — those aren't ours to delete.
-   */
-  private extractFilePathFromUrl(url: string): string | null {
-    // Local dev (/uploads/<path>) and R2 public URLs share a structure
-    // where everything after `/academy/courses/` is the storage path key.
-    const marker = 'academy/courses/';
-    const idx = url.indexOf(marker);
-    if (idx < 0) return null;
-    return url.slice(idx);
   }
 
   /**

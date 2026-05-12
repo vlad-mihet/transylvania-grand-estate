@@ -9,8 +9,18 @@
  * Legacy admin tokens minted before this rollout carry no realm claim; the
  * JWT access strategy defaults those to `'admin'` so existing sessions keep
  * working across deploy.
+ *
+ * Phase 2 — Stage 2.0a (2026-05-11) added the `Realm` enum to the Prisma
+ * schema with a `realm` column on both `admin_users` and `academy_users`.
+ * Re-exported below so application code can import the enum value (for
+ * Prisma writes/queries) and the existing `AuthRealm` string union (for
+ * type annotations) from a single module — both refer to the same domain.
  */
-export type AuthRealm = 'admin' | 'academy';
+import { Realm } from '@prisma/client';
 
-export const ADMIN_REALM: AuthRealm = 'admin';
-export const ACADEMY_REALM: AuthRealm = 'academy';
+export { Realm };
+
+export type AuthRealm = `${Realm}`;
+
+export const ADMIN_REALM: AuthRealm = Realm.admin;
+export const ACADEMY_REALM: AuthRealm = Realm.academy;

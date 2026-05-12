@@ -100,7 +100,7 @@ export class ArticlesService {
   }
 
   async update(id: string, dto: UpdateArticleDto) {
-    await this.ensureExists(id);
+    const existing = await this.ensureExists(id);
     const data: Prisma.ArticleUpdateInput = {};
 
     // Localized fields go through the draft/publish split.
@@ -127,7 +127,26 @@ export class ArticlesService {
     if (dto.readTimeMinutes !== undefined)
       data.readTimeMinutes = dto.readTimeMinutes;
 
-    return this.prisma.article.update({ where: { id }, data });
+    const updated = await this.prisma.article.update({ where: { id }, data });
+    // Preemptive cleanup — articles currently take paste-only external URLs
+    // (no upload endpoint), so deleteByPublicUrl no-ops for them. The hooks
+    // are wired so that if an articles upload endpoint lands later, the
+    // PATCH path is already clean.
+    if (
+      dto.coverImage !== undefined &&
+      existing.coverImage &&
+      existing.coverImage !== dto.coverImage
+    ) {
+      await this.uploads.deleteByPublicUrl(existing.coverImage, 'articles');
+    }
+    if (
+      dto.authorAvatar !== undefined &&
+      existing.authorAvatar &&
+      existing.authorAvatar !== dto.authorAvatar
+    ) {
+      await this.uploads.deleteByPublicUrl(existing.authorAvatar, 'articles');
+    }
+    return updated;
   }
 
   async remove(id: string) {
