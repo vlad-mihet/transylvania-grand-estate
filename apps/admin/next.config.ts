@@ -111,9 +111,19 @@ const nextConfig: NextConfig = {
       "form-action 'self' https://accounts.google.com",
       // Block dangerous APIs by default.
       "object-src 'none'",
-      // Only upgrade to HTTPS automatically; required for the admin deploy.
-      "upgrade-insecure-requests",
-    ].join("; ");
+      // Auto-upgrade http→https for the production deploy (where every URL
+      // is https anyway, so this is belt-and-braces against rogue mixed
+      // content). Skip in dev: Next's dev server runs http only, and the
+      // upgrade rewrite makes browsers attempt `https://localhost:3051/...`
+      // which has no TLS listener, throwing "Unsafe attempt to load URL"
+      // errors for every navigation. Conditional join below filters out
+      // empty strings.
+      process.env.NODE_ENV === "production"
+        ? "upgrade-insecure-requests"
+        : "",
+    ]
+      .filter(Boolean)
+      .join("; ");
     return [
       {
         source: "/:path*",

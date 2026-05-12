@@ -19,6 +19,11 @@ export function useCapsLock(ref: RefObject<HTMLInputElement | null>): boolean {
     if (!el) return;
 
     const read = (e: KeyboardEvent) => {
+      // Defensive guard: in some React 19 + radix-ui interactions the
+      // listener fires with a synthetic event that lacks `getModifierState`.
+      // Skipping that case keeps the console clean; the next real keydown
+      // updates the indicator correctly.
+      if (typeof e.getModifierState !== "function") return;
       // getModifierState is supported in all evergreen browsers and is more
       // reliable than sniffing e.key === "CapsLock" (which only fires on the
       // actual CapsLock press, not while typing under it).

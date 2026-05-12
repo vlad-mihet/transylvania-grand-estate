@@ -6,7 +6,8 @@
   "include": [
     "src/**/*.ts",
     "../../packages/types/src/**/*.ts",
-    "../../packages/data/src/**/*.ts"
+    "../../packages/data/src/**/*.ts",
+    "../../packages/locale/src/**/*.ts"
   ],
   "exclude": ["node_modules", "dist", "test", "**/*.spec.ts"]
 }
