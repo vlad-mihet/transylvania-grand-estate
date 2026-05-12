@@ -44,7 +44,13 @@ export type SafeResult<T> =
 export interface ApiFieldIssue {
   path: string;
   message: string;
+  /** Stable machine code (e.g. `validation.password.too_short`) the
+   *  frontend uses as a translation key. Falls back to `message` when
+   *  no translation matches the key. */
   code?: string;
+  /** Raw Zod issue code (`too_small`, `invalid_string`, …). Debugging
+   *  aid; clients should route on `code`. */
+  zodCode?: string;
 }
 
 export class ApiError extends Error {

@@ -245,3 +245,74 @@ export interface PaginatedMeta {
   limit: number;
   totalPages: number;
 }
+
+// ─── Collapsed wire shape (Phase 4 PR 4b) ──────────────────────────────
+//
+// When public read endpoints opt in via `@LocaleScope('public')` on the API
+// (and the caller does NOT pass `?expand=allLocales`), `LocalizedString`
+// fields collapse to plain strings + a single top-level `_servedLocale`
+// hint. Admin reads default to `?expand=allLocales` and continue to receive
+// the expanded shape.
+//
+// Both shapes coexist; the corresponding `mapApi*` mapper detects which
+// shape arrived (string vs object) and adapts. Public pages always receive
+// the collapsed shape after a resource opts in; admin pages always receive
+// the expanded shape thanks to the client default.
+
+/** Locale codes accepted on the wire — kept here rather than imported
+ *  from `@tge/locale` so `@tge/types` stays dependency-free. */
+type LocaleCode = "ro" | "en" | "fr" | "de";
+
+/**
+ * Type-level transform: walk a resource shape and replace every
+ * `LocalizedString` field with `string`, every `LocalizedString[]` with
+ * `string[]`, and stamp a top-level `_servedLocale` discriminator.
+ * Non-localized fields pass through unchanged.
+ *
+ * Order matters in the conditional — `LocalizedString[]` must be tested
+ * before `LocalizedString` because arrays are also assignable to objects
+ * in narrow positions otherwise.
+ */
+export type CollapseLocalized<T> = {
+  [K in keyof T]: T[K] extends LocalizedString[]
+    ? string[]
+    : T[K] extends LocalizedString[] | null
+      ? string[] | null
+      : T[K] extends LocalizedString[] | null | undefined
+        ? string[] | null | undefined
+        : T[K] extends LocalizedString
+          ? string
+          : T[K] extends LocalizedString | null
+            ? string | null
+            : T[K] extends LocalizedString | null | undefined
+              ? string | null | undefined
+              : T[K];
+} & { _servedLocale: LocaleCode };
+
+export type ApiPropertyCollapsed = CollapseLocalized<
+  Omit<ApiProperty, "developer" | "agent" | "images">
+> & {
+  developer?: ApiDeveloperSummary | null;
+  agent?: ApiAgentSummary | null;
+  images?: ApiPropertyImageCollapsed[];
+};
+
+export type ApiPropertyImageCollapsed = CollapseLocalized<ApiPropertyImage>;
+
+export type ApiCityCollapsed = CollapseLocalized<ApiCity>;
+
+export type ApiDeveloperCollapsed = CollapseLocalized<
+  Omit<ApiDeveloper, "properties">
+> & {
+  properties?: ApiPropertyCollapsed[];
+};
+
+export type ApiAgentPublicCollapsed = CollapseLocalized<
+  Omit<ApiAgentPublic, "properties">
+> & {
+  properties?: ApiPropertyCollapsed[];
+};
+
+export type ApiArticleCollapsed = CollapseLocalized<ApiArticle>;
+
+export type ApiTestimonialCollapsed = CollapseLocalized<ApiTestimonial>;

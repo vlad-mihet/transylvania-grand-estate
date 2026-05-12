@@ -3,6 +3,14 @@ import { InquiryStatus, InquiryType } from "@prisma/client";
 import { paginationSchema } from "./_primitives";
 
 /**
+ * Submitter locale at submission time. Optional in PR 4a so the rolling
+ * deploy doesn't break in-flight payloads from old clients; the server
+ * derives from `sourceUrl` regex as a fallback. PR 4c tightens by making
+ * the DB column NOT NULL and requiring this field at the schema layer.
+ */
+const inquiryLocaleSchema = z.enum(["ro", "en", "fr", "de"]);
+
+/**
  * Inquiry — a customer contact submission. The public form endpoint accepts
  * create payloads anonymously; admin endpoints read and update status.
  * Mirrors `apps/api/src/inquiries/dto/*`.
@@ -40,6 +48,11 @@ export const createInquirySchema = z
     // 201 so a probing bot can't detect the trap. Permissive at the schema
     // layer (any short string) so we don't 4xx and tip the bot off.
     website: z.string().max(120).optional(),
+    // Submitter UI locale at submission time. Optional so older clients
+    // (deployed during a rolling release) don't fail the `.strict()`
+    // check; the service falls back to `deriveSubmitterLocale(sourceUrl)`
+    // when absent.
+    locale: inquiryLocaleSchema.optional(),
   })
   .strict();
 
@@ -60,6 +73,10 @@ export const queryInquirySchema = paginationSchema.extend({
   status: z.nativeEnum(InquiryStatus).optional(),
   siteId: inquirySiteIdSchema.optional(),
   app: inquiryAppSchema.optional(),
+  // Source filter — case-insensitive substring match against the `source`
+  // tag stamped at submission time (e.g. "tge-property-detail",
+  // "revery-contact"). Lets admins triage by originating surface.
+  source: z.string().max(120).optional(),
   // Admin-only escape hatch: include soft-deleted rows (deletedAt IS NOT NULL).
   // Coerced from string because query strings serialise everything as text.
   includeDeleted: z

@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import Image from "next/image";
-import { useTranslations } from "next-intl";
+import { useTranslations, useLocale } from "next-intl";
 import { Loader2, Check } from "lucide-react";
 import {
   AgentPhone,
@@ -15,7 +15,7 @@ import {
   Label,
   Textarea,
 } from "@tge/ui";
-import { useInquirySubmission } from "@tge/hooks";
+import { useInquirySubmission, type InquiryLocale } from "@tge/hooks";
 import { getBrand } from "@tge/branding";
 
 interface AgentSummary {
@@ -55,6 +55,7 @@ export function PropertyContactCard({
 }: PropertyContactCardProps) {
   const t = useTranslations("PropertyDetail");
   const tConsent = useTranslations("GdprConsent");
+  const locale = useLocale() as InquiryLocale;
 
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
@@ -90,6 +91,7 @@ export function PropertyContactCard({
       entitySlug: propertySlug,
       propertySlug,
       gdprConsent: true,
+      locale,
       website: String(fd.get("website") ?? ""),
     });
   };

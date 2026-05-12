@@ -10,6 +10,7 @@ import { toast } from "@/lib/toast";
 import { toast as sonnerToast } from "sonner";
 import {
   Button,
+  Input,
   Tooltip,
   TooltipContent,
   TooltipTrigger,
@@ -92,6 +93,10 @@ interface Inquiry {
   siteId?: "TGE_LUXURY" | "REVERY" | "ACADEMY" | null;
   /** Originating-app code for the unified queue's filter chips. */
   app?: "landing" | "revery" | "academy" | "admin" | null;
+  /** Submitter UI locale at submission time (PR 4a). Nullable for legacy
+   *  rows pre-migration; surfaces in the peek sheet so admins replying to
+   *  an old inquiry know what language to write back in. */
+  locale?: "ro" | "en" | "fr" | "de" | null;
   /** Soft-delete timestamp (Wave B-4). null = live row. */
   deletedAt?: string | null;
 }
@@ -144,8 +149,19 @@ export function InquiriesListPage({ title }: InquiriesListPageProps = {}) {
 
   const [deleteId, setDeleteId] = useState<string | null>(null);
   const [bulkDeleteOpen, setBulkDeleteOpen] = useState(false);
-  const [statusFilter, setStatusFilter] = useState<InquiryStatus | "">("");
+  // Status filter is URL-driven so the AttentionStrip "new inquiries" tile
+  // (href="/inquiries?status=new") lands with the filter pre-applied.
+  const [statusFilter, setStatusFilter] = useQueryState<InquiryStatus | "">(
+    "status",
+    parseAsStringEnum<InquiryStatus | "">([
+      "",
+      "new",
+      "read",
+      "archived",
+    ]).withDefault(""),
+  );
   const [typeFilter, setTypeFilter] = useState<InquiryType | "">("");
+  const [sourceFilter, setSourceFilter] = useState("");
   const [viewing, setViewing] = useState<Inquiry | null>(null);
   const [view, setView] = useQueryState(
     "view",
@@ -154,12 +170,15 @@ export function InquiriesListPage({ title }: InquiriesListPageProps = {}) {
 
   const effectiveTitle = title ?? t("title");
 
+  const trimmedSource = sourceFilter.trim();
+
   const list = useResourceList<Inquiry>({
     resource: "inquiries",
     defaultLimit: 20,
     extraParams: {
       status: statusFilter || undefined,
       type: typeFilter || undefined,
+      source: trimmedSource || undefined,
     },
     enabled: view === "list",
   });
@@ -167,13 +186,18 @@ export function InquiriesListPage({ title }: InquiriesListPageProps = {}) {
   const kanbanQuery = useQuery({
     queryKey: [
       "inquiries-kanban",
-      { type: typeFilter || undefined, status: statusFilter || undefined },
+      {
+        type: typeFilter || undefined,
+        status: statusFilter || undefined,
+        source: trimmedSource || undefined,
+      },
     ],
     queryFn: () => {
       const params = new URLSearchParams();
       params.set("limit", "200");
       if (statusFilter) params.set("status", statusFilter);
       if (typeFilter) params.set("type", typeFilter);
+      if (trimmedSource) params.set("source", trimmedSource);
       return apiClient<PaginatedResponse<Inquiry> | Inquiry[]>(
         `/inquiries?${params.toString()}`,
       );
@@ -467,7 +491,10 @@ export function InquiriesListPage({ title }: InquiriesListPageProps = {}) {
     },
   ];
 
-  const activeFilters = (statusFilter ? 1 : 0) + (typeFilter ? 1 : 0);
+  const activeFilters =
+    (statusFilter ? 1 : 0) +
+    (typeFilter ? 1 : 0) +
+    (trimmedSource ? 1 : 0);
 
   const viewToggle = (
     <div className="inline-flex items-center rounded-md border border-border bg-card p-0.5">
@@ -512,6 +539,7 @@ export function InquiriesListPage({ title }: InquiriesListPageProps = {}) {
                 onClear={() => {
                   setStatusFilter("");
                   setTypeFilter("");
+                  setSourceFilter("");
                 }}
               >
                 <FilterGroup title={t("columnStatus")}>
@@ -535,6 +563,15 @@ export function InquiriesListPage({ title }: InquiriesListPageProps = {}) {
                       onChange={(checked) => setTypeFilter(checked ? ty : "")}
                     />
                   ))}
+                </FilterGroup>
+                <FilterGroup title={t("filterSource")}>
+                  <Input
+                    type="search"
+                    value={sourceFilter}
+                    onChange={(e) => setSourceFilter(e.target.value)}
+                    placeholder={t("filterSourcePlaceholder")}
+                    className="mono h-8 text-[12px]"
+                  />
                 </FilterGroup>
               </FilterRail>
             </div>
@@ -585,6 +622,7 @@ export function InquiriesListPage({ title }: InquiriesListPageProps = {}) {
             onClear={() => {
               setStatusFilter("");
               setTypeFilter("");
+              setSourceFilter("");
             }}
           >
             <FilterGroup title={t("columnStatus")}>
@@ -606,6 +644,15 @@ export function InquiriesListPage({ title }: InquiriesListPageProps = {}) {
                   onChange={(checked) => setTypeFilter(checked ? ty : "")}
                 />
               ))}
+            </FilterGroup>
+            <FilterGroup title={t("filterSource")}>
+              <Input
+                type="search"
+                value={sourceFilter}
+                onChange={(e) => setSourceFilter(e.target.value)}
+                placeholder={t("filterSourcePlaceholder")}
+                className="mono h-8 text-[12px]"
+              />
             </FilterGroup>
           </FilterRail>
         }
@@ -906,6 +953,11 @@ function InquiryPeekSheet({
               >
                 {viewing.sourceUrl}
               </a>
+              {viewing.locale && (
+                <span className="mono ml-2 inline-flex items-center rounded-sm border border-border bg-muted/40 px-1.5 py-0.5 text-[10px] uppercase tracking-[0.08em] text-muted-foreground">
+                  {viewing.locale}
+                </span>
+              )}
             </DetailSheetSection>
           )}
         </>

@@ -32,10 +32,15 @@ function buildPropertyQuery(params: UsePropertiesParams): string {
  * updates. Server components still prefetch via `fetchApi` directly (into a
  * `HydrationBoundary`). The API enforces tier scope server-side via
  * `SiteMiddleware`, so `params.tier` is a cache-key hint only.
+ *
+ * `locale` is included in the cache key so the same React Query store can
+ * hold per-locale snapshots without cross-contamination once PR 4b starts
+ * collapsing responses to a single locale on the wire. Callers pass
+ * `useLocale()` from next-intl.
  */
-export function useProperties(params: UsePropertiesParams = {}) {
+export function useProperties(locale: string, params: UsePropertiesParams = {}) {
   return useQuery({
-    queryKey: ["properties", params],
+    queryKey: ["properties", locale, params],
     queryFn: () =>
       fetchApi<ApiProperty[]>(
         `/properties${

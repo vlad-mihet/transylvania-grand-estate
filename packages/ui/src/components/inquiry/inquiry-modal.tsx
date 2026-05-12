@@ -1,8 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import { useTranslations } from "next-intl";
-import { useInquirySubmission } from "@tge/hooks";
+import { useTranslations, useLocale } from "next-intl";
+import { useInquirySubmission, type InquiryLocale } from "@tge/hooks";
 import { CheckCircle, AlertCircle, Loader2 } from "lucide-react";
 import { cn } from "@tge/utils";
 import {
@@ -67,6 +67,7 @@ export function InquiryModal({ tone = "light" }: InquiryModalProps) {
   const { isOpen, context, closeInquiry } = useInquiryModal();
   const t = useTranslations("InquiryModal");
   const tConsent = useTranslations("GdprConsent");
+  const locale = useLocale() as InquiryLocale;
   const palette = toneClasses[tone];
   // Delegate the submit + analytics-stamping triad to the shared hook so the
   // global modal produces the same `source: "${brand.key}-contact"` and
@@ -93,6 +94,11 @@ export function InquiryModal({ tone = "light" }: InquiryModalProps) {
       entityName: context.entityName,
       entitySlug: context.entitySlug,
       gdprConsent: true,
+      // Capture the submitter's current UI locale so the confirmation
+      // email arrives in the right language and admin replies can match.
+      // Falls back to server-side `sourceUrl` regex if absent (older
+      // clients during rolling deploy).
+      locale,
       // Honeypot — humans never see this field; bots that auto-fill every
       // input land here. The API silently drops the row when non-empty.
       website: String(formData.get("website") ?? ""),

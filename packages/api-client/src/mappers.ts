@@ -6,6 +6,7 @@ import type {
   MapPin,
   Testimonial,
   Article,
+  LocalizedString,
   ApiProperty,
   ApiDeveloper,
   ApiCity,
@@ -13,9 +14,56 @@ import type {
   ApiMapPin,
   ApiTestimonial,
   ApiArticle,
+  ApiPropertyCollapsed,
+  ApiDeveloperCollapsed,
+  ApiCityCollapsed,
+  ApiArticleCollapsed,
+  ApiTestimonialCollapsed,
 } from "@tge/types";
 
-export function mapApiProperty(raw: ApiProperty): Property {
+/**
+ * Coerce a wire value that may be either expanded (`LocalizedString`) or
+ * collapsed (plain `string` after `@LocaleScope('public')` opts in) back to
+ * `LocalizedString` so downstream frontend code (which uses `localize()`
+ * from `@tge/utils`) doesn't need to know which wire shape arrived.
+ *
+ * For collapsed values we duplicate the served string across all locale
+ * slots — `localize()` will pick the current locale and render correctly.
+ * The "every slot identical" trick is intentional: collapsed responses
+ * have already been resolved against the requested locale server-side,
+ * so the frontend's `localize()` picks the right text regardless of which
+ * key it reaches for. PR 4b ships the resource collapses; this helper is
+ * the seam that hides the migration from page code.
+ */
+function asLocalized(
+  value: LocalizedString | string | null | undefined,
+): LocalizedString {
+  if (value === null || value === undefined) {
+    return { ro: "", en: "" };
+  }
+  if (typeof value === "string") {
+    return { ro: value, en: value, fr: value, de: value };
+  }
+  return value;
+}
+
+function asLocalizedNullable(
+  value: LocalizedString | string | null | undefined,
+): LocalizedString | null {
+  if (value === null || value === undefined) return null;
+  return asLocalized(value);
+}
+
+function asLocalizedArray(
+  value: LocalizedString[] | string[] | null | undefined,
+): LocalizedString[] {
+  if (!value) return [];
+  return value.map((item) =>
+    typeof item === "string" ? asLocalized(item) : item,
+  );
+}
+
+export function mapApiProperty(raw: ApiProperty | ApiPropertyCollapsed): Property {
   const denom = raw.type === "terrain" ? raw.landArea : raw.area;
   const pricePerSqm =
     denom && denom > 0 ? Math.round(raw.price / denom) : undefined;
@@ -23,9 +71,9 @@ export function mapApiProperty(raw: ApiProperty): Property {
   return {
     id: raw.id,
     slug: raw.slug,
-    title: raw.title,
-    description: raw.description,
-    shortDescription: raw.shortDescription,
+    title: asLocalized(raw.title),
+    description: asLocalized(raw.description),
+    shortDescription: asLocalized(raw.shortDescription),
     price: raw.price,
     currency: (raw.currency ?? "EUR") as "EUR",
     type: raw.type,
@@ -35,7 +83,7 @@ export function mapApiProperty(raw: ApiProperty): Property {
       city: raw.city,
       citySlug: raw.citySlug,
       neighborhood: raw.neighborhood,
-      address: raw.address,
+      address: asLocalized(raw.address),
       coordinates: { lat: raw.latitude, lng: raw.longitude },
     },
     specs: {
@@ -56,10 +104,10 @@ export function mapApiProperty(raw: ApiProperty): Property {
       windowType: raw.windowType ?? undefined,
       availabilityDate: raw.availabilityDate ?? undefined,
     },
-    features: raw.features ?? [],
+    features: asLocalizedArray(raw.features),
     images: (raw.images ?? []).map((img) => ({
       src: img.src,
-      alt: img.alt,
+      alt: asLocalized(img.alt),
       isHero: img.isHero,
     })),
     featured: raw.featured ?? false,
@@ -92,33 +140,37 @@ export function mapApiProperty(raw: ApiProperty): Property {
   };
 }
 
-export function mapApiProperties(raw: ApiProperty[]): Property[] {
+export function mapApiProperties(
+  raw: (ApiProperty | ApiPropertyCollapsed)[],
+): Property[] {
   return raw.map(mapApiProperty);
 }
 
-export function mapApiDeveloper(raw: ApiDeveloper): Developer {
+export function mapApiDeveloper(
+  raw: ApiDeveloper | ApiDeveloperCollapsed,
+): Developer {
   return {
     id: raw.id,
     slug: raw.slug,
     name: raw.name,
     logo: raw.logo,
-    description: raw.description,
-    shortDescription: raw.shortDescription,
+    description: asLocalized(raw.description),
+    shortDescription: asLocalized(raw.shortDescription),
     city: raw.city,
     citySlug: raw.citySlug,
     website: raw.website ?? undefined,
     projectCount: raw.projectCount,
     featured: raw.featured,
     coverImage: raw.coverImage ?? undefined,
-    tagline: raw.tagline ?? undefined,
+    tagline: asLocalizedNullable(raw.tagline) ?? undefined,
   };
 }
 
-export function mapApiCity(raw: ApiCity): City {
+export function mapApiCity(raw: ApiCity | ApiCityCollapsed): City {
   return {
     name: raw.name,
     slug: raw.slug,
-    description: raw.description,
+    description: asLocalized(raw.description),
     image: raw.image,
     propertyCount: raw.propertyCount,
     latitude: raw.latitude ?? undefined,
@@ -159,13 +211,13 @@ export function mapApiMapPins(raw: ApiMapPin[]): MapPin[] {
   return raw.map(mapApiMapPin);
 }
 
-export function mapApiArticle(raw: ApiArticle): Article {
+export function mapApiArticle(raw: ApiArticle | ApiArticleCollapsed): Article {
   return {
     id: raw.id,
     slug: raw.slug,
-    title: raw.title,
-    excerpt: raw.excerpt,
-    content: raw.content,
+    title: asLocalized(raw.title),
+    excerpt: asLocalized(raw.excerpt),
+    content: asLocalized(raw.content),
     coverImage: raw.coverImage,
     category: raw.category,
     tags: raw.tags ?? [],
@@ -176,17 +228,21 @@ export function mapApiArticle(raw: ApiArticle): Article {
   };
 }
 
-export function mapApiArticles(raw: ApiArticle[]): Article[] {
+export function mapApiArticles(
+  raw: (ApiArticle | ApiArticleCollapsed)[],
+): Article[] {
   return raw.map(mapApiArticle);
 }
 
-export function mapApiTestimonial(raw: ApiTestimonial): Testimonial {
+export function mapApiTestimonial(
+  raw: ApiTestimonial | ApiTestimonialCollapsed,
+): Testimonial {
   return {
     id: raw.id,
     clientName: raw.clientName,
     location: raw.location,
     propertyType: raw.propertyType,
-    quote: raw.quote,
+    quote: asLocalized(raw.quote),
     rating: raw.rating,
   };
 }

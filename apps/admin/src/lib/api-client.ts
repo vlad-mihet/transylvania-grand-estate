@@ -107,6 +107,27 @@ export async function apiClient<T = unknown>(
   });
 }
 
+/**
+ * Append `expand=allLocales` to every admin GET so the
+ * `LocalizedSerializerInterceptor` on the API stays out of the way and
+ * editor pages receive the full per-locale blob they need to populate
+ * each locale tab in their forms. Read-only admin views (lists,
+ * detail panes) also get the full blob — slightly more bandwidth, but
+ * trivially small for admin traffic, and the alternative (per-call
+ * opt-in) is brittle: a missing `expand=allLocales` on any editor
+ * fetch silently breaks form pre-population.
+ *
+ * Implemented by appending the query param to the URL right before the
+ * fetch — preserves any existing query string the caller already built.
+ */
+function withExpandAllLocales(path: string): string {
+  // Skip explicit override (e.g. admin tooling that genuinely wants to see
+  // the collapsed shape for QA).
+  if (path.includes("expand=")) return path;
+  const sep = path.includes("?") ? "&" : "?";
+  return `${path}${sep}expand=allLocales`;
+}
+
 async function getRequest<T>(
   path: string,
   extra: Record<string, string>,
@@ -114,7 +135,7 @@ async function getRequest<T>(
 ): Promise<T> {
   const base = process.env.NEXT_PUBLIC_API_URL;
   if (!base) throw new Error("NEXT_PUBLIC_API_URL is not set");
-  const url = `${base}${path}`;
+  const url = `${base}${withExpandAllLocales(path)}`;
   const siteId = process.env.NEXT_PUBLIC_SITE_ID;
   const headers: Record<string, string> = { ...extra };
   if (siteId) headers["X-Site"] = siteId;

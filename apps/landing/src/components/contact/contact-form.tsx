@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
-import { useTranslations } from "next-intl";
+import { useTranslations, useLocale } from "next-intl";
 import { Input } from "@tge/ui";
 import { Textarea } from "@tge/ui";
 import { Label } from "@tge/ui";
@@ -15,7 +15,7 @@ import {
 } from "@tge/ui";
 import { AccentButton, GdprConsentCheckbox, HoneypotField } from "@tge/ui";
 import { CheckCircle, Loader2 } from "lucide-react";
-import { useInquirySubmission } from "@tge/hooks";
+import { useInquirySubmission, type InquiryLocale } from "@tge/hooks";
 
 interface ContactFormProps {
   properties: { id: string; slug: string; title: string }[];
@@ -30,6 +30,7 @@ const PHONE_PATTERN = "^\\+?[0-9 ]{8,15}$";
 export function ContactForm({ properties }: ContactFormProps) {
   const t = useTranslations("ContactPage.form");
   const tConsent = useTranslations("GdprConsent");
+  const locale = useLocale() as InquiryLocale;
   const searchParams = useSearchParams();
   const {
     submit,
@@ -69,6 +70,7 @@ export function ContactForm({ properties }: ContactFormProps) {
       budget: budget || undefined,
       propertySlug: propertySlug || undefined,
       gdprConsent: true,
+      locale,
       website: String(formData.get("website") ?? ""),
     });
   };

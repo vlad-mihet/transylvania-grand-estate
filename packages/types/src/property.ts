@@ -80,7 +80,10 @@ export interface Property {
   description: LocalizedString;
   shortDescription: LocalizedString;
   price: number;
-  currency: "EUR";
+  /** ISO-4217 currency code. Defaults to EUR for all current listings;
+   *  the column is freeform so CHF/RON/USD listings can land without
+   *  schema churn. Formatters read this directly. */
+  currency: string;
   type: PropertyType;
   status: PropertyStatus;
   tier?: PropertyTier;

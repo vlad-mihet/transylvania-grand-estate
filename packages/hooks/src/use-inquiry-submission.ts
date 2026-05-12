@@ -10,6 +10,14 @@ export type InquiryType =
   | "valuation";
 
 /**
+ * Subset of `@tge/locale`'s `Locale` accepted by the inquiries endpoint.
+ * Kept inline rather than imported to keep `@tge/hooks` free of an explicit
+ * `@tge/locale` dependency — the four codes are stable and shared with the
+ * Zod schema in `@tge/types/schemas/inquiry`.
+ */
+export type InquiryLocale = "ro" | "en" | "fr" | "de";
+
+/**
  * Privacy-policy revision the consent checkbox refers to. Bump when copy or
  * data-handling materially changes — past consent rows keep the old version
  * so we can prove what each user agreed to. Format: ISO date.
@@ -41,6 +49,13 @@ export interface InquiryPayload {
   // Honeypot pass-through. Forms wire this from FormData; humans always send
   // empty, bots usually fill it with a URL. Server silently drops non-empty.
   website?: string;
+  /**
+   * Submitter's UI locale at submission time. Hosts pass `useLocale()` from
+   * next-intl. Optional — if omitted, the server falls back to deriving
+   * from `sourceUrl` (defensive path for older clients in flight during a
+   * rolling deploy).
+   */
+  locale?: InquiryLocale;
 }
 
 export interface UseInquirySubmissionOptions {

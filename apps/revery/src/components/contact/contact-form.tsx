@@ -1,8 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import { useTranslations } from "next-intl";
-import { useInquirySubmission } from "@tge/hooks";
+import { useTranslations, useLocale } from "next-intl";
+import { useInquirySubmission, type InquiryLocale } from "@tge/hooks";
 import {
   Button,
   GdprConsentCheckbox,
@@ -29,6 +29,7 @@ const BUDGET_OPTIONS = [
 export function ContactForm() {
   const t = useTranslations("ContactPage");
   const tConsent = useTranslations("GdprConsent");
+  const locale = useLocale() as InquiryLocale;
   const { submit, isSubmitting, isSuccess, error } = useInquirySubmission();
   const [formData, setFormData] = useState({
     name: "",
@@ -59,6 +60,7 @@ export function ContactForm() {
       budget: formData.budget,
       message: formData.message,
       gdprConsent: true,
+      locale,
       website: String(fd.get("website") ?? ""),
     });
   };
