@@ -32,6 +32,8 @@
       "@tge/ui/*": ["packages/ui/src/*"],
       "@tge/i18n": ["packages/i18n/src/index.ts"],
       "@tge/i18n/*": ["packages/i18n/src/*"],
+      "@tge/locale": ["packages/locale/src/index.ts"],
+      "@tge/locale/*": ["packages/locale/src/*"],
       "@tge/data": ["packages/data/src/index.ts"],
       "@tge/data/*": ["packages/data/src/*"],
       "@tge/tailwind-config": ["packages/tailwind-config/src/index.ts"]

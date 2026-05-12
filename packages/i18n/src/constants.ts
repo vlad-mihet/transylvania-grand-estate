@@ -1,17 +1,10 @@
-export const locales = ["ro", "en", "fr", "de"] as const;
-export const defaultLocale = "ro" as const;
-export type Locale = (typeof locales)[number];
-
-// Autonyms — each locale rendered in its own language. Canonical pattern for
-// locale switchers (Wikipedia, Google): a user stuck in the wrong locale can
-// recognise their target without first having to translate the menu.
-//
-// `as const satisfies` keeps the literal types ("Română" | "English" | ...)
-// while enforcing exhaustive coverage of every Locale at compile time —
-// adding a locale to `locales` without extending this map is a build error.
-export const localeAutonyms = {
-  ro: "Română",
-  en: "English",
-  fr: "Français",
-  de: "Deutsch",
-} as const satisfies Record<Locale, string>;
+// Re-export from @tge/locale (the framework-agnostic source of truth). This
+// shim preserves the `@tge/i18n/constants` import path that existing consumers
+// rely on; new code should import directly from @tge/locale (or from @tge/i18n's
+// barrel, which re-exports the same names plus the next-intl glue).
+export {
+  locales,
+  defaultLocale,
+  localeAutonyms,
+  type Locale,
+} from "@tge/locale";

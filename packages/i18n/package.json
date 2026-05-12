@@ -8,9 +8,12 @@
     ".": "./src/index.ts",
     "./routing": "./src/routing.ts",
     "./navigation": "./src/navigation.ts",
+    "./middleware": "./src/middleware.ts",
+    "./formatters": "./src/formatters.ts",
     "./constants": "./src/constants.ts"
   },
   "dependencies": {
+    "@tge/locale": "workspace:*",
     "next-intl": "^4.8.3"
   },
   "peerDependencies": {
