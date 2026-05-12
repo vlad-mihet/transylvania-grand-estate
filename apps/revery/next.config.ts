@@ -35,6 +35,17 @@ const nextConfig: NextConfig = {
     "@tge/branding",
     "@tge/api-client",
   ],
+  // Proxy `/uploads/<path>` to the API origin so locally-stored images
+  // (STORAGE_TYPE=local) load same-origin. In production R2 returns
+  // absolute URLs and this rule never matches.
+  async rewrites() {
+    const apiOrigin = (process.env.API_URL ?? "http://localhost:4000/api/v1")
+      .replace(/\/api\/v1\/?$/, "")
+      .replace(/\/$/, "");
+    return [
+      { source: "/uploads/:path*", destination: `${apiOrigin}/uploads/:path*` },
+    ];
+  },
 };
 
 const withNextIntl = createNextIntlPlugin("./src/i18n/request.ts");
