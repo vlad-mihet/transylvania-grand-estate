@@ -44,8 +44,6 @@ export interface CommandAction {
   keywords?: string[];
   /** Capability gate — action hidden unless the subject has this. */
   requires?: PermissionAction;
-  /** Optional visible shortcut hint (e.g. "g p"). */
-  shortcut?: string;
 }
 
 /**
@@ -61,7 +59,6 @@ export const COMMAND_ACTIONS: CommandAction[] = [
     group: "navigate",
     icon: LayoutDashboard,
     href: "/",
-    shortcut: "g d",
     keywords: ["home", "overview"],
   },
   {
@@ -69,7 +66,6 @@ export const COMMAND_ACTIONS: CommandAction[] = [
     group: "navigate",
     icon: MessageSquareQuote,
     href: "/inquiries",
-    shortcut: "g i",
     requires: "inquiry.read",
     keywords: ["leads", "contact", "triage"],
   },
@@ -78,7 +74,6 @@ export const COMMAND_ACTIONS: CommandAction[] = [
     group: "navigate",
     icon: Building2,
     href: "/properties",
-    shortcut: "g p",
     requires: "property.read",
     keywords: ["listings", "homes"],
   },
@@ -93,9 +88,9 @@ export const COMMAND_ACTIONS: CommandAction[] = [
     id: "nav.agents",
     group: "navigate",
     icon: UserCircle,
-    href: "/agents",
+    href: "/people/agents",
     requires: "agent.read",
-    keywords: ["brokers", "realtors"],
+    keywords: ["brokers", "realtors", "people"],
   },
   {
     id: "nav.testimonials",
@@ -124,7 +119,6 @@ export const COMMAND_ACTIONS: CommandAction[] = [
     group: "navigate",
     icon: Newspaper,
     href: "/articles",
-    shortcut: "g a",
     requires: "article.read",
     keywords: ["blog", "content"],
   },
@@ -140,17 +134,17 @@ export const COMMAND_ACTIONS: CommandAction[] = [
     id: "nav.academy-students",
     group: "navigate",
     icon: Users,
-    href: "/academy/students",
+    href: "/people/students",
     requires: "academy.user.manage",
-    keywords: ["academy", "students", "learners", "enrollments"],
+    keywords: ["academy", "students", "learners", "enrollments", "people"],
   },
   {
     id: "nav.academy-invitations",
     group: "navigate",
     icon: Mail,
-    href: "/academy/invitations",
+    href: "/people/invitations?tab=academy",
     requires: "academy.user.manage",
-    keywords: ["academy", "invitations", "invites"],
+    keywords: ["academy", "invitations", "invites", "people"],
   },
   {
     id: "nav.bank-rates",
@@ -180,10 +174,9 @@ export const COMMAND_ACTIONS: CommandAction[] = [
     id: "nav.users",
     group: "navigate",
     icon: Users,
-    href: "/users",
-    shortcut: "g u",
+    href: "/people/team",
     requires: "users.manage",
-    keywords: ["admins", "accounts"],
+    keywords: ["admins", "accounts", "team", "people"],
   },
   {
     id: "nav.audit-logs",
@@ -241,7 +234,7 @@ export const COMMAND_ACTIONS: CommandAction[] = [
     id: "create.agent",
     group: "create",
     icon: Plus,
-    href: "/agents/new",
+    href: "/people/agents/new",
     requires: "agent.create",
   },
   {
@@ -288,8 +281,8 @@ export const COMMAND_ACTIONS: CommandAction[] = [
     // surface where the invite CTA is one click away.
     group: "create",
     icon: Plus,
-    href: "/academy/students",
+    href: "/people/students",
     requires: "academy.user.manage",
-    keywords: ["invite", "academy", "student"],
+    keywords: ["invite", "academy", "student", "people"],
   },
 ];

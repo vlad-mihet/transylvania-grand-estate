@@ -10,32 +10,55 @@ import { apiClient } from "@/lib/api-client";
 
 type LinkHref = ComponentProps<typeof Link>["href"];
 
-interface StatTileProps {
+interface BaseStatTileProps {
   label: string;
   icon: LucideIcon;
   href: LinkHref;
+  /** Secondary line rendered below the count (e.g. "5 new"). */
+  subLine?: ReactNode;
+}
+
+interface FetchingStatTileProps extends BaseStatTileProps {
   /** Endpoint to hit for the count. The count is read from the paginated
    *  envelope's `meta.total` — `limit=1` keeps the payload minimal. */
   endpoint: string;
   /** Optional react-query cache key — defaults to the endpoint string. */
   queryKey?: readonly unknown[];
-  /** Secondary line rendered below the count (e.g. "5 new"). */
-  subLine?: ReactNode;
+  value?: never;
+  isLoading?: never;
 }
+
+interface PreFetchedStatTileProps extends BaseStatTileProps {
+  /** Pre-fetched count from an upstream aggregator (e.g. Catalog home).
+   * When set, StatTile skips its own query and just renders. */
+  value: number | undefined;
+  isLoading: boolean;
+  endpoint?: never;
+  queryKey?: never;
+}
+
+type StatTileProps = FetchingStatTileProps | PreFetchedStatTileProps;
 
 interface CountEnvelope {
   data?: unknown[];
   meta?: { total?: number };
 }
 
-export function StatTile({
+export function StatTile(props: StatTileProps) {
+  if ("endpoint" in props && props.endpoint !== undefined) {
+    return <FetchingStatTile {...props} />;
+  }
+  return <PreFetchedStatTile {...(props as PreFetchedStatTileProps)} />;
+}
+
+function FetchingStatTile({
   label,
-  icon: Icon,
+  icon,
   href,
+  subLine,
   endpoint,
   queryKey,
-  subLine,
-}: StatTileProps) {
+}: FetchingStatTileProps) {
   const joiner = endpoint.includes("?") ? "&" : "?";
   const url = `${endpoint}${joiner}limit=1`;
 
@@ -45,8 +68,52 @@ export function StatTile({
     staleTime: 30_000,
   });
 
-  const count = data?.meta?.total ?? 0;
-  const display = String(count);
+  return renderTile({
+    label,
+    icon,
+    href,
+    subLine,
+    isLoading,
+    isError,
+    value: data?.meta?.total ?? 0,
+  });
+}
+
+function PreFetchedStatTile({
+  label,
+  icon,
+  href,
+  subLine,
+  value,
+  isLoading,
+}: PreFetchedStatTileProps) {
+  return renderTile({
+    label,
+    icon,
+    href,
+    subLine,
+    isLoading,
+    isError: false,
+    value: value ?? 0,
+  });
+}
+
+interface RenderArgs extends BaseStatTileProps {
+  value: number;
+  isLoading: boolean;
+  isError: boolean;
+}
+
+function renderTile({
+  label,
+  icon: Icon,
+  href,
+  subLine,
+  value,
+  isLoading,
+  isError,
+}: RenderArgs) {
+  const display = String(value);
 
   return (
     <Link href={href}>

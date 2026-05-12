@@ -9,7 +9,6 @@ import {
   HardHat,
   Landmark,
   LayoutDashboard,
-  LayoutGrid,
   Mail,
   Map,
   MapPin,
@@ -37,12 +36,19 @@ interface NavItem {
   icon: ComponentType<{ className?: string }>;
   /** Optional permission gate — nav item hidden unless the user has this. */
   requires?: Action;
+  /** Show item if the user has any of these. Use instead of `requires` when
+   * a single page legitimately serves multiple permission audiences (e.g.
+   * combined Invitations page for team + academy admins). */
+  requiresAny?: Action[];
   /** Shows a numeric badge (e.g. unread inquiries). Placeholder for Phase 3. */
   badge?: number;
 }
 
 interface NavGroup {
   labelKey: string;
+  /** Optional canonical home for this group. When set, the group label is
+   * rendered as a link to this href. */
+  home?: string;
   items: NavItem[];
 }
 
@@ -60,7 +66,38 @@ const NAV_GROUPS: NavGroup[] = [
     ],
   },
   {
+    labelKey: "people",
+    home: "/people",
+    items: [
+      {
+        href: "/people/team",
+        labelKey: "peopleTeam",
+        icon: Users,
+        requires: "users.manage",
+      },
+      {
+        href: "/people/agents",
+        labelKey: "peopleAgents",
+        icon: UserCircle,
+        requires: "agent.read",
+      },
+      {
+        href: "/people/students",
+        labelKey: "peopleStudents",
+        icon: GraduationCap,
+        requires: "academy.user.manage",
+      },
+      {
+        href: "/people/invitations",
+        labelKey: "peopleInvitations",
+        icon: Mail,
+        requiresAny: ["users.manage", "academy.user.manage"],
+      },
+    ],
+  },
+  {
     labelKey: "catalog",
+    home: "/catalog",
     items: [
       {
         href: "/properties",
@@ -75,12 +112,6 @@ const NAV_GROUPS: NavGroup[] = [
         requires: "developer.read",
       },
       {
-        href: "/agents",
-        labelKey: "agents",
-        icon: UserCircle,
-        requires: "agent.read",
-      },
-      {
         href: "/testimonials",
         labelKey: "testimonials",
         icon: MessageSquareQuote,
@@ -90,6 +121,7 @@ const NAV_GROUPS: NavGroup[] = [
   },
   {
     labelKey: "locations",
+    home: "/locations",
     items: [
       {
         href: "/counties",
@@ -116,12 +148,8 @@ const NAV_GROUPS: NavGroup[] = [
   },
   {
     labelKey: "content",
+    home: "/content",
     items: [
-      {
-        href: "/content",
-        labelKey: "contentOverview",
-        icon: LayoutGrid,
-      },
       {
         href: "/articles",
         labelKey: "articles",
@@ -140,22 +168,11 @@ const NAV_GROUPS: NavGroup[] = [
         icon: GraduationCap,
         requires: "academy.course.read",
       },
-      {
-        href: "/academy/students",
-        labelKey: "academyStudents",
-        icon: Users,
-        requires: "academy.user.manage",
-      },
-      {
-        href: "/academy/invitations",
-        labelKey: "academyInvitations",
-        icon: Mail,
-        requires: "academy.user.manage",
-      },
     ],
   },
   {
     labelKey: "finance",
+    home: "/finance",
     items: [
       {
         href: "/bank-rates",
@@ -173,24 +190,13 @@ const NAV_GROUPS: NavGroup[] = [
   },
   {
     labelKey: "settings",
+    home: "/settings",
     items: [
       {
         href: "/settings",
         labelKey: "settings",
         icon: Settings,
         requires: "site-config.read",
-      },
-      {
-        href: "/users",
-        labelKey: "users",
-        icon: Users,
-        requires: "users.manage",
-      },
-      {
-        href: "/invitations",
-        labelKey: "invitations",
-        icon: Mail,
-        requires: "users.manage",
       },
       {
         href: "/audit-logs",
@@ -255,7 +261,12 @@ function SidebarContent() {
     .map((group) => ({
       ...group,
       items: group.items
-        .filter((item) => !item.requires || can(item.requires))
+        .filter((item) => {
+          if (item.requires && !can(item.requires)) return false;
+          if (item.requiresAny && !item.requiresAny.some((a) => can(a)))
+            return false;
+          return true;
+        })
         .map((item) =>
           item.href === badgeHref && unreadInquiries > 0
             ? { ...item, badge: unreadInquiries }
@@ -287,55 +298,81 @@ function SidebarContent() {
       </div>
 
       <nav className="flex-1 overflow-y-auto px-2 py-3">
-        {visibleGroups.map((group) => (
-          <div key={group.labelKey} className="mb-4">
-            <p className="mono px-2 pb-1.5 text-[9px] font-semibold uppercase tracking-[0.12em] text-[var(--color-sidebar-muted)]">
-              {t(group.labelKey as Parameters<typeof t>[0])}
-            </p>
-            <div className="flex flex-col gap-0.5">
-              {group.items.map((item) => {
-                // Exact-match the root and the /academy overview because
-                // both have prefixes of more specific siblings (every /…
-                // page; /academy/courses, /academy/students, …).
-                const exactMatchHrefs = new Set(["/", "/academy"]);
-                const isActive = exactMatchHrefs.has(item.href)
-                  ? pathname === item.href
-                  : pathname.startsWith(item.href);
-                const Icon = item.icon;
-                return (
-                  <Link
-                    href={item.href as Parameters<typeof Link>[0]["href"]}
-                    key={item.href}
-                    className={cn(
-                      "group relative flex items-center gap-2.5 rounded-sm px-2 py-1.5 text-[13px] font-medium transition-colors",
-                      isActive
-                        ? "bg-[color-mix(in_srgb,var(--color-copper)_10%,transparent)] text-copper"
-                        : "text-sidebar-foreground/80 hover:bg-muted hover:text-sidebar-foreground",
-                    )}
-                  >
-                    <Icon
+        {visibleGroups.map((group) => {
+          const labelClass =
+            "mono px-2 pb-1.5 text-[9px] font-semibold uppercase tracking-[0.12em] text-[var(--color-sidebar-muted)]";
+          return (
+            <div key={group.labelKey} className="mb-4">
+              {group.home ? (
+                <Link
+                  href={group.home as Parameters<typeof Link>[0]["href"]}
+                  className={cn(
+                    labelClass,
+                    "block transition-colors hover:text-sidebar-foreground",
+                  )}
+                >
+                  {t(group.labelKey as Parameters<typeof t>[0])}
+                </Link>
+              ) : (
+                <p className={labelClass}>
+                  {t(group.labelKey as Parameters<typeof t>[0])}
+                </p>
+              )}
+              <div className="flex flex-col gap-0.5">
+                {group.items.map((item) => {
+                  // Exact-match roots that prefix more specific siblings
+                  // (every /… page off "/"; /academy/courses off /academy;
+                  // /people/team etc. off /people; the Phase 3 module homes
+                  // off /catalog, /locations, /finance).
+                  const exactMatchHrefs = new Set([
+                    "/",
+                    "/academy",
+                    "/people",
+                    "/catalog",
+                    "/locations",
+                    "/finance",
+                  ]);
+                  const isActive = exactMatchHrefs.has(item.href)
+                    ? pathname === item.href
+                    : pathname.startsWith(item.href);
+                  const Icon = item.icon;
+                  return (
+                    <Link
+                      href={item.href as Parameters<typeof Link>[0]["href"]}
+                      key={item.href}
                       className={cn(
-                        "h-4 w-4 shrink-0",
-                        isActive ? "text-copper" : "text-[var(--color-sidebar-muted)]",
+                        "group relative flex items-center gap-2.5 rounded-sm px-2 py-1.5 text-[13px] font-medium transition-colors",
+                        isActive
+                          ? "bg-[color-mix(in_srgb,var(--color-copper)_10%,transparent)] text-copper"
+                          : "text-sidebar-foreground/80 hover:bg-muted hover:text-sidebar-foreground",
                       )}
-                    />
-                    <span className="flex-1 truncate">
-                      {t(item.labelKey as Parameters<typeof t>[0])}
-                    </span>
-                    {typeof item.badge === "number" && item.badge > 0 && (
-                      <span className="mono rounded-sm bg-copper/10 px-1.5 text-[10px] font-semibold text-copper">
-                        {item.badge}
+                    >
+                      <Icon
+                        className={cn(
+                          "h-4 w-4 shrink-0",
+                          isActive
+                            ? "text-copper"
+                            : "text-[var(--color-sidebar-muted)]",
+                        )}
+                      />
+                      <span className="flex-1 truncate">
+                        {t(item.labelKey as Parameters<typeof t>[0])}
                       </span>
-                    )}
-                    {isActive && (
-                      <ChevronRight className="h-3 w-3 shrink-0 text-copper/60" />
-                    )}
-                  </Link>
-                );
-              })}
+                      {typeof item.badge === "number" && item.badge > 0 && (
+                        <span className="mono rounded-sm bg-copper/10 px-1.5 text-[10px] font-semibold text-copper">
+                          {item.badge}
+                        </span>
+                      )}
+                      {isActive && (
+                        <ChevronRight className="h-3 w-3 shrink-0 text-copper/60" />
+                      )}
+                    </Link>
+                  );
+                })}
+              </div>
             </div>
-          </div>
-        ))}
+          );
+        })}
       </nav>
 
       <div className="border-t border-border px-4 py-3">

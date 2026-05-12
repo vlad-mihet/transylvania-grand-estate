@@ -87,7 +87,7 @@ export default function AcademyOverviewPage() {
           tone={data.pendingInvitations > 0 ? "warning" : "default"}
           caption={
             <Link
-              href="/academy/invitations"
+              href="/people/invitations?tab=academy"
               className="hover:text-foreground hover:underline"
             >
               {t("pendingInvitationsLink")}

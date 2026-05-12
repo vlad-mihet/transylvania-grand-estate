@@ -31,6 +31,58 @@ const nextConfig: NextConfig = {
     "@tge/i18n",
     "@tge/api-client",
   ],
+  // Proxy `/uploads/<path>` through to the API origin so locally-stored
+  // images (STORAGE_TYPE=local — agent photos, developer logos, course
+  // covers) load same-origin and don't trip the CSP `img-src 'self'` rule.
+  // In production R2 returns absolute URLs, so this rule never matches.
+  async rewrites() {
+    const apiOrigin = (process.env.API_URL ?? "http://localhost:4000/api/v1")
+      .replace(/\/api\/v1\/?$/, "")
+      .replace(/\/$/, "");
+    return [
+      { source: "/uploads/:path*", destination: `${apiOrigin}/uploads/:path*` },
+    ];
+  },
+  // Permanent (308) redirects for the People IA refactor. Old URLs survive
+  // for bookmarks and audit-log entity links. next-intl middleware resolves
+  // the locale prefix before redirects() runs, so these match both /users
+  // and /ro/users.
+  async redirects() {
+    return [
+      { source: "/users", destination: "/people/team", permanent: true },
+      {
+        source: "/users/:path*",
+        destination: "/people/team/:path*",
+        permanent: true,
+      },
+      { source: "/agents", destination: "/people/agents", permanent: true },
+      {
+        source: "/agents/:path*",
+        destination: "/people/agents/:path*",
+        permanent: true,
+      },
+      {
+        source: "/academy/students",
+        destination: "/people/students",
+        permanent: true,
+      },
+      {
+        source: "/academy/students/:path*",
+        destination: "/people/students/:path*",
+        permanent: true,
+      },
+      {
+        source: "/invitations",
+        destination: "/people/invitations?tab=team",
+        permanent: true,
+      },
+      {
+        source: "/academy/invitations",
+        destination: "/people/invitations?tab=academy",
+        permanent: true,
+      },
+    ];
+  },
   // Security headers applied to every non-static response. Tight defaults
   // except for the CSP script-src \u2014 Next.js hydration relies on an inline
   // script; nonce-based CSP is a future hardening pass. For v1, blocking

@@ -6,7 +6,6 @@ import { ThemeProvider } from "next-themes";
 import { useState } from "react";
 import { TooltipProvider } from "@tge/ui";
 import { CommandPaletteProvider } from "@/components/command-palette/command-palette";
-import { KeyboardShortcutsProvider } from "@/components/command-palette/keyboard-shortcuts";
 
 export function Providers({ children }: { children: React.ReactNode }) {
   const [queryClient] = useState(
@@ -31,9 +30,7 @@ export function Providers({ children }: { children: React.ReactNode }) {
       <NuqsAdapter>
         <QueryClientProvider client={queryClient}>
           <TooltipProvider delayDuration={200}>
-            <CommandPaletteProvider>
-              <KeyboardShortcutsProvider>{children}</KeyboardShortcutsProvider>
-            </CommandPaletteProvider>
+            <CommandPaletteProvider>{children}</CommandPaletteProvider>
           </TooltipProvider>
         </QueryClientProvider>
       </NuqsAdapter>

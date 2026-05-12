@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import { useEffect, useState } from "react";
 import { cn } from "@tge/utils";
 
 type ThumbnailSize = "sm" | "md" | "lg";
@@ -29,6 +30,10 @@ interface ThumbnailProps {
  * same pixel sizes the admin was using inline (48×36 in table cells, 56×42
  * in mobile cards, 80×60 in detail heroes) while centralising the
  * next/image plumbing.
+ *
+ * Resilience: if `src` is missing OR the underlying request fails (404,
+ * orphaned R2 object), the component falls back to the bg-muted box —
+ * never a broken `<img>` with stray alt text.
  */
 export function Thumbnail({
   src,
@@ -36,6 +41,15 @@ export function Thumbnail({
   size = "sm",
   className,
 }: ThumbnailProps) {
+  const [errored, setErrored] = useState(false);
+
+  // Reset on src change so a new URL gets a fresh attempt.
+  useEffect(() => {
+    setErrored(false);
+  }, [src]);
+
+  const showImage = !!src && !errored;
+
   return (
     <div
       className={cn(
@@ -44,13 +58,14 @@ export function Thumbnail({
         className,
       )}
     >
-      {src && (
+      {showImage && (
         <Image
           src={src}
           alt={alt}
           fill
           sizes={SIZES_ATTR[size]}
           className="object-cover"
+          onError={() => setErrored(true)}
         />
       )}
     </div>

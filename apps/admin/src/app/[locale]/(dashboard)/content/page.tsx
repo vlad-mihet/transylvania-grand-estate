@@ -27,30 +27,48 @@ import { RelativeTime } from "@/components/shared/relative-time";
 import { StatusBadge } from "@/components/shared/status-badge";
 import { usePermissions } from "@/components/auth/auth-provider";
 import { pickTitle } from "@/lib/academy/pick-title";
+import { RecentList } from "@/components/shared/recent-list";
 import { LocaleCompletenessPanel } from "./_components/locale-completeness-panel";
 import { EnTranslationsQueue } from "./_components/en-translations-queue";
 
-type Article = {
-  id: string;
-  slug: string;
-  title: Record<string, string | undefined>;
-  status?: string;
-  updatedAt?: string;
-  publishedAt?: string;
-};
+type LocalizedTitle = Record<string, string | undefined>;
 
-type Course = {
+interface RecentArticleEntry {
   id: string;
   slug: string;
-  title: Record<string, string | undefined>;
+  title: LocalizedTitle;
+  status: "draft" | "published";
+  updatedAt: string;
+  publishedAt: string | null;
+}
+
+interface RecentCourseEntry {
+  id: string;
+  slug: string;
+  title: LocalizedTitle;
   status: "draft" | "published" | "archived";
   updatedAt: string;
-};
+}
 
-type Envelope<T> = {
-  data: T[];
-  meta: { total: number };
-};
+interface ArticleSummary {
+  total: number;
+  drafts: number;
+  published: number;
+  recent: RecentArticleEntry[];
+}
+
+interface CourseSummary {
+  total: number;
+  drafts: number;
+  published: number;
+  archived: number;
+  recent: RecentCourseEntry[];
+}
+
+interface ContentSummaryResponse {
+  articles: ArticleSummary;
+  courses: CourseSummary;
+}
 
 export default function ContentOverviewPage() {
   const t = useTranslations("Content");
@@ -61,7 +79,10 @@ export default function ContentOverviewPage() {
 
   return (
     <div className="space-y-6">
-      <PageHeader title={t("title")} description={t("description")} />
+      <PageHeader
+        title={t("moduleTitle")}
+        description={t("moduleDescription")}
+      />
 
       <div className="grid grid-cols-1 gap-5 lg:grid-cols-12">
         <div className="lg:col-span-8">
@@ -100,7 +121,7 @@ export default function ContentOverviewPage() {
           </Can>
           <Can action="academy.user.manage">
             <Button asChild variant="outline" size="sm">
-              <Link href="/academy/students">
+              <Link href="/people/students">
                 <Mail className="mr-1.5 h-3.5 w-3.5" />
                 {t("quickInviteStudent")}
               </Link>
@@ -112,36 +133,34 @@ export default function ContentOverviewPage() {
   );
 }
 
+/**
+ * Single shared query against /admin/content/locale-completeness — the same
+ * endpoint LocaleCompletenessPanel + EnTranslationsQueue read from. React
+ * Query dedupes on the queryKey, so all four consumers (panel, queue, this
+ * hook, and the dashboard's missing-EN tile via its own aggregator) reuse
+ * one HTTP round-trip per page load.
+ */
+function useContentSummary() {
+  return useQuery({
+    queryKey: ["content-locale-completeness"],
+    queryFn: () =>
+      apiClient<ContentSummaryResponse>(
+        "/admin/content/locale-completeness",
+      ),
+    staleTime: 60_000,
+  });
+}
+
 function ArticlesOverviewCard() {
   const t = useTranslations("Content");
   const locale = useLocale();
+  const query = useContentSummary();
 
-  const totalQuery = useQuery({
-    queryKey: ["content-articles-total"],
-    queryFn: () =>
-      apiClient<Envelope<Article>>("/articles?limit=1", { envelope: true }),
-  });
-  const draftsQuery = useQuery({
-    queryKey: ["content-articles-drafts"],
-    queryFn: () =>
-      apiClient<Envelope<Article>>("/articles?status=draft&limit=1", {
-        envelope: true,
-      }),
-  });
-  const recentQuery = useQuery({
-    queryKey: ["content-articles-recent"],
-    queryFn: () =>
-      apiClient<Envelope<Article>>("/articles?sort=newest&limit=5", {
-        envelope: true,
-      }),
-  });
-
-  const total = totalQuery.data?.meta.total ?? 0;
-  const drafts = draftsQuery.data?.meta.total ?? 0;
-  const published = Math.max(0, total - drafts);
-  const recent = recentQuery.data?.data ?? [];
-  const isLoading =
-    totalQuery.isLoading || draftsQuery.isLoading || recentQuery.isLoading;
+  const summary = query.data?.articles;
+  const total = summary?.total ?? 0;
+  const drafts = summary?.drafts ?? 0;
+  const published = summary?.published ?? 0;
+  const recent = summary?.recent ?? [];
 
   return (
     <Card>
@@ -154,7 +173,7 @@ function ArticlesOverviewCard() {
           total={total}
           drafts={drafts}
           published={published}
-          loading={isLoading}
+          loading={query.isLoading}
         />
       </CardHeader>
       <CardContent>
@@ -163,10 +182,10 @@ function ArticlesOverviewCard() {
             id: a.id,
             href: `/articles/${a.slug}/edit`,
             title: a.title[locale] ?? a.title.en ?? a.title.ro ?? a.slug,
-            status: a.status ?? "draft",
+            status: a.status,
             timestamp: a.updatedAt ?? a.publishedAt ?? null,
           }))}
-          loading={recentQuery.isLoading}
+          loading={query.isLoading}
           emptyLabel={t("noRecent")}
         />
       </CardContent>
@@ -185,49 +204,14 @@ function ArticlesOverviewCard() {
 function CoursesOverviewCard() {
   const t = useTranslations("Content");
   const locale = useLocale();
+  const query = useContentSummary();
 
-  const totalQuery = useQuery({
-    queryKey: ["content-courses-total"],
-    queryFn: () =>
-      apiClient<Envelope<Course>>("/admin/academy/courses?limit=1", {
-        envelope: true,
-      }),
-  });
-  const draftsQuery = useQuery({
-    queryKey: ["content-courses-drafts"],
-    queryFn: () =>
-      apiClient<Envelope<Course>>(
-        "/admin/academy/courses?status=draft&limit=1",
-        { envelope: true },
-      ),
-  });
-  const archivedQuery = useQuery({
-    queryKey: ["content-courses-archived"],
-    queryFn: () =>
-      apiClient<Envelope<Course>>(
-        "/admin/academy/courses?status=archived&limit=1",
-        { envelope: true },
-      ),
-  });
-  const recentQuery = useQuery({
-    queryKey: ["content-courses-recent"],
-    queryFn: () =>
-      apiClient<Envelope<Course>>(
-        "/admin/academy/courses?sort=newest&limit=5",
-        { envelope: true },
-      ),
-  });
-
-  const total = totalQuery.data?.meta.total ?? 0;
-  const drafts = draftsQuery.data?.meta.total ?? 0;
-  const archived = archivedQuery.data?.meta.total ?? 0;
-  const published = Math.max(0, total - drafts - archived);
-  const recent = recentQuery.data?.data ?? [];
-  const isLoading =
-    totalQuery.isLoading ||
-    draftsQuery.isLoading ||
-    archivedQuery.isLoading ||
-    recentQuery.isLoading;
+  const summary = query.data?.courses;
+  const total = summary?.total ?? 0;
+  const drafts = summary?.drafts ?? 0;
+  const published = summary?.published ?? 0;
+  const archived = summary?.archived ?? 0;
+  const recent = summary?.recent ?? [];
 
   return (
     <Card>
@@ -241,7 +225,7 @@ function CoursesOverviewCard() {
           drafts={drafts}
           published={published}
           archived={archived}
-          loading={isLoading}
+          loading={query.isLoading}
         />
       </CardHeader>
       <CardContent>
@@ -253,7 +237,7 @@ function CoursesOverviewCard() {
             status: c.status,
             timestamp: c.updatedAt,
           }))}
-          loading={recentQuery.isLoading}
+          loading={query.isLoading}
           emptyLabel={t("noRecent")}
         />
       </CardContent>
@@ -323,66 +307,6 @@ function Pill({
   );
 }
 
-interface RecentItem {
-  id: string;
-  href: string;
-  title: string;
-  status: string;
-  timestamp: string | null;
-}
-
-function RecentList({
-  items,
-  loading,
-  emptyLabel,
-}: {
-  items: RecentItem[];
-  loading: boolean;
-  emptyLabel: string;
-}) {
-  if (loading) {
-    return (
-      <ul className="space-y-2">
-        {Array.from({ length: 4 }).map((_, i) => (
-          <li
-            key={i}
-            className="flex items-center justify-between gap-3 py-1.5"
-          >
-            <Skeleton className="h-3.5 w-2/3" />
-            <Skeleton className="h-3.5 w-16" />
-          </li>
-        ))}
-      </ul>
-    );
-  }
-  if (items.length === 0) {
-    return (
-      <p className="py-4 text-sm text-muted-foreground">{emptyLabel}</p>
-    );
-  }
-  return (
-    <ul className="divide-y divide-border">
-      {items.map((item) => (
-        <li key={item.id}>
-          <Link
-            href={item.href}
-            className="group flex items-center justify-between gap-3 py-2 text-sm hover:text-copper"
-          >
-            <span className="truncate font-medium group-hover:underline">
-              {item.title}
-            </span>
-            <span className="flex shrink-0 items-center gap-2">
-              <StatusBadge status={item.status} />
-              {item.timestamp ? (
-                <RelativeTime
-                  value={item.timestamp}
-                  className="text-[11px] text-muted-foreground"
-                />
-              ) : null}
-            </span>
-          </Link>
-        </li>
-      ))}
-    </ul>
-  );
-}
+// Local RecentList replaced by the shared `<RecentList>` extracted to
+// `apps/admin/src/components/shared/recent-list.tsx` so Phase 3 module
+// homes (catalog, locations, finance) reuse the same shape.

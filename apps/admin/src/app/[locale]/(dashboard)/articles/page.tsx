@@ -5,11 +5,13 @@ import { Button } from "@tge/ui";
 import { Eye, Trash2 } from "lucide-react";
 import { useState } from "react";
 import { useLocale, useTranslations } from "next-intl";
+import { parseAsStringEnum, useQueryState } from "nuqs";
 
 import { apiClient } from "@/lib/api-client";
 import { toast } from "@/lib/toast";
 import { Link } from "@/i18n/navigation";
 import { ResourceListPage } from "@/components/resource/resource-list-page";
+import { ConfirmDialog } from "@/components/shared/confirm-dialog";
 import { DeleteDialog } from "@/components/shared/delete-dialog";
 import { Mono, MonoTag } from "@/components/shared/mono";
 import { RelativeTime } from "@/components/shared/relative-time";
@@ -35,10 +37,22 @@ export default function ArticlesPage() {
 
   const [deleteId, setDeleteId] = useState<string | null>(null);
   const [bulkDeleteOpen, setBulkDeleteOpen] = useState(false);
+  const [unpublishCandidate, setUnpublishCandidate] = useState<string | null>(
+    null,
+  );
   const [categoryFilter, setCategoryFilter] = useState<ArticleCategory | "">(
     "",
   );
-  const [statusFilter, setStatusFilter] = useState<ArticleStatus | "">("");
+  // URL-driven so the AttentionStrip "draft articles" tile
+  // (href="/articles?status=draft") lands with the filter pre-applied.
+  const [statusFilter, setStatusFilter] = useQueryState<ArticleStatus | "">(
+    "status",
+    parseAsStringEnum<ArticleStatus | "">([
+      "",
+      "draft",
+      "published",
+    ]).withDefault(""),
+  );
 
   const list = useResourceList<Article>({
     resource: "articles",
@@ -100,6 +114,7 @@ export default function ArticlesPage() {
       toast.success(
         variables.status === "published" ? t("published") : t("unpublished"),
       );
+      setUnpublishCandidate(null);
     },
     onError: () => toast.error(t("statusChangeFailed")),
   });
@@ -129,7 +144,13 @@ export default function ArticlesPage() {
 
   const columns = buildArticleColumns({
     getTitle,
-    onPublishToggle: setStatusMutation.mutate,
+    onPublishToggle: ({ id, status }) => {
+      if (status === "draft") {
+        setUnpublishCandidate(id);
+        return;
+      }
+      setStatusMutation.mutate({ id, status });
+    },
     onDelete: (id) => setDeleteId(id),
     t: (k) => t(k as Parameters<typeof t>[0]),
   });
@@ -244,6 +265,25 @@ export default function ArticlesPage() {
         onConfirm={() => bulkDeleteMutation.mutate(Array.from(list.selection))}
         title={t("deleteTitle")}
         loading={bulkDeleteMutation.isPending}
+      />
+
+      <ConfirmDialog
+        open={!!unpublishCandidate}
+        onOpenChange={(open) => {
+          if (!open) setUnpublishCandidate(null);
+        }}
+        onConfirm={() =>
+          unpublishCandidate &&
+          setStatusMutation.mutate({
+            id: unpublishCandidate,
+            status: "draft",
+          })
+        }
+        title={t("confirmUnpublishTitle")}
+        description={t("confirmUnpublishDescription")}
+        confirmLabel={t("unpublish")}
+        loading={setStatusMutation.isPending}
+        tone="destructive"
       />
     </>
   );

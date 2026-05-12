@@ -35,7 +35,7 @@ import { useTranslations } from "next-intl";
 import { useEffect, useMemo, useState } from "react";
 import { useTheme } from "next-themes";
 import { ChangePasswordDialog } from "@/components/auth/change-password-dialog";
-import { GlobalSearch } from "@/components/global-search/global-search";
+import { SearchTrigger } from "@/components/command-palette/search-trigger";
 
 export function AdminHeader() {
   const { user, logout } = useAuth();
@@ -85,7 +85,7 @@ export function AdminHeader() {
   };
 
   return (
-    <header className="sticky top-0 z-20 grid h-12 grid-cols-[1fr_auto_1fr] items-center gap-3 border-b border-border bg-background/90 px-4 backdrop-blur lg:px-6">
+    <header className="sticky top-0 z-20 grid h-12 grid-cols-[minmax(0,1fr)_minmax(0,560px)_minmax(0,1fr)] items-center gap-3 border-b border-border bg-background/90 px-4 backdrop-blur lg:px-6">
       <div className="flex min-w-0 items-center gap-2">
         <Button
           variant="ghost"
@@ -117,7 +117,7 @@ export function AdminHeader() {
       </div>
 
       <div className="flex justify-center">
-        <GlobalSearch />
+        <SearchTrigger />
       </div>
 
       <div className="flex items-center justify-end gap-2">
