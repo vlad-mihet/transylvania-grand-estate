@@ -59,12 +59,13 @@
   "Sidebar": {
     "management": "Gestion",
     "overview": "Aperçu",
+    "people": "Personnes",
     "catalog": "Catalogue",
     "locations": "Localisations",
     "content": "Contenu",
     "finance": "Finance",
     "settings": "Paramètres",
-    "dashboard": "Tableau de bord",
+    "dashboard": "Aujourd'hui",
     "properties": "Propriétés",
     "developers": "Promoteurs",
     "agents": "Agents",
@@ -90,17 +91,61 @@
     "auditLogs": "Journal d'audit",
     "allSites": "Tous les sites",
     "navigation": "Navigation",
-    "version": "v0.1"
+    "version": "v0.1",
+    "peopleOverview": "Vue d'ensemble",
+    "peopleTeam": "Équipe",
+    "peopleAgents": "Agents",
+    "peopleStudents": "Étudiants Academy",
+    "peopleInvitations": "Invitations"
   },
   "CommandPalette": {
     "placeholder": "Aller à, créer, exécuter…",
-    "empty": "Aucune correspondance.",
+    "searchPlaceholder": "Rechercher partout…",
+    "empty": "Aucun résultat pour « {query} ».",
+    "error": "Une erreur est survenue. Réessayez.",
+    "clearScope": "Effacer le filtre",
+    "recentHeading": "Récents",
+    "quickActionsHeading": "Actions rapides",
+    "tipPrefix": "Astuce",
+    "tip": "Tapez pour rechercher des biens, agents, villes et plus encore.",
+    "showAll": "Tout afficher dans {group}",
+    "removeFromRecent": "Retirer des récents",
+    "resultsAnnouncement": "{count, plural, =0 {Aucun résultat.} =1 {1 résultat.} other {# résultats.}}",
+    "filterHeading": "Filtre",
+    "topResultHeading": "Meilleur résultat",
+    "noScopeResults": "Aucun résultat dans {group} pour « {query} ».",
+    "searchAllCategories": "Rechercher dans toutes les catégories",
     "groups": {
       "context": "Sur cette page",
       "navigate": "Navigation",
       "create": "Créer",
       "finance": "Finance",
-      "system": "Système"
+      "system": "Système",
+      "entity": {
+        "property": "Biens",
+        "agent": "Agents",
+        "developer": "Promoteurs",
+        "city": "Villes",
+        "county": "Départements",
+        "article": "Articles",
+        "inquiry": "Demandes",
+        "testimonial": "Témoignages",
+        "bankRate": "Taux bancaires",
+        "user": "Utilisateurs"
+      }
+    },
+    "scope": {
+      "all": "Tous",
+      "property": "Biens",
+      "agent": "Agents",
+      "developer": "Promoteurs",
+      "city": "Villes",
+      "county": "Départements",
+      "article": "Articles",
+      "inquiry": "Demandes",
+      "testimonial": "Témoignages",
+      "bankRate": "Taux",
+      "user": "Utilisateurs"
     },
     "actions": {
       "nav": {
@@ -148,28 +193,6 @@
     "themeLight": "Clair",
     "themeDark": "Sombre",
     "themeSystem": "Système"
-  },
-  "GlobalSearch": {
-    "placeholder": "Rechercher agents, biens, villes…",
-    "shortcutHint": "Appuyez sur / pour rechercher",
-    "loading": "Recherche…",
-    "empty": "Aucun résultat pour « {query} ».",
-    "error": "Une erreur est survenue. Réessayez.",
-    "clear": "Effacer la recherche",
-    "showAll": "Tout afficher dans {group}",
-    "resultsAnnouncement": "{count, plural, =0 {Aucun résultat.} =1 {1 résultat.} other {# résultats.}}",
-    "footerEnterHint": "↵ ouvrir",
-    "footerEscHint": "éch. fermer",
-    "groupProperty": "Biens",
-    "groupAgent": "Agents",
-    "groupDeveloper": "Promoteurs",
-    "groupCity": "Villes",
-    "groupCounty": "Départements",
-    "groupArticle": "Articles",
-    "groupInquiry": "Demandes",
-    "groupTestimonial": "Témoignages",
-    "groupBankRate": "Taux bancaires",
-    "groupUser": "Utilisateurs"
   },
   "ForgotPassword": {
     "title": "Mot de passe oublié ?",
@@ -237,6 +260,8 @@
   "Dashboard": {
     "title": "Tableau de bord",
     "description": "Aperçu de votre plateforme immobilière",
+    "todayTitle": "Aujourd'hui",
+    "todayDescription": "Ce qui requiert votre attention.",
     "properties": "Propriétés",
     "developers": "Promoteurs",
     "agents": "Agents",
@@ -251,11 +276,99 @@
     "emptyInquiries": "Aucune demande",
     "emptyProperties": "Aucune propriété",
     "emptyArticles": "Aucun article",
-    "viewAll": "Voir tout"
+    "viewAll": "Voir tout",
+    "attention": {
+      "newInquiries": "Nouvelles demandes",
+      "draftArticles": "Articles en brouillon",
+      "missingEn": "À traduire en anglais",
+      "pendingAcademyInvites": "Invitations Academy en attente",
+      "suspendedUsers": "Membres suspendus",
+      "auditFailures": "Échecs d'audit",
+      "allClear": "Rien ne nécessite votre attention pour l'instant."
+    }
+  },
+  "People": {
+    "home": {
+      "title": "Personnes",
+      "description": "Tout le monde sur la plateforme : équipe, agents, étudiants.",
+      "kpi": {
+        "team": "Équipe",
+        "agents": "Agents",
+        "students": "Étudiants Academy",
+        "pendingInvites": "{count, plural, =0 {aucune invitation en attente} one {# invitation en attente} other {# invitations en attente}}",
+        "noLogin": "{count, plural, =0 {tous connectés} one {# sans connexion} other {# sans connexion}}"
+      },
+      "actions": {
+        "inviteTeammate": "Inviter un coéquipier",
+        "inviteAgent": "Inviter un agent",
+        "inviteStudent": "Inviter un étudiant"
+      },
+      "empty": {
+        "team": "Aucun membre d'équipe pour l'instant.",
+        "agents": "Aucun agent pour l'instant.",
+        "students": "Aucun étudiant pour l'instant.",
+        "recentInvites": "Aucune invitation pour l'instant.",
+        "recentSignins": "Aucune connexion récente."
+      },
+      "openTab": "Ouvrir",
+      "overlap": {
+        "title": "Emails dans plusieurs pools",
+        "body": "{count, plural, =0 {Aucun chevauchement.} one {# email apparaît dans plusieurs pools.} other {# emails apparaissent dans plusieurs pools.}}",
+        "showList": "Voir les chevauchements"
+      },
+      "recentInvites": {
+        "title": "Invitations récentes",
+        "viewAll": "Voir tout"
+      },
+      "recentSignins": {
+        "title": "Connexions récentes",
+        "viewAll": "Voir le journal d'audit"
+      }
+    },
+    "sourceChip": {
+      "team": "Équipe",
+      "agent": "Agent",
+      "academy": "Academy"
+    },
+    "accountStatus": {
+      "linked": "Lié",
+      "pendingInvite": "Invitation en attente",
+      "noLogin": "Sans connexion"
+    },
+    "invitations": {
+      "pageTitle": "Invitations",
+      "description": "Invitations en attente pour l'équipe, les agents et les étudiants Academy.",
+      "tabs": {
+        "team": "Équipe & Agents",
+        "academy": "Academy"
+      }
+    },
+    "agentDetail": {
+      "tabs": {
+        "access": "Accès",
+        "publicProfile": "Profil public"
+      },
+      "access": {
+        "headline": "Accès au compte",
+        "description": "Indique si cet agent peut se connecter à la plateforme admin.",
+        "emailLabel": "Email",
+        "statusLabel": "Statut",
+        "invitationExpiresLabel": "L'invitation expire",
+        "invitationSentLabel": "Invitation envoyée",
+        "linkedHelper": "Cet agent dispose d'un compte admin lié à son profil.",
+        "pendingHelper": "Une invitation est en cours. Il ne s'est pas encore connecté.",
+        "noLoginHelper": "Cet agent n'a pas de compte. Envoyez une invitation pour lui accorder l'accès.",
+        "expiredHelper": "L'invitation précédente a expiré. Envoyez-en une nouvelle pour réessayer.",
+        "bouncedHelper": "L'email d'invitation a rebondi. Vérifiez l'adresse avant de renvoyer.",
+        "noActions": "Aucune action disponible pour le moment."
+      }
+    }
   },
   "Content": {
     "title": "Contenu",
     "description": "Articles, cours Academy et accès étudiants, d'un coup d'œil.",
+    "moduleTitle": "Contenu",
+    "moduleDescription": "Articles, cours, traductions.",
     "articlesTitle": "Articles",
     "coursesTitle": "Cours Academy",
     "statTotal": "Total",
@@ -292,6 +405,81 @@
       "developer": "Promoteurs",
       "agent": "Agents",
       "testimonial": "Témoignages"
+    }
+  },
+  "Catalog": {
+    "home": {
+      "title": "Catalogue",
+      "description": "Propriétés, promoteurs et témoignages d'un coup d'œil.",
+      "kpi": {
+        "properties": "Propriétés",
+        "propertiesSub": "{count, plural, =0 {aucune disponible} one {# disponible} other {# disponibles}}",
+        "featured": "Annonces en vedette",
+        "developers": "Promoteurs",
+        "developersSub": "{count, plural, =0 {aucun en vedette} one {# en vedette} other {# en vedette}}",
+        "testimonials": "Témoignages",
+        "testimonialsSub": "Note moyenne {rating}/5"
+      },
+      "actions": {
+        "newProperty": "Nouvelle propriété",
+        "newDeveloper": "Nouveau promoteur",
+        "newTestimonial": "Nouveau témoignage"
+      },
+      "recent": {
+        "propertiesTitle": "Propriétés récentes",
+        "testimonialsTitle": "Témoignages récents",
+        "empty": "Rien ici pour l'instant.",
+        "viewAll": "Voir tout"
+      }
+    }
+  },
+  "Locations": {
+    "home": {
+      "title": "Localisations",
+      "description": "Départements, villes et pages de marque.",
+      "kpi": {
+        "counties": "Départements",
+        "cities": "Villes",
+        "brandCurated": "Villes curées par marque",
+        "brandCuratedSub": "{tge} TGE · {revery} Revery"
+      },
+      "actions": {
+        "newCity": "Nouvelle ville",
+        "editBrandVisibility": "Modifier la visibilité de la marque"
+      },
+      "brandVisibility": {
+        "title": "Pages de marque",
+        "description": "Villes curées pour la page d'accueil de chaque marque.",
+        "brandTge": "TGE",
+        "brandRevery": "Revery",
+        "editAction": "Modifier",
+        "emptyRow": "aucune pour l'instant"
+      }
+    }
+  },
+  "Finance": {
+    "home": {
+      "title": "Finance",
+      "description": "Taux bancaires et indicateurs macro.",
+      "kpi": {
+        "bankRates": "Taux bancaires actifs",
+        "freshnessLabel": "Mise à jour la plus ancienne",
+        "freshnessNone": "Aucun taux actif pour l'instant.",
+        "eurRon": "EUR / RON",
+        "ircc": "IRCC",
+        "syncedLabel": "Synchronisé",
+        "updatedLabel": "Mis à jour",
+        "indicatorMissing": "—"
+      },
+      "actions": {
+        "newBankRate": "Nouveau taux bancaire",
+        "refreshBnr": "Rafraîchir le taux BNR"
+      },
+      "toasts": {
+        "bnrSyncSuccess": "EUR / RON synchronisé depuis BNR ({value})",
+        "bnrSyncFailed": "Échec de la synchronisation BNR : {reason}",
+        "bnrSyncUnknownError": "erreur inconnue"
+      }
     }
   },
   "Properties": {
@@ -334,7 +522,12 @@
     "deleteFailed": "Échec de la suppression du promoteur",
     "created": "Promoteur créé",
     "updated": "Promoteur mis à jour",
-    "imageUploadFailed": "Enregistré mais le téléchargement du logo a échoué. Modifiez pour réessayer."
+    "imageUploadFailed": "Enregistré mais le téléchargement du logo a échoué. Modifiez pour réessayer.",
+    "rebuildCounts": "Recalculer les compteurs",
+    "rebuildCountsHint": "Recalcule le nombre de projets pour chaque promoteur à partir des biens actifs.",
+    "rebuildCountsClean": "Tous les compteurs sont corrects ({checked} promoteurs vérifiés)",
+    "rebuildCountsFixed": "{updated} compteurs sur {checked} corrigés",
+    "rebuildCountsFailed": "Échec du recalcul des compteurs"
   },
   "Agents": {
     "title": "Agents",
@@ -354,7 +547,14 @@
     "deleteFailed": "Échec de la suppression de l'agent",
     "created": "Agent créé",
     "updated": "Agent mis à jour",
-    "imageUploadFailed": "Enregistré mais le téléchargement de la photo a échoué. Modifiez pour réessayer."
+    "imageUploadFailed": "Enregistré mais le téléchargement de la photo a échoué. Modifiez pour réessayer.",
+    "activateAction": "Activer",
+    "deactivateAction": "Désactiver",
+    "activated": "Agent activé",
+    "deactivated": "Agent désactivé",
+    "deactivateConfirmTitle": "Désactiver l'agent ?",
+    "deactivateConfirmDescription": "L'agent perdra l'accès à mes annonces et mes demandes jusqu'à sa réactivation. La fiche reste en place et les biens restent attribués.",
+    "statusChangeFailed": "Échec du changement de statut de l'agent"
   },
   "Invitations": {
     "inviteAgent": "Inviter un agent",
@@ -719,6 +919,8 @@
     "published": "Article publié",
     "unpublished": "Article remis en brouillon",
     "statusChangeFailed": "Échec de la mise à jour du statut",
+    "confirmUnpublishTitle": "Remettre l'article en brouillon ?",
+    "confirmUnpublishDescription": "L'article sera masqué du site public. Vous pourrez le republier à tout moment.",
     "deleteTitle": "Supprimer l'article",
     "deleteDescription": "Cet article sera définitivement supprimé.",
     "deleted": "Article supprimé",
@@ -780,6 +982,8 @@
     "columnLinked": "Liée à",
     "columnSource": "Source",
     "columnReceived": "Reçue",
+    "filterSource": "Source",
+    "filterSourcePlaceholder": "ex. revery-contact",
     "markRead": "Marquer comme lue",
     "archive": "Archiver",
     "reopen": "Rouvrir",
@@ -832,7 +1036,11 @@
     "deleted": "Département supprimé",
     "deleteFailed": "Échec de la suppression du département",
     "created": "Département créé",
-    "createFailed": "Échec de la création du département"
+    "createFailed": "Échec de la création du département",
+    "editCounty": "Modifier le département",
+    "editCountyDescription": "Mettez à jour le nom, le slug, le code ou les coordonnées. Modifier le slug casse les URL publiques qui y font référence.",
+    "updated": "Département mis à jour",
+    "updateFailed": "Échec de la mise à jour du département"
   },
   "Testimonials": {
     "title": "Témoignages",

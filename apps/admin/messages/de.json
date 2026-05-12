@@ -59,12 +59,13 @@
   "Sidebar": {
     "management": "Verwaltung",
     "overview": "Übersicht",
+    "people": "Personen",
     "catalog": "Katalog",
     "locations": "Standorte",
     "content": "Inhalt",
     "finance": "Finanzen",
     "settings": "Einstellungen",
-    "dashboard": "Dashboard",
+    "dashboard": "Heute",
     "properties": "Immobilien",
     "developers": "Bauträger",
     "agents": "Makler",
@@ -90,17 +91,61 @@
     "auditLogs": "Audit-Protokoll",
     "allSites": "Alle Sites",
     "navigation": "Navigation",
-    "version": "v0.1"
+    "version": "v0.1",
+    "peopleOverview": "Übersicht",
+    "peopleTeam": "Team",
+    "peopleAgents": "Makler",
+    "peopleStudents": "Academy-Studierende",
+    "peopleInvitations": "Einladungen"
   },
   "CommandPalette": {
     "placeholder": "Springe zu, erstellen, ausführen…",
-    "empty": "Keine Treffer.",
+    "searchPlaceholder": "Alles durchsuchen…",
+    "empty": "Keine Ergebnisse für „{query}“.",
+    "error": "Ein Fehler ist aufgetreten. Erneut versuchen.",
+    "clearScope": "Filter zurücksetzen",
+    "recentHeading": "Zuletzt",
+    "quickActionsHeading": "Schnellaktionen",
+    "tipPrefix": "Tipp",
+    "tip": "Tippen Sie, um Immobilien, Makler, Städte und mehr zu durchsuchen.",
+    "showAll": "Alle in {group} anzeigen",
+    "removeFromRecent": "Aus „Zuletzt“ entfernen",
+    "resultsAnnouncement": "{count, plural, =0 {Keine Ergebnisse.} =1 {1 Ergebnis.} other {# Ergebnisse.}}",
+    "filterHeading": "Filter",
+    "topResultHeading": "Bestes Ergebnis",
+    "noScopeResults": "Keine Treffer in {group} für „{query}“.",
+    "searchAllCategories": "In allen Kategorien suchen",
     "groups": {
       "context": "Auf dieser Seite",
       "navigate": "Navigation",
       "create": "Erstellen",
       "finance": "Finanzen",
-      "system": "System"
+      "system": "System",
+      "entity": {
+        "property": "Immobilien",
+        "agent": "Agenten",
+        "developer": "Bauträger",
+        "city": "Städte",
+        "county": "Bezirke",
+        "article": "Artikel",
+        "inquiry": "Anfragen",
+        "testimonial": "Testimonials",
+        "bankRate": "Bankzinsen",
+        "user": "Benutzer"
+      }
+    },
+    "scope": {
+      "all": "Alle",
+      "property": "Immobilien",
+      "agent": "Agenten",
+      "developer": "Bauträger",
+      "city": "Städte",
+      "county": "Bezirke",
+      "article": "Artikel",
+      "inquiry": "Anfragen",
+      "testimonial": "Testimonials",
+      "bankRate": "Zinsen",
+      "user": "Benutzer"
     },
     "actions": {
       "nav": {
@@ -148,28 +193,6 @@
     "themeLight": "Hell",
     "themeDark": "Dunkel",
     "themeSystem": "System"
-  },
-  "GlobalSearch": {
-    "placeholder": "Agenten, Immobilien, Städte suchen…",
-    "shortcutHint": "Drücken Sie /, um zu suchen",
-    "loading": "Suche läuft…",
-    "empty": "Keine Ergebnisse für „{query}“.",
-    "error": "Ein Fehler ist aufgetreten. Erneut versuchen.",
-    "clear": "Suche löschen",
-    "showAll": "Alle in {group} anzeigen",
-    "resultsAnnouncement": "{count, plural, =0 {Keine Ergebnisse.} =1 {1 Ergebnis.} other {# Ergebnisse.}}",
-    "footerEnterHint": "↵ öffnen",
-    "footerEscHint": "esc schließen",
-    "groupProperty": "Immobilien",
-    "groupAgent": "Agenten",
-    "groupDeveloper": "Bauträger",
-    "groupCity": "Städte",
-    "groupCounty": "Bezirke",
-    "groupArticle": "Artikel",
-    "groupInquiry": "Anfragen",
-    "groupTestimonial": "Testimonials",
-    "groupBankRate": "Bankzinsen",
-    "groupUser": "Benutzer"
   },
   "ForgotPassword": {
     "title": "Passwort vergessen?",
@@ -237,6 +260,8 @@
   "Dashboard": {
     "title": "Dashboard",
     "description": "Überblick über Ihre Immobilienplattform",
+    "todayTitle": "Heute",
+    "todayDescription": "Was jetzt Ihre Aufmerksamkeit erfordert.",
     "properties": "Immobilien",
     "developers": "Bauträger",
     "agents": "Makler",
@@ -251,11 +276,99 @@
     "emptyInquiries": "Noch keine Anfragen",
     "emptyProperties": "Noch keine Immobilien",
     "emptyArticles": "Noch keine Artikel",
-    "viewAll": "Alle anzeigen"
+    "viewAll": "Alle anzeigen",
+    "attention": {
+      "newInquiries": "Neue Anfragen",
+      "draftArticles": "Artikel-Entwürfe",
+      "missingEn": "Fehlende englische Übersetzung",
+      "pendingAcademyInvites": "Ausstehende Academy-Einladungen",
+      "suspendedUsers": "Suspendierte Teammitglieder",
+      "auditFailures": "Audit-Fehler",
+      "allClear": "Aktuell ist nichts zu tun."
+    }
+  },
+  "People": {
+    "home": {
+      "title": "Personen",
+      "description": "Alle Personen auf der Plattform: Team, Makler, Studierende.",
+      "kpi": {
+        "team": "Team",
+        "agents": "Makler",
+        "students": "Academy-Studierende",
+        "pendingInvites": "{count, plural, =0 {keine ausstehenden Einladungen} one {# ausstehende Einladung} other {# ausstehende Einladungen}}",
+        "noLogin": "{count, plural, =0 {alle verknüpft} one {# ohne Login} other {# ohne Login}}"
+      },
+      "actions": {
+        "inviteTeammate": "Teammitglied einladen",
+        "inviteAgent": "Makler einladen",
+        "inviteStudent": "Studierenden einladen"
+      },
+      "empty": {
+        "team": "Noch keine Teammitglieder.",
+        "agents": "Noch keine Makler.",
+        "students": "Noch keine Studierenden.",
+        "recentInvites": "Noch keine Einladungen.",
+        "recentSignins": "Keine kürzlichen Anmeldungen."
+      },
+      "openTab": "Öffnen",
+      "overlap": {
+        "title": "E-Mails in mehreren Pools",
+        "body": "{count, plural, =0 {Keine Überschneidungen.} one {# E-Mail kommt in mehreren Pools vor.} other {# E-Mails kommen in mehreren Pools vor.}}",
+        "showList": "Überschneidungen anzeigen"
+      },
+      "recentInvites": {
+        "title": "Neueste Einladungen",
+        "viewAll": "Alle anzeigen"
+      },
+      "recentSignins": {
+        "title": "Neueste Anmeldungen",
+        "viewAll": "Audit-Protokoll ansehen"
+      }
+    },
+    "sourceChip": {
+      "team": "Team",
+      "agent": "Makler",
+      "academy": "Academy"
+    },
+    "accountStatus": {
+      "linked": "Verknüpft",
+      "pendingInvite": "Einladung ausstehend",
+      "noLogin": "Kein Login"
+    },
+    "invitations": {
+      "pageTitle": "Einladungen",
+      "description": "Ausstehende Einladungen für Team, Makler und Academy-Studierende.",
+      "tabs": {
+        "team": "Team & Makler",
+        "academy": "Academy"
+      }
+    },
+    "agentDetail": {
+      "tabs": {
+        "access": "Zugriff",
+        "publicProfile": "Öffentliches Profil"
+      },
+      "access": {
+        "headline": "Kontozugriff",
+        "description": "Ob dieser Makler sich in der Admin-Plattform anmelden kann.",
+        "emailLabel": "E-Mail",
+        "statusLabel": "Status",
+        "invitationExpiresLabel": "Einladung läuft ab",
+        "invitationSentLabel": "Einladung gesendet",
+        "linkedHelper": "Dieser Makler ist mit einem Admin-Login verknüpft.",
+        "pendingHelper": "Eine Einladung ist unterwegs. Er hat sich noch nicht angemeldet.",
+        "noLoginHelper": "Dieser Makler hat kein Login. Senden Sie eine Einladung, um Zugriff zu gewähren.",
+        "expiredHelper": "Die vorherige Einladung ist abgelaufen. Senden Sie eine neue, um es erneut zu versuchen.",
+        "bouncedHelper": "Die Einladungs-E-Mail wurde zurückgewiesen. Adresse vor erneutem Senden prüfen.",
+        "noActions": "Derzeit keine Aktionen verfügbar."
+      }
+    }
   },
   "Content": {
     "title": "Inhalt",
     "description": "Artikel, Academy-Kurse und Studierendenzugang auf einen Blick.",
+    "moduleTitle": "Inhalt",
+    "moduleDescription": "Artikel, Kurse, Übersetzungen.",
     "articlesTitle": "Artikel",
     "coursesTitle": "Academy-Kurse",
     "statTotal": "Gesamt",
@@ -292,6 +405,81 @@
       "developer": "Entwickler",
       "agent": "Agenten",
       "testimonial": "Referenzen"
+    }
+  },
+  "Catalog": {
+    "home": {
+      "title": "Katalog",
+      "description": "Immobilien, Bauträger und Referenzen auf einen Blick.",
+      "kpi": {
+        "properties": "Immobilien",
+        "propertiesSub": "{count, plural, =0 {keine verfügbar} one {# verfügbar} other {# verfügbar}}",
+        "featured": "Hervorgehobene Angebote",
+        "developers": "Bauträger",
+        "developersSub": "{count, plural, =0 {keine hervorgehoben} one {# hervorgehoben} other {# hervorgehoben}}",
+        "testimonials": "Referenzen",
+        "testimonialsSub": "Durchschnittsbewertung {rating}/5"
+      },
+      "actions": {
+        "newProperty": "Neue Immobilie",
+        "newDeveloper": "Neuer Bauträger",
+        "newTestimonial": "Neue Referenz"
+      },
+      "recent": {
+        "propertiesTitle": "Neueste Immobilien",
+        "testimonialsTitle": "Neueste Referenzen",
+        "empty": "Hier ist noch nichts.",
+        "viewAll": "Alle anzeigen"
+      }
+    }
+  },
+  "Locations": {
+    "home": {
+      "title": "Standorte",
+      "description": "Landkreise, Städte und Markenseiten.",
+      "kpi": {
+        "counties": "Landkreise",
+        "cities": "Städte",
+        "brandCurated": "Markenkuratierte Städte",
+        "brandCuratedSub": "{tge} TGE · {revery} Revery"
+      },
+      "actions": {
+        "newCity": "Neue Stadt",
+        "editBrandVisibility": "Markensichtbarkeit bearbeiten"
+      },
+      "brandVisibility": {
+        "title": "Markenseiten",
+        "description": "Städte, die für die Startseite jeder Marke kuratiert sind.",
+        "brandTge": "TGE",
+        "brandRevery": "Revery",
+        "editAction": "Bearbeiten",
+        "emptyRow": "noch keine"
+      }
+    }
+  },
+  "Finance": {
+    "home": {
+      "title": "Finanzen",
+      "description": "Bankzinsen und Makro-Indikatoren.",
+      "kpi": {
+        "bankRates": "Aktive Bankzinsen",
+        "freshnessLabel": "Älteste Aktualisierung",
+        "freshnessNone": "Noch keine aktiven Zinssätze.",
+        "eurRon": "EUR / RON",
+        "ircc": "IRCC",
+        "syncedLabel": "Synchronisiert",
+        "updatedLabel": "Aktualisiert",
+        "indicatorMissing": "—"
+      },
+      "actions": {
+        "newBankRate": "Neuer Bankzins",
+        "refreshBnr": "BNR-Kurs aktualisieren"
+      },
+      "toasts": {
+        "bnrSyncSuccess": "EUR / RON von BNR synchronisiert ({value})",
+        "bnrSyncFailed": "BNR-Synchronisierung fehlgeschlagen: {reason}",
+        "bnrSyncUnknownError": "unbekannter Fehler"
+      }
     }
   },
   "Properties": {
@@ -334,7 +522,12 @@
     "deleteFailed": "Fehler beim Löschen des Bauträgers",
     "created": "Bauträger erstellt",
     "updated": "Bauträger aktualisiert",
-    "imageUploadFailed": "Gespeichert, aber Logo-Upload fehlgeschlagen. Bearbeiten Sie, um es erneut zu versuchen."
+    "imageUploadFailed": "Gespeichert, aber Logo-Upload fehlgeschlagen. Bearbeiten Sie, um es erneut zu versuchen.",
+    "rebuildCounts": "Zähler neu berechnen",
+    "rebuildCountsHint": "Berechnet die Projektanzahl für jeden Bauträger aus den aktiven Immobilien neu.",
+    "rebuildCountsClean": "Alle Zähler sind korrekt ({checked} Bauträger geprüft)",
+    "rebuildCountsFixed": "{updated} von {checked} Zählern korrigiert",
+    "rebuildCountsFailed": "Neuberechnung der Zähler fehlgeschlagen"
   },
   "Agents": {
     "title": "Makler",
@@ -354,7 +547,14 @@
     "deleteFailed": "Fehler beim Löschen des Maklers",
     "created": "Makler erstellt",
     "updated": "Makler aktualisiert",
-    "imageUploadFailed": "Gespeichert, aber Foto-Upload fehlgeschlagen. Bearbeiten Sie, um es erneut zu versuchen."
+    "imageUploadFailed": "Gespeichert, aber Foto-Upload fehlgeschlagen. Bearbeiten Sie, um es erneut zu versuchen.",
+    "activateAction": "Aktivieren",
+    "deactivateAction": "Deaktivieren",
+    "activated": "Makler aktiviert",
+    "deactivated": "Makler deaktiviert",
+    "deactivateConfirmTitle": "Makler deaktivieren?",
+    "deactivateConfirmDescription": "Der Makler verliert den Zugriff auf seine Listings und Anfragen bis zur Reaktivierung. Das Profil bleibt erhalten und Immobilien bleiben zugewiesen.",
+    "statusChangeFailed": "Statusänderung des Maklers fehlgeschlagen"
   },
   "Invitations": {
     "inviteAgent": "Makler einladen",
@@ -719,6 +919,8 @@
     "published": "Artikel veröffentlicht",
     "unpublished": "Artikel als Entwurf markiert",
     "statusChangeFailed": "Statusänderung fehlgeschlagen",
+    "confirmUnpublishTitle": "Artikel als Entwurf markieren?",
+    "confirmUnpublishDescription": "Der Artikel wird auf der öffentlichen Website nicht mehr angezeigt. Sie können ihn jederzeit wieder veröffentlichen.",
     "deleteTitle": "Artikel löschen",
     "deleteDescription": "Der Artikel wird dauerhaft gelöscht.",
     "deleted": "Artikel gelöscht",
@@ -780,6 +982,8 @@
     "columnLinked": "Verknüpft",
     "columnSource": "Quelle",
     "columnReceived": "Erhalten",
+    "filterSource": "Quelle",
+    "filterSourcePlaceholder": "z. B. revery-contact",
     "markRead": "Als gelesen markieren",
     "archive": "Archivieren",
     "reopen": "Wieder öffnen",
@@ -832,7 +1036,11 @@
     "deleted": "Landkreis gelöscht",
     "deleteFailed": "Fehler beim Löschen des Landkreises",
     "created": "Landkreis erstellt",
-    "createFailed": "Fehler beim Erstellen des Landkreises"
+    "createFailed": "Fehler beim Erstellen des Landkreises",
+    "editCounty": "Landkreis bearbeiten",
+    "editCountyDescription": "Name, Slug, Code oder Koordinaten aktualisieren. Eine Slug-Änderung bricht öffentliche URLs, die darauf verweisen.",
+    "updated": "Landkreis aktualisiert",
+    "updateFailed": "Fehler beim Aktualisieren des Landkreises"
   },
   "Testimonials": {
     "title": "Referenzen",

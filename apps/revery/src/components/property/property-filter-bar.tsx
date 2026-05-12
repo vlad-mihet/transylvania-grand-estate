@@ -248,7 +248,10 @@ export function PropertyFilterBar({
               value={filters.type}
               onValueChange={(v) => updateFilter("type", v)}
             >
-              <SelectTrigger className={`${FILTER_STYLES.trigger} w-full`}>
+              <SelectTrigger
+                aria-label={t("type")}
+                className={`${FILTER_STYLES.trigger} w-full`}
+              >
                 <SelectValue placeholder={t("allTypes")} />
               </SelectTrigger>
               <SelectContent>
@@ -268,7 +271,10 @@ export function PropertyFilterBar({
               value={filters.transaction}
               onValueChange={(v) => updateFilter("transaction", v)}
             >
-              <SelectTrigger className={`${FILTER_STYLES.trigger} w-full`}>
+              <SelectTrigger
+                aria-label={t("transaction")}
+                className={`${FILTER_STYLES.trigger} w-full`}
+              >
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
@@ -302,7 +308,10 @@ export function PropertyFilterBar({
               value={filters.radius}
               onValueChange={(v) => updateFilter("radius", v)}
             >
-              <SelectTrigger className={`${FILTER_STYLES.trigger} w-full`}>
+              <SelectTrigger
+                aria-label={t("radius")}
+                className={`${FILTER_STYLES.trigger} w-full`}
+              >
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>

@@ -120,6 +120,13 @@
   --container-px: 1rem;
   --container-offset: max(0px, calc((100vw - var(--container-max-w)) / 2));
   --container-inset: calc(var(--container-offset) + var(--container-px));
+
+  /* Top "headroom" gutter for fixed headers. 0.5rem (8px) is on the 8pt grid
+     and keeps utility-bar content from kissing the viewport edge.
+     env(safe-area-inset-top) auto-extends past the notch on iOS PWA standalone
+     mode (≈44px on notched iPhones) — falls back to the 8px floor everywhere
+     else (desktop browsers, Android, non-PWA Safari). */
+  --header-safe-top: max(env(safe-area-inset-top), 0.5rem);
 }
 
 @media (min-width: 640px) {

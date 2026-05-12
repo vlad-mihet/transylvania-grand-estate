@@ -294,7 +294,7 @@ export class CitiesService {
   }
 
   async update(id: string, dto: UpdateCityDto) {
-    await this.ensureExists(id);
+    const existing = await this.ensureExists(id);
     const data: Prisma.CityUpdateInput = {};
 
     const { live, draft } = applyDraftMode(
@@ -315,6 +315,7 @@ export class CitiesService {
     // tagged with exactly `dto.brands`. Wrapped in a single transaction with
     // the row update so a partial failure doesn't leave the city's brand set
     // half-applied.
+    let updated;
     if (dto.brands !== undefined) {
       const desired = new Set<Brand>(dto.brands);
       const current = await this.prisma.cityBrand.findMany({
@@ -325,8 +326,8 @@ export class CitiesService {
       const toAdd: Brand[] = [...desired].filter((b) => !currentSet.has(b));
       const toRemove: Brand[] = [...currentSet].filter((b) => !desired.has(b));
 
-      return this.prisma.$transaction(async (tx) => {
-        const updated = await tx.city.update({ where: { id }, data });
+      updated = await this.prisma.$transaction(async (tx) => {
+        const u = await tx.city.update({ where: { id }, data });
         if (toAdd.length > 0) {
           await tx.cityBrand.createMany({
             data: toAdd.map((brand) => ({ cityId: id, brand })),
@@ -338,25 +339,45 @@ export class CitiesService {
             where: { cityId: id, brand: { in: toRemove } },
           });
         }
-        return updated;
+        return u;
       });
+    } else {
+      updated = await this.prisma.city.update({ where: { id }, data });
     }
 
-    return this.prisma.city.update({ where: { id }, data });
+    // Replacing `image` via PATCH orphans the prior upload — `uploadImage`
+    // handles its own flow. Seed-baked /images/cities/... paths are filtered
+    // by extractStoragePath so the call no-ops on those.
+    if (
+      dto.image !== undefined &&
+      existing.image &&
+      existing.image !== dto.image
+    ) {
+      await this.uploadsService.deleteByPublicUrl(existing.image, 'cities');
+    }
+    return updated;
   }
 
   async remove(id: string) {
-    await this.ensureExists(id);
-    return this.prisma.city.delete({ where: { id } });
+    const existing = await this.ensureExists(id);
+    const deleted = await this.prisma.city.delete({ where: { id } });
+    // City.image is often a seed-baked /images/cities/<slug>.jpg static path;
+    // extractStoragePath filters those out so we only touch real uploads.
+    await this.uploadsService.deleteByPublicUrl(existing.image, 'cities');
+    return deleted;
   }
 
   async uploadImage(id: string, file: Express.Multer.File) {
-    await this.ensureExists(id);
+    const existing = await this.ensureExists(id);
     const result = await this.uploadsService.uploadFile(file, 'cities');
-    return this.prisma.city.update({
+    const updated = await this.prisma.city.update({
       where: { id },
       data: { image: result.publicUrl },
     });
+    if (existing.image && existing.image !== result.publicUrl) {
+      await this.uploadsService.deleteByPublicUrl(existing.image, 'cities');
+    }
+    return updated;
   }
 
   /**

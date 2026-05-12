@@ -70,6 +70,18 @@ export class DevelopersController {
     return this.developersService.findBySlug(slug, site);
   }
 
+  /**
+   * Maintenance — recompute `Developer.projectCount` for every developer by
+   * grouping the live Property rows. Useful when soft-deletes, manual SQL,
+   * or relation churn drift the denormalized counter. SUPER_ADMIN-only;
+   * defined before `POST /:id/logo` so the static path matches first.
+   */
+  @Roles(AdminRole.SUPER_ADMIN)
+  @Post('admin/rebuild-counts')
+  async rebuildProjectCounts() {
+    return this.developersService.rebuildProjectCounts();
+  }
+
   @Roles(AdminRole.ADMIN, AdminRole.SUPER_ADMIN)
   @Post()
   async create(@Body() dto: CreateDeveloperDto) {

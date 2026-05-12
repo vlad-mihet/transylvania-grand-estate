@@ -198,7 +198,7 @@ export class DevelopersService {
   }
 
   async update(id: string, dto: UpdateDeveloperDto) {
-    await this.ensureExists(id);
+    const existing = await this.ensureExists(id);
     const data: Prisma.DeveloperUpdateInput = {};
 
     const { live, draft } = applyDraftMode(
@@ -219,22 +219,102 @@ export class DevelopersService {
     if (dto.website !== undefined) data.website = dto.website;
     if (dto.projectCount !== undefined) data.projectCount = dto.projectCount;
     if (dto.featured !== undefined) data.featured = dto.featured;
+    if (dto.coverImage !== undefined) data.coverImage = dto.coverImage;
 
-    return this.prisma.developer.update({ where: { id }, data });
+    const updated = await this.prisma.developer.update({ where: { id }, data });
+    if (
+      dto.logo !== undefined &&
+      existing.logo &&
+      existing.logo !== dto.logo
+    ) {
+      await this.uploadsService.deleteByPublicUrl(existing.logo, 'developers');
+    }
+    if (
+      dto.coverImage !== undefined &&
+      existing.coverImage &&
+      existing.coverImage !== dto.coverImage
+    ) {
+      await this.uploadsService.deleteByPublicUrl(
+        existing.coverImage,
+        'developers',
+      );
+    }
+    return updated;
   }
 
   async remove(id: string) {
-    await this.ensureExists(id);
-    return this.prisma.developer.delete({ where: { id } });
+    const existing = await this.ensureExists(id);
+    const deleted = await this.prisma.developer.delete({ where: { id } });
+    // Best-effort cleanup of any owned upload assets after the DB delete
+    // succeeds. Static seed paths (/images/...) are filtered by extractStoragePath.
+    await this.uploadsService.deleteByPublicUrl(existing.logo, 'developers');
+    await this.uploadsService.deleteByPublicUrl(
+      existing.coverImage,
+      'developers',
+    );
+    return deleted;
+  }
+
+  /**
+   * Recompute `Developer.projectCount` from the live `Property` table.
+   * Returns the number of developers whose count actually changed so the
+   * caller can show "fixed N counts" without surfacing no-op rebuilds.
+   * Implementation: one groupBy + per-developer update inside a transaction
+   * so a partial failure leaves the counts as they were.
+   */
+  async rebuildProjectCounts(): Promise<{ updated: number; checked: number }> {
+    const grouped = await this.prisma.property.groupBy({
+      by: ['developerId'],
+      _count: { _all: true },
+      where: { developerId: { not: null } },
+    });
+    const counts = new Map<string, number>();
+    for (const row of grouped) {
+      if (row.developerId) counts.set(row.developerId, row._count._all);
+    }
+
+    const developers = await this.prisma.developer.findMany({
+      select: { id: true, projectCount: true },
+    });
+
+    const drift = developers
+      .map((d) => ({
+        id: d.id,
+        current: d.projectCount,
+        next: counts.get(d.id) ?? 0,
+      }))
+      .filter((d) => d.current !== d.next);
+
+    if (drift.length === 0) {
+      return { updated: 0, checked: developers.length };
+    }
+
+    await this.prisma.$transaction(
+      drift.map((d) =>
+        this.prisma.developer.update({
+          where: { id: d.id },
+          data: { projectCount: d.next },
+        }),
+      ),
+    );
+
+    this.logger.log(
+      `Rebuilt projectCount for ${drift.length}/${developers.length} developers`,
+    );
+    return { updated: drift.length, checked: developers.length };
   }
 
   async uploadLogo(id: string, file: Express.Multer.File) {
-    await this.ensureExists(id);
+    const existing = await this.ensureExists(id);
     const result = await this.uploadsService.uploadFile(file, 'developers');
-    return this.prisma.developer.update({
+    const updated = await this.prisma.developer.update({
       where: { id },
       data: { logo: result.publicUrl },
     });
+    if (existing.logo && existing.logo !== result.publicUrl) {
+      await this.uploadsService.deleteByPublicUrl(existing.logo, 'developers');
+    }
+    return updated;
   }
 
   private ensureExists(id: string) {

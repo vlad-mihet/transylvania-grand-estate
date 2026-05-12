@@ -205,7 +205,10 @@ export default async function AboutPage() {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {steps.map((step) => (
               <div key={step.key} className="bg-background rounded-2xl p-8">
-                <span className="text-3xl font-bold text-border leading-none">
+                <span
+                  aria-hidden="true"
+                  className="text-3xl font-bold text-muted-foreground leading-none"
+                >
                   {step.num}
                 </span>
                 <h3 className="text-lg font-bold text-foreground mt-4 mb-2">

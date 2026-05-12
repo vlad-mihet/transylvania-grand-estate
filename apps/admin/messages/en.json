@@ -59,12 +59,13 @@
   "Sidebar": {
     "management": "Management",
     "overview": "Overview",
+    "people": "People",
     "catalog": "Catalog",
     "locations": "Locations",
     "content": "Content",
     "finance": "Finance",
     "settings": "Settings",
-    "dashboard": "Dashboard",
+    "dashboard": "Today",
     "properties": "Properties",
     "developers": "Developers",
     "agents": "Agents",
@@ -90,17 +91,61 @@
     "auditLogs": "Audit Log",
     "allSites": "All Sites",
     "navigation": "Navigation",
-    "version": "v0.1"
+    "version": "v0.1",
+    "peopleOverview": "Overview",
+    "peopleTeam": "Team",
+    "peopleAgents": "Agents",
+    "peopleStudents": "Academy Students",
+    "peopleInvitations": "Invitations"
   },
   "CommandPalette": {
     "placeholder": "Jump to, create, run…",
-    "empty": "No matches.",
+    "searchPlaceholder": "Search anything…",
+    "empty": "No results for “{query}”.",
+    "error": "Something went wrong. Try again.",
+    "clearScope": "Clear filter",
+    "recentHeading": "Recent",
+    "quickActionsHeading": "Quick actions",
+    "tipPrefix": "Tip",
+    "tip": "Type to search across properties, agents, cities, and more.",
+    "showAll": "Show all in {group}",
+    "removeFromRecent": "Remove from recent",
+    "resultsAnnouncement": "{count, plural, =0 {No results.} =1 {1 result.} other {# results.}}",
+    "filterHeading": "Filter",
+    "topResultHeading": "Top result",
+    "noScopeResults": "No matches in {group} for “{query}”.",
+    "searchAllCategories": "Search across all categories",
     "groups": {
       "context": "On this page",
       "navigate": "Navigate",
       "create": "Create",
       "finance": "Finance",
-      "system": "System"
+      "system": "System",
+      "entity": {
+        "property": "Properties",
+        "agent": "Agents",
+        "developer": "Developers",
+        "city": "Cities",
+        "county": "Counties",
+        "article": "Articles",
+        "inquiry": "Inquiries",
+        "testimonial": "Testimonials",
+        "bankRate": "Bank Rates",
+        "user": "Users"
+      }
+    },
+    "scope": {
+      "all": "All",
+      "property": "Properties",
+      "agent": "Agents",
+      "developer": "Developers",
+      "city": "Cities",
+      "county": "Counties",
+      "article": "Articles",
+      "inquiry": "Inquiries",
+      "testimonial": "Testimonials",
+      "bankRate": "Bank Rates",
+      "user": "Users"
     },
     "actions": {
       "nav": {
@@ -148,28 +193,6 @@
     "themeLight": "Light",
     "themeDark": "Dark",
     "themeSystem": "System"
-  },
-  "GlobalSearch": {
-    "placeholder": "Search agents, properties, cities…",
-    "shortcutHint": "Press / to search",
-    "loading": "Searching…",
-    "empty": "No results for “{query}”.",
-    "error": "Something went wrong. Try again.",
-    "clear": "Clear search",
-    "showAll": "Show all in {group}",
-    "resultsAnnouncement": "{count, plural, =0 {No results.} =1 {1 result.} other {# results.}}",
-    "footerEnterHint": "↵ open",
-    "footerEscHint": "esc close",
-    "groupProperty": "Properties",
-    "groupAgent": "Agents",
-    "groupDeveloper": "Developers",
-    "groupCity": "Cities",
-    "groupCounty": "Counties",
-    "groupArticle": "Articles",
-    "groupInquiry": "Inquiries",
-    "groupTestimonial": "Testimonials",
-    "groupBankRate": "Bank Rates",
-    "groupUser": "Users"
   },
   "ForgotPassword": {
     "title": "Forgot your password?",
@@ -237,6 +260,8 @@
   "Dashboard": {
     "title": "Dashboard",
     "description": "Overview of your real estate platform",
+    "todayTitle": "Today",
+    "todayDescription": "What needs your attention right now.",
     "properties": "Properties",
     "developers": "Developers",
     "agents": "Agents",
@@ -251,11 +276,99 @@
     "emptyInquiries": "No inquiries yet",
     "emptyProperties": "No properties yet",
     "emptyArticles": "No articles yet",
-    "viewAll": "View all"
+    "viewAll": "View all",
+    "attention": {
+      "newInquiries": "New inquiries",
+      "draftArticles": "Draft articles",
+      "missingEn": "Missing English",
+      "pendingAcademyInvites": "Pending Academy invitations",
+      "suspendedUsers": "Suspended team members",
+      "auditFailures": "Audit failures",
+      "allClear": "Nothing needs attention right now."
+    }
+  },
+  "People": {
+    "home": {
+      "title": "People",
+      "description": "Everyone on the platform: team, agents, students.",
+      "kpi": {
+        "team": "Team",
+        "agents": "Agents",
+        "students": "Academy Students",
+        "pendingInvites": "{count, plural, =0 {no pending invites} one {# pending invite} other {# pending invites}}",
+        "noLogin": "{count, plural, =0 {all linked} one {# without login} other {# without login}}"
+      },
+      "actions": {
+        "inviteTeammate": "Invite teammate",
+        "inviteAgent": "Invite agent",
+        "inviteStudent": "Invite student"
+      },
+      "empty": {
+        "team": "No team members yet.",
+        "agents": "No agents yet.",
+        "students": "No students yet.",
+        "recentInvites": "No invitations yet.",
+        "recentSignins": "No recent sign-ins."
+      },
+      "openTab": "Open",
+      "overlap": {
+        "title": "Email overlap across pools",
+        "body": "{count, plural, =0 {No overlap.} one {# email appears in more than one pool.} other {# emails appear in more than one pool.}}",
+        "showList": "Show overlapping emails"
+      },
+      "recentInvites": {
+        "title": "Recent invitations",
+        "viewAll": "View all"
+      },
+      "recentSignins": {
+        "title": "Recent sign-ins",
+        "viewAll": "View audit log"
+      }
+    },
+    "sourceChip": {
+      "team": "Team",
+      "agent": "Agent",
+      "academy": "Academy"
+    },
+    "accountStatus": {
+      "linked": "Linked",
+      "pendingInvite": "Pending invite",
+      "noLogin": "No login"
+    },
+    "invitations": {
+      "pageTitle": "Invitations",
+      "description": "Pending invites for team, agents, and Academy students.",
+      "tabs": {
+        "team": "Team & Agents",
+        "academy": "Academy"
+      }
+    },
+    "agentDetail": {
+      "tabs": {
+        "access": "Access",
+        "publicProfile": "Public profile"
+      },
+      "access": {
+        "headline": "Account access",
+        "description": "Whether this agent can sign in to the admin platform.",
+        "emailLabel": "Email",
+        "statusLabel": "Status",
+        "invitationExpiresLabel": "Invitation expires",
+        "invitationSentLabel": "Invitation sent",
+        "linkedHelper": "This agent has an Admin login linked to their profile.",
+        "pendingHelper": "An invitation is in flight. They haven't signed in yet.",
+        "noLoginHelper": "This agent has no login. Send an invitation to grant access.",
+        "expiredHelper": "The previous invitation expired. Send a fresh one to retry.",
+        "bouncedHelper": "The invitation email bounced. Verify the address before resending.",
+        "noActions": "No actions available right now."
+      }
+    }
   },
   "Content": {
     "title": "Content",
     "description": "Articles, academy courses, and student access at a glance.",
+    "moduleTitle": "Content",
+    "moduleDescription": "Articles, courses, translations.",
     "articlesTitle": "Articles",
     "coursesTitle": "Academy courses",
     "statTotal": "All",
@@ -292,6 +405,81 @@
       "developer": "Developers",
       "agent": "Agents",
       "testimonial": "Testimonials"
+    }
+  },
+  "Catalog": {
+    "home": {
+      "title": "Catalog",
+      "description": "Properties, developers, and testimonials at a glance.",
+      "kpi": {
+        "properties": "Properties",
+        "propertiesSub": "{count, plural, =0 {none available} one {# available} other {# available}}",
+        "featured": "Featured listings",
+        "developers": "Developers",
+        "developersSub": "{count, plural, =0 {none featured} one {# featured} other {# featured}}",
+        "testimonials": "Testimonials",
+        "testimonialsSub": "Avg rating {rating}/5"
+      },
+      "actions": {
+        "newProperty": "New property",
+        "newDeveloper": "New developer",
+        "newTestimonial": "New testimonial"
+      },
+      "recent": {
+        "propertiesTitle": "Recent properties",
+        "testimonialsTitle": "Recent testimonials",
+        "empty": "Nothing here yet.",
+        "viewAll": "View all"
+      }
+    }
+  },
+  "Locations": {
+    "home": {
+      "title": "Locations",
+      "description": "Counties, cities, and brand homepages.",
+      "kpi": {
+        "counties": "Counties",
+        "cities": "Cities",
+        "brandCurated": "Brand-curated cities",
+        "brandCuratedSub": "{tge} TGE · {revery} Revery"
+      },
+      "actions": {
+        "newCity": "New city",
+        "editBrandVisibility": "Edit brand visibility"
+      },
+      "brandVisibility": {
+        "title": "Brand homepages",
+        "description": "Cities curated for each brand's landing page rotation.",
+        "brandTge": "TGE",
+        "brandRevery": "Revery",
+        "editAction": "Edit",
+        "emptyRow": "none yet"
+      }
+    }
+  },
+  "Finance": {
+    "home": {
+      "title": "Finance",
+      "description": "Bank rates and macro indicators.",
+      "kpi": {
+        "bankRates": "Active bank rates",
+        "freshnessLabel": "Oldest update",
+        "freshnessNone": "No active rates yet.",
+        "eurRon": "EUR / RON",
+        "ircc": "IRCC",
+        "syncedLabel": "Synced",
+        "updatedLabel": "Updated",
+        "indicatorMissing": "—"
+      },
+      "actions": {
+        "newBankRate": "New bank rate",
+        "refreshBnr": "Refresh BNR rate"
+      },
+      "toasts": {
+        "bnrSyncSuccess": "EUR / RON synced from BNR ({value})",
+        "bnrSyncFailed": "BNR sync failed: {reason}",
+        "bnrSyncUnknownError": "unknown error"
+      }
     }
   },
   "Properties": {
@@ -334,7 +522,12 @@
     "deleteFailed": "Failed to delete developer",
     "created": "Developer created",
     "updated": "Developer updated",
-    "imageUploadFailed": "Saved but logo upload failed. Edit to retry."
+    "imageUploadFailed": "Saved but logo upload failed. Edit to retry.",
+    "rebuildCounts": "Rebuild counts",
+    "rebuildCountsHint": "Recompute project counts for every developer from live properties.",
+    "rebuildCountsClean": "All counts already correct ({checked} developers checked)",
+    "rebuildCountsFixed": "Fixed {updated} of {checked} developer counts",
+    "rebuildCountsFailed": "Failed to rebuild project counts"
   },
   "Agents": {
     "title": "Agents",
@@ -354,7 +547,14 @@
     "deleteFailed": "Failed to delete agent",
     "created": "Agent created",
     "updated": "Agent updated",
-    "imageUploadFailed": "Saved but photo upload failed. Edit to retry."
+    "imageUploadFailed": "Saved but photo upload failed. Edit to retry.",
+    "activateAction": "Activate",
+    "deactivateAction": "Deactivate",
+    "activated": "Agent activated",
+    "deactivated": "Agent deactivated",
+    "deactivateConfirmTitle": "Deactivate agent?",
+    "deactivateConfirmDescription": "They will lose access to my-listings and my-inquiries until reactivated. The agent record stays in place; properties remain assigned.",
+    "statusChangeFailed": "Failed to change agent status"
   },
   "Invitations": {
     "inviteAgent": "Invite Agent",
@@ -719,6 +919,8 @@
     "published": "Article published",
     "unpublished": "Article moved back to draft",
     "statusChangeFailed": "Failed to update status",
+    "confirmUnpublishTitle": "Move article back to draft?",
+    "confirmUnpublishDescription": "The article will be hidden from the public site. You can re-publish it any time.",
     "deleteTitle": "Delete article",
     "deleteDescription": "This will permanently delete the article and its cover image is no longer referenced.",
     "deleted": "Article deleted",
@@ -780,6 +982,8 @@
     "columnLinked": "Linked",
     "columnSource": "Source",
     "columnReceived": "Received",
+    "filterSource": "Source",
+    "filterSourcePlaceholder": "e.g. revery-contact",
     "markRead": "Mark as read",
     "archive": "Archive",
     "reopen": "Reopen",
@@ -832,7 +1036,11 @@
     "deleted": "County deleted",
     "deleteFailed": "Failed to delete county",
     "created": "County created",
-    "createFailed": "Failed to create county"
+    "createFailed": "Failed to create county",
+    "editCounty": "Edit County",
+    "editCountyDescription": "Update name, slug, code, or coordinates. Slug changes break public URLs that reference the county.",
+    "updated": "County updated",
+    "updateFailed": "Failed to update county"
   },
   "Testimonials": {
     "title": "Testimonials",

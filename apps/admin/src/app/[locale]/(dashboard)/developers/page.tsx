@@ -4,7 +4,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { apiClient } from "@/lib/api-client";
 import { toast } from "@/lib/toast";
 import { Button, Switch } from "@tge/ui";
-import { Trash2 } from "lucide-react";
+import { Loader2, RefreshCw, Trash2 } from "lucide-react";
 import { useState } from "react";
 import { useTranslations } from "next-intl";
 import type { ApiDeveloper } from "@tge/types";
@@ -75,6 +75,28 @@ export default function DevelopersPage() {
       toast.error(tc("featuredError"));
       queryClient.invalidateQueries({ queryKey: ["developers"] });
     },
+  });
+
+  const rebuildCounts = useMutation({
+    mutationFn: () =>
+      apiClient<{ updated: number; checked: number }>(
+        "/developers/admin/rebuild-counts",
+        { method: "POST" },
+      ),
+    onSuccess: (result) => {
+      queryClient.invalidateQueries({ queryKey: ["developers"] });
+      if (result.updated === 0) {
+        toast.success(t("rebuildCountsClean", { checked: result.checked }));
+      } else {
+        toast.success(
+          t("rebuildCountsFixed", {
+            updated: result.updated,
+            checked: result.checked,
+          }),
+        );
+      }
+    },
+    onError: () => toast.error(t("rebuildCountsFailed")),
   });
 
   const columns: ColumnDef<Developer, unknown>[] = [
@@ -176,6 +198,24 @@ export default function DevelopersPage() {
         list={list}
         columns={columns}
         sortTokens={SORT_TOKENS}
+        headerActions={
+          <Can action="developer.rebuild-counts">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => rebuildCounts.mutate()}
+              disabled={rebuildCounts.isPending}
+              title={t("rebuildCountsHint")}
+            >
+              {rebuildCounts.isPending ? (
+                <Loader2 className="mr-1.5 h-3.5 w-3.5 animate-spin" />
+              ) : (
+                <RefreshCw className="mr-1.5 h-3.5 w-3.5" />
+              )}
+              <span className="hidden sm:inline">{t("rebuildCounts")}</span>
+            </Button>
+          </Can>
+        }
         sortOptions={[
           { value: "name_asc", label: tc("sortNameAsc") },
           { value: "name_desc", label: tc("sortNameDesc") },

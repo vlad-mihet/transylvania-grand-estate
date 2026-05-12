@@ -81,7 +81,10 @@ export type Action =
   | "academy.lesson.update"
   | "academy.lesson.delete"
   | "academy.user.read"
-  | "academy.user.manage";
+  | "academy.user.manage"
+  // Maintenance — recompute denormalized counts (Developer.projectCount).
+  // SUPER_ADMIN-only; ADMIN is omitted from the matrix below intentionally.
+  | "developer.rebuild-counts";
 
 // Map of actions restricted to SUPER_ADMIN capability. Users-page + audit-log
 // are kept here because they sit behind the SUPER_ADMIN role which reads

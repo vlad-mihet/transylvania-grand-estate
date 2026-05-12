@@ -59,12 +59,13 @@
   "Sidebar": {
     "management": "Gestionare",
     "overview": "Prezentare",
+    "people": "Persoane",
     "catalog": "Catalog",
     "locations": "Locații",
     "content": "Conținut",
     "finance": "Financiar",
     "settings": "Setări",
-    "dashboard": "Panou principal",
+    "dashboard": "Astăzi",
     "properties": "Proprietăți",
     "developers": "Dezvoltatori",
     "agents": "Agenți",
@@ -90,17 +91,61 @@
     "auditLogs": "Jurnal audit",
     "allSites": "Toate site-urile",
     "navigation": "Navigare",
-    "version": "v0.1"
+    "version": "v0.1",
+    "peopleOverview": "Privire ansamblu",
+    "peopleTeam": "Echipă",
+    "peopleAgents": "Agenți",
+    "peopleStudents": "Studenți Academy",
+    "peopleInvitations": "Invitații"
   },
   "CommandPalette": {
     "placeholder": "Sari la, creează, rulează…",
-    "empty": "Niciun rezultat.",
+    "searchPlaceholder": "Caută orice…",
+    "empty": "Niciun rezultat pentru „{query}”.",
+    "error": "A apărut o eroare. Încearcă din nou.",
+    "clearScope": "Șterge filtrul",
+    "recentHeading": "Recente",
+    "quickActionsHeading": "Acțiuni rapide",
+    "tipPrefix": "Sfat",
+    "tip": "Scrie pentru a căuta în proprietăți, agenți, orașe și altele.",
+    "showAll": "Arată tot în {group}",
+    "removeFromRecent": "Șterge din recente",
+    "resultsAnnouncement": "{count, plural, =0 {Niciun rezultat.} =1 {1 rezultat.} other {# rezultate.}}",
+    "filterHeading": "Filtru",
+    "topResultHeading": "Cel mai bun rezultat",
+    "noScopeResults": "Nicio potrivire în {group} pentru „{query}”.",
+    "searchAllCategories": "Caută în toate categoriile",
     "groups": {
       "context": "Pe această pagină",
       "navigate": "Navigare",
       "create": "Creează",
       "finance": "Financiar",
-      "system": "Sistem"
+      "system": "Sistem",
+      "entity": {
+        "property": "Proprietăți",
+        "agent": "Agenți",
+        "developer": "Dezvoltatori",
+        "city": "Orașe",
+        "county": "Județe",
+        "article": "Articole",
+        "inquiry": "Solicitări",
+        "testimonial": "Testimoniale",
+        "bankRate": "Dobânzi bancare",
+        "user": "Utilizatori"
+      }
+    },
+    "scope": {
+      "all": "Toate",
+      "property": "Proprietăți",
+      "agent": "Agenți",
+      "developer": "Dezvoltatori",
+      "city": "Orașe",
+      "county": "Județe",
+      "article": "Articole",
+      "inquiry": "Solicitări",
+      "testimonial": "Testimoniale",
+      "bankRate": "Dobânzi",
+      "user": "Utilizatori"
     },
     "actions": {
       "nav": {
@@ -148,28 +193,6 @@
     "themeLight": "Luminoasă",
     "themeDark": "Întunecată",
     "themeSystem": "Sistem"
-  },
-  "GlobalSearch": {
-    "placeholder": "Caută agenți, proprietăți, orașe…",
-    "shortcutHint": "Apasă / pentru a căuta",
-    "loading": "Se caută…",
-    "empty": "Niciun rezultat pentru „{query}”.",
-    "error": "A apărut o eroare. Încearcă din nou.",
-    "clear": "Șterge căutarea",
-    "showAll": "Arată tot în {group}",
-    "resultsAnnouncement": "{count, plural, =0 {Niciun rezultat.} =1 {1 rezultat.} other {# rezultate.}}",
-    "footerEnterHint": "↵ deschide",
-    "footerEscHint": "esc închide",
-    "groupProperty": "Proprietăți",
-    "groupAgent": "Agenți",
-    "groupDeveloper": "Dezvoltatori",
-    "groupCity": "Orașe",
-    "groupCounty": "Județe",
-    "groupArticle": "Articole",
-    "groupInquiry": "Solicitări",
-    "groupTestimonial": "Testimoniale",
-    "groupBankRate": "Dobânzi bancare",
-    "groupUser": "Utilizatori"
   },
   "ForgotPassword": {
     "title": "Ți-ai uitat parola?",
@@ -237,6 +260,8 @@
   "Dashboard": {
     "title": "Panou principal",
     "description": "Prezentare generală a platformei imobiliare",
+    "todayTitle": "Astăzi",
+    "todayDescription": "Ce necesită atenție acum.",
     "properties": "Proprietăți",
     "developers": "Dezvoltatori",
     "agents": "Agenți",
@@ -251,11 +276,99 @@
     "emptyInquiries": "Nicio cerere încă",
     "emptyProperties": "Nicio proprietate încă",
     "emptyArticles": "Niciun articol încă",
-    "viewAll": "Vezi toate"
+    "viewAll": "Vezi toate",
+    "attention": {
+      "newInquiries": "Cereri noi",
+      "draftArticles": "Articole în draft",
+      "missingEn": "Articole netraduse (EN)",
+      "pendingAcademyInvites": "Invitații Academy în așteptare",
+      "suspendedUsers": "Membri suspendați",
+      "auditFailures": "Eșecuri audit",
+      "allClear": "Nimic nu necesită atenție acum."
+    }
+  },
+  "People": {
+    "home": {
+      "title": "Persoane",
+      "description": "Toți oamenii din platformă: echipă, agenți, studenți.",
+      "kpi": {
+        "team": "Echipă",
+        "agents": "Agenți",
+        "students": "Studenți Academy",
+        "pendingInvites": "{count, plural, =0 {nicio invitație în așteptare} one {# invitație în așteptare} few {# invitații în așteptare} other {# invitații în așteptare}}",
+        "noLogin": "{count, plural, =0 {toți cu cont} one {# fără cont} few {# fără cont} other {# fără cont}}"
+      },
+      "actions": {
+        "inviteTeammate": "Invită coechipier",
+        "inviteAgent": "Invită agent",
+        "inviteStudent": "Invită student"
+      },
+      "empty": {
+        "team": "Niciun membru de echipă încă.",
+        "agents": "Niciun agent încă.",
+        "students": "Niciun student încă.",
+        "recentInvites": "Nicio invitație încă.",
+        "recentSignins": "Nicio autentificare recentă."
+      },
+      "openTab": "Deschide",
+      "overlap": {
+        "title": "Email-uri în mai multe pool-uri",
+        "body": "{count, plural, =0 {Nicio suprapunere.} one {# adresă apare în mai multe pool-uri.} few {# adrese apar în mai multe pool-uri.} other {# adrese apar în mai multe pool-uri.}}",
+        "showList": "Vezi suprapunerile"
+      },
+      "recentInvites": {
+        "title": "Invitații recente",
+        "viewAll": "Vezi toate"
+      },
+      "recentSignins": {
+        "title": "Autentificări recente",
+        "viewAll": "Vezi jurnalul de audit"
+      }
+    },
+    "sourceChip": {
+      "team": "Echipă",
+      "agent": "Agent",
+      "academy": "Academy"
+    },
+    "accountStatus": {
+      "linked": "Conectat",
+      "pendingInvite": "Invitație în așteptare",
+      "noLogin": "Fără cont"
+    },
+    "invitations": {
+      "pageTitle": "Invitații",
+      "description": "Invitații în așteptare pentru echipă, agenți și studenți Academy.",
+      "tabs": {
+        "team": "Echipă & Agenți",
+        "academy": "Academy"
+      }
+    },
+    "agentDetail": {
+      "tabs": {
+        "access": "Acces",
+        "publicProfile": "Profil public"
+      },
+      "access": {
+        "headline": "Acces cont",
+        "description": "Dacă acest agent se poate autentifica în platforma admin.",
+        "emailLabel": "Email",
+        "statusLabel": "Stare",
+        "invitationExpiresLabel": "Invitația expiră",
+        "invitationSentLabel": "Invitație trimisă",
+        "linkedHelper": "Acest agent are un cont admin asociat profilului.",
+        "pendingHelper": "O invitație este în așteptare. Încă nu s-a autentificat.",
+        "noLoginHelper": "Acest agent nu are cont. Trimite o invitație pentru a-i acorda acces.",
+        "expiredHelper": "Invitația anterioară a expirat. Trimite una nouă pentru a reîncerca.",
+        "bouncedHelper": "Emailul de invitație a eșuat la livrare. Verifică adresa înainte de retrimitere.",
+        "noActions": "Nicio acțiune disponibilă acum."
+      }
+    }
   },
   "Content": {
     "title": "Conținut",
     "description": "Articole, cursuri Academy și acces studenți, dintr-o privire.",
+    "moduleTitle": "Conținut",
+    "moduleDescription": "Articole, cursuri, traduceri.",
     "articlesTitle": "Articole",
     "coursesTitle": "Cursuri Academy",
     "statTotal": "Total",
@@ -292,6 +405,81 @@
       "developer": "Dezvoltatori",
       "agent": "Agenți",
       "testimonial": "Testimoniale"
+    }
+  },
+  "Catalog": {
+    "home": {
+      "title": "Catalog",
+      "description": "Proprietăți, dezvoltatori și testimoniale dintr-o privire.",
+      "kpi": {
+        "properties": "Proprietăți",
+        "propertiesSub": "{count, plural, =0 {niciuna disponibilă} one {# disponibilă} few {# disponibile} other {# disponibile}}",
+        "featured": "Proprietăți recomandate",
+        "developers": "Dezvoltatori",
+        "developersSub": "{count, plural, =0 {niciunul recomandat} one {# recomandat} few {# recomandați} other {# recomandați}}",
+        "testimonials": "Testimoniale",
+        "testimonialsSub": "Rating mediu {rating}/5"
+      },
+      "actions": {
+        "newProperty": "Proprietate nouă",
+        "newDeveloper": "Dezvoltator nou",
+        "newTestimonial": "Testimonial nou"
+      },
+      "recent": {
+        "propertiesTitle": "Proprietăți recente",
+        "testimonialsTitle": "Testimoniale recente",
+        "empty": "Nimic aici încă.",
+        "viewAll": "Vezi toate"
+      }
+    }
+  },
+  "Locations": {
+    "home": {
+      "title": "Locații",
+      "description": "Județe, orașe și pagini brand.",
+      "kpi": {
+        "counties": "Județe",
+        "cities": "Orașe",
+        "brandCurated": "Orașe curatoriate per brand",
+        "brandCuratedSub": "{tge} TGE · {revery} Revery"
+      },
+      "actions": {
+        "newCity": "Oraș nou",
+        "editBrandVisibility": "Editează vizibilitatea brand"
+      },
+      "brandVisibility": {
+        "title": "Pagini brand",
+        "description": "Orașele curatoriate pentru pagina de start a fiecărui brand.",
+        "brandTge": "TGE",
+        "brandRevery": "Revery",
+        "editAction": "Editează",
+        "emptyRow": "niciunul încă"
+      }
+    }
+  },
+  "Finance": {
+    "home": {
+      "title": "Financiar",
+      "description": "Dobânzi bancare și indicatori macro.",
+      "kpi": {
+        "bankRates": "Dobânzi active",
+        "freshnessLabel": "Cea mai veche actualizare",
+        "freshnessNone": "Nicio dobândă activă încă.",
+        "eurRon": "EUR / RON",
+        "ircc": "IRCC",
+        "syncedLabel": "Sincronizat",
+        "updatedLabel": "Actualizat",
+        "indicatorMissing": "—"
+      },
+      "actions": {
+        "newBankRate": "Dobândă nouă",
+        "refreshBnr": "Actualizează cursul BNR"
+      },
+      "toasts": {
+        "bnrSyncSuccess": "EUR / RON sincronizat de la BNR ({value})",
+        "bnrSyncFailed": "Sincronizarea BNR a eșuat: {reason}",
+        "bnrSyncUnknownError": "eroare necunoscută"
+      }
     }
   },
   "Properties": {
@@ -334,7 +522,12 @@
     "deleteFailed": "Eroare la ștergerea dezvoltatorului",
     "created": "Dezvoltator creat",
     "updated": "Dezvoltator actualizat",
-    "imageUploadFailed": "Salvat, dar încărcarea logo-ului a eșuat. Editează pentru a reîncerca."
+    "imageUploadFailed": "Salvat, dar încărcarea logo-ului a eșuat. Editează pentru a reîncerca.",
+    "rebuildCounts": "Recalculează contoarele",
+    "rebuildCountsHint": "Recalculează numărul de proiecte pentru fiecare dezvoltator pe baza proprietăților active.",
+    "rebuildCountsClean": "Toate contoarele sunt corecte ({checked} dezvoltatori verificați)",
+    "rebuildCountsFixed": "Au fost corectate {updated} din {checked} contoare",
+    "rebuildCountsFailed": "Eroare la recalcularea contoarelor"
   },
   "Agents": {
     "title": "Agenți",
@@ -354,7 +547,14 @@
     "deleteFailed": "Eroare la ștergerea agentului",
     "created": "Agent creat",
     "updated": "Agent actualizat",
-    "imageUploadFailed": "Salvat, dar încărcarea fotografiei a eșuat. Editează pentru a reîncerca."
+    "imageUploadFailed": "Salvat, dar încărcarea fotografiei a eșuat. Editează pentru a reîncerca.",
+    "activateAction": "Activează",
+    "deactivateAction": "Dezactivează",
+    "activated": "Agent activat",
+    "deactivated": "Agent dezactivat",
+    "deactivateConfirmTitle": "Dezactivezi agentul?",
+    "deactivateConfirmDescription": "Va pierde accesul la listările proprii și la cererile proprii până la reactivare. Profilul agentului rămâne, iar proprietățile rămân atribuite.",
+    "statusChangeFailed": "Eroare la schimbarea statusului agentului"
   },
   "Invitations": {
     "inviteAgent": "Invită agent",
@@ -719,6 +919,8 @@
     "published": "Articol publicat",
     "unpublished": "Articol mutat în ciornă",
     "statusChangeFailed": "Eroare la actualizarea statusului",
+    "confirmUnpublishTitle": "Muți articolul înapoi în ciornă?",
+    "confirmUnpublishDescription": "Articolul va fi ascuns de pe site-ul public. Îl poți republica oricând.",
     "deleteTitle": "Șterge articolul",
     "deleteDescription": "Aceasta va șterge permanent articolul.",
     "deleted": "Articol șters",
@@ -780,6 +982,8 @@
     "columnLinked": "Legat de",
     "columnSource": "Sursă",
     "columnReceived": "Primit",
+    "filterSource": "Sursă",
+    "filterSourcePlaceholder": "ex. revery-contact",
     "markRead": "Marchează ca citit",
     "archive": "Arhivează",
     "reopen": "Redeschide",
@@ -832,7 +1036,11 @@
     "deleted": "Județ șters",
     "deleteFailed": "Eroare la ștergerea județului",
     "created": "Județ creat",
-    "createFailed": "Eroare la crearea județului"
+    "createFailed": "Eroare la crearea județului",
+    "editCounty": "Editează județul",
+    "editCountyDescription": "Actualizează numele, slug-ul, codul sau coordonatele. Schimbarea slug-ului poate strica URL-urile publice care fac referire la județ.",
+    "updated": "Județ actualizat",
+    "updateFailed": "Eroare la actualizarea județului"
   },
   "Testimonials": {
     "title": "Testimoniale",

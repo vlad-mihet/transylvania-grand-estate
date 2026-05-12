@@ -60,7 +60,10 @@ export function PropertyListView({
               <div className="hidden sm:flex items-center gap-2">
                 <ArrowUpDown className="h-4 w-4 text-primary shrink-0" />
                 <Select value={sortValue} onValueChange={onSortChange}>
-                  <SelectTrigger className="border-border text-foreground w-[200px] rounded-lg">
+                  <SelectTrigger
+                    aria-label={tFilter("sort")}
+                    className="border-border text-foreground w-[200px] rounded-lg"
+                  >
                     <SelectValue placeholder={tFilter("sort")} />
                   </SelectTrigger>
                   <SelectContent>

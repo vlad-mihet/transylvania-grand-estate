@@ -262,7 +262,7 @@ export class AgentsService {
   }
 
   async update(id: string, dto: UpdateAgentDto) {
-    await this.ensureExists(id);
+    const existing = await this.ensureExists(id);
     const data: Prisma.AgentUpdateInput = {};
 
     const { live, draft } = applyDraftMode(dto, ['bio'] as const, dto.mode);
@@ -277,21 +277,41 @@ export class AgentsService {
     if (dto.photo !== undefined) data.photo = dto.photo;
     if (dto.active !== undefined) data.active = dto.active;
 
-    return this.prisma.agent.update({ where: { id }, data });
+    const updated = await this.prisma.agent.update({ where: { id }, data });
+    // Replacing `photo` via PATCH leaves the prior upload orphaned without
+    // this cleanup — `uploadPhoto` already handles its own flow.
+    if (
+      dto.photo !== undefined &&
+      existing.photo &&
+      existing.photo !== dto.photo
+    ) {
+      await this.uploadsService.deleteByPublicUrl(existing.photo, 'agents');
+    }
+    return updated;
   }
 
   async remove(id: string) {
-    await this.ensureExists(id);
-    return this.prisma.agent.delete({ where: { id } });
+    const existing = await this.ensureExists(id);
+    const deleted = await this.prisma.agent.delete({ where: { id } });
+    // Best-effort cleanup — DB is authoritative; an orphaned object on the
+    // storage layer is recoverable via GC, a failed delete here is not.
+    await this.uploadsService.deleteByPublicUrl(existing.photo, 'agents');
+    return deleted;
   }
 
   async uploadPhoto(id: string, file: Express.Multer.File) {
-    await this.ensureExists(id);
+    const existing = await this.ensureExists(id);
     const result = await this.uploadsService.uploadFile(file, 'agents');
-    return this.prisma.agent.update({
+    const updated = await this.prisma.agent.update({
       where: { id },
       data: { photo: result.publicUrl },
     });
+    // Order: write new URL to DB first so a delete-failure can never strand
+    // a row pointing at a now-missing object.
+    if (existing.photo && existing.photo !== result.publicUrl) {
+      await this.uploadsService.deleteByPublicUrl(existing.photo, 'agents');
+    }
+    return updated;
   }
 
   private ensureExists(id: string) {
