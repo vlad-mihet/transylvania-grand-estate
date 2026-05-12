@@ -19,6 +19,10 @@ import {
   CreateCountyDialog,
   type CountyCreatePayload,
 } from "./_components/create-county-dialog";
+import {
+  EditCountyDialog,
+  type CountyUpdatePayload,
+} from "./_components/edit-county-dialog";
 
 export default function CountiesPage() {
   const queryClient = useQueryClient();
@@ -28,6 +32,7 @@ export default function CountiesPage() {
   const [deleteId, setDeleteId] = useState<string | null>(null);
   const [bulkDeleteOpen, setBulkDeleteOpen] = useState(false);
   const [createOpen, setCreateOpen] = useState(false);
+  const [editing, setEditing] = useState<County | null>(null);
 
   // Counties are universal across brands (TGE + Revery both consume the
   // full set as a public-site filter facet), so this page is plain CRUD —
@@ -75,7 +80,19 @@ export default function CountiesPage() {
     onError: () => toast.error(t("createFailed")),
   });
 
+  const updateMutation = useMutation({
+    mutationFn: ({ id, payload }: { id: string; payload: CountyUpdatePayload }) =>
+      apiClient(`/counties/${id}`, { method: "PATCH", body: payload }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["counties"] });
+      toast.success(t("updated"));
+      setEditing(null);
+    },
+    onError: () => toast.error(t("updateFailed")),
+  });
+
   const columns = buildCountyColumns({
+    onEdit: (county) => setEditing(county),
     onDelete: (id) => setDeleteId(id),
     t: (k, v) =>
       t(
@@ -134,6 +151,16 @@ export default function CountiesPage() {
         onOpenChange={setCreateOpen}
         onSubmit={(payload) => createMutation.mutate(payload)}
         isPending={createMutation.isPending}
+      />
+
+      <EditCountyDialog
+        county={editing}
+        open={!!editing}
+        onOpenChange={(open) => {
+          if (!open) setEditing(null);
+        }}
+        onSubmit={(id, payload) => updateMutation.mutate({ id, payload })}
+        isPending={updateMutation.isPending}
       />
 
       <DeleteDialog

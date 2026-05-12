@@ -2,6 +2,7 @@ import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { Prisma } from '@prisma/client';
 import { PrismaService } from '../prisma/prisma.service';
 import { CreateCountyDto } from './dto/create-county.dto';
+import { UpdateCountyDto } from './dto/update-county.dto';
 import { paginate } from '../common/utils/pagination.util';
 
 const UNPAGINATED_CAP = 100;
@@ -122,6 +123,18 @@ export class CountiesService {
         longitude: dto.longitude,
       },
     });
+  }
+
+  async update(id: string, dto: UpdateCountyDto) {
+    const county = await this.prisma.county.findUnique({ where: { id } });
+    if (!county) throw new NotFoundException('County not found');
+    const data: Prisma.CountyUpdateInput = {};
+    if (dto.name !== undefined) data.name = dto.name;
+    if (dto.slug !== undefined) data.slug = dto.slug;
+    if (dto.code !== undefined) data.code = dto.code;
+    if (dto.latitude !== undefined) data.latitude = dto.latitude;
+    if (dto.longitude !== undefined) data.longitude = dto.longitude;
+    return this.prisma.county.update({ where: { id }, data });
   }
 
   async remove(id: string) {

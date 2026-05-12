@@ -50,7 +50,7 @@ export function EnTranslationsQueue() {
   });
 
   return (
-    <Card className="flex flex-col">
+    <Card id="en-queue" className="flex flex-col scroll-mt-4">
       <CardHeader>
         <div className="flex items-baseline justify-between gap-2">
           <CardTitle className="text-sm">{t("title")}</CardTitle>

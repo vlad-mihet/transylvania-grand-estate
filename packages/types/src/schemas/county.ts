@@ -21,4 +21,13 @@ export const createCountySchema = z
   })
   .strict();
 
+/**
+ * All fields optional — admin partial-update endpoint. Renaming a county is
+ * the common case (typo fix in the create form); changing slug invalidates
+ * any cached public URLs that included it, so the UI should warn before
+ * sending. Mirrors `apps/api/src/counties/dto/update-county.dto.ts`.
+ */
+export const updateCountySchema = createCountySchema.partial().strict();
+
 export type CreateCountyInput = z.infer<typeof createCountySchema>;
+export type UpdateCountyInput = z.infer<typeof updateCountySchema>;

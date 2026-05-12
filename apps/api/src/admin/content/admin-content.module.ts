@@ -5,5 +5,6 @@ import { AdminContentService } from './admin-content.service';
 @Module({
   controllers: [AdminContentController],
   providers: [AdminContentService],
+  exports: [AdminContentService],
 })
 export class AdminContentModule {}

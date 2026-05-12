@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common';
+import { ArticleStatus, CourseStatus } from '@prisma/client';
 import { PrismaService } from '../../prisma/prisma.service';
 
 type LocaleKey = 'ro' | 'en' | 'fr' | 'de';
@@ -26,6 +27,40 @@ export interface MissingEnEntry {
   editHref: string;
 }
 
+type LocalizedTitle = Record<LocaleKey, string | undefined>;
+
+export interface RecentArticleEntry {
+  id: string;
+  slug: string;
+  title: LocalizedTitle;
+  status: ArticleStatus;
+  updatedAt: string;
+  publishedAt: string | null;
+}
+
+export interface RecentCourseEntry {
+  id: string;
+  slug: string;
+  title: LocalizedTitle;
+  status: CourseStatus;
+  updatedAt: string;
+}
+
+export interface ArticleSummary {
+  total: number;
+  drafts: number;
+  published: number;
+  recent: RecentArticleEntry[];
+}
+
+export interface CourseSummary {
+  total: number;
+  drafts: number;
+  published: number;
+  archived: number;
+  recent: RecentCourseEntry[];
+}
+
 type ContentType =
   | 'article'
   | 'course'
@@ -40,9 +75,12 @@ export interface LocaleCompletenessResponse {
   byType: Record<ContentType, TypeStats>;
   missingEn: MissingEnEntry[];
   missingEnTotal: number;
+  articles: ArticleSummary;
+  courses: CourseSummary;
 }
 
 const QUEUE_LIMIT = 12;
+const RECENT_LIMIT = 5;
 
 function isFilled(value: unknown): boolean {
   return typeof value === 'string' && value.trim().length > 0;
@@ -114,6 +152,8 @@ export class AdminContentService {
         select: {
           id: true,
           slug: true,
+          status: true,
+          publishedAt: true,
           updatedAt: true,
           title: true,
           excerpt: true,
@@ -124,6 +164,7 @@ export class AdminContentService {
         select: {
           id: true,
           slug: true,
+          status: true,
           updatedAt: true,
           title: true,
           description: true,
@@ -296,8 +337,81 @@ export class AdminContentService {
     const missingTotal = missing.length;
     const missingEn = missing.slice(0, QUEUE_LIMIT);
 
-    return { byType, missingEn, missingEnTotal: missingTotal };
+    // Article + course status counts and recent items derived from the same
+    // findMany scans above. Avoids a second fan-out from the front-end Content
+    // home (previously 7 round-trips: 3 articles + 4 courses) and keeps the
+    // Dashboard's missingEnTotal call free of extra DB work.
+    const articleSummary = summarizeArticles(articles);
+    const courseSummary = summarizeCourses(courses);
+
+    return {
+      byType,
+      missingEn,
+      missingEnTotal: missingTotal,
+      articles: articleSummary,
+      courses: courseSummary,
+    };
   }
+}
+
+interface ArticleRowForSummary {
+  id: string;
+  slug: string | null;
+  status: ArticleStatus;
+  publishedAt: Date | null;
+  updatedAt: Date;
+  title: unknown;
+}
+
+function summarizeArticles(rows: ArticleRowForSummary[]): ArticleSummary {
+  let drafts = 0;
+  let published = 0;
+  for (const row of rows) {
+    if (row.status === ArticleStatus.draft) drafts += 1;
+    else if (row.status === ArticleStatus.published) published += 1;
+  }
+  const recent = [...rows]
+    .sort((a, b) => b.updatedAt.getTime() - a.updatedAt.getTime())
+    .slice(0, RECENT_LIMIT)
+    .map<RecentArticleEntry>((row) => ({
+      id: row.id,
+      slug: row.slug ?? row.id,
+      title: (row.title ?? {}) as LocalizedTitle,
+      status: row.status,
+      updatedAt: row.updatedAt.toISOString(),
+      publishedAt: row.publishedAt ? row.publishedAt.toISOString() : null,
+    }));
+  return { total: rows.length, drafts, published, recent };
+}
+
+interface CourseRowForSummary {
+  id: string;
+  slug: string | null;
+  status: CourseStatus;
+  updatedAt: Date;
+  title: unknown;
+}
+
+function summarizeCourses(rows: CourseRowForSummary[]): CourseSummary {
+  let drafts = 0;
+  let published = 0;
+  let archived = 0;
+  for (const row of rows) {
+    if (row.status === CourseStatus.draft) drafts += 1;
+    else if (row.status === CourseStatus.published) published += 1;
+    else if (row.status === CourseStatus.archived) archived += 1;
+  }
+  const recent = [...rows]
+    .sort((a, b) => b.updatedAt.getTime() - a.updatedAt.getTime())
+    .slice(0, RECENT_LIMIT)
+    .map<RecentCourseEntry>((row) => ({
+      id: row.id,
+      slug: row.slug ?? row.id,
+      title: (row.title ?? {}) as LocalizedTitle,
+      status: row.status,
+      updatedAt: row.updatedAt.toISOString(),
+    }));
+  return { total: rows.length, drafts, published, archived, recent };
 }
 
 function pickEntityDisplay(

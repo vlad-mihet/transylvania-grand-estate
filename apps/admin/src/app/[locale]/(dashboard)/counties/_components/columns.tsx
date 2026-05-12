@@ -1,7 +1,11 @@
 "use client";
 
+import { Button, Tooltip, TooltipContent, TooltipTrigger } from "@tge/ui";
+import { Pencil } from "lucide-react";
+import { useTranslations } from "next-intl";
 import type { ApiCounty } from "@tge/types";
 import type { ColumnDef } from "@/components/resource/resource-table";
+import { Can } from "@/components/shared/can";
 import { Mono, MonoTag } from "@/components/shared/mono";
 import { RowActions } from "@/components/shared/row-actions";
 
@@ -13,11 +17,34 @@ export type County = ApiCounty & {
 };
 
 interface BuildColumnsArgs {
+  onEdit: (county: County) => void;
   onDelete: (id: string) => void;
   t: (key: string, values?: Record<string, string>) => string;
 }
 
+function EditCountyButton({ onClick }: { onClick: () => void }) {
+  const tc = useTranslations("Common");
+  return (
+    <Can action="county.update">
+      <Tooltip>
+        <TooltipTrigger asChild>
+          <Button
+            variant="ghost"
+            size="icon-sm"
+            aria-label={tc("edit")}
+            onClick={onClick}
+          >
+            <Pencil />
+          </Button>
+        </TooltipTrigger>
+        <TooltipContent>{tc("edit")}</TooltipContent>
+      </Tooltip>
+    </Can>
+  );
+}
+
 export function buildCountyColumns({
+  onEdit,
   onDelete,
   t,
 }: BuildColumnsArgs): ColumnDef<County, unknown>[] {
@@ -71,12 +98,13 @@ export function buildCountyColumns({
     {
       id: "actions",
       header: "",
-      size: 40,
+      size: 80,
       enableSorting: false,
       cell: ({ row }) => (
         <RowActions
           onDelete={() => onDelete(row.original.id)}
           permissions={{ delete: "county.delete" }}
+          extra={<EditCountyButton onClick={() => onEdit(row.original)} />}
         />
       ),
     },
