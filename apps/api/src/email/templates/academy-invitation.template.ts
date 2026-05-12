@@ -1,11 +1,10 @@
 /**
  * Academy invitation email. Separate from the agent template because the
  * copy is about joining a study platform, not a real-estate workplace.
- * Localised EN + RO in v1; DE/FR follow when the student locale picker
- * reaches production.
+ * All four locales supported (Phase 5).
  */
 
-export type AcademyInvitationLocale = 'en' | 'ro';
+export type AcademyInvitationLocale = 'en' | 'ro' | 'fr' | 'de';
 
 export interface AcademyInvitationInput {
   name: string;
@@ -58,6 +57,44 @@ const COPY: Record<
     fallback: 'Dacă butonul nu funcționează, copiază acest URL în browser:',
     signoff: 'Ne vedem în aplicație,\nEchipa TGE Academy',
   },
+  fr: {
+    subject: 'Vous avez été invité à TGE Academy',
+    heading: (name) => `Bienvenue, ${name} !`,
+    intro: (invitedBy, course) =>
+      course
+        ? `${invitedBy} vous a invité au cours « ${course} » sur TGE Academy. Cliquez sur le bouton ci-dessous pour configurer votre compte — vous pouvez vous connecter avec Google ou définir un mot de passe.`
+        : `${invitedBy} vous a invité à TGE Academy. Cliquez sur le bouton ci-dessous pour configurer votre compte — vous pouvez vous connecter avec Google ou définir un mot de passe.`,
+    cta: 'Commencer la formation',
+    expiresNote: (date) => `Ce lien expire le ${date}.`,
+    fallback: "Si le bouton ne fonctionne pas, collez cette URL dans votre navigateur :",
+    signoff: "À très bientôt,\nL'équipe TGE Academy",
+  },
+  de: {
+    subject: 'Sie wurden zur TGE Academy eingeladen',
+    heading: (name) => `Willkommen, ${name}!`,
+    intro: (invitedBy, course) =>
+      course
+        ? `${invitedBy} hat Sie zum Kurs „${course}" auf der TGE Academy eingeladen. Klicken Sie auf die Schaltfläche unten, um Ihr Konto einzurichten — Sie können sich mit Google anmelden oder ein Passwort festlegen.`
+        : `${invitedBy} hat Sie zur TGE Academy eingeladen. Klicken Sie auf die Schaltfläche unten, um Ihr Konto einzurichten — Sie können sich mit Google anmelden oder ein Passwort festlegen.`,
+    cta: 'Lernen beginnen',
+    expiresNote: (date) => `Dieser Link läuft am ${date} ab.`,
+    fallback: 'Wenn die Schaltfläche nicht funktioniert, fügen Sie diese URL in Ihren Browser ein:',
+    signoff: 'Bis bald,\nDas TGE Academy-Team',
+  },
+};
+
+const DATE_LOCALE_MAP: Record<AcademyInvitationLocale, string> = {
+  en: 'en-GB',
+  ro: 'ro-RO',
+  fr: 'fr-FR',
+  de: 'de-DE',
+};
+
+const INVITED_BY_DEFAULT: Record<AcademyInvitationLocale, string> = {
+  en: 'An administrator',
+  ro: 'Un administrator',
+  fr: 'Un administrateur',
+  de: 'Ein Administrator',
 };
 
 const escapeHtml = (s: string): string =>
@@ -78,10 +115,9 @@ export function renderAcademyInvitation(
 ): RenderedEmail {
   const locale: AcademyInvitationLocale = input.locale ?? 'ro';
   const copy = COPY[locale];
-  const invitedBy =
-    input.invitedByName ?? (locale === 'ro' ? 'Un administrator' : 'An administrator');
+  const invitedBy = input.invitedByName ?? INVITED_BY_DEFAULT[locale];
   const expires = new Intl.DateTimeFormat(
-    locale === 'ro' ? 'ro-RO' : 'en-GB',
+    DATE_LOCALE_MAP[locale],
     { day: '2-digit', month: 'long', year: 'numeric' },
   ).format(input.expiresAt);
 

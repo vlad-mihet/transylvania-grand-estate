@@ -20,6 +20,96 @@
       "chalet": "Chalet",
       "mansion": "Conac",
       "palace": "Palat"
+    },
+    "actions": {
+      "submit": "Trimite",
+      "cancel": "Anulează",
+      "save": "Salvează",
+      "delete": "Șterge",
+      "close": "Închide",
+      "back": "Înapoi",
+      "next": "Următorul",
+      "retry": "Reîncearcă",
+      "confirm": "Confirmă",
+      "edit": "Editează",
+      "search": "Caută"
+    },
+    "locale": {
+      "label": "Limbă",
+      "switchTo": "Schimbă la {language}"
+    },
+    "errors": {
+      "network": "Eroare de rețea. Verifică conexiunea și încearcă din nou.",
+      "server": "Ceva nu a funcționat. Te rugăm să încerci mai târziu.",
+      "unknown": "A apărut o eroare neașteptată. Te rugăm să încerci din nou."
+    }
+  },
+  "Status": {
+    "draft": "Ciornă",
+    "published": "Publicat",
+    "archived": "Arhivat",
+    "pending": "În așteptare",
+    "active": "Activ",
+    "inactive": "Inactiv"
+  },
+  "Errors": {
+    "validation": {
+      "password": {
+        "too_short": "Parola trebuie să aibă cel puțin 12 caractere",
+        "too_long": "Parola este prea lungă",
+        "missing_lowercase": "Parola trebuie să conțină o literă mică",
+        "missing_uppercase": "Parola trebuie să conțină o literă mare",
+        "missing_digit": "Parola trebuie să conțină o cifră",
+        "required": "Parola este obligatorie",
+        "invalid_type": "Parolă invalidă"
+      },
+      "email": {
+        "invalid_email": "Introdu o adresă de email validă",
+        "too_long": "Adresa de email este prea lungă",
+        "required": "Email-ul este obligatoriu"
+      },
+      "name": {
+        "too_short": "Numele este prea scurt",
+        "too_long": "Numele este prea lung",
+        "required": "Numele este obligatoriu"
+      },
+      "phone": {
+        "invalid_format": "Introdu un număr de telefon valid",
+        "too_long": "Numărul de telefon este prea lung"
+      },
+      "message": {
+        "too_short": "Mesajul este prea scurt — adaugă mai multe detalii",
+        "too_long": "Mesajul este prea lung",
+        "required": "Mesajul este obligatoriu"
+      },
+      "gdprConsent": {
+        "required": "Te rugăm să accepți politica de confidențialitate pentru a continua"
+      },
+      "role": {
+        "required_for_set_role": "Alege un rol pentru atribuire"
+      },
+      "grantEnrollment": {
+        "empty_targets": "Adaugă cel puțin un utilizator sau un email pentru a acorda accesul",
+        "too_many_targets": "Poți acorda acces la maximum 500 de utilizatori și email-uri deodată"
+      },
+      "value": {
+        "required": "Acest câmp este obligatoriu",
+        "too_short": "Valoarea este prea scurtă",
+        "too_long": "Valoarea este prea lungă",
+        "too_small": "Valoarea este prea mică",
+        "too_big": "Valoarea este prea mare",
+        "too_few": "Nu sunt suficiente elemente",
+        "too_many": "Prea multe elemente",
+        "invalid_email": "Adresă de email invalidă",
+        "invalid_url": "URL invalid",
+        "invalid_uuid": "Identificator invalid",
+        "invalid_format": "Format invalid",
+        "invalid_string": "Valoare invalidă",
+        "invalid_type": "Tip de valoare invalid",
+        "invalid_choice": "Alege o opțiune validă",
+        "invalid_date": "Dată invalidă",
+        "invalid": "Valoare invalidă"
+      }
     }
   }
 }

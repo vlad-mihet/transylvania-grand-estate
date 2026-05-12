@@ -7,6 +7,7 @@ export {
 } from "./use-inquiry-submission";
 export type {
   InquiryType,
+  InquiryLocale,
   InquiryPayload,
   UseInquirySubmissionOptions,
   InquirySubmissionState,
@@ -14,6 +15,7 @@ export type {
 export {
   useApiFormErrors,
   applyApiFieldErrors,
+  translateFieldError,
   getApiFields,
   type ApiFieldIssue,
 } from "./use-api-form-errors";

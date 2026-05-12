@@ -1,11 +1,11 @@
 /**
  * Agent invitation email template. Inline HTML (not React Email) to keep
  * the API deploy surface small — we can graduate to MJML/React Email later
- * if we need richer layouts. Localised EN + RO in v1; DE/FR follow when
- * the admin UI exposes a language picker on the invite form.
+ * if we need richer layouts. All four locales supported (Phase 5);
+ * fallback to RO when the caller doesn't know the invitee's locale.
  */
 
-export type AgentInvitationLocale = 'en' | 'ro';
+export type AgentInvitationLocale = 'en' | 'ro' | 'fr' | 'de';
 
 export interface AgentInvitationInput {
   firstName: string;
@@ -37,27 +37,63 @@ const COPY: Record<
   }
 > = {
   en: {
-    subject: 'You\u2019ve been invited to join TGE',
+    subject: 'You’ve been invited to join TGE',
     heading: (firstName) => `Welcome, ${firstName}!`,
     intro: (invitedBy) =>
-      `${invitedBy} invited you to join TGE as a real estate agent. Click the button below to set up your account \u2014 you can sign in with Google or set a password.`,
+      `${invitedBy} invited you to join TGE as a real estate agent. Click the button below to set up your account — you can sign in with Google or set a password.`,
     cta: 'Accept invitation',
     expiresNote: (date) => `This link expires on ${date}.`,
     fallback:
-      'If the button doesn\u2019t work, paste this URL into your browser:',
+      'If the button doesn’t work, paste this URL into your browser:',
     signoff: 'See you inside,\nThe TGE team',
   },
   ro: {
     subject: 'Ai fost invitat să te alături TGE',
     heading: (firstName) => `Bun venit, ${firstName}!`,
     intro: (invitedBy) =>
-      `${invitedBy} te-a invitat să te alături TGE ca agent imobiliar. Apasă butonul de mai jos pentru a-ți configura contul \u2014 te poți autentifica prin Google sau îți poți seta o parolă.`,
+      `${invitedBy} te-a invitat să te alături TGE ca agent imobiliar. Apasă butonul de mai jos pentru a-ți configura contul — te poți autentifica prin Google sau îți poți seta o parolă.`,
     cta: 'Acceptă invitația',
     expiresNote: (date) => `Acest link expiră pe ${date}.`,
     fallback:
       'Dacă butonul nu funcționează, copiază acest URL în browser:',
     signoff: 'Ne vedem în aplicație,\nEchipa TGE',
   },
+  fr: {
+    subject: 'Vous avez été invité à rejoindre TGE',
+    heading: (firstName) => `Bienvenue, ${firstName} !`,
+    intro: (invitedBy) =>
+      `${invitedBy} vous a invité à rejoindre TGE en tant qu’agent immobilier. Cliquez sur le bouton ci-dessous pour configurer votre compte — vous pouvez vous connecter avec Google ou définir un mot de passe.`,
+    cta: "Accepter l'invitation",
+    expiresNote: (date) => `Ce lien expire le ${date}.`,
+    fallback:
+      "Si le bouton ne fonctionne pas, collez cette URL dans votre navigateur :",
+    signoff: "À très bientôt,\nL'équipe TGE",
+  },
+  de: {
+    subject: 'Sie wurden eingeladen, TGE beizutreten',
+    heading: (firstName) => `Willkommen, ${firstName}!`,
+    intro: (invitedBy) =>
+      `${invitedBy} hat Sie eingeladen, TGE als Immobilienmakler beizutreten. Klicken Sie auf die Schaltfläche unten, um Ihr Konto einzurichten — Sie können sich mit Google anmelden oder ein Passwort festlegen.`,
+    cta: 'Einladung annehmen',
+    expiresNote: (date) => `Dieser Link läuft am ${date} ab.`,
+    fallback:
+      'Wenn die Schaltfläche nicht funktioniert, fügen Sie diese URL in Ihren Browser ein:',
+    signoff: 'Bis bald,\nDas TGE-Team',
+  },
+};
+
+const DATE_LOCALE_MAP: Record<AgentInvitationLocale, string> = {
+  en: 'en-GB',
+  ro: 'ro-RO',
+  fr: 'fr-FR',
+  de: 'de-DE',
+};
+
+const INVITED_BY_DEFAULT: Record<AgentInvitationLocale, string> = {
+  en: 'An administrator',
+  ro: 'Un administrator',
+  fr: 'Un administrateur',
+  de: 'Ein Administrator',
 };
 
 const escapeHtml = (s: string): string =>
@@ -78,8 +114,8 @@ export function renderAgentInvitation(
 ): RenderedEmail {
   const locale: AgentInvitationLocale = input.locale ?? 'ro';
   const copy = COPY[locale];
-  const invitedBy = input.invitedByName ?? (locale === 'ro' ? 'Un administrator' : 'An administrator');
-  const expires = new Intl.DateTimeFormat(locale === 'ro' ? 'ro-RO' : 'en-GB', {
+  const invitedBy = input.invitedByName ?? INVITED_BY_DEFAULT[locale];
+  const expires = new Intl.DateTimeFormat(DATE_LOCALE_MAP[locale], {
     day: '2-digit',
     month: 'long',
     year: 'numeric',

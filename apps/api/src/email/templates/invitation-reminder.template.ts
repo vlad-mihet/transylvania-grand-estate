@@ -47,6 +47,33 @@ const COPY: Record<
       'Dacă butonul nu funcționează, copiază acest URL în browser:',
     signoff: 'Echipa TGE',
   },
+  fr: {
+    subject: 'Votre invitation TGE expire demain',
+    heading: (firstName) => `Bonjour ${firstName},`,
+    intro: (expires) =>
+      `Petit rappel : l'invitation que nous vous avons envoyée expire le ${expires}. Si vous souhaitez toujours nous rejoindre, cliquez ci-dessous pour configurer votre compte.`,
+    cta: "Accepter l'invitation",
+    fallback:
+      "Si le bouton ne fonctionne pas, collez cette URL dans votre navigateur :",
+    signoff: "L'équipe TGE",
+  },
+  de: {
+    subject: 'Ihre TGE-Einladung läuft morgen ab',
+    heading: (firstName) => `Hallo ${firstName},`,
+    intro: (expires) =>
+      `Kurze Erinnerung: Die Einladung, die wir Ihnen gesendet haben, läuft am ${expires} ab. Wenn Sie noch beitreten möchten, klicken Sie unten, um Ihr Konto einzurichten.`,
+    cta: 'Einladung annehmen',
+    fallback:
+      'Wenn die Schaltfläche nicht funktioniert, fügen Sie diese URL in Ihren Browser ein:',
+    signoff: 'Das TGE-Team',
+  },
+};
+
+const DATE_LOCALE_MAP: Record<AgentInvitationLocale, string> = {
+  en: 'en-GB',
+  ro: 'ro-RO',
+  fr: 'fr-FR',
+  de: 'de-DE',
 };
 
 const escapeHtml = (s: string): string =>
@@ -67,7 +94,7 @@ export function renderInvitationReminder(
 ): RenderedEmail {
   const locale: AgentInvitationLocale = input.locale ?? 'ro';
   const copy = COPY[locale];
-  const expires = new Intl.DateTimeFormat(locale === 'ro' ? 'ro-RO' : 'en-GB', {
+  const expires = new Intl.DateTimeFormat(DATE_LOCALE_MAP[locale], {
     day: '2-digit',
     month: 'long',
     year: 'numeric',

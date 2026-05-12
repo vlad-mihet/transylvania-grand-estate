@@ -259,6 +259,7 @@ export const bulkGrantEnrollmentSchema = z
     {
       message: "Provide at least one userId or email",
       path: ["userIds"],
+      params: { code: "validation.grantEnrollment.empty_targets" },
     },
   )
   .refine(
@@ -267,6 +268,7 @@ export const bulkGrantEnrollmentSchema = z
     {
       message: "Combined userIds + emails must be ≤ 500",
       path: ["emails"],
+      params: { code: "validation.grantEnrollment.too_many_targets" },
     },
   );
 

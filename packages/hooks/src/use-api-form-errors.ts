@@ -2,6 +2,7 @@
 
 import { useEffect, useRef } from "react";
 import type {
+  FieldError,
   FieldPath,
   FieldValues,
   UseFormReturn,
@@ -13,11 +14,18 @@ import { ApiError } from "@tge/api-client";
  * `HttpExceptionFilter` emits `body.error.fields[]` when a request fails
  * Zod validation; `@tge/api-client`'s `ApiError` surfaces it as the
  * `.fields` property.
+ *
+ * `code` is a STABLE machine code like `validation.password.too_short`
+ * derived server-side from the Zod issue (see `apps/api/src/common/filters/
+ * zod-error-code.ts`). Frontends use it as a translation key and fall back
+ * to the English `message` if no translation matches. `zodCode` is the raw
+ * Zod identifier (`too_small`, `invalid_string`, …) kept for debugging.
  */
 export interface ApiFieldIssue {
   path: string;
   message: string;
   code?: string;
+  zodCode?: string;
 }
 
 export function getApiFields(error: unknown): ApiFieldIssue[] | undefined {
@@ -39,6 +47,10 @@ export function getApiFields(error: unknown): ApiFieldIssue[] | undefined {
  * so the input that failed validation lights up with the API's message.
  * Returns `true` if any field errors were applied; `false` if the error
  * wasn't a Zod failure (caller can fall back to a toast).
+ *
+ * The stable code lands in `type` so callers using `translateFieldError`
+ * (below) can render a localized message; the raw English `message` is the
+ * fallback when no translation matches.
  */
 export function applyApiFieldErrors<T extends FieldValues>(
   form: UseFormReturn<T>,
@@ -54,6 +66,41 @@ export function applyApiFieldErrors<T extends FieldValues>(
     });
   }
   return true;
+}
+
+/**
+ * Render a localized error message for a react-hook-form field error,
+ * preferring a translation lookup by stable code over the raw English
+ * server message.
+ *
+ * Pattern at the form input:
+ *
+ *   const t = useTranslations();
+ *   <span>{translateFieldError(errors.password, t)}</span>
+ *
+ * `translate` receives `(code, fallback)` and must return the translated
+ * string OR `fallback` when the key is missing. Pass an adapter shaped
+ * around the host i18n library:
+ *
+ *   (code, fallback) => t.has(code) ? t(code) : fallback
+ *
+ * Returns an empty string when the field has no error so the caller can
+ * always render the result without a guard.
+ */
+export function translateFieldError(
+  error: FieldError | undefined,
+  translate: (code: string, fallback: string) => string,
+): string {
+  if (!error) return "";
+  const fallback = error.message ?? "";
+  // `type` carries the stable code (`validation.password.too_short`) when
+  // set by `applyApiFieldErrors`. Client-side validators (zodResolver et al)
+  // set `type` to Zod's raw issue code — those won't match a translation
+  // key, so `translate` should return the fallback.
+  if (typeof error.type === "string" && error.type.startsWith("validation.")) {
+    return translate(error.type, fallback);
+  }
+  return fallback;
 }
 
 /**

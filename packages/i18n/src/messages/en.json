@@ -20,6 +20,96 @@
       "chalet": "Chalet",
       "mansion": "Mansion",
       "palace": "Palace"
+    },
+    "actions": {
+      "submit": "Submit",
+      "cancel": "Cancel",
+      "save": "Save",
+      "delete": "Delete",
+      "close": "Close",
+      "back": "Back",
+      "next": "Next",
+      "retry": "Retry",
+      "confirm": "Confirm",
+      "edit": "Edit",
+      "search": "Search"
+    },
+    "locale": {
+      "label": "Language",
+      "switchTo": "Switch to {language}"
+    },
+    "errors": {
+      "network": "Network error. Please check your connection and try again.",
+      "server": "Something went wrong on our side. Please try again later.",
+      "unknown": "An unexpected error occurred. Please try again."
+    }
+  },
+  "Status": {
+    "draft": "Draft",
+    "published": "Published",
+    "archived": "Archived",
+    "pending": "Pending",
+    "active": "Active",
+    "inactive": "Inactive"
+  },
+  "Errors": {
+    "validation": {
+      "password": {
+        "too_short": "Password must be at least 12 characters",
+        "too_long": "Password is too long",
+        "missing_lowercase": "Password must contain a lowercase letter",
+        "missing_uppercase": "Password must contain an uppercase letter",
+        "missing_digit": "Password must contain a digit",
+        "required": "Password is required",
+        "invalid_type": "Password is invalid"
+      },
+      "email": {
+        "invalid_email": "Please enter a valid email address",
+        "too_long": "Email is too long",
+        "required": "Email is required"
+      },
+      "name": {
+        "too_short": "Name is too short",
+        "too_long": "Name is too long",
+        "required": "Name is required"
+      },
+      "phone": {
+        "invalid_format": "Please enter a valid phone number",
+        "too_long": "Phone number is too long"
+      },
+      "message": {
+        "too_short": "Message is too short — please add a bit more detail",
+        "too_long": "Message is too long",
+        "required": "Message is required"
+      },
+      "gdprConsent": {
+        "required": "Please accept the privacy policy to continue"
+      },
+      "role": {
+        "required_for_set_role": "Choose a role to assign"
+      },
+      "grantEnrollment": {
+        "empty_targets": "Add at least one user or email to grant enrollment to",
+        "too_many_targets": "You can grant up to 500 users + emails at once"
+      },
+      "value": {
+        "required": "This field is required",
+        "too_short": "This value is too short",
+        "too_long": "This value is too long",
+        "too_small": "Value is too small",
+        "too_big": "Value is too big",
+        "too_few": "Not enough items",
+        "too_many": "Too many items",
+        "invalid_email": "Invalid email address",
+        "invalid_url": "Invalid URL",
+        "invalid_uuid": "Invalid identifier",
+        "invalid_format": "Invalid format",
+        "invalid_string": "Invalid value",
+        "invalid_type": "Invalid value type",
+        "invalid_choice": "Choose a valid option",
+        "invalid_date": "Invalid date",
+        "invalid": "Invalid value"
+      }
     }
   }
 }

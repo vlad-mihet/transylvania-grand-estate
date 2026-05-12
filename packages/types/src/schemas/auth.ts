@@ -19,12 +19,15 @@ export const passwordPolicy = z
   .max(200)
   .refine((v) => /[a-z]/.test(v), {
     message: "Password must contain a lowercase letter",
+    params: { code: "validation.password.missing_lowercase" },
   })
   .refine((v) => /[A-Z]/.test(v), {
     message: "Password must contain an uppercase letter",
+    params: { code: "validation.password.missing_uppercase" },
   })
   .refine((v) => /\d/.test(v), {
     message: "Password must contain a digit",
+    params: { code: "validation.password.missing_digit" },
   });
 
 export const loginSchema = z
@@ -107,6 +110,7 @@ export const bulkUserActionSchema = z
   .refine((v) => v.action !== "set-role" || v.role !== undefined, {
     message: "role is required when action is set-role",
     path: ["role"],
+    params: { code: "validation.role.required_for_set_role" },
   });
 
 export type LoginInput = z.infer<typeof loginSchema>;

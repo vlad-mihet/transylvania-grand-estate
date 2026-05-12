@@ -11,11 +11,18 @@ import { ZodValidationException } from 'nestjs-zod';
 import type { ZodError, ZodIssue } from 'zod';
 import type { Request, Response } from 'express';
 import * as Sentry from '@sentry/node';
+import { deriveStableCode } from './zod-error-code';
 
 interface FieldIssue {
   path: string;
   message: string;
+  /** Stable machine code (e.g. `validation.password.too_short`). Clients
+   *  use this as a translation key; falls back to `message` if no
+   *  translation matches. See `deriveStableCode`. */
   code: string;
+  /** Raw Zod issue code (e.g. `too_small`, `invalid_string`). Kept for
+   *  debugging; clients should prefer `code` for routing. */
+  zodCode?: string;
 }
 
 interface ErrorBody {
@@ -166,7 +173,8 @@ export class HttpExceptionFilter implements ExceptionFilter {
         fields: zodError.issues.map((issue: ZodIssue) => ({
           path: issue.path.map(String).join('.'),
           message: issue.message,
-          code: issue.code,
+          code: deriveStableCode(issue),
+          zodCode: issue.code,
         })),
       };
     } else if (exception instanceof HttpException) {

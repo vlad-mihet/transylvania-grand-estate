@@ -20,6 +20,96 @@
       "chalet": "Chalet",
       "mansion": "Manoir",
       "palace": "Palais"
+    },
+    "actions": {
+      "submit": "Envoyer",
+      "cancel": "Annuler",
+      "save": "Enregistrer",
+      "delete": "Supprimer",
+      "close": "Fermer",
+      "back": "Retour",
+      "next": "Suivant",
+      "retry": "Réessayer",
+      "confirm": "Confirmer",
+      "edit": "Modifier",
+      "search": "Rechercher"
+    },
+    "locale": {
+      "label": "Langue",
+      "switchTo": "Passer en {language}"
+    },
+    "errors": {
+      "network": "Erreur réseau. Vérifiez votre connexion et réessayez.",
+      "server": "Une erreur est survenue de notre côté. Veuillez réessayer plus tard.",
+      "unknown": "Une erreur inattendue est survenue. Veuillez réessayer."
+    }
+  },
+  "Status": {
+    "draft": "Brouillon",
+    "published": "Publié",
+    "archived": "Archivé",
+    "pending": "En attente",
+    "active": "Actif",
+    "inactive": "Inactif"
+  },
+  "Errors": {
+    "validation": {
+      "password": {
+        "too_short": "Le mot de passe doit contenir au moins 12 caractères",
+        "too_long": "Le mot de passe est trop long",
+        "missing_lowercase": "Le mot de passe doit contenir une lettre minuscule",
+        "missing_uppercase": "Le mot de passe doit contenir une lettre majuscule",
+        "missing_digit": "Le mot de passe doit contenir un chiffre",
+        "required": "Le mot de passe est obligatoire",
+        "invalid_type": "Mot de passe invalide"
+      },
+      "email": {
+        "invalid_email": "Veuillez saisir une adresse email valide",
+        "too_long": "L'adresse email est trop longue",
+        "required": "L'email est obligatoire"
+      },
+      "name": {
+        "too_short": "Le nom est trop court",
+        "too_long": "Le nom est trop long",
+        "required": "Le nom est obligatoire"
+      },
+      "phone": {
+        "invalid_format": "Veuillez saisir un numéro de téléphone valide",
+        "too_long": "Le numéro de téléphone est trop long"
+      },
+      "message": {
+        "too_short": "Le message est trop court — ajoutez un peu plus de détails",
+        "too_long": "Le message est trop long",
+        "required": "Le message est obligatoire"
+      },
+      "gdprConsent": {
+        "required": "Veuillez accepter la politique de confidentialité pour continuer"
+      },
+      "role": {
+        "required_for_set_role": "Choisissez un rôle à attribuer"
+      },
+      "grantEnrollment": {
+        "empty_targets": "Ajoutez au moins un utilisateur ou un email pour accorder l'inscription",
+        "too_many_targets": "Vous pouvez accorder jusqu'à 500 utilisateurs + emails à la fois"
+      },
+      "value": {
+        "required": "Ce champ est obligatoire",
+        "too_short": "Cette valeur est trop courte",
+        "too_long": "Cette valeur est trop longue",
+        "too_small": "La valeur est trop petite",
+        "too_big": "La valeur est trop grande",
+        "too_few": "Pas assez d'éléments",
+        "too_many": "Trop d'éléments",
+        "invalid_email": "Adresse email invalide",
+        "invalid_url": "URL invalide",
+        "invalid_uuid": "Identifiant invalide",
+        "invalid_format": "Format invalide",
+        "invalid_string": "Valeur invalide",
+        "invalid_type": "Type de valeur invalide",
+        "invalid_choice": "Choisissez une option valide",
+        "invalid_date": "Date invalide",
+        "invalid": "Valeur invalide"
+      }
     }
   }
 }

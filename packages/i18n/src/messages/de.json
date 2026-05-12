@@ -20,6 +20,96 @@
       "chalet": "Chalet",
       "mansion": "Herrenhaus",
       "palace": "Palast"
+    },
+    "actions": {
+      "submit": "Senden",
+      "cancel": "Abbrechen",
+      "save": "Speichern",
+      "delete": "Löschen",
+      "close": "Schließen",
+      "back": "Zurück",
+      "next": "Weiter",
+      "retry": "Erneut versuchen",
+      "confirm": "Bestätigen",
+      "edit": "Bearbeiten",
+      "search": "Suchen"
+    },
+    "locale": {
+      "label": "Sprache",
+      "switchTo": "Zu {language} wechseln"
+    },
+    "errors": {
+      "network": "Netzwerkfehler. Bitte überprüfen Sie Ihre Verbindung und versuchen Sie es erneut.",
+      "server": "Etwas ist auf unserer Seite schiefgelaufen. Bitte versuchen Sie es später erneut.",
+      "unknown": "Ein unerwarteter Fehler ist aufgetreten. Bitte versuchen Sie es erneut."
+    }
+  },
+  "Status": {
+    "draft": "Entwurf",
+    "published": "Veröffentlicht",
+    "archived": "Archiviert",
+    "pending": "Ausstehend",
+    "active": "Aktiv",
+    "inactive": "Inaktiv"
+  },
+  "Errors": {
+    "validation": {
+      "password": {
+        "too_short": "Das Passwort muss mindestens 12 Zeichen lang sein",
+        "too_long": "Das Passwort ist zu lang",
+        "missing_lowercase": "Das Passwort muss einen Kleinbuchstaben enthalten",
+        "missing_uppercase": "Das Passwort muss einen Großbuchstaben enthalten",
+        "missing_digit": "Das Passwort muss eine Ziffer enthalten",
+        "required": "Passwort ist erforderlich",
+        "invalid_type": "Ungültiges Passwort"
+      },
+      "email": {
+        "invalid_email": "Bitte geben Sie eine gültige E-Mail-Adresse ein",
+        "too_long": "Die E-Mail-Adresse ist zu lang",
+        "required": "E-Mail ist erforderlich"
+      },
+      "name": {
+        "too_short": "Der Name ist zu kurz",
+        "too_long": "Der Name ist zu lang",
+        "required": "Name ist erforderlich"
+      },
+      "phone": {
+        "invalid_format": "Bitte geben Sie eine gültige Telefonnummer ein",
+        "too_long": "Die Telefonnummer ist zu lang"
+      },
+      "message": {
+        "too_short": "Die Nachricht ist zu kurz — bitte fügen Sie mehr Details hinzu",
+        "too_long": "Die Nachricht ist zu lang",
+        "required": "Nachricht ist erforderlich"
+      },
+      "gdprConsent": {
+        "required": "Bitte akzeptieren Sie die Datenschutzerklärung, um fortzufahren"
+      },
+      "role": {
+        "required_for_set_role": "Wählen Sie eine Rolle zur Zuweisung"
+      },
+      "grantEnrollment": {
+        "empty_targets": "Fügen Sie mindestens einen Benutzer oder eine E-Mail zur Einschreibung hinzu",
+        "too_many_targets": "Sie können bis zu 500 Benutzer + E-Mails gleichzeitig einschreiben"
+      },
+      "value": {
+        "required": "Dieses Feld ist erforderlich",
+        "too_short": "Dieser Wert ist zu kurz",
+        "too_long": "Dieser Wert ist zu lang",
+        "too_small": "Wert ist zu klein",
+        "too_big": "Wert ist zu groß",
+        "too_few": "Nicht genügend Einträge",
+        "too_many": "Zu viele Einträge",
+        "invalid_email": "Ungültige E-Mail-Adresse",
+        "invalid_url": "Ungültige URL",
+        "invalid_uuid": "Ungültige Kennung",
+        "invalid_format": "Ungültiges Format",
+        "invalid_string": "Ungültiger Wert",
+        "invalid_type": "Ungültiger Werttyp",
+        "invalid_choice": "Wählen Sie eine gültige Option",
+        "invalid_date": "Ungültiges Datum",
+        "invalid": "Ungültiger Wert"
+      }
     }
   }
 }
