@@ -22,6 +22,7 @@ import { UpdateCityDto } from './dto/update-city.dto';
 import { Public } from '../common/decorators/public.decorator';
 import { Roles } from '../common/decorators/roles.decorator';
 import { CurrentSite, SiteContext } from '../common/site';
+import { LocaleScope } from '../common/locale';
 
 @ApiTags('Cities')
 @Controller('cities')
@@ -29,6 +30,7 @@ export class CitiesController {
   constructor(private citiesService: CitiesService) {}
 
   @Public()
+  @LocaleScope('public')
   @Get()
   async findAll(
     @CurrentSite() site: SiteContext,
@@ -64,6 +66,7 @@ export class CitiesController {
   }
 
   @Public()
+  @LocaleScope('public')
   @Get('id/:id')
   async findById(
     @Param('id', ParseUUIDPipe) id: string,
@@ -73,6 +76,7 @@ export class CitiesController {
   }
 
   @Public()
+  @LocaleScope('public')
   @Get(':slug/neighborhoods')
   async findNeighborhoods(
     @Param('slug') slug: string,
@@ -82,6 +86,7 @@ export class CitiesController {
   }
 
   @Public()
+  @LocaleScope('public')
   @Get(':slug')
   async findBySlug(
     @Param('slug') slug: string,

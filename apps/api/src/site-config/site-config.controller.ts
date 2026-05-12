@@ -5,6 +5,7 @@ import { SiteConfigService } from './site-config.service';
 import { UpdateSiteConfigDto } from './dto/update-site-config.dto';
 import { Public } from '../common/decorators/public.decorator';
 import { Roles } from '../common/decorators/roles.decorator';
+import { LocaleScope } from '../common/locale';
 
 @ApiTags('Site Config')
 @Controller('site-config')
@@ -12,6 +13,7 @@ export class SiteConfigController {
   constructor(private siteConfigService: SiteConfigService) {}
 
   @Public()
+  @LocaleScope('public')
   @Get()
   async get() {
     return this.siteConfigService.get();

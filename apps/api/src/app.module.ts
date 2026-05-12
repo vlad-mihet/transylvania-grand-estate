@@ -21,7 +21,9 @@ import { UploadsModule } from './uploads/uploads.module';
 import { InquiriesModule } from './inquiries/inquiries.module';
 import { ArticlesModule } from './articles/articles.module';
 import { AcademyModule } from './academy/academy.module';
+import { AdminCatalogModule } from './admin/catalog/admin-catalog.module';
 import { AdminContentModule } from './admin/content/admin-content.module';
+import { AdminDashboardModule } from './admin/dashboard/admin-dashboard.module';
 import { CountiesModule } from './counties/counties.module';
 import { LocationsModule } from './locations/locations.module';
 import { FinancialDataModule } from './financial-data/financial-data.module';
@@ -40,6 +42,11 @@ import { PasswordResetModule } from './password-reset/password-reset.module';
 import { WebhooksModule } from './webhooks/webhooks.module';
 import { MetricsModule } from './metrics/metrics.module';
 import { SiteModule, SiteMiddleware } from './common/site';
+import {
+  LocaleModule,
+  LocaleMiddleware,
+  LocalizedSerializerInterceptor,
+} from './common/locale';
 import { RequestContextModule } from './common/cls/request-context.module';
 import { FeatureFlagsModule } from './common/config/feature-flags.module';
 
@@ -171,6 +178,7 @@ const serveStaticModules =
     RequestContextModule,
     FeatureFlagsModule,
     SiteModule,
+    LocaleModule,
     PrismaModule,
     AuditModule,
     EmailModule,
@@ -189,7 +197,9 @@ const serveStaticModules =
     InquiriesModule,
     ArticlesModule,
     AcademyModule,
+    AdminCatalogModule,
     AdminContentModule,
+    AdminDashboardModule,
     CountiesModule,
     LocationsModule,
     FinancialDataModule,
@@ -207,10 +217,17 @@ const serveStaticModules =
     { provide: APP_FILTER, useClass: HttpExceptionFilter },
     { provide: APP_INTERCEPTOR, useClass: TransformInterceptor },
     { provide: APP_INTERCEPTOR, useClass: AuditInterceptor },
+    // Innermost (declared last) — sees raw handler return values, collapses
+    // LocalizedString fields when the controller is `@LocaleScope('public')`
+    // and the request lacks `?expand=allLocales`. Passthrough otherwise.
+    { provide: APP_INTERCEPTOR, useClass: LocalizedSerializerInterceptor },
   ],
 })
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer): void {
-    consumer.apply(SiteMiddleware).forRoutes('*');
+    // SiteMiddleware stamps `req.site`; LocaleMiddleware stamps `req.locale`.
+    // Order doesn't matter (they touch independent fields) but keeping them
+    // together makes the request-shaping pipeline easy to read at a glance.
+    consumer.apply(SiteMiddleware, LocaleMiddleware).forRoutes('*');
   }
 }

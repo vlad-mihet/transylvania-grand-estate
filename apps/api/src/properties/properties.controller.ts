@@ -35,6 +35,7 @@ import { OwnsResource } from '../common/decorators/owns-resource.decorator';
 import { OwnershipGuard } from '../common/guards/ownership.guard';
 import type { PrismaService } from '../prisma/prisma.service';
 import { CurrentSite, SiteContext } from '../common/site';
+import { LocaleScope } from '../common/locale';
 
 /**
  * Ownership resolver shared across every property-scoped endpoint (including
@@ -58,6 +59,7 @@ export class PropertiesController {
   constructor(private propertiesService: PropertiesService) {}
 
   @Public()
+  @LocaleScope('public')
   @Get()
   async findAll(
     @Query() query: QueryPropertyDto,
@@ -67,6 +69,11 @@ export class PropertiesController {
     return this.propertiesService.findAll(query, site, user);
   }
 
+  // Intentionally NOT @LocaleScope('public'): map-pins returns only flat
+  // primitives ({ id, slug, latitude, longitude, price, type, heroImageSrc })
+  // with no LocalizedString fields, so collapse would be a no-op that still
+  // pays the walker cost + adds `_servedLocale` payload bytes per pin. The
+  // map view renders thousands of pins per session — keep it lean.
   @Public()
   @Get('map-pins')
   async findMapPins(
@@ -77,6 +84,7 @@ export class PropertiesController {
   }
 
   @Public()
+  @LocaleScope('public')
   @Get('id/:id')
   async findById(
     @Param('id', ParseUUIDPipe) id: string,
@@ -87,6 +95,7 @@ export class PropertiesController {
   }
 
   @Public()
+  @LocaleScope('public')
   @Get(':slug')
   async findBySlug(
     @Param('slug') slug: string,

@@ -16,6 +16,7 @@ import { CreateTestimonialDto } from './dto/create-testimonial.dto';
 import { UpdateTestimonialDto } from './dto/update-testimonial.dto';
 import { Public } from '../common/decorators/public.decorator';
 import { Roles } from '../common/decorators/roles.decorator';
+import { LocaleScope } from '../common/locale';
 
 @ApiTags('Testimonials')
 @Controller('testimonials')
@@ -23,6 +24,7 @@ export class TestimonialsController {
   constructor(private testimonialsService: TestimonialsService) {}
 
   @Public()
+  @LocaleScope('public')
   @Get()
   async findAll(
     @Query('search') search?: string,
@@ -34,6 +36,7 @@ export class TestimonialsController {
   }
 
   @Public()
+  @LocaleScope('public')
   @Get(':id')
   async findById(@Param('id', ParseUUIDPipe) id: string) {
     return this.testimonialsService.findById(id);

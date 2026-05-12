@@ -12,6 +12,7 @@ import { ensureRef } from '../common/utils/ensure-ref.util';
 import { ensureSlugUnique } from '../common/utils/ensure-slug-unique.util';
 import { toJson } from '../common/utils/prisma-json';
 import { applyDraftMode } from '../common/utils/entry-draft';
+import { localizedJsonContainsAny } from '../common/utils/localized-search';
 import {
   SITE_TIER_SCOPE,
   SiteContext,
@@ -391,14 +392,14 @@ export class PropertiesService {
     if (!q.search) return;
     const { search } = q;
     where.OR = [
-      { title: { path: ['en'], string_contains: search } },
-      { title: { path: ['ro'], string_contains: search } },
-      { title: { path: ['fr'], string_contains: search } },
-      { title: { path: ['de'], string_contains: search } },
+      ...localizedJsonContainsAny('title', search).map((filter) => ({
+        title: filter,
+      })),
+      ...localizedJsonContainsAny('address', search).map((filter) => ({
+        address: filter,
+      })),
       { city: { contains: search, mode: 'insensitive' } },
       { neighborhood: { contains: search, mode: 'insensitive' } },
-      { address: { path: ['ro'], string_contains: search } },
-      { address: { path: ['en'], string_contains: search } },
     ];
   }
 

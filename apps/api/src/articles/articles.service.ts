@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { Prisma } from '@prisma/client';
 import { PrismaService } from '../prisma/prisma.service';
+import { UploadsService } from '../uploads/uploads.service';
 import { CreateArticleDto } from './dto/create-article.dto';
 import { UpdateArticleDto } from './dto/update-article.dto';
 import { QueryArticleDto } from './dto/query-article.dto';
@@ -9,10 +10,14 @@ import { ensureFound } from '../common/utils/ensure-found.util';
 import { ensureSlugUnique } from '../common/utils/ensure-slug-unique.util';
 import { toJson } from '../common/utils/prisma-json';
 import { applyDraftMode } from '../common/utils/entry-draft';
+import { localizedJsonContainsAny } from '../common/utils/localized-search';
 
 @Injectable()
 export class ArticlesService {
-  constructor(private prisma: PrismaService) {}
+  constructor(
+    private prisma: PrismaService,
+    private uploads: UploadsService,
+  ) {}
 
   async findAll(query: QueryArticleDto) {
     const { page = 1, limit = 12, category, status, search, sort } = query;
@@ -23,8 +28,9 @@ export class ArticlesService {
     if (status) where.status = status;
     if (search) {
       where.OR = [
-        { title: { path: ['en'], string_contains: search } },
-        { title: { path: ['ro'], string_contains: search } },
+        ...localizedJsonContainsAny('title', search).map((filter) => ({
+          title: filter,
+        })),
         { authorName: { contains: search, mode: 'insensitive' } },
       ];
     }

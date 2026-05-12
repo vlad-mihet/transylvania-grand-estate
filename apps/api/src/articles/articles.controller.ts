@@ -17,6 +17,7 @@ import { UpdateArticleDto } from './dto/update-article.dto';
 import { QueryArticleDto } from './dto/query-article.dto';
 import { Public } from '../common/decorators/public.decorator';
 import { Roles } from '../common/decorators/roles.decorator';
+import { LocaleScope } from '../common/locale';
 
 @ApiTags('Articles')
 @Controller('articles')
@@ -24,12 +25,14 @@ export class ArticlesController {
   constructor(private articlesService: ArticlesService) {}
 
   @Public()
+  @LocaleScope('public')
   @Get()
   async findAll(@Query() query: QueryArticleDto) {
     return this.articlesService.findAll(query);
   }
 
   @Public()
+  @LocaleScope('public')
   @Get(':slug')
   async findBySlug(@Param('slug') slug: string) {
     return this.articlesService.findBySlug(slug);

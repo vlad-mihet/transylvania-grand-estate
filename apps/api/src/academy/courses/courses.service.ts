@@ -11,6 +11,7 @@ import { ensureSlugUnique } from '../../common/utils/ensure-slug-unique.util';
 import { toJson } from '../../common/utils/prisma-json';
 import { applyDraftMode } from '../../common/utils/entry-draft';
 import { paginate } from '../../common/utils/pagination.util';
+import { localizedJsonContainsAny } from '../../common/utils/localized-search';
 import type { CreateCourseDto, UpdateCourseDto, QueryCourseDto } from './dto/courses.dto';
 
 @Injectable()
@@ -31,8 +32,9 @@ export class CoursesService {
     if (status) where.status = status;
     if (search) {
       where.OR = [
-        { title: { path: ['ro'], string_contains: search } },
-        { title: { path: ['en'], string_contains: search } },
+        ...localizedJsonContainsAny('title', search).map((filter) => ({
+          title: filter,
+        })),
         { slug: { contains: search, mode: 'insensitive' } },
       ];
     }
@@ -180,8 +182,9 @@ export class CoursesService {
     };
     if (search) {
       where.OR = [
-        { title: { path: ['ro'], string_contains: search } },
-        { title: { path: ['en'], string_contains: search } },
+        ...localizedJsonContainsAny('title', search).map((filter) => ({
+          title: filter,
+        })),
         { slug: { contains: search, mode: 'insensitive' } },
       ];
     }

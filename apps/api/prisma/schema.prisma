@@ -713,6 +713,15 @@ model Inquiry {
   siteId String? @map("site_id") @db.VarChar(20)
   app    String? @map("app") @db.VarChar(20)
 
+  // Submitter's UI locale at submission time. Captured by the client (the
+  // `useInquirySubmission` hook reads `useLocale()` from next-intl) so that
+  // confirmation emails are sent in the correct language and admins replying
+  // to old inquiries know which language to use. Falls back to a sourceUrl
+  // regex derivation when the client didn't send it (rolling-deploy window);
+  // PR 4c will tighten this to NOT NULL once the soak is done. Nullable
+  // initially so the migration's backfill can complete safely.
+  locale String? @default("ro") @db.VarChar(8)
+
   // Soft-delete. DELETE flips this timestamp instead of dropping the row;
   // reads filter `deletedAt: null` by default. A 90-day cron purges rows
   // beyond that window for GDPR right-to-erasure compliance.

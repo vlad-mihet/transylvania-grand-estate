@@ -32,6 +32,7 @@ import { OwnsResource } from '../common/decorators/owns-resource.decorator';
 import { OwnershipGuard } from '../common/guards/ownership.guard';
 import type { PrismaService } from '../prisma/prisma.service';
 import { CurrentSite, SiteContext } from '../common/site';
+import { LocaleScope } from '../common/locale';
 
 /**
  * AGENT self-ownership on `/agents/:id` — compare against the AdminUser id
@@ -59,6 +60,7 @@ export class AgentsController {
   constructor(private agentsService: AgentsService) {}
 
   @Public()
+  @LocaleScope('public')
   @Get()
   async findAll(
     @CurrentSite() site: SiteContext,
@@ -104,6 +106,7 @@ export class AgentsController {
   }
 
   @Public()
+  @LocaleScope('public')
   @Get('id/:id')
   async findById(
     @Param('id', ParseUUIDPipe) id: string,
@@ -114,6 +117,7 @@ export class AgentsController {
   }
 
   @Public()
+  @LocaleScope('public')
   @Get(':slug')
   async findBySlug(
     @Param('slug') slug: string,

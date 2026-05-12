@@ -22,6 +22,7 @@ import { UpdateDeveloperDto } from './dto/update-developer.dto';
 import { Public } from '../common/decorators/public.decorator';
 import { Roles } from '../common/decorators/roles.decorator';
 import { CurrentSite, SiteContext } from '../common/site';
+import { LocaleScope } from '../common/locale';
 
 @ApiTags('Developers')
 @Controller('developers')
@@ -29,6 +30,7 @@ export class DevelopersController {
   constructor(private developersService: DevelopersService) {}
 
   @Public()
+  @LocaleScope('public')
   @Get()
   async findAll(
     @CurrentSite() site: SiteContext,
@@ -53,6 +55,7 @@ export class DevelopersController {
   }
 
   @Public()
+  @LocaleScope('public')
   @Get('id/:id')
   async findById(
     @Param('id', ParseUUIDPipe) id: string,
@@ -62,6 +65,7 @@ export class DevelopersController {
   }
 
   @Public()
+  @LocaleScope('public')
   @Get(':slug')
   async findBySlug(
     @Param('slug') slug: string,

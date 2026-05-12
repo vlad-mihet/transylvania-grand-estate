@@ -116,6 +116,15 @@ export class InquiriesService {
       : SiteId.TGE_LUXURY;
     const stampedApp = SITE_TO_APP[stampedSiteId];
 
+    // Locale capture. PR 4a: client may or may not send `dto.locale` (rolling
+    // deploy window — older clients still in flight). When absent, derive
+    // from the sourceUrl regex as a defensive fallback so the row is never
+    // saved with a NULL locale. PR 4c will require `dto.locale` at the schema
+    // level and drop the regex.
+    const submitterLocale =
+      (dto.locale as InquirySubmitterLocale | undefined) ??
+      this.deriveSubmitterLocale(dto.sourceUrl);
+
     // Server stamps `consentedAt` so the timestamp can't be backdated by a
     // tampered client; `gdprConsent: true` is enforced by the Zod DTO.
     const inquiry = await this.prisma.inquiry.create({
@@ -136,6 +145,7 @@ export class InquiriesService {
         consentedAt: new Date(),
         siteId: stampedSiteId,
         app: stampedApp,
+        locale: submitterLocale,
       },
     });
 
@@ -154,10 +164,14 @@ export class InquiriesService {
   }
 
   private async dispatchInquiryEmails(
-    inquiry: { id: string; createdAt: Date; type: string },
+    inquiry: { id: string; createdAt: Date; type: string; locale: string | null },
     dto: CreateInquiryDto,
   ): Promise<void> {
-    const submitterLocale = this.deriveSubmitterLocale(dto.sourceUrl);
+    // Read from the persisted column first; fall back to the regex helper
+    // for rows mid-flight on rolling deploys. PR 4c drops the fallback.
+    const submitterLocale = this.normalizeSubmitterLocale(
+      inquiry.locale ?? dto.locale ?? this.deriveSubmitterLocale(dto.sourceUrl),
+    );
     const brandName = this.deriveBrandName(dto.source);
     const adminUrl = this.buildAdminUrl(inquiry.id);
     const adminRecipients = this.config.get<string>('INQUIRIES_NOTIFY_TO');
@@ -246,6 +260,18 @@ export class InquiriesService {
   }
 
   /**
+   * Narrow an arbitrary string (e.g. the value loaded from the DB column)
+   * to a known submitter locale. Defends against historical rows where
+   * `locale` might be NULL or an unexpected value.
+   */
+  private normalizeSubmitterLocale(raw: unknown): InquirySubmitterLocale {
+    return typeof raw === 'string' &&
+      SUBMITTER_LOCALES.has(raw as InquirySubmitterLocale)
+      ? (raw as InquirySubmitterLocale)
+      : 'en';
+  }
+
+  /**
    * Maps the client-stamped `source` (e.g. "tge-contact", "revery-property-detail",
    * "academy-support") back to a human-readable brand name for the email
    * signoff. Falls back to a neutral label so a malformed source string still
@@ -263,6 +289,10 @@ export class InquiriesService {
     const base = this.config
       .get<string>('ADMIN_PUBLIC_URL', 'http://localhost:3051')
       .replace(/\/$/, '');
+    // Deliberately unprefixed. The admin edge middleware redirects unprefixed
+    // hits to the recipient's preferred locale (NEXT_LOCALE cookie →
+    // Accept-Language → default), which is better UX than hardcoding `/ro/`
+    // and forcing every non-RO admin to switch on each click.
     return `${base}/inquiries?id=${inquiryId}`;
   }
 
@@ -271,8 +301,16 @@ export class InquiriesService {
     user?: CurrentUserPayload | null,
     site?: SiteContext,
   ) {
-    const { page = 1, limit = 12, type, status, siteId, app, includeDeleted } =
-      query;
+    const {
+      page = 1,
+      limit = 12,
+      type,
+      status,
+      siteId,
+      app,
+      source,
+      includeDeleted,
+    } = query;
     const where: Prisma.InquiryWhereInput = {};
     if (type) where.type = type;
     if (status) where.status = status;
@@ -285,6 +323,10 @@ export class InquiriesService {
     // can't widen it.
     if (siteId) where.siteId = siteId;
     if (app) where.app = app;
+    // Source attribution filter — substring match (case-insensitive) so
+    // operators can search "revery", "property-detail", etc. without knowing
+    // the full tag.
+    if (source) where.source = { contains: source, mode: 'insensitive' };
 
     // Brand isolation. The X-Site header drives `site.id`. Public-brand
     // requests (TGE_LUXURY, REVERY) clamp the result to their own siteId
