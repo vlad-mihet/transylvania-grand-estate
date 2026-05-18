@@ -90,6 +90,14 @@ jobs:
       - name: Build shared types
         run: pnpm --filter @tge/types build
 
+      # apps/api source imports @tge/locale (e.g. localized-search.ts).
+      # `test:e2e` runs jest directly without going through api's prebuild,
+      # so node's CJS resolver can't find dist/index.js without this step.
+      # Other jobs that call `pnpm --filter @tge/api build` get this
+      # implicitly via api's prebuild.
+      - name: Build shared locale
+        run: pnpm --filter @tge/locale build
+
       - name: Run e2e tests
         run: pnpm --filter @tge/api test:e2e
         env:

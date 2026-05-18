@@ -69,6 +69,14 @@ VALUES
   ('Vaslui', 'vaslui', '{"en":"A Moldavian market town in Stephen the Great''s historical heartland — site of the 1475 Battle of Podul Înalt and today a quiet county seat at the centre of a largely rural region.","ro":"Un târg moldovenesc în inima ținutului lui Ștefan cel Mare — locul bătăliei de la Podul Înalt din 1475, astăzi o reședință liniștită de județ, în mijlocul unei regiuni preponderent rurale."}'::jsonb, '/images/cities/placeholder.jpg', 0, 46.6407, 27.7276, 'vaslui'),
   ('Zalău', 'zalau', '{"en":"A Sălaj mountain-foot town near the Roman frontier city of Porolissum — a quiet regional capital with a compact civic square and sweeping Meseș-hills views.","ro":"Un oraș sălăjean la poalele munților, aproape de cetatea romană Porolissum — o capitală regională liniștită, cu o piață centrală compactă și panorame largi peste dealurile Meseșului."}'::jsonb, '/images/cities/placeholder.jpg', 0, 47.1897, 23.0572, 'salaj');
 
+-- Counties are normally seeded via `prisma db seed`, not via migrations.
+-- On prod (always seeded) all 36 counties exist and every city below
+-- gets inserted. On a clean DB (CI's prisma migrate smoke, Playwright
+-- jobs that run migrate before seed) counties are absent; we emit a
+-- NOTICE rather than raising, and the INSERT below naturally skips
+-- cities whose counties haven't been created yet — the INNER JOIN on
+-- "counties" excludes them. Seed runs immediately after and fills both
+-- counties and cities idempotently.
 DO $$
 DECLARE
   missing_counties TEXT;
@@ -80,7 +88,7 @@ BEGIN
   WHERE c."id" IS NULL;
 
   IF missing_counties IS NOT NULL THEN
-    RAISE EXCEPTION 'Cannot backfill Revery cities; missing counties: %', missing_counties;
+    RAISE NOTICE 'Skipping Revery city backfill for missing counties (clean-DB run, seed will populate): %', missing_counties;
   END IF;
 END $$;
 
