@@ -9,6 +9,7 @@ COPY pnpm-lock.yaml pnpm-workspace.yaml .npmrc package.json ./
 COPY apps/api/package.json ./apps/api/
 COPY packages/types/package.json ./packages/types/
 COPY packages/data/package.json ./packages/data/
+COPY packages/locale/package.json ./packages/locale/
 RUN pnpm install --frozen-lockfile
 
 # --- Build ---
@@ -17,6 +18,10 @@ WORKDIR /app
 COPY --from=deps /app ./
 COPY . .
 RUN cd apps/api && npx prisma generate
+# @tge/locale is required at runtime by apps/api/src/common/utils/localized-search.ts.
+# Its package.json main points to dist/index.js — without this build, the
+# runner image starts up, fails `require("@tge/locale")`, and crashloops.
+RUN pnpm --filter @tge/locale build
 # @tge/types ships a compiled dist that apps/api's `require("@tge/types/*")`
 # resolves to at runtime via the package's exports map. Build it before the
 # API so node_modules/@tge/types/dist is populated.
