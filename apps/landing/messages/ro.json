@@ -452,28 +452,28 @@
   "PrivacyPolicy": {
     "title": "Politica de Confidențialitate",
     "lastUpdatedLabel": "Actualizat",
-    "lastUpdated": "10 mai 2026",
-    "intro": "Vă respectăm confidențialitatea și ne angajăm să prelucrăm datele dvs. personale în mod responsabil. Acest rezumat descrie ce colectăm când ne contactați și cum folosim aceste informații.",
+    "lastUpdated": "18 mai 2026",
+    "intro": "Transilvania Grand SRL este operatorul de date pentru platforma Transylvania Grand Estate. Prelucrăm datele dvs. personale în baza GDPR (Regulamentul UE 2016/679) și a Legii 190/2018, exclusiv pentru a presta servicii de intermediere imobiliară. Această pagină rezumă ce date colectăm, cum le folosim și ce drepturi aveți.",
     "sections": {
       "collect": {
         "title": "Ce colectăm",
-        "body": "Când completați un formular de contact, înregistrăm numele dvs., adresa de email, numărul de telefon (opțional) și mesajul scris. Dacă faceți referire la o proprietate sau un dezvoltator, înregistrăm și acea referință. De asemenea, stocăm adresa paginii de pe care ați trimis formularul, pentru a putea înțelege contextul cererii."
+        "body": "Colectăm doar datele necesare pentru a presta serviciile, în limitele art. 6 alin. 1 GDPR: numele, prenumele, CNP-ul și seria/numărul CI pentru încheierea contractului de vizionare sau intermediere; telefonul și email-ul pentru comunicare și programare; date despre interesul dvs. imobiliar (proprietate, dezvoltator, buget orientativ, preferințe de zonă) pentru personalizarea ofertelor; precum și URL-ul paginii de pe care ați trimis formularul, pentru context. Nu colectăm date sensibile și nu efectuăm profilare automată."
       },
       "use": {
         "title": "Cum folosim datele",
-        "body": "Folosim informațiile dvs. exclusiv pentru a răspunde solicitării. Nu vindem și nu împărtășim datele cu terți în scopuri de marketing. Dacă ați acceptat să primiți emailuri promoționale, vom folosi adresa dvs. doar pentru actualizări ocazionale și vă puteți dezabona oricând."
+        "body": "Folosim datele dvs. exclusiv pentru a răspunde solicitării și pentru prestarea serviciului de intermediere. Le putem transmite, doar în măsura strict necesară: proprietarului imobilului negociat, notarului public pentru întocmirea actelor, contabilului și avocatului nostru pentru obligațiile legale, precum și furnizorilor noștri de infrastructură IT (găzduire, email, CRM), cu care avem acorduri DPA semnate conform art. 28 GDPR. Nu vindem și nu închiriem datele dvs. nimănui. Pentru protecție folosim criptare în tranzit (HTTPS), parole protejate cu hash, autentificare cu doi factori pentru accesul administrativ și acces limitat pe principiul „need-to-know”."
       },
       "retention": {
         "title": "Cât timp păstrăm datele",
-        "body": "Cererile sunt păstrate pe durata relației active și până la doi ani după aceea, pentru motive de calitate a serviciilor și audit. După acest interval, ștergem sau anonimizăm înregistrarea."
+        "body": "Lead-urile fără tranzacție le păstrăm 120 de zile de la ultima interacțiune, plus 30 de zile buffer pentru arhivare, după care sunt șterse definitiv. Tranzacțiile încheiate sunt păstrate 3 ani pentru obligațiile fiscale, iar documentele contabile aferente — 10 ani, conform Codului Fiscal. Pentru comunicările de marketing (cu consimțământ explicit), păstrăm datele până la retragerea consimțământului."
       },
       "rights": {
         "title": "Drepturile dvs.",
-        "body": "Puteți solicita oricând o copie a datelor pe care le deținem despre dvs., corectarea lor sau ștergerea. Trimiteți-ne un email și vom răspunde în maximum 30 de zile."
+        "body": "Conform GDPR, aveți dreptul, gratuit, la: accesul la datele dvs., rectificarea celor inexacte, ștergerea lor dacă nu mai există temei legal pentru păstrare, restricționarea sau opoziția la prelucrare, portabilitatea într-un format uzual, precum și retragerea consimțământului pentru marketing oricând. Răspundem cererilor în maximum 30 de zile. Aveți și dreptul să depuneți plângere la ANSPDCP (dataprotection.ro, B-dul G-ral Gheorghe Magheru 28-30, București)."
       },
       "contact": {
         "title": "Contact",
-        "body": "Pentru orice întrebare legată de confidențialitate sau pentru a vă exercita drepturile, contactați privacy@tge.com."
+        "body": "Pentru orice întrebare legată de confidențialitate sau pentru a vă exercita drepturile, scrieți-ne la privacy@tge.com. Operator de date: Transilvania Grand SRL, CUI 39607580, înregistrată la Registrul Comerțului sub nr. J01/631/2018, cu sediul social în Str. Libertății nr. 5, bl. L4, et. 3, ap. 10, Câmpeni 515500, jud. Alba."
       }
     }
   },

@@ -726,28 +726,28 @@
   "PrivacyPolicy": {
     "title": "Datenschutzerklärung",
     "lastUpdatedLabel": "Stand",
-    "lastUpdated": "10. Mai 2026",
-    "intro": "Wir respektieren Ihre Privatsphäre und verpflichten uns, Ihre personenbezogenen Daten verantwortungsvoll zu verarbeiten. Diese Übersicht beschreibt, was wir bei einer Kontaktanfrage erheben und wie wir diese Daten verwenden.",
+    "lastUpdated": "18. Mai 2026",
+    "intro": "Transilvania Grand SRL ist der für die Plattform Revery Verantwortliche. Wir verarbeiten Ihre personenbezogenen Daten auf Grundlage der DSGVO (Verordnung (EU) 2016/679) und des rumänischen Gesetzes 190/2018, ausschließlich zur Erbringung von Immobilienvermittlungsdienstleistungen. Diese Seite fasst zusammen, welche Daten wir erheben, wie wir sie verwenden und welche Rechte Sie haben.",
     "sections": {
       "collect": {
         "title": "Welche Daten wir erheben",
-        "body": "Wenn Sie ein Kontaktformular absenden, erfassen wir Ihren Namen, Ihre E-Mail-Adresse, optional Ihre Telefonnummer und den Text Ihrer Nachricht. Wenn Sie eine bestimmte Immobilie erwähnen, speichern wir auch diese Referenz. Außerdem speichern wir die URL der Seite, von der Sie das Formular gesendet haben, damit unser Team den Kontext nachvollziehen kann."
+        "body": "Wir erheben nur die Daten, die wir zur Erbringung unserer Leistungen benötigen, im Rahmen von Art. 6 Abs. 1 DSGVO: Vor- und Nachname, rumänische Personennummer (CNP) sowie Serie und Nummer des Personalausweises zum Abschluss des Besichtigungs- bzw. Vermittlungsvertrags; Telefonnummer und E-Mail-Adresse zur Kommunikation und Terminvereinbarung; Angaben zu Ihrem Immobilieninteresse (konkrete Immobilie, ungefähres Budget, Lagepräferenzen) zur Individualisierung der Angebote; sowie die URL der Seite, von der Sie das Formular abgesendet haben, zur Kontextualisierung. Wir erheben keine sensiblen Daten und führen kein automatisiertes Profiling durch."
       },
       "use": {
         "title": "Wofür wir Ihre Daten verwenden",
-        "body": "Wir verwenden Ihre Informationen ausschließlich, um auf Ihre Anfrage zu antworten. Wir verkaufen oder teilen Ihre Daten nicht zu Marketingzwecken mit Dritten. Wenn Sie dem Erhalt von Werbe-E-Mails zugestimmt haben, nutzen wir Ihre Adresse nur für gelegentliche Updates; Sie können sich jederzeit abmelden."
+        "body": "Wir verwenden Ihre Daten ausschließlich, um auf Ihre Anfrage zu antworten und die Vermittlungsleistung zu erbringen. Wir geben sie nur im strikt erforderlichen Umfang weiter: an den Eigentümer der verhandelten Immobilie, an den Notar zur Beurkundung, an unseren Steuerberater und Rechtsanwalt zur Erfüllung gesetzlicher Pflichten sowie an unsere IT-Dienstleister (Hosting, E-Mail, CRM), mit denen wir Auftragsverarbeitungsverträge nach Art. 28 DSGVO geschlossen haben. Wir verkaufen oder vermieten Ihre Daten nicht. Zum Schutz nutzen wir Transportverschlüsselung (HTTPS), gehashte Passwörter, Zwei-Faktor-Authentifizierung für administrativen Zugriff und Zugriffskontrolle nach dem Need-to-know-Prinzip."
       },
       "retention": {
         "title": "Wie lange wir Daten speichern",
-        "body": "Anfragen werden für die Dauer der aktiven Beziehung und bis zu zwei Jahre danach aus Gründen der Servicequalität und Auditierung aufbewahrt. Danach löschen oder anonymisieren wir den Datensatz."
+        "body": "Anfragen, die nicht zu einem Geschäftsabschluss führen, werden 120 Tage ab der letzten Interaktion zuzüglich eines Puffers von 30 Tagen zur Archivierung gespeichert und anschließend endgültig gelöscht. Abgeschlossene Transaktionen werden 3 Jahre für steuerliche Zwecke aufbewahrt, die zugehörigen Buchhaltungsunterlagen 10 Jahre gemäß rumänischem Steuergesetzbuch. Marketing-Kommunikation (mit ausdrücklicher Einwilligung) wird bis zum Widerruf der Einwilligung aufbewahrt."
       },
       "rights": {
         "title": "Ihre Rechte",
-        "body": "Sie können jederzeit eine Kopie der über Sie gespeicherten Daten anfordern, deren Berichtigung oder Löschung verlangen. Schreiben Sie uns eine E-Mail; wir antworten innerhalb von 30 Tagen."
+        "body": "Nach der DSGVO haben Sie unentgeltlich das Recht auf: Auskunft über die Sie betreffenden Daten, Berichtigung unrichtiger Daten, Löschung, sofern keine Rechtsgrundlage zur Aufbewahrung mehr besteht, Einschränkung oder Widerspruch gegen die Verarbeitung, Datenübertragbarkeit in einem gängigen Format sowie jederzeitigen Widerruf der Marketingeinwilligung. Wir beantworten Anfragen innerhalb von 30 Tagen. Sie haben außerdem das Recht, sich bei der rumänischen Datenschutzbehörde (ANSPDCP — dataprotection.ro, B-dul G-ral Gheorghe Magheru 28-30, Bukarest) zu beschweren."
       },
       "contact": {
         "title": "Kontakt",
-        "body": "Für datenschutzbezogene Fragen oder zur Ausübung Ihrer Rechte wenden Sie sich an privacy@reveria.com."
+        "body": "Bei Fragen zum Datenschutz oder zur Ausübung Ihrer Rechte wenden Sie sich an privacy@reveria.com. Verantwortlicher: Transilvania Grand SRL, Steuernummer 39607580, eingetragen beim Handelsregister unter J01/631/2018, mit Sitz in Str. Libertății 5, Bl. L4, Et. 3, Ap. 10, Câmpeni 515500, Kreis Alba, Rumänien."
       }
     }
   },

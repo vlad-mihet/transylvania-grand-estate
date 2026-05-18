@@ -127,9 +127,12 @@ export function Footer() {
             {t("copyright", { year: new Date().getFullYear().toString() })}
           </p>
           <div className="flex gap-4 text-xs text-cream-muted">
-            <span className="hover:text-copper transition-colors cursor-pointer">
+            <Link
+              href="/privacy"
+              className="hover:text-copper transition-colors"
+            >
               {t("privacy")}
-            </span>
+            </Link>
             <span className="hover:text-copper transition-colors cursor-pointer">
               {t("terms")}
             </span>

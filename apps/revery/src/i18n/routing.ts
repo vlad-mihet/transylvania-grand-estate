@@ -25,6 +25,7 @@ export const routing = defineRouting({
     "/developers/[slug]": "/developers/[slug]",
     "/blog": "/blog",
     "/blog/[slug]": "/blog/[slug]",
+    "/privacy": "/privacy",
     "/instrumente": {
       en: "/tools",
       ro: "/instrumente",

@@ -726,28 +726,28 @@
   "PrivacyPolicy": {
     "title": "Privacy Policy",
     "lastUpdatedLabel": "Last updated",
-    "lastUpdated": "10 May 2026",
-    "intro": "We respect your privacy and are committed to handling your personal data responsibly. This summary describes what we collect when you contact us and how we use it.",
+    "lastUpdated": "18 May 2026",
+    "intro": "Transilvania Grand SRL is the data controller for the Revery platform. We process your personal data under the GDPR (EU Regulation 2016/679) and Romanian Law 190/2018, solely to provide real-estate brokerage services. This page summarises what we collect, how we use it, and the rights you have.",
     "sections": {
       "collect": {
         "title": "What we collect",
-        "body": "When you submit a contact form we record your name, email address, optional phone number, and the message you write. If you reference a specific property, we record that link too. We also store the URL of the page you submitted from so a member of our team can return to your context."
+        "body": "We collect only the data we need to deliver our services, within the bounds of GDPR Article 6(1): name, surname, national ID number (CNP) and ID card series/number to enter into the viewing or brokerage contract; phone number and email for communication and scheduling; information about your property interest (specific property, indicative budget, area preferences) to tailor offers; and the URL of the page you submitted the form from, for context. We do not collect sensitive data and we do not perform automated profiling."
       },
       "use": {
         "title": "How we use it",
-        "body": "We use your information solely to respond to your inquiry. We do not sell or share your data with third parties for marketing purposes. If you opted in to marketing emails, we use your email address only for occasional updates and you can opt out at any time."
+        "body": "We use your data solely to respond to your inquiry and to provide the brokerage service. We may share it, only to the extent strictly necessary, with: the owner of the property being negotiated, a notary public for drafting the deed, our accountant and lawyer for legal obligations, and our IT infrastructure providers (hosting, email, CRM), with whom we hold data processing agreements signed under GDPR Article 28. We do not sell or rent your data to anyone. For protection we use in-transit encryption (HTTPS), hashed passwords, two-factor authentication for administrative access, and need-to-know access controls."
       },
       "retention": {
         "title": "How long we keep it",
-        "body": "Inquiries are retained for as long as the relationship is active and for up to two years thereafter for service-quality and audit reasons. After that, we delete or anonymise the record."
+        "body": "Inquiries that do not result in a transaction are kept for 120 days from the last interaction, plus a 30-day buffer for archival, after which they are permanently deleted. Completed transactions are kept for 3 years for tax purposes, with related accounting documents retained for 10 years as required by the Romanian Fiscal Code. Marketing communications (with explicit consent) are retained until consent is withdrawn."
       },
       "rights": {
         "title": "Your rights",
-        "body": "You can request a copy of the data we hold about you, ask us to correct it, or request deletion at any time. Email us and we will respond within 30 days."
+        "body": "Under the GDPR you have the right, free of charge, to: access the data we hold about you, have inaccurate data corrected, request deletion where no legal basis for retention remains, restrict or object to processing, receive your data in a portable format, and withdraw marketing consent at any time. We respond to requests within 30 days. You also have the right to lodge a complaint with the Romanian data protection authority (ANSPDCP — dataprotection.ro, B-dul G-ral Gheorghe Magheru 28-30, Bucharest)."
       },
       "contact": {
         "title": "Contact",
-        "body": "For any privacy-related question or to exercise your rights, contact privacy@reveria.com."
+        "body": "For any privacy-related question or to exercise your rights, contact privacy@reveria.com. Data controller: Transilvania Grand SRL, fiscal code 39607580, registered with the Trade Register under no. J01/631/2018, registered office at Str. Libertății 5, bl. L4, et. 3, ap. 10, Câmpeni 515500, Alba County, Romania."
       }
     }
   },

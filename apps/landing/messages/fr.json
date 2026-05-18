@@ -452,28 +452,28 @@
   "PrivacyPolicy": {
     "title": "Politique de confidentialité",
     "lastUpdatedLabel": "Mise à jour",
-    "lastUpdated": "10 mai 2026",
-    "intro": "Nous respectons votre vie privée et nous engageons à traiter vos données personnelles de manière responsable. Ce résumé décrit ce que nous collectons lorsque vous nous contactez et comment nous l'utilisons.",
+    "lastUpdated": "18 mai 2026",
+    "intro": "Transilvania Grand SRL est le responsable de traitement pour la plateforme Transylvania Grand Estate. Nous traitons vos données personnelles en application du RGPD (Règlement UE 2016/679) et de la loi roumaine 190/2018, exclusivement pour fournir des services d'intermédiation immobilière. Cette page résume ce que nous collectons, comment nous utilisons ces données et les droits dont vous disposez.",
     "sections": {
       "collect": {
         "title": "Ce que nous collectons",
-        "body": "Lorsque vous soumettez un formulaire de contact, nous enregistrons votre nom, votre adresse e-mail, votre numéro de téléphone (facultatif) et le message que vous rédigez. Si vous mentionnez une propriété ou un promoteur, nous enregistrons également ce lien. Nous conservons aussi l'URL de la page d'où vous avez envoyé le formulaire pour replacer la demande dans son contexte."
+        "body": "Nous collectons uniquement les données nécessaires à la prestation de nos services, dans le cadre de l'article 6, paragraphe 1, du RGPD : nom, prénom, code numérique personnel (CNP) ainsi que la série et le numéro de la carte d'identité pour la conclusion du contrat de visite ou d'intermédiation ; numéro de téléphone et adresse e-mail pour la communication et la planification ; informations sur votre intérêt immobilier (bien spécifique, promoteur, budget indicatif, préférences de localisation) pour adapter les offres ; ainsi que l'URL de la page depuis laquelle vous avez envoyé le formulaire, à des fins contextuelles. Nous ne collectons pas de données sensibles et ne procédons pas à un profilage automatisé."
       },
       "use": {
         "title": "Comment nous utilisons ces données",
-        "body": "Nous utilisons vos informations uniquement pour répondre à votre demande. Nous ne vendons ni ne partageons vos données avec des tiers à des fins de marketing. Si vous avez accepté de recevoir des e-mails promotionnels, votre adresse ne servira qu'à des actualités occasionnelles et vous pouvez vous désinscrire à tout moment."
+        "body": "Nous utilisons vos données uniquement pour répondre à votre demande et fournir le service d'intermédiation. Nous pouvons les transmettre, dans la stricte mesure du nécessaire, au propriétaire du bien négocié, au notaire pour la rédaction de l'acte, à notre comptable et à notre avocat pour les obligations légales, ainsi qu'à nos prestataires d'infrastructure informatique (hébergement, e-mail, CRM), avec lesquels nous avons signé des accords de sous-traitance conformément à l'article 28 du RGPD. Nous ne vendons ni ne louons vos données à quiconque. Pour la protection, nous utilisons le chiffrement en transit (HTTPS), des mots de passe protégés par hachage, l'authentification à deux facteurs pour l'accès administratif et un contrôle d'accès selon le principe du besoin d'en connaître."
       },
       "retention": {
         "title": "Durée de conservation",
-        "body": "Les demandes sont conservées pendant la durée de la relation active et jusqu'à deux ans après, pour des raisons de qualité de service et d'audit. Au-delà, nous supprimons ou anonymisons l'enregistrement."
+        "body": "Les demandes qui ne donnent pas lieu à une transaction sont conservées 120 jours à compter de la dernière interaction, plus une période tampon de 30 jours d'archivage, après quoi elles sont définitivement supprimées. Les transactions abouties sont conservées 3 ans pour les obligations fiscales, et les pièces comptables correspondantes 10 ans, conformément au Code fiscal roumain. Les communications marketing (avec consentement explicite) sont conservées jusqu'au retrait du consentement."
       },
       "rights": {
         "title": "Vos droits",
-        "body": "Vous pouvez à tout moment demander une copie des données que nous détenons à votre sujet, leur correction ou leur suppression. Envoyez-nous un e-mail et nous vous répondrons dans un délai de 30 jours."
+        "body": "Au titre du RGPD, vous disposez gratuitement des droits suivants : accès aux données vous concernant, rectification des données inexactes, effacement lorsqu'aucune base légale ne justifie plus leur conservation, limitation ou opposition au traitement, portabilité des données dans un format usuel, et retrait à tout moment du consentement marketing. Nous répondons aux demandes dans un délai de 30 jours. Vous avez également le droit d'introduire une réclamation auprès de l'autorité roumaine de protection des données (ANSPDCP — dataprotection.ro, B-dul G-ral Gheorghe Magheru 28-30, Bucarest)."
       },
       "contact": {
         "title": "Contact",
-        "body": "Pour toute question relative à la confidentialité ou pour exercer vos droits, contactez privacy@tge.com."
+        "body": "Pour toute question relative à la confidentialité ou pour exercer vos droits, contactez privacy@tge.com. Responsable de traitement : Transilvania Grand SRL, code fiscal 39607580, immatriculée au Registre du Commerce sous le n° J01/631/2018, dont le siège social est situé Str. Libertății 5, bl. L4, ét. 3, ap. 10, Câmpeni 515500, département d'Alba, Roumanie."
       }
     }
   },
