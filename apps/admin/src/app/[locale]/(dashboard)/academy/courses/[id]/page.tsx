@@ -2,7 +2,6 @@
 
 import { useState } from "react";
 import { useParams, notFound, useRouter } from "next/navigation";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useLocale, useTranslations } from "next-intl";
 import {
   Button,
@@ -16,20 +15,31 @@ import {
   Label,
   LoadingState,
 } from "@tge/ui";
-import { Copy, Plus, Search } from "lucide-react";
-import { apiClient, ApiError } from "@/lib/api-client";
+import { ChevronDown, ChevronLeft, ChevronRight, Copy, Plus } from "lucide-react";
+import { cn } from "@tge/utils";
+import { ApiError } from "@/lib/api-client";
 import { toast } from "@/lib/toast";
 import { Link } from "@/i18n/navigation";
 import { Can } from "@/components/shared/can";
 import { DeleteDialog } from "@/components/shared/delete-dialog";
 import { PageHeader } from "@/components/shared/page-header";
+import { SearchInput } from "@/components/shared/search-input";
 import { SectionCard } from "@/components/shared/section-card";
 import { StatTile } from "@/components/shared/stat-tile";
 import { Mono } from "@/components/shared/mono";
 import { ExportCsvButton } from "@/components/shared/export-csv-button";
-import { LessonsTable, type LessonsTableLesson } from "@/components/academy/lessons-table";
-import { AcademyProgressBar } from "@/components/academy/academy-progress-bar";
-import { pickTitle } from "@/lib/academy/pick-title";
+import { LessonsTable, type LessonsTableLesson } from "@/modules/academy/components/lessons-table";
+import { AcademyProgressBar } from "@/modules/academy/components/academy-progress-bar";
+import {
+  pickTitle,
+  useAcademyCourse,
+  useAcademyCourseStats,
+  useDeleteLesson,
+  useDuplicateCourse,
+  useMoveLesson,
+  useUpdateCourse,
+} from "@/modules/academy";
+import { useResourceList } from "@/hooks/use-resource-list";
 
 type Course = {
   id: string;
@@ -42,8 +52,6 @@ type Course = {
   publishedAt: string | null;
   _count: { lessons: number };
 };
-
-type LessonList = { data: LessonsTableLesson[]; meta: { total: number } };
 
 type CourseStats = {
   enrolledCount: number;
@@ -63,7 +71,6 @@ export default function AcademyCourseDetailPage() {
   const params = useParams<{ id: string }>();
   const router = useRouter();
   const locale = useLocale();
-  const queryClient = useQueryClient();
   const t = useTranslations("Academy.courses");
   const tLessons = useTranslations("Academy.lessons");
   const tStatus = useTranslations("Academy.statuses");
@@ -72,119 +79,100 @@ export default function AcademyCourseDetailPage() {
   const tt = useTranslations("Academy.toasts");
   const tStats = useTranslations("Academy.courseStats");
 
-  const courseQuery = useQuery({
-    queryKey: ["academy-course", params.id],
-    queryFn: () => apiClient<Course>(`/admin/academy/courses/${params.id}`),
+  const courseQuery = useAcademyCourse<Course>(params.id);
+
+  // Paginated lesson list, page state synced to the URL. Drag-and-drop
+  // reorder calls `POST /lessons/:id/move` with the destination's global
+  // `targetOrder`, so DnD and pagination coexist cleanly — cross-page
+  // moves use the "Move to position…" row action.
+  const lessonsList = useResourceList<LessonsTableLesson>({
+    resource: `academy-lessons-${params.id}`,
+    endpoint: `/admin/academy/courses/${params.id}/lessons`,
+    defaultLimit: 25,
+    defaultSort: "order",
   });
 
-  const lessonsQuery = useQuery({
-    queryKey: ["academy-lessons", params.id],
-    queryFn: () =>
-      apiClient<LessonList>(
-        // limit=500 matches queryLessonSchema's cap; the reorder endpoint
-        // requires the entire course's lesson list in one shot, so any
-        // pagination here would silently break drag-and-drop on large
-        // courses (e.g. real-estate-fundamentals at 180+ lessons).
-        `/admin/academy/courses/${params.id}/lessons?limit=500&sort=order`,
-        { envelope: true },
-      ),
-  });
+  const statsQuery = useAcademyCourseStats<CourseStats>(params.id);
+  const updateCourse = useUpdateCourse();
+  const moveLesson = useMoveLesson(params.id);
+  const duplicateCourse = useDuplicateCourse();
+  const deleteLesson = useDeleteLesson(params.id);
 
-  const statsQuery = useQuery({
-    queryKey: ["academy-course-stats", params.id],
-    queryFn: () =>
-      apiClient<CourseStats>(`/admin/academy/courses/${params.id}/stats`),
-  });
-
-  const [searchQuery, setSearchQuery] = useState("");
-
-  const publishMutation = useMutation({
-    mutationFn: () =>
-      apiClient(`/admin/academy/courses/${params.id}`, {
-        method: "PATCH",
-        body: {
-          status:
-            courseQuery.data?.status === "published" ? "draft" : "published",
+  const publishMutation = {
+    isPending: updateCourse.isPending,
+    mutate: () =>
+      updateCourse.mutate(
+        {
+          id: params.id,
+          body: {
+            status:
+              courseQuery.data?.status === "published" ? "draft" : "published",
+          },
         },
-      }),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["academy-course", params.id] });
-      queryClient.invalidateQueries({ queryKey: ["academy-courses"] });
-      toast.success(tt("courseStatusUpdated"));
-    },
-    onError: (err) =>
-      toast.error(
-        err instanceof ApiError ? err.message : tt("courseStatusFailed"),
+        {
+          onSuccess: () => toast.success(tt("courseStatusUpdated")),
+          onError: (err) =>
+            toast.error(
+              err instanceof ApiError ? err.message : tt("courseStatusFailed"),
+            ),
+        },
       ),
-  });
+  };
 
-  const reorderMutation = useMutation({
-    mutationFn: (lessonIds: string[]) =>
-      apiClient<{ ok: boolean; reordered: number }>(
-        `/admin/academy/courses/${params.id}/lessons/reorder`,
-        { method: "POST", body: { lessonIds } },
-      ),
-    onSettled: () => {
-      queryClient.invalidateQueries({
-        queryKey: ["academy-lessons", params.id],
-      });
-    },
-    onError: (err) => {
-      toast.error(
-        err instanceof ApiError ? err.message : tt("lessonReorderFailed"),
-      );
-    },
-  });
+  const moveMutation = {
+    isPending: moveLesson.isPending,
+    mutate: (input: { lessonId: string; targetOrder: number }) =>
+      moveLesson.mutate(input, {
+        onSettled: () => lessonsList.refetch(),
+        onError: (err) =>
+          toast.error(
+            err instanceof ApiError ? err.message : tt("lessonReorderFailed"),
+          ),
+      }),
+  };
 
   const [duplicateOpen, setDuplicateOpen] = useState(false);
   const [duplicateSlug, setDuplicateSlug] = useState("");
   const [duplicateCopyLessons, setDuplicateCopyLessons] = useState(true);
-  const duplicateMutation = useMutation({
-    mutationFn: () =>
-      apiClient<{ id: string }>(
-        `/admin/academy/courses/${params.id}/duplicate`,
+  const duplicateMutation = {
+    isPending: duplicateCourse.isPending,
+    mutate: () =>
+      duplicateCourse.mutate(
         {
-          method: "POST",
-          body: {
-            slug: duplicateSlug.trim(),
-            copyLessons: duplicateCopyLessons,
+          id: params.id,
+          body: { slug: duplicateSlug.trim(), copyLessons: duplicateCopyLessons },
+        },
+        {
+          onSuccess: (created) => {
+            toast.success(tt("courseDuplicated"));
+            setDuplicateOpen(false);
+            setDuplicateSlug("");
+            router.push(`/${locale}/academy/courses/${created.id}/edit`);
           },
+          onError: (err) =>
+            toast.error(
+              err instanceof ApiError ? err.message : tt("courseDuplicateFailed"),
+            ),
         },
       ),
-    onSuccess: (created) => {
-      queryClient.invalidateQueries({ queryKey: ["academy-courses"] });
-      toast.success(tt("courseDuplicated"));
-      setDuplicateOpen(false);
-      setDuplicateSlug("");
-      router.push(`/${locale}/academy/courses/${created.id}/edit`);
-    },
-    onError: (err) =>
-      toast.error(
-        err instanceof ApiError ? err.message : tt("courseDuplicateFailed"),
-      ),
-  });
+  };
 
   const [deleteLessonId, setDeleteLessonId] = useState<string | null>(null);
-  const deleteLessonMutation = useMutation({
-    mutationFn: (id: string) =>
-      apiClient(`/admin/academy/courses/${params.id}/lessons/${id}`, {
-        method: "DELETE",
+  const deleteLessonMutation = {
+    isPending: deleteLesson.isPending,
+    mutate: (id: string) =>
+      deleteLesson.mutate(id, {
+        onSuccess: () => {
+          lessonsList.refetch();
+          toast.success(tt("lessonDeleted"));
+          setDeleteLessonId(null);
+        },
+        onError: (err) =>
+          toast.error(
+              err instanceof ApiError ? err.message : tt("lessonDeleteFailed"),
+          ),
       }),
-    onSuccess: () => {
-      queryClient.invalidateQueries({
-        queryKey: ["academy-lessons", params.id],
-      });
-      queryClient.invalidateQueries({
-        queryKey: ["academy-course", params.id],
-      });
-      toast.success(tt("lessonDeleted"));
-      setDeleteLessonId(null);
-    },
-    onError: (err) =>
-      toast.error(
-        err instanceof ApiError ? err.message : tt("lessonDeleteFailed"),
-      ),
-  });
+  };
 
   if (courseQuery.isLoading) {
     return <LoadingState label={tc("loading")} />;
@@ -201,14 +189,18 @@ export default function AcademyCourseDetailPage() {
   const title = pickTitle(course.title, course.slug, locale);
   const description =
     course.description[locale] ?? course.description.ro ?? "";
-  const lessons = lessonsQuery.data?.data ?? [];
+  // Total lesson count comes from the paginated envelope's meta; falls back
+  // to the course's denormalized `_count.lessons` while the list query is
+  // still in flight, so the header copy doesn't flicker "0 lessons" → "180".
+  const lessonCount =
+    lessonsList.meta?.total ?? course._count?.lessons ?? lessonsList.items.length;
 
   return (
     <div className="space-y-6">
       <PageHeader
         title={title}
         description={t("detailSummary", {
-          lessonCount: lessons.length,
+          lessonCount,
           status: tStatus(course.status),
           visibility: tVisibility(course.visibility),
         })}
@@ -296,24 +288,29 @@ export default function AcademyCourseDetailPage() {
 
       <p className="-mt-4 text-xs text-muted-foreground">{tLessons("hint")}</p>
 
-      <div className="relative w-full sm:max-w-sm">
-        <Search className="pointer-events-none absolute left-2.5 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-muted-foreground" />
-        <Input
-          type="search"
-          value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
+      <div className="w-full sm:max-w-sm">
+        <SearchInput
+          value={lessonsList.search}
+          onValueChange={lessonsList.setSearch}
           placeholder={tLessons("searchPlaceholder")}
-          className="h-8 pl-8 text-sm"
           aria-label={tLessons("searchPlaceholder")}
         />
       </div>
 
       <LessonsTable
-        lessons={lessons}
-        searchQuery={searchQuery}
+        lessons={lessonsList.items}
+        meta={lessonsList.meta}
+        page={lessonsList.page}
+        onPageChange={lessonsList.setPage}
+        limit={lessonsList.limit}
+        onLimitChange={lessonsList.setLimit}
+        sort={lessonsList.sort ?? "order"}
+        searchActive={!!lessonsList.search}
         courseId={course.id}
-        isLoading={lessonsQuery.isLoading}
-        onReorder={(ids) => reorderMutation.mutate(ids)}
+        isLoading={lessonsList.isLoading}
+        onMove={(lessonId, targetOrder) =>
+          moveMutation.mutate({ lessonId, targetOrder })
+        }
         onDelete={(id) => setDeleteLessonId(id)}
       />
 
@@ -398,8 +395,20 @@ export default function AcademyCourseDetailPage() {
   );
 }
 
+// Rows per page in the per-lesson completion distribution. 20 keeps the
+// list at "scroll without losing the page" length on 180-lesson courses
+// without forcing the admin through too many pages to scan drop-off.
+const DISTRIBUTION_PAGE_SIZE = 20;
+
 function CourseStatsContent({ stats }: { stats: CourseStats }) {
   const tStats = useTranslations("Academy.courseStats");
+  const tc = useTranslations("Common");
+  // The distribution is a deep-dive surface — the stats tiles above
+  // already answer the at-a-glance question ("are students finishing?").
+  // Collapse by default so a 180-lesson course doesn't push the lessons
+  // table off the first screen.
+  const [distributionOpen, setDistributionOpen] = useState(false);
+  const [distributionPage, setDistributionPage] = useState(1);
 
   // Derived caption for the average days tile — null when nobody has
   // finished yet, otherwise the count of completers contributing to the
@@ -410,10 +419,28 @@ function CourseStatsContent({ stats }: { stats: CourseStats }) {
       : tStats("avgFromCompleters", { count: stats.completedCount });
 
   // Drop-off detection: any lesson where the completed count is < 50%
-  // of the highest gets a subtle warning highlight.
+  // of the highest gets a subtle warning highlight. Compared against the
+  // FULL distribution so a row stays flagged even when paged out of view.
   const peakCompletions = stats.lessonCompletionDistribution.reduce(
     (max, l) => Math.max(max, l.completedCount),
     0,
+  );
+
+  const distributionTotal = stats.lessonCompletionDistribution.length;
+  const distributionTotalPages = Math.max(
+    1,
+    Math.ceil(distributionTotal / DISTRIBUTION_PAGE_SIZE),
+  );
+  const safePage = Math.min(distributionPage, distributionTotalPages);
+  const distributionStart = (safePage - 1) * DISTRIBUTION_PAGE_SIZE;
+  const visibleDistribution = stats.lessonCompletionDistribution.slice(
+    distributionStart,
+    distributionStart + DISTRIBUTION_PAGE_SIZE,
+  );
+  const distributionFrom = distributionTotal === 0 ? 0 : distributionStart + 1;
+  const distributionTo = Math.min(
+    distributionTotal,
+    distributionStart + DISTRIBUTION_PAGE_SIZE,
   );
 
   return (
@@ -440,23 +467,43 @@ function CourseStatsContent({ stats }: { stats: CourseStats }) {
         />
       </div>
 
-      {stats.lessonCompletionDistribution.length > 0 && (
+      {distributionTotal > 0 && (
         <div className="mt-5">
-          <div className="mono text-[10px] font-semibold uppercase tracking-[0.08em] text-muted-foreground">
+          <button
+            type="button"
+            onClick={() => setDistributionOpen((v) => !v)}
+            aria-expanded={distributionOpen}
+            className="mono inline-flex items-center gap-1.5 text-[10px] font-semibold uppercase tracking-[0.08em] text-muted-foreground transition-colors hover:text-foreground"
+          >
+            <ChevronDown
+              className={cn(
+                "h-3 w-3 transition-transform",
+                distributionOpen ? "rotate-0" : "-rotate-90",
+              )}
+            />
             {tStats("perLessonDistribution")}
-          </div>
+            <span className="ml-1 text-muted-foreground/70">
+              ({distributionTotal})
+            </span>
+          </button>
+          {distributionOpen && (
+          <>
           <ul className="mt-2 divide-y divide-border rounded-md border border-border">
-            {stats.lessonCompletionDistribution.map((l, idx) => {
+            {visibleDistribution.map((l, idx) => {
               const dropOff =
                 peakCompletions > 0 &&
                 l.completedCount < peakCompletions * 0.5;
+              // Position is the lesson's index in the FULL ordered list,
+              // not the index within this page — admins reading "23 →"
+              // and "57 →" need to map back to the lesson reorder labels.
+              const position = distributionStart + idx + 1;
               return (
                 <li
                   key={l.lessonId}
                   className="flex items-center gap-3 px-3 py-2 text-xs"
                 >
                   <Mono className="w-7 shrink-0 text-muted-foreground">
-                    {String(idx + 1).padStart(2, "0")}
+                    {String(position).padStart(2, "0")}
                   </Mono>
                   <span className="min-w-0 flex-1 truncate font-mono text-[11px] text-muted-foreground">
                     {l.slug}
@@ -481,6 +528,47 @@ function CourseStatsContent({ stats }: { stats: CourseStats }) {
               );
             })}
           </ul>
+          {distributionTotal > DISTRIBUTION_PAGE_SIZE && (
+            <div className="mt-2 flex flex-wrap items-center justify-between gap-3 px-1 text-xs">
+              <Mono className="text-muted-foreground">
+                {tc("rangeOf", {
+                  from: distributionFrom,
+                  to: distributionTo,
+                  total: distributionTotal,
+                })}
+              </Mono>
+              <div className="flex items-center gap-2">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setDistributionPage((p) => Math.max(1, p - 1))}
+                  disabled={safePage <= 1}
+                >
+                  <ChevronLeft className="h-3.5 w-3.5" />
+                </Button>
+                <Mono className="min-w-[4.5rem] text-center text-muted-foreground">
+                  {tc("page", {
+                    current: safePage,
+                    total: distributionTotalPages,
+                  })}
+                </Mono>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() =>
+                    setDistributionPage((p) =>
+                      Math.min(distributionTotalPages, p + 1),
+                    )
+                  }
+                  disabled={safePage >= distributionTotalPages}
+                >
+                  <ChevronRight className="h-3.5 w-3.5" />
+                </Button>
+              </div>
+            </div>
+          )}
+          </>
+          )}
         </div>
       )}
     </>

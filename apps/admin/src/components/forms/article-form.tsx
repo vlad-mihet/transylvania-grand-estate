@@ -15,10 +15,14 @@ import { useTranslations } from "next-intl";
 import {
   EntryEditorShell,
   EntryLocaleProvider,
+  EntryOutlineProvider,
   LocalizedInput,
-  LocalizedMarkdownEditor,
   LocalizedTextarea,
+  LocalizedTiptapEditor,
   MetaField,
+  OutlineSidebar,
+  SaveStatusIndicator,
+  useAutosave,
   useLocaleCompleteness,
 } from "@/components/entry-editor";
 import { FormActions } from "@/components/shared/form-actions";
@@ -48,6 +52,17 @@ interface ArticleFormProps {
     data: ArticleFormValues,
     saveMode?: "draft" | "publish",
   ) => void;
+  /**
+   * Optional autosave hook. When provided AND `mode === "edit"`, the form
+   * fires this callback ~2s after the last localized-field keystroke with
+   * `{ title, excerpt, content, mode: "draft" }`. Should resolve on success
+   * and reject on failure so the SaveStatusIndicator can surface state.
+   */
+  onAutosave?: (
+    payload: Pick<ArticleFormValues, "title" | "excerpt" | "content"> & {
+      mode: "draft";
+    },
+  ) => Promise<unknown>;
   loading?: boolean;
   submissionError?: unknown;
   cancelHref: string;
@@ -77,6 +92,7 @@ export function ArticleForm({
   mode,
   defaultValues,
   onSubmit,
+  onAutosave,
   loading,
   submissionError,
   cancelHref,
@@ -96,6 +112,34 @@ export function ArticleForm({
     toast.error(message);
   });
   useUnsavedChangesWarning(form.formState.isDirty && !loading);
+
+  const autosave = useAutosave<
+    ArticleFormValues,
+    Pick<ArticleFormValues, "title" | "excerpt" | "content"> & {
+      mode: "draft";
+    }
+  >({
+    form,
+    watchPaths: ["title", "excerpt", "content"],
+    enabled: mode === "edit" && !!onAutosave,
+    buildPayload: (values) => {
+      // Skip the tick when the primary-locale title is empty — the server
+      // requires `title.ro` / `title.en` non-empty and would 400. A pristine
+      // entry won't autosave; once the author types a primary title every
+      // subsequent autosave is in valid territory.
+      if (!values.title?.ro && !values.title?.en) return null;
+      return {
+        title: values.title,
+        excerpt: values.excerpt,
+        content: values.content,
+        mode: "draft" as const,
+      };
+    },
+    save: async (payload) => {
+      if (!onAutosave) return;
+      return onAutosave(payload);
+    },
+  });
 
   // Two submit paths: "save draft" (default form submit, type="submit") and
   // "publish" (the EntryEditorShell action button). Create mode collapses
@@ -117,19 +161,22 @@ export function ArticleForm({
   return (
     <FormProvider {...form}>
       <EntryLocaleProvider>
-        <form onSubmit={mode === "edit" ? submitDraft : submitPublish}>
-          <ArticleFormBody
-            mode={mode}
-            t={t}
-            cancelHref={cancelHref}
-            loading={loading}
-            dirty={form.formState.isDirty}
-            title={title}
-            breadcrumb={breadcrumb}
-            hasPendingDraft={hasPendingDraft}
-            onPublish={() => void submitPublish()}
-          />
-        </form>
+        <EntryOutlineProvider>
+          <form onSubmit={mode === "edit" ? submitDraft : submitPublish}>
+            <ArticleFormBody
+              mode={mode}
+              t={t}
+              cancelHref={cancelHref}
+              loading={loading}
+              dirty={form.formState.isDirty}
+              title={title}
+              breadcrumb={breadcrumb}
+              hasPendingDraft={hasPendingDraft}
+              onPublish={() => void submitPublish()}
+              autosaveState={mode === "edit" && onAutosave ? autosave.state : null}
+            />
+          </form>
+        </EntryOutlineProvider>
       </EntryLocaleProvider>
     </FormProvider>
   );
@@ -145,6 +192,7 @@ interface ArticleFormBodyProps {
   breadcrumb?: ReactNode;
   hasPendingDraft?: boolean;
   onPublish: () => void;
+  autosaveState: import("@/components/entry-editor").AutosaveState | null;
 }
 
 /**
@@ -162,6 +210,7 @@ function ArticleFormBody({
   breadcrumb,
   hasPendingDraft,
   onPublish,
+  autosaveState,
 }: ArticleFormBodyProps) {
   const tc = useTranslations("Common");
   const { completeness, errorCounts } = useLocaleCompleteness<ArticleFormValues>(
@@ -187,6 +236,9 @@ function ArticleFormBody({
       }
       breadcrumb={breadcrumb}
       unsavedDirty={dirty}
+      saveStatus={
+        autosaveState ? <SaveStatusIndicator state={autosaveState} /> : undefined
+      }
       switcherCompleteness={completeness}
       switcherErrorCounts={errorCounts}
       actions={
@@ -209,6 +261,7 @@ function ArticleFormBody({
           }
         />
       }
+      outline={<OutlineSidebar />}
       localizedFields={
         <>
           <LocalizedInput<ArticleFormValues>
@@ -222,11 +275,10 @@ function ArticleFormBody({
             required
             rows={3}
           />
-          <LocalizedMarkdownEditor<ArticleFormValues>
+          <LocalizedTiptapEditor<ArticleFormValues>
             name="content"
             label={t("contentLabel")}
             required
-            rows={16}
           />
         </>
       }

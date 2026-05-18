@@ -17,11 +17,20 @@ import {
 } from "./types";
 
 const SESSION_KEY = "tge.entryLocale";
-const URL_PARAM = "loc";
+const URL_PARAM_ACTIVE = "loc";
+const URL_PARAM_COMPARE = "cmp";
 
 interface EntryLocaleContextValue {
+  /** The locale currently being edited (or shown in the left pane in compare mode). */
   active: LocaleKey;
   setActive: (locale: LocaleKey) => void;
+  /**
+   * When non-null, compare mode is active: the editor renders two columns,
+   * left bound to `active`, right bound to `compareLocale`. Use
+   * `setCompareLocale(null)` to exit compare mode.
+   */
+  compareLocale: LocaleKey | null;
+  setCompareLocale: (locale: LocaleKey | null) => void;
   available: readonly LocaleKey[];
   primary: LocaleKey;
 }
@@ -59,35 +68,69 @@ export function EntryLocaleProvider({
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
-  const urlLocale = searchParams.get(URL_PARAM);
+  const urlActive = searchParams.get(URL_PARAM_ACTIVE);
+  const urlCompare = searchParams.get(URL_PARAM_COMPARE);
 
-  // The URL param is the source of truth. Derive `active` from it during
-  // render so we never call setState in an effect.
+  // The URL is the source of truth. Derive `active` and `compareLocale`
+  // during render so we never call setState in an effect.
   const active: LocaleKey =
-    isLocaleKey(urlLocale) && available.includes(urlLocale)
-      ? urlLocale
+    isLocaleKey(urlActive) && available.includes(urlActive)
+      ? urlActive
       : PRIMARY_LOCALE;
 
-  const setActive = useCallback(
-    (next: LocaleKey) => {
-      if (!available.includes(next)) return;
-      writeSession(next);
+  const compareLocale: LocaleKey | null =
+    isLocaleKey(urlCompare) &&
+    available.includes(urlCompare) &&
+    urlCompare !== active
+      ? urlCompare
+      : null;
+
+  const pushParams = useCallback(
+    (next: { active: LocaleKey; compareLocale: LocaleKey | null }) => {
+      writeSession(next.active);
       const params = new URLSearchParams(searchParams.toString());
-      params.set(URL_PARAM, next);
-      router.replace(`${pathname}?${params.toString()}`, { scroll: false });
+      if (next.active === PRIMARY_LOCALE) {
+        params.delete(URL_PARAM_ACTIVE);
+      } else {
+        params.set(URL_PARAM_ACTIVE, next.active);
+      }
+      if (next.compareLocale === null) {
+        params.delete(URL_PARAM_COMPARE);
+      } else {
+        params.set(URL_PARAM_COMPARE, next.compareLocale);
+      }
+      const qs = params.toString();
+      router.replace(qs ? `${pathname}?${qs}` : pathname, { scroll: false });
     },
-    [router, pathname, searchParams, available],
+    [router, pathname, searchParams],
   );
 
-  // On mount, if the URL has no `loc` param, hydrate it from sessionStorage
-  // (or leave it at the primary). This is a one-shot URL sync — not a state
-  // sync — so it doesn't trigger cascading renders.
+  const setActive = useCallback(
+    (locale: LocaleKey) => {
+      if (!available.includes(locale)) return;
+      // If we'd collide with compareLocale, drop the compare pane.
+      const nextCompare = compareLocale === locale ? null : compareLocale;
+      pushParams({ active: locale, compareLocale: nextCompare });
+    },
+    [pushParams, available, compareLocale],
+  );
+
+  const setCompareLocale = useCallback(
+    (locale: LocaleKey | null) => {
+      if (locale !== null && !available.includes(locale)) return;
+      if (locale === active) return; // can't compare a locale with itself
+      pushParams({ active, compareLocale: locale });
+    },
+    [pushParams, available, active],
+  );
+
+  // One-shot mount hydration from sessionStorage if the URL has no `loc`.
   useEffect(() => {
-    if (isLocaleKey(urlLocale) && available.includes(urlLocale)) return;
+    if (isLocaleKey(urlActive) && available.includes(urlActive)) return;
     const session = readSession();
     if (session && available.includes(session) && session !== PRIMARY_LOCALE) {
       const params = new URLSearchParams(searchParams.toString());
-      params.set(URL_PARAM, session);
+      params.set(URL_PARAM_ACTIVE, session);
       router.replace(`${pathname}?${params.toString()}`, { scroll: false });
     }
     // Run only once on mount; subsequent locale changes go through `setActive`.
@@ -95,8 +138,15 @@ export function EntryLocaleProvider({
   }, []);
 
   const value = useMemo<EntryLocaleContextValue>(
-    () => ({ active, setActive, available, primary: PRIMARY_LOCALE }),
-    [active, setActive, available],
+    () => ({
+      active,
+      setActive,
+      compareLocale,
+      setCompareLocale,
+      available,
+      primary: PRIMARY_LOCALE,
+    }),
+    [active, setActive, compareLocale, setCompareLocale, available],
   );
 
   return (

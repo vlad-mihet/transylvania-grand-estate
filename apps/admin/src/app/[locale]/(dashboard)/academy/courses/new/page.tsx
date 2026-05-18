@@ -4,14 +4,15 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useMutation } from "@tanstack/react-query";
 import { useLocale, useTranslations } from "next-intl";
-import { apiClient } from "@/lib/api-client";
 import { toast } from "@/lib/toast";
 import { Link } from "@/i18n/navigation";
 import { usePermissions } from "@/components/auth/auth-provider";
-import { CourseForm } from "@/components/forms/course-form";
-import type { CourseFormValues } from "@/lib/validations/academy";
-
-type Course = { id: string; slug: string };
+import { CourseForm } from "@/modules/academy/forms/course-form";
+import {
+  useCreateCourse,
+  useUploadCourseCover,
+  type CourseFormValues,
+} from "@/modules/academy";
 
 export default function NewAcademyCoursePage() {
   const router = useRouter();
@@ -26,24 +27,18 @@ export default function NewAcademyCoursePage() {
     if (!can("academy.course.create")) router.replace(`/${locale}/403`);
   }, [can, router, locale]);
 
+  const createCourse = useCreateCourse();
+  const uploadCover = useUploadCourseCover();
+
+  // Sequenced flow: create then best-effort cover upload. A cover upload
+  // failure surfaces via toast but does not discard the new course — the
+  // user can retry from the edit page's live uploader.
   const createMutation = useMutation({
     mutationFn: async (input: CourseFormValues) => {
-      const course = await apiClient<Course>("/admin/academy/courses", {
-        method: "POST",
-        body: input,
-      });
-      // Cover-image upload is best-effort: a failure here shouldn't
-      // discard the just-created course. We surface the error via toast
-      // and let the user retry from edit mode where the live uploader
-      // takes over.
+      const course = await createCourse.mutateAsync(input);
       if (stagedCoverFile) {
         try {
-          const formData = new FormData();
-          formData.append("image", stagedCoverFile);
-          await apiClient(
-            `/admin/academy/courses/${course.id}/cover-image`,
-            { method: "POST", body: formData },
-          );
+          await uploadCover.mutateAsync({ id: course.id, file: stagedCoverFile });
         } catch (err) {
           toast.error(
             err instanceof Error

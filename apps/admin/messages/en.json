@@ -56,6 +56,22 @@
     "signingYouIn": "Signing you in…",
     "goToLogin": "Go to login"
   },
+  "AcademyShell": {
+    "eyebrow": "Academy",
+    "title": "Study Platform",
+    "tagline": "Courses, lessons, students, and invitations — all in one place.",
+    "backToAdmin": "Back to admin",
+    "workspaceLabel": "Workspace",
+    "studioFooter": "Academy studio · v1",
+    "navigation": "Navigation",
+    "tabsLabel": "Academy sections",
+    "tabs": {
+      "overview": "Overview",
+      "courses": "Courses",
+      "students": "Students",
+      "invitations": "Invitations"
+    }
+  },
   "Sidebar": {
     "management": "Management",
     "overview": "Overview",
@@ -63,6 +79,7 @@
     "catalog": "Catalog",
     "locations": "Locations",
     "content": "Content",
+    "academy": "Academy",
     "finance": "Finance",
     "settings": "Settings",
     "dashboard": "Today",
@@ -95,7 +112,6 @@
     "peopleOverview": "Overview",
     "peopleTeam": "Team",
     "peopleAgents": "Agents",
-    "peopleStudents": "Academy Students",
     "peopleInvitations": "Invitations"
   },
   "CommandPalette": {
@@ -1262,6 +1278,7 @@
     "noResults": "No results",
     "page": "{current} / {total}",
     "rangeOf": "{from}–{to} of {total}",
+    "next": "Next",
     "searchPlaceholder": "Search…",
     "emptyTitle": "Nothing to show yet",
     "emptySearchDescription": "No matches for \"{query}\". Try a different search.",
@@ -1390,6 +1407,12 @@
       "listDescription": "Manage the study platform's courses and lessons.",
       "createLabel": "New course",
       "searchPlaceholder": "Search by title or slug",
+      "lessonCount": "{count, plural, =0 {No lessons} one {# lesson} other {# lessons}}",
+      "selectAria": "Select {title}",
+      "actionsAria": "Actions for {title}",
+      "selectAll": "Select all",
+      "selectAllAria": "Select all courses on this page",
+      "selectedCount": "{count, plural, one {# selected} other {# selected}}",
       "columnTitle": "Title",
       "columnSlug": "Slug",
       "columnStatus": "Status",
@@ -1488,7 +1511,12 @@
       "nextLessonAria": "Next lesson: {title}",
       "searchPlaceholder": "Search lessons…",
       "searchEmpty": "No lessons match your search.",
-      "reorderDisabledHint": "Reordering is disabled while filtering.",
+      "reorderDisabledHint": "Drag-reorder is disabled here; use “Move to position…” for cross-page moves.",
+      "movePopoverTitle": "Move to a specific position",
+      "moveDescription": "Enter the target position (1–{total}). The course renumbers automatically after the move.",
+      "movePlaceholder": "Target position",
+      "moveSubmit": "Move",
+      "moveAriaLabel": "Move lesson {position} to another position",
       "railHeading": "Lessons",
       "saveAndNext": "Save & next",
       "lastLessonReached": "You're on the last lesson.",

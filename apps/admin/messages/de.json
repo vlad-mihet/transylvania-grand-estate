@@ -56,6 +56,22 @@
     "signingYouIn": "Anmeldung läuft…",
     "goToLogin": "Zur Anmeldung"
   },
+  "AcademyShell": {
+    "eyebrow": "Academy",
+    "title": "Lernplattform",
+    "tagline": "Kurse, Lektionen, Studierende und Einladungen — alles an einem Ort.",
+    "backToAdmin": "Zurück zum Admin",
+    "workspaceLabel": "Arbeitsbereich",
+    "studioFooter": "Academy-Studio · v1",
+    "navigation": "Navigation",
+    "tabsLabel": "Academy-Bereiche",
+    "tabs": {
+      "overview": "Übersicht",
+      "courses": "Kurse",
+      "students": "Studierende",
+      "invitations": "Einladungen"
+    }
+  },
   "Sidebar": {
     "management": "Verwaltung",
     "overview": "Übersicht",
@@ -63,6 +79,7 @@
     "catalog": "Katalog",
     "locations": "Standorte",
     "content": "Inhalt",
+    "academy": "Academy",
     "finance": "Finanzen",
     "settings": "Einstellungen",
     "dashboard": "Heute",
@@ -95,7 +112,6 @@
     "peopleOverview": "Übersicht",
     "peopleTeam": "Team",
     "peopleAgents": "Makler",
-    "peopleStudents": "Academy-Studierende",
     "peopleInvitations": "Einladungen"
   },
   "CommandPalette": {
@@ -1261,6 +1277,7 @@
     "noResults": "Keine Ergebnisse",
     "page": "{current} / {total}",
     "rangeOf": "{from}–{to} von {total}",
+    "next": "Weiter",
     "searchPlaceholder": "Suchen…",
     "emptyTitle": "Noch nichts anzuzeigen",
     "emptySearchDescription": "Keine Treffer für „{query}“. Versuchen Sie eine andere Suche.",
@@ -1389,6 +1406,12 @@
       "listTitle": "Academy-Kurse",
       "listDescription": "Verwalten Sie die Kurse und Lektionen der Lernplattform.",
       "createLabel": "Neuer Kurs",
+      "lessonCount": "{count, plural, =0 {Keine Lektionen} one {# Lektion} other {# Lektionen}}",
+      "selectAria": "{title} auswählen",
+      "actionsAria": "Aktionen für {title}",
+      "selectAll": "Alle auswählen",
+      "selectAllAria": "Alle Kurse auf dieser Seite auswählen",
+      "selectedCount": "{count, plural, one {# ausgewählt} other {# ausgewählt}}",
       "searchPlaceholder": "Nach Titel oder Slug suchen",
       "columnTitle": "Titel",
       "columnSlug": "Slug",
@@ -1488,7 +1511,12 @@
       "nextLessonAria": "Nächste Lektion: {title}",
       "searchPlaceholder": "Lektion suchen…",
       "searchEmpty": "Keine Lektion entspricht der Suche.",
-      "reorderDisabledHint": "Neuanordnung ist während des Filterns deaktiviert.",
+      "reorderDisabledHint": "Drag-Reordering ist hier deaktiviert; nutze „Auf Position… verschieben“ für Verschiebungen über Seiten hinweg.",
+      "movePopoverTitle": "An eine bestimmte Position verschieben",
+      "moveDescription": "Zielposition eingeben (1–{total}). Der Kurs wird nach dem Verschieben automatisch neu nummeriert.",
+      "movePlaceholder": "Zielposition",
+      "moveSubmit": "Verschieben",
+      "moveAriaLabel": "Lektion {position} an eine andere Position verschieben",
       "railHeading": "Lektionen",
       "saveAndNext": "Speichern und weiter",
       "lastLessonReached": "Sie sind bei der letzten Lektion.",

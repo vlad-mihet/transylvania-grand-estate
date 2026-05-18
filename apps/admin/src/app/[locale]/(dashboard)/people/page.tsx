@@ -65,7 +65,7 @@ export default function PeopleHomePage() {
           <KpiCard
             label={tKpi("students")}
             icon={GraduationCap}
-            href="/people/students"
+            href="/academy/students"
             total={kpis.students.total}
             isLoading={kpis.students.isLoading}
             caption={tKpi("pendingInvites", { count: studentsPending })}

@@ -125,6 +125,16 @@ export default function EditArticlePage() {
       onSubmit={(values, saveMode) =>
         updateMutation.mutate({ ...values, mode: saveMode })
       }
+      onAutosave={async (payload) => {
+        if (!articleQuery.data) return;
+        // Direct apiClient call — bypasses TanStack's invalidate-on-success
+        // chain so the loaded form doesn't reset its defaults mid-edit. The
+        // server merges into the draft column; live remains untouched.
+        await apiClient<ApiArticle>(`/articles/${articleQuery.data.id}`, {
+          method: "PATCH",
+          body: payload,
+        });
+      }}
       loading={updateMutation.isPending}
       submissionError={updateMutation.error}
       cancelHref="/articles"

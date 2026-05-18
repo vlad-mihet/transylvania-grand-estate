@@ -56,6 +56,22 @@
     "signingYouIn": "Te autentificăm…",
     "goToLogin": "Mergi la autentificare"
   },
+  "AcademyShell": {
+    "eyebrow": "Academy",
+    "title": "Platforma de studiu",
+    "tagline": "Cursuri, lecții, studenți și invitații — toate într-un singur loc.",
+    "backToAdmin": "Înapoi la admin",
+    "workspaceLabel": "Spațiu de lucru",
+    "studioFooter": "Studio Academy · v1",
+    "navigation": "Navigație",
+    "tabsLabel": "Secțiuni Academy",
+    "tabs": {
+      "overview": "Sumar",
+      "courses": "Cursuri",
+      "students": "Studenți",
+      "invitations": "Invitații"
+    }
+  },
   "Sidebar": {
     "management": "Gestionare",
     "overview": "Prezentare",
@@ -63,6 +79,7 @@
     "catalog": "Catalog",
     "locations": "Locații",
     "content": "Conținut",
+    "academy": "Academie",
     "finance": "Financiar",
     "settings": "Setări",
     "dashboard": "Astăzi",
@@ -95,7 +112,6 @@
     "peopleOverview": "Privire ansamblu",
     "peopleTeam": "Echipă",
     "peopleAgents": "Agenți",
-    "peopleStudents": "Studenți Academy",
     "peopleInvitations": "Invitații"
   },
   "CommandPalette": {
@@ -1262,6 +1278,7 @@
     "noResults": "Niciun rezultat",
     "page": "{current} / {total}",
     "rangeOf": "{from}–{to} din {total}",
+    "next": "Următoarea",
     "searchPlaceholder": "Caută…",
     "emptyTitle": "Nimic de afișat încă",
     "emptySearchDescription": "Niciun rezultat pentru „{query}”. Încearcă o căutare diferită.",
@@ -1389,6 +1406,12 @@
       "listTitle": "Cursuri Academy",
       "listDescription": "Gestionează cursurile și lecțiile platformei de studiu.",
       "createLabel": "Curs nou",
+      "lessonCount": "{count, plural, =0 {Fără lecții} one {# lecție} few {# lecții} other {# de lecții}}",
+      "selectAria": "Selectează {title}",
+      "actionsAria": "Acțiuni pentru {title}",
+      "selectAll": "Selectează tot",
+      "selectAllAria": "Selectează toate cursurile de pe această pagină",
+      "selectedCount": "{count, plural, one {# selectat} few {# selectate} other {# de selectate}}",
       "searchPlaceholder": "Caută după titlu sau slug",
       "columnTitle": "Titlu",
       "columnSlug": "Slug",
@@ -1488,7 +1511,12 @@
       "nextLessonAria": "Lecția următoare: {title}",
       "searchPlaceholder": "Caută o lecție…",
       "searchEmpty": "Nicio lecție nu se potrivește căutării.",
-      "reorderDisabledHint": "Reordonarea e dezactivată cât timp filtrezi.",
+      "reorderDisabledHint": "Reordonarea prin tragere e dezactivată; folosește „Mută la poziția…” pentru deplasări între pagini.",
+      "movePopoverTitle": "Mută la o anumită poziție",
+      "moveDescription": "Introdu poziția dorită (1–{total}). Cursul se renumerotează automat după mutare.",
+      "movePlaceholder": "Poziție țintă",
+      "moveSubmit": "Mută",
+      "moveAriaLabel": "Mută lecția {position} la o altă poziție",
       "railHeading": "Lecții",
       "saveAndNext": "Salvează și mergi la următoarea",
       "lastLessonReached": "Ești pe ultima lecție.",

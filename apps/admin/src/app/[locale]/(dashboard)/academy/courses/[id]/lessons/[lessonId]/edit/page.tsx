@@ -2,18 +2,23 @@
 
 import { useEffect } from "react";
 import { useParams, useRouter, notFound } from "next/navigation";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useLocale, useTranslations } from "next-intl";
 import { Eye } from "lucide-react";
-import { apiClient, ApiError } from "@/lib/api-client";
+import { ApiError } from "@/lib/api-client";
 import { toast } from "@/lib/toast";
 import { Link } from "@/i18n/navigation";
 import { usePermissions } from "@/components/auth/auth-provider";
-import { LessonForm } from "@/components/forms/lesson-form";
-import { LessonAttachmentsSection } from "@/components/forms/lesson-attachments-section";
-import { LessonPrevNext } from "@/components/academy/lesson-prev-next";
+import { LessonForm } from "@/modules/academy/forms/lesson-form";
+import { LessonAttachmentsSection } from "@/modules/academy/forms/lesson-attachments-section";
+import { LessonPrevNext } from "@/modules/academy/components/lesson-prev-next";
 import { Button, LoadingState } from "@tge/ui";
-import type { LessonFormValues } from "@/lib/validations/academy";
+import {
+  useAcademyLesson,
+  useAutosaveLesson,
+  useMintLessonPreviewToken,
+  useUpdateLesson,
+  type LessonFormValues,
+} from "@/modules/academy";
 import type { LessonStatus, LessonType } from "@prisma/client";
 
 type LessonSibling = {
@@ -49,73 +54,60 @@ export default function EditAcademyLessonPage() {
   const params = useParams<{ id: string; lessonId: string }>();
   const router = useRouter();
   const locale = useLocale();
-  const queryClient = useQueryClient();
   const tCourse = useTranslations("Academy.courses");
   const tLessons = useTranslations("Academy.lessons");
   const tc = useTranslations("Common");
   const tt = useTranslations("Academy.toasts");
   const { can } = usePermissions();
 
-  const previewMutation = useMutation({
-    mutationFn: () =>
-      apiClient<{ url: string; expiresAt: string }>(
-        `/admin/academy/courses/${params.id}/lessons/${params.lessonId}/preview-token`,
-        { method: "POST", body: {} },
-      ),
-    onSuccess: (result) => {
-      // Open in a new tab so the editor can flip back to keep editing.
-      // Brief popup-blocker dance: most browsers permit window.open from
-      // a click handler, but the mutation is async so we open *after*
-      // the response — accept a one-time prompt for that case.
-      window.open(result.url, "_blank", "noopener,noreferrer");
-    },
-    onError: (err) =>
-      toast.error(
-        err instanceof ApiError ? err.message : tt("previewMintFailed"),
-      ),
-  });
+  const mintPreview = useMintLessonPreviewToken(params.id);
+  const previewMutation = {
+    isPending: mintPreview.isPending,
+    mutate: () =>
+      mintPreview.mutate(params.lessonId, {
+        onSuccess: (result) => {
+          // Open in a new tab so the editor can flip back to keep editing.
+          window.open(result.url, "_blank", "noopener,noreferrer");
+        },
+        onError: (err) =>
+          toast.error(
+            err instanceof ApiError ? err.message : tt("previewMintFailed"),
+          ),
+      }),
+  };
 
   useEffect(() => {
     if (!can("academy.lesson.update")) router.replace(`/${locale}/403`);
   }, [can, router, locale]);
 
-  const lessonQuery = useQuery({
-    queryKey: ["academy-lesson", params.lessonId],
-    queryFn: () =>
-      apiClient<Lesson>(
-        `/admin/academy/courses/${params.id}/lessons/${params.lessonId}`,
-      ),
-  });
+  const lessonQuery = useAcademyLesson<Lesson>(params.id, params.lessonId);
+  const updateLesson = useUpdateLesson(params.id);
+  const autosaveLesson = useAutosaveLesson(params.id, params.lessonId);
 
-  const updateMutation = useMutation({
-    mutationFn: (vars: {
-      input: LessonFormValues & { mode?: "draft" | "publish" };
-      advanceTo: string | null;
-    }) =>
-      apiClient<Lesson>(
-        `/admin/academy/courses/${params.id}/lessons/${params.lessonId}`,
-        {
-          method: "PATCH",
-          body: vars.input,
+  const handleUpdate = (
+    input: LessonFormValues & { mode?: "draft" | "publish" },
+    advanceTo: string | null,
+  ) =>
+    updateLesson.mutate(
+      { lessonId: params.lessonId, body: input },
+      {
+        onSuccess: () => {
+          toast.success(tt("lessonSaved"));
+          if (advanceTo) {
+            router.push(
+              `/${locale}/academy/courses/${params.id}/lessons/${advanceTo}/edit`,
+            );
+          } else {
+            router.push(`/${locale}/academy/courses/${params.id}`);
+          }
         },
-      ).then((res) => ({ res, advanceTo: vars.advanceTo })),
-    onSuccess: ({ advanceTo }) => {
-      queryClient.invalidateQueries({
-        queryKey: ["academy-lesson", params.lessonId],
-      });
-      queryClient.invalidateQueries({
-        queryKey: ["academy-lessons", params.id],
-      });
-      toast.success(tt("lessonSaved"));
-      if (advanceTo) {
-        router.push(
-          `/${locale}/academy/courses/${params.id}/lessons/${advanceTo}/edit`,
-        );
-      } else {
-        router.push(`/${locale}/academy/courses/${params.id}`);
-      }
-    },
-  });
+      },
+    );
+
+  const updateMutation = {
+    isPending: updateLesson.isPending,
+    error: updateLesson.error,
+  };
 
   if (!can("academy.lesson.update")) return null;
 
@@ -194,21 +186,18 @@ export default function EditAcademyLessonPage() {
         mode="edit"
         defaultValues={defaults}
         onSubmit={(values, saveMode) =>
-          updateMutation.mutate({
-            input: { ...values, mode: saveMode },
-            advanceTo: null,
-          })
+          handleUpdate({ ...values, mode: saveMode }, null)
         }
+        onAutosave={async (payload) => {
+          await autosaveLesson.mutateAsync(payload);
+        }}
         onSubmitAndNext={
           lesson.next
             ? (values) =>
-                updateMutation.mutate({
-                  // "Save & next" promotes the entry to live (publish) since
-                  // the editor is moving forward in the sequence and would
-                  // otherwise leave a stale draft behind.
-                  input: { ...values, mode: "publish" },
-                  advanceTo: lesson.next!.id,
-                })
+                // "Save & next" promotes the entry to live (publish) since
+                // the editor is moving forward in the sequence and would
+                // otherwise leave a stale draft behind.
+                handleUpdate({ ...values, mode: "publish" }, lesson.next!.id)
             : undefined
         }
         loading={updateMutation.isPending}

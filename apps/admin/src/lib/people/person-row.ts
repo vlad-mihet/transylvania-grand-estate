@@ -107,7 +107,7 @@ export function fromAcademyUser(u: AcademyUserLike): PersonRow {
     roleOrTag: enrollments > 0 ? `${enrollments} enrolled` : null,
     status,
     lastActiveAt: u.lastLoginAt ?? null,
-    href: `/people/students/${u.id}`,
+    href: `/academy/students/${u.id}`,
   };
 }
 

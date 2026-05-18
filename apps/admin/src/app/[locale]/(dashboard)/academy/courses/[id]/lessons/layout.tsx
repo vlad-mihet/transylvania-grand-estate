@@ -1,5 +1,5 @@
 import type { ReactNode } from "react";
-import { CourseLessonsRail } from "@/components/academy/course-lessons-rail";
+import { CourseLessonsRail } from "@/modules/academy/components/course-lessons-rail";
 
 /**
  * Lesson editor shell — adds a secondary rail listing every lesson in the

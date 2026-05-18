@@ -1,5 +1,6 @@
 "use client";
 
+import { usePathname } from "@/i18n/navigation";
 import { AuthProvider } from "@/components/auth/auth-provider";
 import { AuthGuard } from "@/components/auth/auth-guard";
 import { Providers } from "@/components/providers";
@@ -7,12 +8,19 @@ import { SidebarProvider } from "@/components/layout/sidebar-context";
 import { AdminSidebar } from "@/components/layout/admin-sidebar";
 import { AdminHeader } from "@/components/layout/admin-header";
 import { BrandContextProvider } from "@/components/layout/brand-context-provider";
+import { AcademyWorkspaceSidebar } from "@/modules/academy/components/workspace-sidebar";
 
 export default function DashboardLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  const pathname = usePathname();
+  // When inside `/academy/**`, the Academy workspace sidebar replaces the
+  // global admin sidebar — the user has "entered" a dedicated module with
+  // its own chrome instead of a tab sitting inside the admin universe.
+  const isAcademyWorkspace = pathname.startsWith("/academy");
+
   return (
     <AuthProvider>
       <AuthGuard>
@@ -26,7 +34,11 @@ export default function DashboardLayout({
               Skip to content
             </a>
             <div className="flex min-h-screen bg-background">
-              <AdminSidebar />
+              {isAcademyWorkspace ? (
+                <AcademyWorkspaceSidebar />
+              ) : (
+                <AdminSidebar />
+              )}
               <div className="flex flex-1 flex-col lg:pl-60">
                 <AdminHeader />
                 <main

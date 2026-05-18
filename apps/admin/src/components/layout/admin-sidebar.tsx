@@ -1,11 +1,10 @@
 "use client";
 
-import { useEffect, type ComponentType } from "react";
+import { useEffect } from "react";
 import {
   Building2,
   ChevronRight,
   Gauge,
-  GraduationCap,
   HardHat,
   Landmark,
   LayoutDashboard,
@@ -26,31 +25,10 @@ import { useSidebar } from "@/components/layout/sidebar-context";
 import { Link, usePathname } from "@/i18n/navigation";
 import { useTranslations } from "next-intl";
 import { usePermissions } from "@/components/auth/auth-provider";
-import type { Action } from "@/lib/permissions";
 import { useUnreadInquiries } from "@/hooks/use-unread-inquiries";
 import { cn } from "@tge/utils";
-
-interface NavItem {
-  href: string;
-  labelKey: string;
-  icon: ComponentType<{ className?: string }>;
-  /** Optional permission gate — nav item hidden unless the user has this. */
-  requires?: Action;
-  /** Show item if the user has any of these. Use instead of `requires` when
-   * a single page legitimately serves multiple permission audiences (e.g.
-   * combined Invitations page for team + academy admins). */
-  requiresAny?: Action[];
-  /** Shows a numeric badge (e.g. unread inquiries). Placeholder for Phase 3. */
-  badge?: number;
-}
-
-interface NavGroup {
-  labelKey: string;
-  /** Optional canonical home for this group. When set, the group label is
-   * rendered as a link to this href. */
-  home?: string;
-  items: NavItem[];
-}
+import type { NavGroup } from "@/components/layout/nav-types";
+import { academyNavGroup } from "@/modules/academy";
 
 const NAV_GROUPS: NavGroup[] = [
   {
@@ -80,12 +58,6 @@ const NAV_GROUPS: NavGroup[] = [
         labelKey: "peopleAgents",
         icon: UserCircle,
         requires: "agent.read",
-      },
-      {
-        href: "/people/students",
-        labelKey: "peopleStudents",
-        icon: GraduationCap,
-        requires: "academy.user.manage",
       },
       {
         href: "/people/invitations",
@@ -156,20 +128,9 @@ const NAV_GROUPS: NavGroup[] = [
         icon: Newspaper,
         requires: "article.read",
       },
-      {
-        href: "/academy",
-        labelKey: "academyOverview",
-        icon: Gauge,
-        requires: "academy.user.manage",
-      },
-      {
-        href: "/academy/courses",
-        labelKey: "academyCourses",
-        icon: GraduationCap,
-        requires: "academy.course.read",
-      },
     ],
   },
+  academyNavGroup,
   {
     labelKey: "finance",
     home: "/finance",

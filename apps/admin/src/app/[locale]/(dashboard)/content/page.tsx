@@ -26,7 +26,7 @@ import { PageHeader } from "@/components/shared/page-header";
 import { RelativeTime } from "@/components/shared/relative-time";
 import { StatusBadge } from "@/components/shared/status-badge";
 import { usePermissions } from "@/components/auth/auth-provider";
-import { pickTitle } from "@/lib/academy/pick-title";
+import { pickTitle } from "@/modules/academy";
 import { RecentList } from "@/components/shared/recent-list";
 import { LocaleCompletenessPanel } from "./_components/locale-completeness-panel";
 import { EnTranslationsQueue } from "./_components/en-translations-queue";
@@ -121,7 +121,7 @@ export default function ContentOverviewPage() {
           </Can>
           <Can action="academy.user.manage">
             <Button asChild variant="outline" size="sm">
-              <Link href="/people/students">
+              <Link href="/academy/students">
                 <Mail className="mr-1.5 h-3.5 w-3.5" />
                 {t("quickInviteStudent")}
               </Link>

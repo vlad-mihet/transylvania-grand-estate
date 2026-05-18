@@ -29,6 +29,11 @@ const STATUS_LABEL: Record<LocaleStatus, string> = {
   error: "validation errors",
 };
 
+/**
+ * Inline 4-pill switcher for active locale. The richer Contentful-style
+ * dropdown with per-locale publish state lives in Phase 1A; this is the
+ * baseline switcher used pre-Phase-1A.
+ */
 export function EntryLocaleSwitcher({
   completeness,
   errorCounts,
@@ -58,7 +63,9 @@ export function EntryLocaleSwitcher({
             role="tab"
             aria-selected={isActive}
             aria-label={`${localeAutonyms[locale]} — ${STATUS_LABEL[status]}${
-              errorCount > 0 ? ` (${errorCount} error${errorCount === 1 ? "" : "s"})` : ""
+              errorCount > 0
+                ? ` (${errorCount} error${errorCount === 1 ? "" : "s"})`
+                : ""
             }`}
             onClick={() => setActive(locale)}
             className={[

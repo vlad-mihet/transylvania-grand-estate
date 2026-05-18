@@ -19,10 +19,10 @@ interface LocalizedFieldShellProps {
 
 /**
  * Visual chrome shared by `LocalizedInput`, `LocalizedTextarea`, and the
- * markdown editor wrapper. Renders the label, the right-gutter locale chip,
- * the active-locale-aware input slot, the copy-from-primary affordance, and
- * the validation message — so the per-field components only own the input
- * itself and the controller wiring.
+ * markdown editor wrapper. Renders the label, the right-gutter locale chip
+ * for the *active* locale, the input slot, the copy-from-primary affordance,
+ * and the validation message — so the per-field components only own the
+ * input itself and the controller wiring.
  */
 export function LocalizedFieldShell({
   id,

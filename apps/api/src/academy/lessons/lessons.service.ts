@@ -28,10 +28,24 @@ export class LessonsService {
   ) {}
 
   async findAllForAdmin(courseId: string, query: QueryLessonDto) {
-    const { page = 1, limit = 20, status, type, sort } = query;
+    const { page = 1, limit = 20, status, type, sort, search } = query;
     const where: Prisma.LessonWhereInput = { courseId };
     if (status) where.status = status;
     if (type) where.type = type;
+    if (search?.trim()) {
+      const q = search.trim();
+      // Match slug (TEXT column) + localized title across the 4 supported
+      // locales. JSON path matching on each locale key lets the SQL planner
+      // use the GIN index we maintain on the `title` JSONB column without
+      // resorting to a full table scan via `path: ['*']`.
+      where.OR = [
+        { slug: { contains: q, mode: 'insensitive' } },
+        { title: { path: ['ro'], string_contains: q } },
+        { title: { path: ['en'], string_contains: q } },
+        { title: { path: ['fr'], string_contains: q } },
+        { title: { path: ['de'], string_contains: q } },
+      ];
+    }
     const orderBy: Prisma.LessonOrderByWithRelationInput =
       sort === 'newest'
         ? { createdAt: 'desc' }
@@ -398,50 +412,60 @@ export class LessonsService {
   }
 
   /**
-   * Atomically rewrite `order` for every lesson in the course. The caller
-   * passes the full ordered sequence of lesson ids; we rewrite to sparse
-   * (10, 20, 30, …) so manual inserts via the edit form's `order` field
-   * can still squeeze rows between existing positions after a reorder.
+   * Move one lesson to a 1-based `targetOrder` inside its course. The
+   * server fetches the lessons ASC, splices the moved row to
+   * `targetOrder - 1`, and renumbers densely as `(idx + 1) * 10` in a
+   * single transaction. The dense renumber preserves the sparse-int
+   * pattern from the schema — manual `order` edits via the lesson form
+   * can still squeeze a row between two existing positions after a move.
    *
-   * Validation rejects partial inputs so the endpoint stays safe:
-   *   - Count mismatch → client is out of sync with the server; 400.
-   *   - Duplicate id → impossible-by-design; 400.
-   *   - Foreign id (not in this course) → 400.
+   * `targetOrder` is clamped to `[1, lessonCount]` rather than rejected.
+   * The cross-page "Move to position N" UI binds a number input; clamping
+   * snaps obviously-out-of-range values (0, N+5) to a sensible endpoint
+   * instead of surfacing a 400 the user can't act on.
+   *
+   * Same-position moves return `{ moved: 0 }` without touching the
+   * database or incrementing the reorder metric — refetch-on-settle
+   * still runs on the client, so this is also our defence against drag
+   * events that don't actually change anything.
    */
-  async reorder(courseId: string, lessonIds: string[]) {
+  async move(courseId: string, lessonId: string, targetOrder: number) {
     await this.ensureCourseExists(courseId);
-    const existing = await this.prisma.lesson.findMany({
+    const lessons = await this.prisma.lesson.findMany({
       where: { courseId },
-      select: { id: true },
+      orderBy: { order: 'asc' },
+      select: { id: true, order: true },
     });
-    const existingIds = new Set(existing.map((l) => l.id));
-
-    if (new Set(lessonIds).size !== lessonIds.length) {
-      throw new BadRequestException('lessonIds must be unique');
-    }
-    if (lessonIds.length !== existingIds.size) {
+    const fromIdx = lessons.findIndex((l) => l.id === lessonId);
+    if (fromIdx < 0) {
       throw new BadRequestException(
-        `lessonIds must cover all ${existingIds.size} lesson(s) in this course; got ${lessonIds.length}`,
+        `lesson ${lessonId} does not belong to course ${courseId}`,
       );
     }
-    for (const id of lessonIds) {
-      if (!existingIds.has(id)) {
-        throw new BadRequestException(
-          `lesson ${id} does not belong to course ${courseId}`,
-        );
-      }
+    const toIdx = Math.max(0, Math.min(lessons.length - 1, targetOrder - 1));
+    if (fromIdx === toIdx) {
+      return { ok: true, moved: 0 as const };
     }
 
+    const next = [...lessons];
+    const [moved] = next.splice(fromIdx, 1);
+    next.splice(toIdx, 0, moved);
+
     await this.prisma.$transaction(
-      lessonIds.map((id, idx) =>
+      next.map((l, idx) =>
         this.prisma.lesson.update({
-          where: { id },
+          where: { id: l.id },
           data: { order: (idx + 1) * 10 },
         }),
       ),
     );
     this.metrics.academyReorders.inc();
-    return { ok: true, reordered: lessonIds.length };
+    return {
+      ok: true,
+      moved: 1 as const,
+      fromOrder: (fromIdx + 1) * 10,
+      toOrder: (toIdx + 1) * 10,
+    };
   }
 
   private async ensureCourseExists(courseId: string) {

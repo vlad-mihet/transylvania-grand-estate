@@ -1,54 +1,23 @@
 "use client";
 
-import { useQuery } from "@tanstack/react-query";
 import { useLocale, useTranslations } from "next-intl";
 import { LoadingState } from "@tge/ui";
 import { CheckCircle2, Play } from "lucide-react";
-import { apiClient } from "@/lib/api-client";
 import { Link } from "@/i18n/navigation";
 import { Mono } from "@/components/shared/mono";
 import { PageHeader } from "@/components/shared/page-header";
 import { RelativeTime } from "@/components/shared/relative-time";
 import { SectionCard } from "@/components/shared/section-card";
 import { StatTile } from "@/components/shared/stat-tile";
-import { AcademyProgressBar } from "@/components/academy/academy-progress-bar";
-import { pickTitle } from "@/lib/academy/pick-title";
-
-type Overview = {
-  mau30d: number;
-  activeEnrollments: number;
-  newStudentsLast7d: number;
-  pendingInvitations: number;
-  topCoursesByCompletion: Array<{
-    courseId: string;
-    slug: string;
-    title: Record<string, string | undefined>;
-    completedCount: number;
-    enrolledCount: number;
-    completionRate: number;
-  }>;
-  recentActivity: Array<{
-    studentId: string;
-    studentName: string;
-    kind: "started" | "completed";
-    courseId: string;
-    courseSlug: string;
-    courseTitle: Record<string, string | undefined>;
-    lessonId: string;
-    lessonSlug: string;
-    at: string;
-  }>;
-};
+import { AcademyProgressBar } from "@/modules/academy/components/academy-progress-bar";
+import { pickTitle, useAcademyOverview } from "@/modules/academy";
 
 export default function AcademyOverviewPage() {
   const locale = useLocale();
   const t = useTranslations("Academy.overview");
   const tc = useTranslations("Common");
 
-  const overviewQuery = useQuery({
-    queryKey: ["academy-overview"],
-    queryFn: () => apiClient<Overview>("/admin/academy/overview"),
-  });
+  const overviewQuery = useAcademyOverview();
 
   if (overviewQuery.isLoading) {
     return <LoadingState label={tc("loading")} />;
@@ -87,7 +56,7 @@ export default function AcademyOverviewPage() {
           tone={data.pendingInvitations > 0 ? "warning" : "default"}
           caption={
             <Link
-              href="/people/invitations?tab=academy"
+              href="/academy/invitations"
               className="hover:text-foreground hover:underline"
             >
               {t("pendingInvitationsLink")}

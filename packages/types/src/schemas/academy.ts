@@ -8,6 +8,7 @@ import {
 import {
   entryModeSchema,
   lessonEmbedUrlSchema,
+  localizedRichTextSchema,
   localizedStringSchema,
   paginationSchema,
   slugSchema,
@@ -29,7 +30,7 @@ export const createCourseSchema = z
   .object({
     slug: slugSchema,
     title: localizedStringSchema,
-    description: localizedStringSchema,
+    description: localizedRichTextSchema,
     coverImage: z.string().min(1).max(500).optional(),
     // `enrolled` = listing + lesson access require an AcademyEnrollment row;
     // `public` = any authenticated academy user can read without enrollment.
@@ -90,7 +91,7 @@ export const createLessonSchema = z
     order: z.number().int().min(0),
     title: localizedStringSchema,
     excerpt: localizedStringSchema,
-    content: localizedStringSchema,
+    content: localizedRichTextSchema,
     type: lessonTypeSchema.optional(),
     // Only meaningful when type === 'video'. The schema normalizes share
     // URLs to their canonical privacy-friendly embed form (youtube-nocookie
@@ -143,15 +144,12 @@ export const studentLessonsQuerySchema = paginationSchema.extend({
 export type StudentLessonsQueryInput = z.infer<typeof studentLessonsQuerySchema>;
 
 export const queryLessonSchema = paginationSchema.extend({
-  // Override the global pagination cap of 100. The admin course-detail page
-  // needs the FULL lesson list in one shot — drag-and-drop reorder posts
-  // every lesson id back to the server, and the reorder endpoint rejects
-  // any payload that doesn't cover the course exactly. Soft cap matches
-  // reorderLessonsSchema's 500.
-  limit: z.coerce.number().int().min(1).max(500).default(12),
   status: z.nativeEnum(LessonStatus).optional(),
   type: lessonTypeSchema.optional(),
   sort: z.enum(["order", "newest", "oldest"]).optional(),
+  // Server-side title/slug search. The admin paginates lessons so we can no
+  // longer rely on client-side filtering over the full course at once.
+  search: z.string().max(200).optional(),
 });
 
 export type CreateLessonInput = z.infer<typeof createLessonSchema>;
@@ -178,10 +176,11 @@ export type LessonAttachmentSummary = {
 };
 
 /**
- * Atomic reorder of all attachments on a lesson. Same discipline as
- * `reorderLessonsSchema`: client sends the full ordered sequence of
- * attachment ids and the server rewrites `sortOrder` accordingly. The
- * cap matches `ATTACHMENTS_PER_LESSON_CAP` on the API side.
+ * Atomic reorder of all attachments on a lesson. Client sends the full
+ * ordered sequence of attachment ids and the server rewrites `sortOrder`
+ * accordingly. The cap matches `ATTACHMENTS_PER_LESSON_CAP` on the API
+ * side, and stays as a "full array" payload because per-lesson
+ * attachments are bounded at 10 — pagination isn't a concern.
  */
 export const reorderLessonAttachmentsSchema = z
   .object({
@@ -194,23 +193,26 @@ export type ReorderLessonAttachmentsInput = z.infer<
 >;
 
 /**
- * Bulk reorder for lessons inside a course. The full ordered sequence of
- * lesson ids is the single source of truth — the server rewrites `order`
- * as `(index + 1) * 10` for each, so positions are dense after the write
- * and sparse gaps reappear only after manual edits.
+ * Move a single lesson to a target 1-based position inside its course. The
+ * server fetches the course's lessons ASC, splices the moved lesson to
+ * `targetOrder - 1`, then renumbers densely as `(index + 1) * 10` in one
+ * transaction. Out-of-range `targetOrder` values are clamped to
+ * `[1, lessonCount]` rather than rejected — the admin "Move to position N"
+ * UI binds an `<input type="number">` and we'd rather snap-to-end than
+ * surface a 400 for a value the user typed one off.
  *
- * The server rejects if the array doesn't exactly cover the course's
- * current lessons (missing → 400, duplicate → 400, foreign id → 400).
- * This makes the endpoint a safe atomic operation: no partial reorders
- * where some lessons silently keep their old `order`.
+ * Decoupling display from the data structure: pagination on the lessons
+ * list is impossible with a bulk "send the whole array back" reorder
+ * (cross-page moves can't see the rows on other pages). A move-by-id
+ * operation lets pagination and drag-and-drop coexist at any course size.
  */
-export const reorderLessonsSchema = z
+export const moveLessonSchema = z
   .object({
-    lessonIds: z.array(z.string().uuid()).min(1).max(500),
+    targetOrder: z.number().int().min(1).max(10_000),
   })
   .strict();
 
-export type ReorderLessonsInput = z.infer<typeof reorderLessonsSchema>;
+export type MoveLessonInput = z.infer<typeof moveLessonSchema>;
 
 // ─── Enrollment ─────────────────────────────────────────
 

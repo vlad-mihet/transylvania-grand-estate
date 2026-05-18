@@ -147,7 +147,7 @@ export function useRecentInvitations() {
         displayName: row.email,
         status: row.status,
         createdAt: row.createdAt,
-        href: "/people/invitations?tab=academy",
+        href: "/academy/invitations",
       }),
     );
     return [...teamRows, ...academyRows]

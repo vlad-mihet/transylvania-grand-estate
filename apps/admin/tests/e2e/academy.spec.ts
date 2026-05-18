@@ -71,21 +71,27 @@ test.describe('academy course + lessons lifecycle', () => {
         lessonIds.push(res.data.id);
       }
 
-      // 3. Reorder: reverse the array.
+      // 3. Reorder via the move-by-id endpoint: walk the array from the
+      //    end and move each lesson to position 1, which by induction
+      //    produces the reversed sequence. The legacy bulk-reorder
+      //    endpoint was retired so admin pagination + drag-drop can
+      //    coexist; this loop is the closest equivalent.
       const reversed = [...lessonIds].reverse();
-      await adminApi(
-        token,
-        `/admin/academy/courses/${courseId}/lessons/reorder`,
-        {
-          method: 'POST',
-          body: { lessonIds: reversed },
-        },
-      );
+      for (const lessonId of reversed) {
+        await adminApi(
+          token,
+          `/admin/academy/courses/${courseId}/lessons/${lessonId}/move`,
+          {
+            method: 'POST',
+            body: { targetOrder: 1 },
+          },
+        );
+      }
 
-      // Verify order took effect.
+      // Verify order took effect. Default pagination covers 3 lessons.
       const lessonsEnv = await adminApi<ApiEnvelope<Lesson[]>>(
         token,
-        `/admin/academy/courses/${courseId}/lessons?limit=500&sort=order`,
+        `/admin/academy/courses/${courseId}/lessons?sort=order`,
       );
       const orderedIds = lessonsEnv.data.map((l) => l.id);
       expect(orderedIds).toEqual(reversed);

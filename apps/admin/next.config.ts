@@ -62,23 +62,18 @@ const nextConfig: NextConfig = {
         permanent: true,
       },
       {
-        source: "/academy/students",
-        destination: "/people/students",
+        source: "/people/students",
+        destination: "/academy/students",
         permanent: true,
       },
       {
-        source: "/academy/students/:path*",
-        destination: "/people/students/:path*",
+        source: "/people/students/:path*",
+        destination: "/academy/students/:path*",
         permanent: true,
       },
       {
         source: "/invitations",
         destination: "/people/invitations?tab=team",
-        permanent: true,
-      },
-      {
-        source: "/academy/invitations",
-        destination: "/people/invitations?tab=academy",
         permanent: true,
       },
     ];

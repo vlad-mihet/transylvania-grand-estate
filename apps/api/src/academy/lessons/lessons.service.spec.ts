@@ -20,115 +20,256 @@ function makeProgress(): LessonProgressService {
   } as unknown as LessonProgressService;
 }
 
-/**
- * Validation contract for `LessonsService.reorder`. The endpoint renumbers
- * every lesson in the course atomically, so a bad input (partial, dupes,
- * foreign ids) must fail closed before any Prisma write fires.
- */
-describe('LessonsService.reorder', () => {
-  const COURSE_ID = '00000000-0000-0000-0000-000000000001';
-  const LESSON_A = '00000000-0000-0000-0000-0000000000a1';
-  const LESSON_B = '00000000-0000-0000-0000-0000000000a2';
-  const LESSON_C = '00000000-0000-0000-0000-0000000000a3';
-  const FOREIGN_LESSON = '00000000-0000-0000-0000-0000000000ff';
+function makeMetrics(): MetricsService {
+  return {
+    academyReorders: { inc: jest.fn() },
+  } as unknown as MetricsService;
+}
 
-  function makePrisma(existing: string[]): {
+const COURSE_ID = '00000000-0000-0000-0000-000000000001';
+const LESSON_A = '00000000-0000-0000-0000-0000000000a1';
+const LESSON_B = '00000000-0000-0000-0000-0000000000a2';
+const LESSON_C = '00000000-0000-0000-0000-0000000000a3';
+const LESSON_D = '00000000-0000-0000-0000-0000000000a4';
+const LESSON_E = '00000000-0000-0000-0000-0000000000a5';
+const FOREIGN_LESSON = '00000000-0000-0000-0000-0000000000ff';
+
+/**
+ * `move` is the lone source of truth for changing lesson order — the
+ * legacy bulk-reorder endpoint was retired so admin pagination + DnD
+ * could coexist. The contract is forgiving by design (out-of-range
+ * `targetOrder` is clamped rather than rejected) so an admin scrolling
+ * past the end can't trip a 400; the validation we DO enforce is the
+ * lesson-belongs-to-course check.
+ */
+describe('LessonsService.move', () => {
+  function makePrisma(existing: { id: string; order: number }[]): {
     prisma: PrismaService;
     tx: jest.Mock;
+    update: jest.Mock;
   } {
     const tx = jest.fn().mockResolvedValue([]);
+    const update = jest.fn((args) => args);
     const prisma = {
       course: {
         findUnique: jest.fn().mockResolvedValue({ id: COURSE_ID }),
       },
       lesson: {
-        findMany: jest.fn().mockResolvedValue(existing.map((id) => ({ id }))),
-        update: jest.fn((args) => args),
+        findMany: jest.fn().mockResolvedValue(existing),
+        update,
       },
       $transaction: tx,
     } as unknown as PrismaService;
-    return { prisma, tx };
-  }
-
-  function makeMetrics(): MetricsService {
-    return {
-      academyReorders: { inc: jest.fn() },
-    } as unknown as MetricsService;
+    return { prisma, tx, update };
   }
 
   it('rejects when the course does not exist', async () => {
     const prisma = {
       course: { findUnique: jest.fn().mockResolvedValue(null) },
     } as unknown as PrismaService;
-    const service = new LessonsService(prisma, makeMetrics(), makeEnrollments(), makeProgress());
+    const service = new LessonsService(
+      prisma,
+      makeMetrics(),
+      makeEnrollments(),
+      makeProgress(),
+    );
     await expect(
-      service.reorder(COURSE_ID, [LESSON_A]),
+      service.move(COURSE_ID, LESSON_A, 1),
     ).rejects.toThrow(NotFoundException);
   });
 
-  it('rejects duplicate lesson ids before any DB write', async () => {
-    const { prisma, tx } = makePrisma([LESSON_A, LESSON_B, LESSON_C]);
-    const service = new LessonsService(prisma, makeMetrics(), makeEnrollments(), makeProgress());
+  it('rejects a lesson id that does not belong to the course', async () => {
+    const { prisma, tx } = makePrisma([
+      { id: LESSON_A, order: 10 },
+      { id: LESSON_B, order: 20 },
+    ]);
+    const service = new LessonsService(
+      prisma,
+      makeMetrics(),
+      makeEnrollments(),
+      makeProgress(),
+    );
     await expect(
-      service.reorder(COURSE_ID, [LESSON_A, LESSON_A, LESSON_B]),
+      service.move(COURSE_ID, FOREIGN_LESSON, 1),
     ).rejects.toThrow(BadRequestException);
     expect(tx).not.toHaveBeenCalled();
   });
 
-  it('rejects when the array length does not cover every lesson in the course', async () => {
-    const { prisma, tx } = makePrisma([LESSON_A, LESSON_B, LESSON_C]);
-    const service = new LessonsService(prisma, makeMetrics(), makeEnrollments(), makeProgress());
-    await expect(
-      service.reorder(COURSE_ID, [LESSON_A, LESSON_B]),
-    ).rejects.toThrow(BadRequestException);
+  it('is a no-op when moved to its current position (no write, no metric)', async () => {
+    const { prisma, tx, update } = makePrisma([
+      { id: LESSON_A, order: 10 },
+      { id: LESSON_B, order: 20 },
+      { id: LESSON_C, order: 30 },
+    ]);
+    const metrics = makeMetrics();
+    const service = new LessonsService(
+      prisma,
+      metrics,
+      makeEnrollments(),
+      makeProgress(),
+    );
+    const result = await service.move(COURSE_ID, LESSON_B, 2);
+    expect(result).toEqual({ ok: true, moved: 0 });
     expect(tx).not.toHaveBeenCalled();
+    expect(update).not.toHaveBeenCalled();
+    expect(metrics.academyReorders.inc).not.toHaveBeenCalled();
   });
 
-  it('rejects foreign lesson ids (belong to another course)', async () => {
-    const { prisma, tx } = makePrisma([LESSON_A, LESSON_B, LESSON_C]);
-    const service = new LessonsService(prisma, makeMetrics(), makeEnrollments(), makeProgress());
-    await expect(
-      service.reorder(COURSE_ID, [LESSON_A, LESSON_B, FOREIGN_LESSON]),
-    ).rejects.toThrow(BadRequestException);
-    expect(tx).not.toHaveBeenCalled();
+  it('moves lesson #3 to position 1 and renumbers densely', async () => {
+    const { prisma, tx, update } = makePrisma([
+      { id: LESSON_A, order: 10 },
+      { id: LESSON_B, order: 20 },
+      { id: LESSON_C, order: 30 },
+      { id: LESSON_D, order: 40 },
+      { id: LESSON_E, order: 50 },
+    ]);
+    const metrics = makeMetrics();
+    const service = new LessonsService(
+      prisma,
+      metrics,
+      makeEnrollments(),
+      makeProgress(),
+    );
+    const result = await service.move(COURSE_ID, LESSON_C, 1);
+    expect(result).toEqual({
+      ok: true,
+      moved: 1,
+      fromOrder: 30,
+      toOrder: 10,
+    });
+    expect(tx).toHaveBeenCalledTimes(1);
+    expect(update.mock.calls).toEqual([
+      [{ where: { id: LESSON_C }, data: { order: 10 } }],
+      [{ where: { id: LESSON_A }, data: { order: 20 } }],
+      [{ where: { id: LESSON_B }, data: { order: 30 } }],
+      [{ where: { id: LESSON_D }, data: { order: 40 } }],
+      [{ where: { id: LESSON_E }, data: { order: 50 } }],
+    ]);
+    expect(metrics.academyReorders.inc).toHaveBeenCalledTimes(1);
   });
 
+  it('clamps targetOrder=0 to position 1', async () => {
+    const { prisma, update } = makePrisma([
+      { id: LESSON_A, order: 10 },
+      { id: LESSON_B, order: 20 },
+      { id: LESSON_C, order: 30 },
+    ]);
+    const service = new LessonsService(
+      prisma,
+      makeMetrics(),
+      makeEnrollments(),
+      makeProgress(),
+    );
+    const result = await service.move(COURSE_ID, LESSON_B, 0);
+    expect(result.moved).toBe(1);
+    // First update is the moved lesson at order 10.
+    expect(update.mock.calls[0]).toEqual([
+      { where: { id: LESSON_B }, data: { order: 10 } },
+    ]);
+  });
+
+  it('clamps targetOrder beyond the end to the last position', async () => {
+    const { prisma, update } = makePrisma([
+      { id: LESSON_A, order: 10 },
+      { id: LESSON_B, order: 20 },
+      { id: LESSON_C, order: 30 },
+    ]);
+    const service = new LessonsService(
+      prisma,
+      makeMetrics(),
+      makeEnrollments(),
+      makeProgress(),
+    );
+    const result = await service.move(COURSE_ID, LESSON_A, 999);
+    expect(result.moved).toBe(1);
+    expect(result.toOrder).toBe(30);
+    // A ended up last.
+    expect(update.mock.calls).toEqual([
+      [{ where: { id: LESSON_B }, data: { order: 10 } }],
+      [{ where: { id: LESSON_C }, data: { order: 20 } }],
+      [{ where: { id: LESSON_A }, data: { order: 30 } }],
+    ]);
+  });
+});
+
+/**
+ * Non-mutation reads stay covered. The sibling chain feeds the lesson
+ * editor's prev/next controls; the student paginator drives the academy
+ * TOC. Both are unaffected by the move refactor but are the surfaces an
+ * admin will exercise side-by-side with the new pagination.
+ */
+describe('LessonsService reads', () => {
   it('returns prev/next siblings for admin in-editor navigation regardless of status', async () => {
-    // The admin sibling chain must include drafts and archived lessons —
-    // the editor is the surface used to publish them, so they have to be
-    // reachable via prev/next. Order is by `order` ASC.
-    const A = { id: LESSON_A, courseId: COURSE_ID, slug: 'a', order: 10, status: 'archived', title: { ro: 'Unu' } };
-    const B = { id: LESSON_B, courseId: COURSE_ID, slug: 'b', order: 20, status: 'draft', title: { ro: 'Doi' } };
-    const C = { id: LESSON_C, courseId: COURSE_ID, slug: 'c', order: 30, status: 'published', title: { ro: 'Trei' } };
+    const A = {
+      id: LESSON_A,
+      courseId: COURSE_ID,
+      slug: 'a',
+      order: 10,
+      status: 'archived',
+      title: { ro: 'Unu' },
+    };
+    const B = {
+      id: LESSON_B,
+      courseId: COURSE_ID,
+      slug: 'b',
+      order: 20,
+      status: 'draft',
+      title: { ro: 'Doi' },
+    };
+    const C = {
+      id: LESSON_C,
+      courseId: COURSE_ID,
+      slug: 'c',
+      order: 30,
+      status: 'published',
+      title: { ro: 'Trei' },
+    };
     const prisma = {
       lesson: {
         findMany: jest.fn().mockResolvedValue([A, B, C]),
       },
     } as unknown as PrismaService;
-    const service = new LessonsService(prisma, makeMetrics(), makeEnrollments(), makeProgress());
+    const service = new LessonsService(
+      prisma,
+      makeMetrics(),
+      makeEnrollments(),
+      makeProgress(),
+    );
 
     const first = await service.findByIdForAdminWithSiblings(COURSE_ID, LESSON_A);
     expect(first.position).toBe(1);
     expect(first.total).toBe(3);
     expect(first.prev).toBeNull();
-    expect(first.next).toEqual({ id: LESSON_B, slug: 'b', title: { ro: 'Doi' } });
+    expect(first.next).toEqual({
+      id: LESSON_B,
+      slug: 'b',
+      title: { ro: 'Doi' },
+    });
 
     const middle = await service.findByIdForAdminWithSiblings(COURSE_ID, LESSON_B);
     expect(middle.position).toBe(2);
-    expect(middle.prev).toEqual({ id: LESSON_A, slug: 'a', title: { ro: 'Unu' } });
-    expect(middle.next).toEqual({ id: LESSON_C, slug: 'c', title: { ro: 'Trei' } });
+    expect(middle.prev).toEqual({
+      id: LESSON_A,
+      slug: 'a',
+      title: { ro: 'Unu' },
+    });
+    expect(middle.next).toEqual({
+      id: LESSON_C,
+      slug: 'c',
+      title: { ro: 'Trei' },
+    });
 
     const last = await service.findByIdForAdminWithSiblings(COURSE_ID, LESSON_C);
     expect(last.position).toBe(3);
-    expect(last.prev).toEqual({ id: LESSON_B, slug: 'b', title: { ro: 'Doi' } });
+    expect(last.prev).toEqual({
+      id: LESSON_B,
+      slug: 'b',
+      title: { ro: 'Doi' },
+    });
     expect(last.next).toBeNull();
   });
 
   it('paginates the student TOC and preserves position when filtered', async () => {
-    // 5 published lessons. Page 2 of 2 (limit 2) → returns lessons 3-4
-    // with position 3 + 4 (NOT 1 + 2). When filtered to lessons whose
-    // slug includes "two", only lesson 2 returns — but its position
-    // remains 2, not 1.
     const lessons = Array.from({ length: 5 }, (_, i) => ({
       id: `00000000-0000-0000-0000-000000000${(i + 1).toString().padStart(3, '0')}`,
       slug: ['one', 'two', 'three', 'four', 'five'][i],
@@ -190,7 +331,6 @@ describe('LessonsService.reorder', () => {
   });
 
   it('returns null when the course is not published or accessible', async () => {
-    // Draft course -> not visible to students.
     const prisma = {
       course: {
         findUnique: jest.fn().mockResolvedValue({
@@ -223,30 +363,14 @@ describe('LessonsService.reorder', () => {
         ]),
       },
     } as unknown as PrismaService;
-    const service = new LessonsService(prisma, makeMetrics(), makeEnrollments(), makeProgress());
+    const service = new LessonsService(
+      prisma,
+      makeMetrics(),
+      makeEnrollments(),
+      makeProgress(),
+    );
     await expect(
       service.findByIdForAdminWithSiblings(COURSE_ID, FOREIGN_LESSON),
     ).rejects.toThrow(NotFoundException);
-  });
-
-  it('writes sparse orders (10/20/30…) in a single transaction on the happy path', async () => {
-    const { prisma, tx } = makePrisma([LESSON_A, LESSON_B, LESSON_C]);
-    const metrics = makeMetrics();
-    const service = new LessonsService(prisma, metrics, makeEnrollments(), makeProgress());
-    const result = await service.reorder(COURSE_ID, [
-      LESSON_C,
-      LESSON_A,
-      LESSON_B,
-    ]);
-    expect(result).toEqual({ ok: true, reordered: 3 });
-    expect(tx).toHaveBeenCalledTimes(1);
-    // Verify each lesson.update was called with the right order value.
-    const updateCalls = (prisma.lesson.update as jest.Mock).mock.calls;
-    expect(updateCalls).toEqual([
-      [{ where: { id: LESSON_C }, data: { order: 10 } }],
-      [{ where: { id: LESSON_A }, data: { order: 20 } }],
-      [{ where: { id: LESSON_B }, data: { order: 30 } }],
-    ]);
-    expect(metrics.academyReorders.inc).toHaveBeenCalledTimes(1);
   });
 });

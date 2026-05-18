@@ -469,13 +469,16 @@ export class AuditInterceptor implements NestInterceptor {
 
 /**
  * Classify an academy admin route. `segments` starts after `/admin/academy/`
- * — e.g. `['courses', ':id', 'lessons', 'reorder']`. Returns an audit
- * metadata object or null if the route shouldn't be audited.
+ * — e.g. `['courses', ':id', 'lessons', ':lessonId', 'move']`. Returns an
+ * audit metadata object or null if the route shouldn't be audited.
  *
  * Special cases that don't fit the bare verb-for(method) mapping:
- *   - `POST /courses/:courseId/lessons/reorder` — pin the audit entry to
- *     the course (not to a single lesson) via `resourceIdParam: 'courseId'`.
- *     One row per drag-drop commit instead of 24 individual Lesson updates.
+ *   - `POST /courses/:courseId/lessons/:lessonId/move` — pin the audit
+ *     entry to the course (not the moved lesson) via
+ *     `resourceIdParam: 'courseId'`. One row per move commit; an admin
+ *     restructuring 20 lessons across pages now writes 20 rows under
+ *     `course.lesson.move`, where each row's `after` carries the lesson
+ *     that actually moved and its new order.
  *   - `/courses/:id/cover-image` (POST/DELETE) — no resource row to snapshot
  *     cleanly; we still want the `course.cover-image.update|delete` event.
  *   - `POST /invitations/:id/resend` — treated as `invitation.resend`.
@@ -485,13 +488,19 @@ function classifyAcademy(
   method: string,
 ): AuditMetadata | null {
   const [area, , third, fourth] = segments;
+  const fifth = segments[4];
 
   if (area === 'courses') {
-    // /courses/:id/lessons/reorder
-    if (third === 'lessons' && fourth === 'reorder' && method === 'POST') {
+    // /courses/:id/lessons/:lessonId/move
+    if (
+      third === 'lessons' &&
+      fourth &&
+      fifth === 'move' &&
+      method === 'POST'
+    ) {
       return {
         resource: 'Course',
-        action: 'course.lesson.reorder',
+        action: 'course.lesson.move',
         resourceIdParam: 'courseId',
       };
     }

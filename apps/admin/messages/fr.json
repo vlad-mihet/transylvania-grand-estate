@@ -56,6 +56,22 @@
     "signingYouIn": "Connexion en cours…",
     "goToLogin": "Retour à la connexion"
   },
+  "AcademyShell": {
+    "eyebrow": "Academy",
+    "title": "Plateforme d'apprentissage",
+    "tagline": "Cours, leçons, étudiants et invitations — tout au même endroit.",
+    "backToAdmin": "Retour à l'admin",
+    "workspaceLabel": "Espace de travail",
+    "studioFooter": "Studio Academy · v1",
+    "navigation": "Navigation",
+    "tabsLabel": "Sections Academy",
+    "tabs": {
+      "overview": "Aperçu",
+      "courses": "Cours",
+      "students": "Étudiants",
+      "invitations": "Invitations"
+    }
+  },
   "Sidebar": {
     "management": "Gestion",
     "overview": "Aperçu",
@@ -63,6 +79,7 @@
     "catalog": "Catalogue",
     "locations": "Localisations",
     "content": "Contenu",
+    "academy": "Académie",
     "finance": "Finance",
     "settings": "Paramètres",
     "dashboard": "Aujourd'hui",
@@ -95,7 +112,6 @@
     "peopleOverview": "Vue d'ensemble",
     "peopleTeam": "Équipe",
     "peopleAgents": "Agents",
-    "peopleStudents": "Étudiants Academy",
     "peopleInvitations": "Invitations"
   },
   "CommandPalette": {
@@ -1261,6 +1277,7 @@
     "noResults": "Aucun résultat",
     "page": "{current} / {total}",
     "rangeOf": "{from}–{to} sur {total}",
+    "next": "Suivant",
     "searchPlaceholder": "Rechercher…",
     "emptyTitle": "Rien à afficher",
     "emptySearchDescription": "Aucun résultat pour « {query} ». Essayez une autre recherche.",
@@ -1389,6 +1406,12 @@
       "listTitle": "Cours Academy",
       "listDescription": "Gérez les cours et les leçons de la plateforme d'étude.",
       "createLabel": "Nouveau cours",
+      "lessonCount": "{count, plural, =0 {Aucune leçon} one {# leçon} other {# leçons}}",
+      "selectAria": "Sélectionner {title}",
+      "actionsAria": "Actions pour {title}",
+      "selectAll": "Tout sélectionner",
+      "selectAllAria": "Sélectionner tous les cours de cette page",
+      "selectedCount": "{count, plural, one {# sélectionné} other {# sélectionnés}}",
       "searchPlaceholder": "Rechercher par titre ou slug",
       "columnTitle": "Titre",
       "columnSlug": "Slug",
@@ -1488,7 +1511,12 @@
       "nextLessonAria": "Leçon suivante : {title}",
       "searchPlaceholder": "Rechercher une leçon…",
       "searchEmpty": "Aucune leçon ne correspond à votre recherche.",
-      "reorderDisabledHint": "La réorganisation est désactivée pendant le filtrage.",
+      "reorderDisabledHint": "Le glisser-déposer est désactivé ici ; utilisez « Déplacer vers la position… » pour les déplacements entre pages.",
+      "movePopoverTitle": "Déplacer à une position précise",
+      "moveDescription": "Saisissez la position cible (1–{total}). Le cours est renuméroté automatiquement après le déplacement.",
+      "movePlaceholder": "Position cible",
+      "moveSubmit": "Déplacer",
+      "moveAriaLabel": "Déplacer la leçon {position} à une autre position",
       "railHeading": "Leçons",
       "saveAndNext": "Enregistrer et suivante",
       "lastLessonReached": "Vous êtes sur la dernière leçon.",

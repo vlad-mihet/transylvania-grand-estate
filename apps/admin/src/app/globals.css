@@ -248,4 +248,83 @@
   ::-webkit-scrollbar-thumb:hover {
     background: var(--muted-foreground);
   }
+
+  /* Tiptap editor — typography is inherited from `prose prose-sm` on the
+     editor element. These rules patch the few cases prose doesn't cover:
+     empty-document placeholder, table cell selection, task list checkbox
+     alignment, and code-block syntax background. */
+  .tge-tiptap-editor p.is-editor-empty:first-child::before {
+    content: attr(data-placeholder);
+    color: var(--muted-foreground);
+    float: left;
+    height: 0;
+    pointer-events: none;
+  }
+  .tge-tiptap-editor:focus {
+    outline: none;
+  }
+  .tge-tiptap-editor .tge-code-block {
+    background: var(--muted);
+    border-radius: var(--radius-sm);
+    padding: 0.75rem 1rem;
+    font-family: var(--font-mono);
+    font-size: 0.8125rem;
+    overflow-x: auto;
+  }
+  .tge-tiptap-editor .tge-task-list {
+    list-style: none;
+    padding-left: 0;
+  }
+  .tge-tiptap-editor .tge-task-item {
+    display: flex;
+    gap: 0.5rem;
+    align-items: flex-start;
+  }
+  .tge-tiptap-editor .tge-task-item > label {
+    flex-shrink: 0;
+    margin-top: 0.3rem;
+  }
+  .tge-tiptap-editor .tge-task-item > div {
+    flex: 1;
+    min-width: 0;
+  }
+  .tge-tiptap-editor .tge-table {
+    border-collapse: collapse;
+    table-layout: fixed;
+    width: 100%;
+    margin: 0.75rem 0;
+  }
+  .tge-tiptap-editor .tge-table td,
+  .tge-tiptap-editor .tge-table th {
+    border: 1px solid var(--border);
+    padding: 0.375rem 0.5rem;
+    vertical-align: top;
+    position: relative;
+  }
+  .tge-tiptap-editor .tge-table th {
+    background: color-mix(in srgb, var(--muted) 50%, transparent);
+    font-weight: 600;
+    text-align: left;
+  }
+  .tge-tiptap-editor .selectedCell::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: color-mix(in srgb, var(--copper) 12%, transparent);
+    pointer-events: none;
+  }
+  .tge-tiptap-editor .tge-image {
+    border-radius: var(--radius-sm);
+    max-width: 100%;
+    height: auto;
+  }
+  .tge-tiptap-editor .tge-hr {
+    border: 0;
+    border-top: 1px solid var(--border);
+    margin: 1rem 0;
+  }
+  /* ProseMirror selection — slightly more visible than browser default. */
+  .tge-tiptap-editor ::selection {
+    background: color-mix(in srgb, var(--copper) 25%, transparent);
+  }
 }

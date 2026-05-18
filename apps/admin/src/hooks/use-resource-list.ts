@@ -107,7 +107,11 @@ export function useResourceList<T>(
     const params = new URLSearchParams();
     if (state.q) params.set("search", state.q);
     if (state.page > 1) params.set("page", String(state.page));
-    if (state.limit !== defaultLimit) params.set("limit", String(state.limit));
+    // Always send `limit` — the UI default doesn't necessarily match the
+    // API's Zod default (paginationSchema defaults to 12), so omitting
+    // when equal silently desyncs the UI's pagination math from the
+    // server's actual page size.
+    params.set("limit", String(state.limit));
     if (state.sort) params.set("sort", state.sort);
     if (extraParams) {
       for (const [key, value] of Object.entries(extraParams)) {
@@ -122,12 +126,20 @@ export function useResourceList<T>(
     }
     const qs = params.toString();
     return qs ? `?${qs}` : "";
-  }, [state, extraParams, defaultLimit]);
+  }, [state, extraParams]);
 
   const query = useQuery({
     queryKey: [resource, queryString],
+    // `envelope: true` keeps `meta` (total / totalPages) on the response.
+    // The shared api-client otherwise unwraps `json.data` and pagination
+    // chrome would render with `meta` permanently undefined — disabled
+    // next/prev on every list page, regardless of how many rows exist
+    // server-side.
     queryFn: () =>
-      apiClient<PaginatedResponse<T> | T[]>(`${endpoint}${queryString}`),
+      apiClient<{ data: PaginatedResponse<T> | T[]; meta?: PaginationMeta }>(
+        `${endpoint}${queryString}`,
+        { envelope: true },
+      ),
     placeholderData: keepPreviousData,
     enabled,
   });
@@ -135,8 +147,18 @@ export function useResourceList<T>(
   const paginated: PaginatedResponse<T> = useMemo(() => {
     const raw = query.data;
     if (!raw) return { data: [] };
-    if (Array.isArray(raw)) return { data: raw };
-    return raw;
+    // Envelope shape: `{ data: T[] | PaginatedResponse<T>, meta?: PaginationMeta }`.
+    // The TransformInterceptor on the API flattens `paginate()` results into
+    // top-level `{ success, data, meta }`, so the inner `data` is always a
+    // bare array. Non-paginated endpoints (returning a raw array from the
+    // controller) wrap to `{ data: [...] }` with no `meta`.
+    const data = Array.isArray(raw.data)
+      ? raw.data
+      : raw.data?.data ?? [];
+    const meta =
+      raw.meta ??
+      (!Array.isArray(raw.data) ? raw.data?.meta : undefined);
+    return meta ? { data, meta } : { data };
   }, [query.data]);
 
   const setPage = useCallback(

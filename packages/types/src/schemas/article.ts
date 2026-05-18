@@ -2,6 +2,7 @@ import { z } from "zod";
 import { ArticleStatus } from "@prisma/client";
 import {
   entryModeSchema,
+  localizedRichTextSchema,
   localizedStringSchema,
   paginationSchema,
   slugSchema,
@@ -24,7 +25,7 @@ export const createArticleSchema = z
     slug: slugSchema,
     title: localizedStringSchema,
     excerpt: localizedStringSchema,
-    content: localizedStringSchema,
+    content: localizedRichTextSchema,
     coverImage: z.string().min(1).max(500),
     category: articleCategorySchema,
     tags: z.array(z.string().max(80)).optional(),

@@ -1,46 +1,46 @@
 "use client";
 
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useLocale, useTranslations } from "next-intl";
 import { useState } from "react";
+import { Archive, Eye, SlidersHorizontal, Trash2, X } from "lucide-react";
 import {
   Button,
-  Tooltip,
-  TooltipContent,
-  TooltipTrigger,
+  Checkbox,
+  EmptyState,
+  ErrorState,
+  LoadingState,
 } from "@tge/ui";
-import { Archive, Eye, RotateCcw, Trash2 } from "lucide-react";
-import { apiClient } from "@/lib/api-client";
 import { toast } from "@/lib/toast";
 import { Link } from "@/i18n/navigation";
 import { Can } from "@/components/shared/can";
 import { DeleteDialog } from "@/components/shared/delete-dialog";
 import { Mono } from "@/components/shared/mono";
-import { RelativeTime } from "@/components/shared/relative-time";
-import { StatusBadge } from "@/components/shared/status-badge";
+import { PageHeader } from "@/components/shared/page-header";
+import { SearchInput } from "@/components/shared/search-input";
 import {
   FilterRail,
   FilterGroup,
   FilterCheckbox,
 } from "@/components/shared/filter-rail";
-import {
-  ResourceListPage,
-} from "@/components/resource/resource-list-page";
-import { type ColumnDef } from "@/components/resource/resource-table";
 import { useResourceList } from "@/hooks/use-resource-list";
-import { pickTitle } from "@/lib/academy/pick-title";
+import {
+  academyKeys,
+  pickTitle,
+  useCourseDeleteImpact,
+  useDeleteCourse,
+  useUpdateCourse,
+} from "@/modules/academy";
+import {
+  CourseCard,
+  type CourseCardData,
+} from "@/modules/academy/components/course-card";
+import { apiClient } from "@/lib/api-client";
 
-type Course = {
-  id: string;
-  slug: string;
-  title: Record<string, string | undefined>;
-  status: "draft" | "published" | "archived";
-  visibility: "public" | "enrolled";
+type Course = CourseCardData & {
   order: number;
   publishedAt: string | null;
-  updatedAt: string;
   createdAt: string;
-  _count: { lessons: number };
 };
 
 type StatusFilter = "draft" | "published" | "archived";
@@ -60,6 +60,7 @@ export default function AcademyCoursesPage() {
   );
   const [deleteId, setDeleteId] = useState<string | null>(null);
   const [bulkDeleteOpen, setBulkDeleteOpen] = useState(false);
+  const [railOpen, setRailOpen] = useState(true);
 
   const statusParam =
     statusFilters.size === 1 ? Array.from(statusFilters)[0] : undefined;
@@ -72,26 +73,33 @@ export default function AcademyCoursesPage() {
     extraParams: { status: statusParam },
   });
 
-  const impactQuery = useQuery({
-    enabled: !!deleteId,
-    queryKey: ["academy-course-delete-impact", deleteId],
-    queryFn: () =>
-      apiClient<{ lessonCount: number; activeEnrollmentCount: number }>(
-        `/admin/academy/courses/${deleteId}/delete-impact`,
-      ),
-  });
+  const impactQuery = useCourseDeleteImpact(deleteId);
+  const deleteMutation = useDeleteCourse();
+  const setStatusMutation = useUpdateCourse();
 
-  const deleteMutation = useMutation({
-    mutationFn: (id: string) =>
-      apiClient(`/admin/academy/courses/${id}`, { method: "DELETE" }),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["academy-courses"] });
-      toast.success(tt("courseDeleted"));
-      setDeleteId(null);
-    },
-    onError: () => toast.error(tt("courseDeleteFailed")),
-  });
+  const handleDelete = (id: string) =>
+    deleteMutation.mutate(id, {
+      onSuccess: () => {
+        toast.success(tt("courseDeleted"));
+        setDeleteId(null);
+      },
+      onError: () => toast.error(tt("courseDeleteFailed")),
+    });
 
+  const handleSetStatus = (
+    id: string,
+    status: "draft" | "published" | "archived",
+  ) =>
+    setStatusMutation.mutate(
+      { id, body: { status } },
+      {
+        onSuccess: () => toast.success(tt("courseStatusUpdated")),
+        onError: () => toast.error(tt("courseStatusFailed")),
+      },
+    );
+
+  // Bulk operations fan out to the single-course endpoint. Inline Promise.all
+  // avoids a hook variant whose only purpose is batching.
   const bulkDeleteMutation = useMutation({
     mutationFn: async (ids: string[]) => {
       await Promise.all(
@@ -101,31 +109,13 @@ export default function AcademyCoursesPage() {
       );
     },
     onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: academyKeys.courses() });
       queryClient.invalidateQueries({ queryKey: ["academy-courses"] });
       toast.success(tt("courseDeleted"));
       list.clearSelection();
       setBulkDeleteOpen(false);
     },
     onError: () => toast.error(tt("courseDeleteFailed")),
-  });
-
-  const setStatusMutation = useMutation({
-    mutationFn: ({
-      id,
-      status,
-    }: {
-      id: string;
-      status: "draft" | "published" | "archived";
-    }) =>
-      apiClient(`/admin/academy/courses/${id}`, {
-        method: "PATCH",
-        body: { status },
-      }),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["academy-courses"] });
-      toast.success(tt("courseStatusUpdated"));
-    },
-    onError: () => toast.error(tt("courseStatusFailed")),
   });
 
   const bulkSetStatusMutation = useMutation({
@@ -146,6 +136,7 @@ export default function AcademyCoursesPage() {
       );
     },
     onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: academyKeys.courses() });
       queryClient.invalidateQueries({ queryKey: ["academy-courses"] });
       toast.success(tt("courseStatusUpdated"));
       list.clearSelection();
@@ -162,159 +153,6 @@ export default function AcademyCoursesPage() {
     });
   };
 
-  const columns: ColumnDef<Course, unknown>[] = [
-    {
-      id: "title",
-      header: t("columnTitle"),
-      cell: ({ row }) => (
-        <div className="min-w-0">
-          <Link
-            href={`/academy/courses/${row.original.id}`}
-            className="block truncate text-sm font-medium text-foreground hover:underline"
-            onClick={(e) => e.stopPropagation()}
-          >
-            {pickTitle(row.original.title, row.original.slug, locale)}
-          </Link>
-          <Mono className="block truncate text-[11px] text-muted-foreground">
-            {row.original.slug}
-          </Mono>
-        </div>
-      ),
-    },
-    {
-      id: "status",
-      header: t("columnStatus"),
-      cell: ({ row }) => <StatusBadge status={row.original.status} />,
-    },
-    {
-      id: "visibility",
-      header: t("columnVisibility"),
-      cell: ({ row }) => (
-        <StatusBadge
-          status={row.original.visibility}
-          tone={row.original.visibility === "public" ? "info" : "neutral"}
-        />
-      ),
-    },
-    {
-      id: "lessons",
-      header: t("columnLessons"),
-      cell: ({ row }) => <Mono>{row.original._count.lessons}</Mono>,
-    },
-    {
-      id: "order",
-      header: t("columnOrder"),
-      cell: ({ row }) => <Mono>{row.original.order}</Mono>,
-    },
-    {
-      id: "updatedAt",
-      header: tc("columnUpdated"),
-      cell: ({ row }) => (
-        <RelativeTime value={row.original.updatedAt ?? row.original.createdAt} />
-      ),
-    },
-    {
-      id: "actions",
-      header: "",
-      size: 120,
-      enableSorting: false,
-      cell: ({ row }) => {
-        const courseTitle = pickTitle(
-          row.original.title,
-          row.original.slug,
-          locale,
-        );
-        const status = row.original.status;
-        return (
-          <div
-            className="flex justify-end gap-1"
-            onClick={(e) => e.stopPropagation()}
-          >
-            <Can action="academy.course.update">
-              {status === "draft" ? (
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <Button
-                      variant="ghost"
-                      size="icon-sm"
-                      onClick={() =>
-                        setStatusMutation.mutate({
-                          id: row.original.id,
-                          status: "published",
-                        })
-                      }
-                      disabled={setStatusMutation.isPending}
-                      aria-label={t("publishAria", { title: courseTitle })}
-                    >
-                      <Eye className="text-[var(--color-success)]" />
-                    </Button>
-                  </TooltipTrigger>
-                  <TooltipContent>{t("publishAction")}</TooltipContent>
-                </Tooltip>
-              ) : status === "published" ? (
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <Button
-                      variant="ghost"
-                      size="icon-sm"
-                      onClick={() =>
-                        setStatusMutation.mutate({
-                          id: row.original.id,
-                          status: "archived",
-                        })
-                      }
-                      disabled={setStatusMutation.isPending}
-                      aria-label={t("archiveAria", { title: courseTitle })}
-                    >
-                      <Archive className="text-muted-foreground" />
-                    </Button>
-                  </TooltipTrigger>
-                  <TooltipContent>{t("archiveAction")}</TooltipContent>
-                </Tooltip>
-              ) : (
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <Button
-                      variant="ghost"
-                      size="icon-sm"
-                      onClick={() =>
-                        setStatusMutation.mutate({
-                          id: row.original.id,
-                          status: "draft",
-                        })
-                      }
-                      disabled={setStatusMutation.isPending}
-                      aria-label={t("restoreAria", { title: courseTitle })}
-                    >
-                      <RotateCcw className="text-muted-foreground" />
-                    </Button>
-                  </TooltipTrigger>
-                  <TooltipContent>{t("restoreAction")}</TooltipContent>
-                </Tooltip>
-              )}
-            </Can>
-            <Can action="academy.course.delete">
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <Button
-                    variant="ghost"
-                    size="icon-sm"
-                    onClick={() => setDeleteId(row.original.id)}
-                    aria-label={t("deleteAriaLabel", { title: courseTitle })}
-                    className="text-destructive hover:bg-destructive/10 hover:text-destructive"
-                  >
-                    <Trash2 />
-                  </Button>
-                </TooltipTrigger>
-                <TooltipContent>{tc("delete")}</TooltipContent>
-              </Tooltip>
-            </Can>
-          </div>
-        );
-      },
-    },
-  ];
-
   const impact = impactQuery.data;
   const impactDescription = deleteId
     ? impact
@@ -325,109 +163,251 @@ export default function AcademyCoursesPage() {
       : t("deleteImpactCalculating")
     : undefined;
 
+  const allVisibleIds = list.items.map((c) => c.id);
+  const allSelected =
+    allVisibleIds.length > 0 &&
+    allVisibleIds.every((id) => list.selection.has(id));
+
   return (
     <>
-      <ResourceListPage<Course>
-        title={t("listTitle")}
-        description={t("listDescription")}
-        list={list}
-        columns={columns}
-        searchPlaceholder={t("searchPlaceholder")}
-        sortOptions={[
-          { value: "order", label: t("sortOrder") },
-          { value: "newest", label: t("sortNewest") },
-          { value: "oldest", label: t("sortOldest") },
-        ]}
-        activeFilters={statusFilters.size}
-        filterRail={
-          <FilterRail
-            activeCount={statusFilters.size}
-            onClear={() => setStatusFilters(new Set())}
-          >
-            <FilterGroup title={t("columnStatus")}>
-              {STATUS_VALUES.map((s) => (
-                <FilterCheckbox
-                  key={s}
-                  label={tStatus(s)}
-                  checked={statusFilters.has(s)}
-                  onChange={() => toggleStatus(s)}
-                />
-              ))}
-            </FilterGroup>
-          </FilterRail>
-        }
-        emptyTitle={t("emptyTitle")}
-        emptyDescription={t("emptyDescription")}
-        emptyAction={
-          <Can action="academy.course.create">
-            <Button asChild size="sm">
-              <Link href="/academy/courses/new">{t("createLabel")}</Link>
-            </Button>
-          </Can>
-        }
-        headerActions={
-          <Can action="academy.course.create">
-            <Button asChild size="sm">
-              <Link href="/academy/courses/new">{t("createLabel")}</Link>
-            </Button>
-          </Can>
-        }
-        bulkActions={(selection) => (
-          <>
-            <Can action="academy.course.update">
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() =>
-                  bulkSetStatusMutation.mutate({
-                    ids: Array.from(selection),
-                    status: "published",
-                  })
-                }
-                disabled={
-                  selection.size === 0 || bulkSetStatusMutation.isPending
-                }
-              >
-                <Eye className="mr-1.5 h-3.5 w-3.5" />
-                {t("bulkPublish")}
-              </Button>
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() =>
-                  bulkSetStatusMutation.mutate({
-                    ids: Array.from(selection),
-                    status: "archived",
-                  })
-                }
-                disabled={
-                  selection.size === 0 || bulkSetStatusMutation.isPending
-                }
-              >
-                <Archive className="mr-1.5 h-3.5 w-3.5" />
-                {t("bulkArchive")}
+      <div className="flex min-h-0 flex-1 flex-col gap-4">
+        <PageHeader
+          title={t("listTitle")}
+          description={
+            list.meta
+              ? `${list.meta.total} ${list.meta.total === 1 ? "item" : "items"}`
+              : t("listDescription")
+          }
+          actions={
+            <Can action="academy.course.create">
+              <Button asChild size="sm">
+                <Link href="/academy/courses/new">{t("createLabel")}</Link>
               </Button>
             </Can>
-            <Can action="academy.course.delete">
+          }
+        />
+
+        <div className="flex min-h-0 flex-1 gap-4">
+          {railOpen && (
+            <div className="hidden lg:block">
+              <FilterRail
+                activeCount={statusFilters.size}
+                onClear={() => setStatusFilters(new Set())}
+              >
+                <FilterGroup title={t("columnStatus")}>
+                  {STATUS_VALUES.map((s) => (
+                    <FilterCheckbox
+                      key={s}
+                      label={tStatus(s)}
+                      checked={statusFilters.has(s)}
+                      onChange={() => toggleStatus(s)}
+                    />
+                  ))}
+                </FilterGroup>
+              </FilterRail>
+            </div>
+          )}
+
+          <div className="flex min-w-0 flex-1 flex-col gap-3">
+            <div className="flex flex-wrap items-center gap-2">
               <Button
                 variant="outline"
                 size="sm"
-                className="text-[var(--color-danger)] border-[color-mix(in_srgb,var(--color-danger)_30%,var(--border))] hover:bg-[var(--color-danger-bg)]"
-                onClick={() => setBulkDeleteOpen(true)}
-                disabled={selection.size === 0}
+                onClick={() => setRailOpen((v) => !v)}
+                className="hidden lg:inline-flex"
               >
-                <Trash2 className="mr-1.5 h-3.5 w-3.5" />
-                {t("bulkDelete")}
+                <SlidersHorizontal className="h-3.5 w-3.5 sm:mr-1.5" />
+                <span className="hidden sm:inline">
+                  {tc("filters")}
+                  {statusFilters.size > 0 && (
+                    <span className="ml-1.5 mono text-[11px] text-copper">
+                      {statusFilters.size}
+                    </span>
+                  )}
+                </span>
               </Button>
-            </Can>
-          </>
-        )}
-      />
+              <SearchInput
+                value={list.search}
+                onValueChange={list.setSearch}
+                placeholder={t("searchPlaceholder")}
+                shortcut="⌘K"
+              />
+              <select
+                value={list.sort ?? ""}
+                onChange={(e) => list.setSort(e.target.value)}
+                className="mono h-9 rounded-md border border-border bg-card px-2.5 text-xs text-foreground transition-colors hover:bg-muted focus:outline-none focus:ring-2 focus:ring-ring/30"
+              >
+                <option value="order">{t("sortOrder")}</option>
+                <option value="newest">{t("sortNewest")}</option>
+                <option value="oldest">{t("sortOldest")}</option>
+              </select>
+
+              {/* Select-all toggle, only visible when there are items. */}
+              {list.items.length > 0 && (
+                <label className="ml-auto flex items-center gap-2 rounded-md border border-border bg-card px-2.5 py-1.5 text-xs">
+                  <Checkbox
+                    checked={allSelected}
+                    onCheckedChange={() =>
+                      list.selectAll(allVisibleIds, !allSelected)
+                    }
+                    aria-label={t("selectAllAria")}
+                  />
+                  <span className="text-muted-foreground">
+                    {t("selectAll")}
+                  </span>
+                </label>
+              )}
+            </div>
+
+            {/* Bulk action bar. */}
+            {list.selection.size > 0 && (
+              <div className="flex flex-wrap items-center justify-between gap-2 rounded-md border border-border bg-[color-mix(in_srgb,var(--color-copper)_6%,transparent)] px-3 py-2">
+                <Mono className="text-foreground">
+                  {t("selectedCount", { count: list.selection.size })}
+                </Mono>
+                <div className="flex flex-wrap items-center gap-2">
+                  <Can action="academy.course.update">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() =>
+                        bulkSetStatusMutation.mutate({
+                          ids: Array.from(list.selection),
+                          status: "published",
+                        })
+                      }
+                      disabled={bulkSetStatusMutation.isPending}
+                    >
+                      <Eye className="mr-1.5 h-3.5 w-3.5" />
+                      {t("bulkPublish")}
+                    </Button>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() =>
+                        bulkSetStatusMutation.mutate({
+                          ids: Array.from(list.selection),
+                          status: "archived",
+                        })
+                      }
+                      disabled={bulkSetStatusMutation.isPending}
+                    >
+                      <Archive className="mr-1.5 h-3.5 w-3.5" />
+                      {t("bulkArchive")}
+                    </Button>
+                  </Can>
+                  <Can action="academy.course.delete">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => setBulkDeleteOpen(true)}
+                      className="text-[var(--color-danger)] border-[color-mix(in_srgb,var(--color-danger)_30%,var(--border))] hover:bg-[var(--color-danger-bg)]"
+                    >
+                      <Trash2 className="mr-1.5 h-3.5 w-3.5" />
+                      {t("bulkDelete")}
+                    </Button>
+                  </Can>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={list.clearSelection}
+                    className="text-muted-foreground"
+                  >
+                    <X className="mr-1 h-3.5 w-3.5" />
+                    {tc("clear")}
+                  </Button>
+                </div>
+              </div>
+            )}
+
+            {/* Grid body. */}
+            {list.isLoading ? (
+              <LoadingState label={tc("loading")} />
+            ) : list.isError ? (
+              <ErrorState
+                onRetry={() => list.refetch()}
+                retryLabel={tc("retry")}
+              />
+            ) : list.items.length === 0 ? (
+              <EmptyState
+                title={t("emptyTitle")}
+                description={
+                  list.search
+                    ? tc("emptySearchDescription", { query: list.search })
+                    : t("emptyDescription")
+                }
+                action={
+                  <Can action="academy.course.create">
+                    <Button asChild size="sm">
+                      <Link href="/academy/courses/new">
+                        {t("createLabel")}
+                      </Link>
+                    </Button>
+                  </Can>
+                }
+                className="m-4"
+              />
+            ) : (
+              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4">
+                {list.items.map((course) => (
+                  <CourseCard
+                    key={course.id}
+                    course={course}
+                    title={pickTitle(course.title, course.slug, locale)}
+                    selected={list.selection.has(course.id)}
+                    onToggleSelect={() => list.toggleRow(course.id)}
+                    onSetStatus={(status) => handleSetStatus(course.id, status)}
+                    onDelete={() => setDeleteId(course.id)}
+                    isStatusPending={setStatusMutation.isPending}
+                  />
+                ))}
+              </div>
+            )}
+
+            {/* Pagination. */}
+            {list.meta && list.meta.totalPages > 1 && (
+              <div className="mt-2 flex items-center justify-between text-xs text-muted-foreground">
+                <Mono>
+                  {tc("rangeOf", {
+                    from: (list.page - 1) * list.limit + 1,
+                    to: Math.min(list.page * list.limit, list.meta.total),
+                    total: list.meta.total,
+                  })}
+                </Mono>
+                <div className="flex items-center gap-1">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    disabled={list.page <= 1}
+                    onClick={() => list.setPage(list.page - 1)}
+                  >
+                    {tc("back")}
+                  </Button>
+                  <Mono className="px-2">
+                    {tc("page", {
+                      current: list.page,
+                      total: list.meta.totalPages,
+                    })}
+                  </Mono>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    disabled={list.page >= list.meta.totalPages}
+                    onClick={() => list.setPage(list.page + 1)}
+                  >
+                    {tc("next")}
+                  </Button>
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
 
       <DeleteDialog
         open={!!deleteId}
         onOpenChange={(open) => !open && setDeleteId(null)}
-        onConfirm={() => deleteId && deleteMutation.mutate(deleteId)}
+        onConfirm={() => deleteId && handleDelete(deleteId)}
         title={t("deleteTitle")}
         description={impactDescription}
         loading={deleteMutation.isPending}

@@ -23,7 +23,7 @@ import { ResourceListPage } from "@/components/resource/resource-list-page";
 import { type ColumnDef } from "@/components/resource/resource-table";
 import { useResourceList } from "@/hooks/use-resource-list";
 import { ExportCsvButton } from "@/components/shared/export-csv-button";
-import { pickTitle } from "@/lib/academy/pick-title";
+import { pickTitle } from "@/modules/academy";
 
 type InvitationStatus =
   | "PENDING"

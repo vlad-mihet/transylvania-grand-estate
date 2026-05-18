@@ -146,7 +146,7 @@ export function AttentionStrip() {
       key: "academy-invites",
       label: t("pendingAcademyInvites"),
       icon: Mail,
-      href: "/people/invitations?tab=academy",
+      href: "/academy/invitations",
       value: data.pendingAcademyInvitations,
     });
   }

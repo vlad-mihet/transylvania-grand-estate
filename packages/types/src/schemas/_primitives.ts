@@ -6,9 +6,9 @@ import { z } from "zod";
  * regex, locale keys) don't drift between resources.
  */
 
-// Upper bound matches the class-validator `LOCALIZED_MAX_LENGTH` in
-// apps/api/src/common/dto/localized-string.dto.ts — long property
-// descriptions need the headroom; titles and addresses stay well under it.
+// Length ceiling for short-form localized strings (titles, excerpts, names,
+// addresses, testimonial quotes). 5000 is comfortably above anything a
+// reader-facing label needs.
 export const LOCALIZED_MAX_LENGTH = 5000;
 
 export const localizedStringSchema = z.object({
@@ -19,6 +19,22 @@ export const localizedStringSchema = z.object({
 });
 
 export type LocalizedStringInput = z.infer<typeof localizedStringSchema>;
+
+// Length ceiling for long-form localized markdown content (article bodies,
+// lesson bodies, course descriptions). 100k chars (~16k words) covers any
+// realistic editorial piece with headroom for embedded HTML blocks. The
+// admin Tiptap editor enforces a CharacterCount soft limit at the UI layer;
+// this Zod cap is the authoritative server-side gate.
+export const LOCALIZED_RICH_TEXT_MAX_LENGTH = 100_000;
+
+export const localizedRichTextSchema = z.object({
+  ro: z.string().min(1).max(LOCALIZED_RICH_TEXT_MAX_LENGTH),
+  en: z.string().min(1).max(LOCALIZED_RICH_TEXT_MAX_LENGTH),
+  fr: z.string().max(LOCALIZED_RICH_TEXT_MAX_LENGTH).optional(),
+  de: z.string().max(LOCALIZED_RICH_TEXT_MAX_LENGTH).optional(),
+});
+
+export type LocalizedRichTextInput = z.infer<typeof localizedRichTextSchema>;
 
 /**
  * Save mode for entry editors with draft + publish support. Optional on the

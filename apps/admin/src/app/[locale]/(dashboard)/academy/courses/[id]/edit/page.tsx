@@ -2,15 +2,18 @@
 
 import { useEffect } from "react";
 import { useParams, useRouter, notFound } from "next/navigation";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useLocale, useTranslations } from "next-intl";
-import { apiClient, ApiError } from "@/lib/api-client";
+import { ApiError } from "@/lib/api-client";
 import { toast } from "@/lib/toast";
 import { Link } from "@/i18n/navigation";
 import { usePermissions } from "@/components/auth/auth-provider";
-import { CourseForm } from "@/components/forms/course-form";
+import { CourseForm } from "@/modules/academy/forms/course-form";
 import { LoadingState } from "@tge/ui";
-import type { CourseFormValues } from "@/lib/validations/academy";
+import {
+  useAcademyCourse,
+  useUpdateCourse,
+  type CourseFormValues,
+} from "@/modules/academy";
 import type { CourseStatus, CourseVisibility } from "@prisma/client";
 
 type Course = {
@@ -32,7 +35,6 @@ export default function EditAcademyCoursePage() {
   const params = useParams<{ id: string }>();
   const router = useRouter();
   const locale = useLocale();
-  const queryClient = useQueryClient();
   const t = useTranslations("Academy.courses");
   const tc = useTranslations("Common");
   const tt = useTranslations("Academy.toasts");
@@ -42,24 +44,22 @@ export default function EditAcademyCoursePage() {
     if (!can("academy.course.update")) router.replace(`/${locale}/403`);
   }, [can, router, locale]);
 
-  const courseQuery = useQuery({
-    queryKey: ["academy-course", params.id],
-    queryFn: () => apiClient<Course>(`/admin/academy/courses/${params.id}`),
-  });
+  const courseQuery = useAcademyCourse<Course>(params.id);
+  const updateMutation = useUpdateCourse();
 
-  const updateMutation = useMutation({
-    mutationFn: (input: CourseFormValues & { mode?: "draft" | "publish" }) =>
-      apiClient<Course>(`/admin/academy/courses/${params.id}`, {
-        method: "PATCH",
-        body: input,
-      }),
-    onSuccess: (course) => {
-      queryClient.invalidateQueries({ queryKey: ["academy-course", params.id] });
-      queryClient.invalidateQueries({ queryKey: ["academy-courses"] });
-      toast.success(tt("courseSaved"));
-      router.push(`/${locale}/academy/courses/${course.id}`);
-    },
-  });
+  const handleSubmit = (
+    values: CourseFormValues,
+    saveMode?: "draft" | "publish",
+  ) =>
+    updateMutation.mutate(
+      { id: params.id, body: { ...values, mode: saveMode } },
+      {
+        onSuccess: (course) => {
+          toast.success(tt("courseSaved"));
+          router.push(`/${locale}/academy/courses/${course.id}`);
+        },
+      },
+    );
 
   if (!can("academy.course.update")) return null;
 
@@ -105,9 +105,7 @@ export default function EditAcademyCoursePage() {
       mode="edit"
       courseId={params.id}
       defaultValues={defaults}
-      onSubmit={(values, saveMode) =>
-        updateMutation.mutate({ ...values, mode: saveMode })
-      }
+      onSubmit={handleSubmit}
       loading={updateMutation.isPending}
       submissionError={updateMutation.error}
       cancelHref={`/academy/courses/${params.id}`}

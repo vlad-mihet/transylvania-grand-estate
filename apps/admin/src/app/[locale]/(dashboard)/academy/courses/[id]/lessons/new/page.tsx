@@ -2,17 +2,17 @@
 
 import { useEffect } from "react";
 import { useParams, useRouter } from "next/navigation";
-import { useMutation, useQuery } from "@tanstack/react-query";
 import { useLocale, useTranslations } from "next-intl";
-import { apiClient } from "@/lib/api-client";
 import { toast } from "@/lib/toast";
 import { Link } from "@/i18n/navigation";
 import { usePermissions } from "@/components/auth/auth-provider";
-import { LessonForm } from "@/components/forms/lesson-form";
+import { LessonForm } from "@/modules/academy/forms/lesson-form";
 import { LoadingState } from "@tge/ui";
-import type { LessonFormValues } from "@/lib/validations/academy";
-
-type Lesson = { id: string };
+import {
+  useCreateLesson,
+  useLessonNextOrder,
+  type LessonFormValues,
+} from "@/modules/academy";
 
 export default function NewAcademyLessonPage() {
   const params = useParams<{ id: string }>();
@@ -28,26 +28,16 @@ export default function NewAcademyLessonPage() {
     if (!can("academy.lesson.create")) router.replace(`/${locale}/403`);
   }, [can, router, locale]);
 
-  // Pre-fetch the next sparse order so the admin doesn't have to guess.
-  const nextOrderQuery = useQuery({
-    queryKey: ["academy-lessons-next-order", params.id],
-    queryFn: () =>
-      apiClient<{ order: number }>(
-        `/admin/academy/courses/${params.id}/lessons/next-order`,
-      ),
-  });
+  const nextOrderQuery = useLessonNextOrder(params.id);
+  const createMutation = useCreateLesson(params.id);
 
-  const createMutation = useMutation({
-    mutationFn: (input: LessonFormValues) =>
-      apiClient<Lesson>(`/admin/academy/courses/${params.id}/lessons`, {
-        method: "POST",
-        body: input,
-      }),
-    onSuccess: () => {
-      toast.success(tt("lessonCreated"));
-      router.push(`/${locale}/academy/courses/${params.id}`);
-    },
-  });
+  const handleSubmit = (values: LessonFormValues) =>
+    createMutation.mutate(values, {
+      onSuccess: () => {
+        toast.success(tt("lessonCreated"));
+        router.push(`/${locale}/academy/courses/${params.id}`);
+      },
+    });
 
   if (!can("academy.lesson.create")) return null;
 
@@ -61,7 +51,7 @@ export default function NewAcademyLessonPage() {
     <LessonForm
       mode="create"
       defaultValues={{ order }}
-      onSubmit={(values) => createMutation.mutate(values)}
+      onSubmit={handleSubmit}
       loading={createMutation.isPending}
       submissionError={createMutation.error}
       cancelHref={`/academy/courses/${params.id}`}

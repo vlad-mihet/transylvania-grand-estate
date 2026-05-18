@@ -35,7 +35,7 @@ export function PeopleQuickActions() {
       </Can>
       <Can action="academy.user.manage">
         <Button asChild size="sm" variant="outline">
-          <Link href="/people/students">
+          <Link href="/academy/students">
             <Mail className="mr-1.5 h-3.5 w-3.5" />
             {t("inviteStudent")}
           </Link>

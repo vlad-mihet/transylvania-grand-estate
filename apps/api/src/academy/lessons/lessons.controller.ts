@@ -26,7 +26,7 @@ import {
   QueryLessonDto,
   StudentLessonsQueryDto,
 } from './dto/lessons.dto';
-import { ReorderLessonsDto } from './dto/reorder-lessons.dto';
+import { MoveLessonDto } from './dto/move-lesson.dto';
 import { Roles } from '../../common/decorators/roles.decorator';
 import { Realm } from '../../common/decorators/realm.decorator';
 import { JwtAcademyAuthGuard } from '../auth/guards/jwt-academy-auth.guard';
@@ -61,22 +61,6 @@ export class AdminLessonsController {
     return { order: await this.lessonsService.nextOrderInCourse(courseId) };
   }
 
-  /**
-   * Atomic bulk reorder. Client submits the full ordered sequence of
-   * lesson ids after a drag-and-drop operation; server rewrites every
-   * `order` column in a transaction. See `reorder()` on the service for
-   * validation details.
-   */
-  @Roles(AdminRole.EDITOR, AdminRole.ADMIN, AdminRole.SUPER_ADMIN)
-  @Post('reorder')
-  @HttpCode(200)
-  async reorder(
-    @Param('courseId', ParseUUIDPipe) courseId: string,
-    @Body() dto: ReorderLessonsDto,
-  ) {
-    return this.lessonsService.reorder(courseId, dto.lessonIds);
-  }
-
   @Roles(AdminRole.EDITOR, AdminRole.ADMIN, AdminRole.SUPER_ADMIN)
   @Get(':id')
   async findOne(
@@ -84,6 +68,25 @@ export class AdminLessonsController {
     @Param('id', ParseUUIDPipe) id: string,
   ) {
     return this.lessonsService.findByIdForAdminWithSiblings(courseId, id);
+  }
+
+  /**
+   * Move a single lesson to a 1-based `targetOrder` inside the course.
+   * Server clamps the target to `[1, lessonCount]` and renumbers densely
+   * in one transaction. Replaces the previous bulk-array reorder so the
+   * admin can paginate the lesson list without losing drag-and-drop
+   * (cross-page moves use the same endpoint via the "Move to position…"
+   * row action).
+   */
+  @Roles(AdminRole.EDITOR, AdminRole.ADMIN, AdminRole.SUPER_ADMIN)
+  @Post(':id/move')
+  @HttpCode(200)
+  async move(
+    @Param('courseId', ParseUUIDPipe) courseId: string,
+    @Param('id', ParseUUIDPipe) id: string,
+    @Body() dto: MoveLessonDto,
+  ) {
+    return this.lessonsService.move(courseId, id, dto.targetOrder);
   }
 
   @Roles(AdminRole.EDITOR, AdminRole.ADMIN, AdminRole.SUPER_ADMIN)

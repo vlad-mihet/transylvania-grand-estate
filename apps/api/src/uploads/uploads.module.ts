@@ -3,9 +3,11 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { LocalStorageService } from './storage/local-storage.service';
 import { R2StorageService } from './storage/r2-storage.service';
 import { UploadsService } from './uploads.service';
+import { AdminUploadsController } from './admin-uploads.controller';
 
 @Module({
   imports: [ConfigModule],
+  controllers: [AdminUploadsController],
   providers: [
     {
       provide: 'STORAGE_SERVICE',
