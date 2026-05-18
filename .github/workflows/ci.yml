@@ -213,6 +213,13 @@ jobs:
       - name: Build shared types
         run: pnpm --filter @tge/types build
 
+      # prisma db seed runs prisma/seed.ts which imports from @tge/data;
+      # without this step the package's dist/ is missing and seed crashes
+      # with MODULE_NOT_FOUND. The later "Build API" step builds it via
+      # api's prebuild, but that runs after the seed step.
+      - name: Build shared data
+        run: pnpm --filter @tge/data build
+
       - name: Apply migrations + seed
         run: |
           pnpm --filter @tge/api exec prisma migrate deploy
@@ -308,6 +315,13 @@ jobs:
 
       - name: Build shared types
         run: pnpm --filter @tge/types build
+
+      # prisma db seed runs prisma/seed.ts which imports from @tge/data;
+      # without this step the package's dist/ is missing and seed crashes
+      # with MODULE_NOT_FOUND. The later "Build API" step builds it via
+      # api's prebuild, but that runs after the seed step.
+      - name: Build shared data
+        run: pnpm --filter @tge/data build
 
       - name: Apply migrations + seed
         run: |
