@@ -6,17 +6,23 @@ Luxury real estate consultancy platform — an Nx monorepo powered by Next.js, N
 
 ```
 apps/
-  landing/          Public website (Next.js 16, App Router) — port 3000
-  admin/            Admin panel (Next.js 16, App Router) — port 3001
-  api/              REST API (NestJS, Prisma ORM) — port 3333
+  landing/          Public TGE website (Next.js 16, App Router) — port 3050
+  admin/            Admin panel (Next.js 16, App Router) — port 3051
+  revery/           Reveria affordable-properties site (Next.js 16) — port 3052
+  academy/          Study platform (Next.js 16) — port 3053
+  api/              REST API (NestJS, Prisma ORM) — port 4000
 
 packages/
   types/            Shared TypeScript type definitions (@tge/types)
   data/             Static data — properties, developers, cities, etc. (@tge/data)
+  api-client/       Shared fetch client; stamps the X-Site brand header (@tge/api-client)
+  locale/           Locale resolution shared by API + apps (@tge/locale)
   utils/            Utility functions — cn(), formatPrice(), formatArea() (@tge/utils)
   hooks/            React hooks — useIntersectionObserver, useScrollDirection (@tge/hooks)
   ui/               shadcn/ui primitives + shared components (@tge/ui)
   i18n/             Shared i18n routing & navigation config (@tge/i18n)
+  branding/         Per-site brand tokens (@tge/branding)
+  assets/           Shared binary assets, synced into each app's public/ (@tge/assets)
   tailwind-config/  Shared TailwindCSS 4 theme (@tge/tailwind-config)
 ```
 
@@ -35,8 +41,22 @@ packages/
 ### Prerequisites
 
 - Node.js 22+
-- pnpm 10+ (`corepack enable && corepack prepare pnpm@latest --activate`)
-- Docker (for PostgreSQL)
+- pnpm 10.13.1 (`corepack enable && corepack prepare pnpm@10.13.1 --activate`)
+- Docker Desktop (for PostgreSQL)
+
+### Quick start (macOS / Linux)
+
+```bash
+git clone https://github.com/vlad-mihet/transylvania-grand-estate.git
+cd transylvania-grand-estate
+./scripts/setup-mac.sh
+```
+
+`setup-mac.sh` is idempotent and does the whole dance: installs deps, seeds
+the gitignored env files from their `.example` templates, starts Postgres,
+builds the shared packages, and runs `prisma generate` + `migrate deploy` +
+`db seed`. When it finishes, `pnpm dev:all` starts everything. The manual
+steps below are what the script automates, for reference or for Windows.
 
 ### Install
 
@@ -54,50 +74,41 @@ Start PostgreSQL via Docker:
 docker compose up -d
 ```
 
-This runs Postgres 16 on `localhost:5432` (user: `postgres`, password: `password`, db: `tge_dev`).
+This runs Postgres 16 on `localhost:5435` (user: `postgres`, password: `password`, db: `tge_dev`).
 
-Then run migrations and generate the Prisma client:
+The Prisma seed imports from `@tge/data`, and the API loads `@tge/locale`,
+`@tge/types`, and `@tge/data` as compiled JS at runtime — build them once
+before generating/seeding:
 
 ```bash
-cd apps/api
-npx prisma generate
-npx prisma migrate dev
-npx prisma db seed    # optional — seeds initial data
-cd ../..
+pnpm --filter @tge/locale build
+pnpm --filter @tge/types build
+pnpm --filter @tge/data build
+
+pnpm --filter @tge/api exec prisma generate
+pnpm --filter @tge/api exec prisma migrate deploy
+pnpm --filter @tge/api exec prisma db seed    # seeds initial data
 ```
 
 ### Environment Variables
 
-Create the following files before running the apps:
+Copy each app's `.example` to its gitignored counterpart (the quick-start
+script does this for you). The API runs on **port 4000** in dev.
 
-**`apps/api/.env`** (copy from `apps/api/.env.example`):
-
-```env
-DATABASE_URL="postgresql://postgres:password@localhost:5432/tge_dev?schema=public"
-JWT_ADMIN_ACCESS_SECRET="dev-admin-access-secret-change-in-production"
-JWT_ADMIN_REFRESH_SECRET="dev-admin-refresh-secret-change-in-production"
-JWT_ACADEMY_ACCESS_SECRET="dev-academy-access-secret-change-in-production"
-JWT_ACADEMY_REFRESH_SECRET="dev-academy-refresh-secret-change-in-production"
-JWT_ACCESS_EXPIRATION="15m"
-JWT_REFRESH_EXPIRATION="7d"
-PORT=3333
-NODE_ENV=development
-UPLOAD_DIR="./uploads"
-MAX_FILE_SIZE=10485760
+```bash
+cp apps/api/.env.example       apps/api/.env
+cp apps/admin/.env.example     apps/admin/.env          # admin reads .env, not .env.local
+cp apps/landing/.env.example   apps/landing/.env.local
+cp apps/academy/.env.local.example apps/academy/.env.local
+# revery needs no env file — it defaults its API URL in next.config.ts
 ```
 
-**`apps/admin/.env.local`**:
-
-```env
-NEXT_PUBLIC_API_URL=http://localhost:3333/api/v1
-API_URL=http://localhost:3333/api/v1
-```
-
-**`apps/landing/.env.local`**:
-
-```env
-NEXT_PUBLIC_API_URL=http://localhost:3333/api/v1
-```
+The committed defaults point every app at `http://localhost:4000/api/v1` and
+ship safe dev placeholders for the JWT/invitation secrets. Leave
+`RESEND_API_KEY` / `GOOGLE_CLIENT_ID` blank for local dev (emails log to
+stdout, the Google button is hidden). The `apps/api/.env.example` notes which
+vars are Windows-only (`PRISMA_CLIENT_ENGINE_TYPE`) — leave those unset on
+macOS/Linux.
 
 ### Development
 
@@ -106,9 +117,11 @@ NEXT_PUBLIC_API_URL=http://localhost:3333/api/v1
 pnpm dev:all
 
 # Individual apps
-pnpm dev          # Landing (port 3000)
-pnpm dev:api      # API (port 3333)
-pnpm dev:admin    # Admin (port 3001)
+pnpm dev          # Landing  (port 3050)
+pnpm dev:api      # API      (port 4000)
+pnpm dev:admin    # Admin    (port 3051)
+pnpm dev:academy  # Academy  (port 3053)
+pnpm --filter @tge/revery dev   # Revery (port 3052)
 ```
 
 ### Build
@@ -144,7 +157,7 @@ For detailed guides beyond setup:
 - [Authentication](docs/AUTH.md) — JWT auth flow, roles, and how the admin BFF proxy works
 - [Admin Guide](docs/ADMIN-GUIDE.md) — CRUD patterns, forms, and adding new entities
 - [Landing Guide](docs/LANDING-GUIDE.md) — Server-side data fetching, templates, and i18n
-- **API Reference** — Run the API and visit `http://localhost:3333/api/docs` (Swagger)
+- **API Reference** — Run the API and visit `http://localhost:4000/api/docs` (Swagger)
 
 ## Production
 
