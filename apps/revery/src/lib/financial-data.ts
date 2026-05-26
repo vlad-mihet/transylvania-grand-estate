@@ -34,7 +34,7 @@ const FALLBACK_CONFIG: ResolvedCalculatorConfig = {
   bankRates: romanianBankRates,
   bankRatesFull: [],
   eurToRon: EUR_TO_RON,
-  ircc: 5.86,
+  ircc: 5.58,
   lastUpdated: null,
 };
 
@@ -55,7 +55,7 @@ export async function fetchCalculatorConfig(): Promise<ResolvedCalculatorConfig>
     }));
 
     const eurRon = raw.indicators.EUR_RON?.value ?? EUR_TO_RON;
-    const ircc = raw.indicators.IRCC?.value ?? 5.86;
+    const ircc = raw.indicators.IRCC?.value ?? 5.58;
 
     // Find the most recent fetchedAt across all indicators
     const dates = Object.values(raw.indicators)

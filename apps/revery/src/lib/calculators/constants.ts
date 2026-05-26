@@ -2,8 +2,10 @@
 
 export const MONTHS_PER_YEAR = 12;
 
-// Fixed EUR→RON conversion rate (approximate, 2025/2026)
-export const EUR_TO_RON = 4.97;
+// Fixed EUR→RON conversion fallback (BNR reference, 2026-05-26). This is only
+// the offline fallback — the live value comes from the API (EUR_RON indicator,
+// auto-synced daily from the BNR FX feed).
+export const EUR_TO_RON = 5.2359;
 
 // Romanian BNR regulation 17/2012: max 40% of net income for all debts
 export const MAX_DTI_RATIO = 0.4;

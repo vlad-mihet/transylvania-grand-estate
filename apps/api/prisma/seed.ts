@@ -752,35 +752,47 @@ async function main() {
   });
   console.log('  Site config seeded');
 
-  // 8. Seed bank rates
+  // 8. Seed bank rates — 5-year-fixed nominal rates, researched May 2026 from
+  //    public Romanian mortgage comparators. Noua Casă is the government
+  //    program (rate ≈ IRCC + 2pp). Upserts so a re-seed refreshes existing
+  //    rows (rates move; the calculator must not show stale numbers).
   const bankRatesData = [
-    { bankName: 'Noua Casă', rate: 5.0, rateType: 'govt_program' as const, maxLtv: 0.95, maxTermYears: 30, processingFee: 0.0, insuranceRate: 0.05, notes: 'Program guvernamental — max 70.000 EUR', sortOrder: 0 },
-    { bankName: 'ING Bank', rate: 6.2, rateType: 'fixed' as const, maxLtv: 0.85, maxTermYears: 30, processingFee: 0.5, insuranceRate: 0.05, sortOrder: 1 },
-    { bankName: 'CEC Bank', rate: 6.3, rateType: 'fixed' as const, maxLtv: 0.85, maxTermYears: 30, processingFee: 0.75, insuranceRate: 0.06, sortOrder: 2 },
-    { bankName: 'Banca Transilvania', rate: 6.4, rateType: 'fixed' as const, maxLtv: 0.85, maxTermYears: 30, processingFee: 1.0, insuranceRate: 0.05, sortOrder: 3 },
-    { bankName: 'BRD', rate: 6.5, rateType: 'fixed' as const, maxLtv: 0.80, maxTermYears: 30, processingFee: 0.75, insuranceRate: 0.06, sortOrder: 4 },
-    { bankName: 'Raiffeisen', rate: 6.6, rateType: 'fixed' as const, maxLtv: 0.85, maxTermYears: 30, processingFee: 1.0, insuranceRate: 0.05, sortOrder: 5 },
-    { bankName: 'BCR', rate: 6.8, rateType: 'fixed' as const, maxLtv: 0.85, maxTermYears: 30, processingFee: 0.5, insuranceRate: 0.06, sortOrder: 6 },
+    { bankName: 'Noua Casă', rate: 7.58, rateType: 'govt_program' as const, maxLtv: 0.95, maxTermYears: 30, processingFee: 0.0, insuranceRate: 0.05, notes: 'Program guvernamental — max 70.000 EUR; dobândă ≈ IRCC + 2pp', sortOrder: 0 },
+    { bankName: 'ING Bank', rate: 5.95, rateType: 'fixed' as const, maxLtv: 0.85, maxTermYears: 30, processingFee: 0.5, insuranceRate: 0.05, sortOrder: 1 },
+    { bankName: 'CEC Bank', rate: 5.95, rateType: 'fixed' as const, maxLtv: 0.85, maxTermYears: 30, processingFee: 0.75, insuranceRate: 0.06, sortOrder: 2 },
+    { bankName: 'Banca Transilvania', rate: 5.29, rateType: 'fixed' as const, maxLtv: 0.85, maxTermYears: 30, processingFee: 1.0, insuranceRate: 0.05, sortOrder: 3 },
+    { bankName: 'BRD', rate: 6.30, rateType: 'fixed' as const, maxLtv: 0.80, maxTermYears: 30, processingFee: 0.75, insuranceRate: 0.06, sortOrder: 4 },
+    { bankName: 'Raiffeisen', rate: 5.90, rateType: 'fixed' as const, maxLtv: 0.85, maxTermYears: 30, processingFee: 1.0, insuranceRate: 0.05, sortOrder: 5 },
+    { bankName: 'BCR', rate: 5.95, rateType: 'fixed' as const, maxLtv: 0.85, maxTermYears: 30, processingFee: 0.5, insuranceRate: 0.06, sortOrder: 6 },
   ];
   for (const br of bankRatesData) {
     const existing = await prisma.bankRate.findFirst({
       where: { bankName: br.bankName },
     });
-    if (!existing) {
+    if (existing) {
+      await prisma.bankRate.update({ where: { id: existing.id }, data: br });
+    } else {
       await prisma.bankRate.create({ data: br });
     }
   }
   console.log('  Bank rates seeded');
 
-  // 9. Seed financial indicators
+  // 9. Seed financial indicators — refresh values on every re-seed. EUR_RON is
+  //    also auto-synced daily from the BNR FX feed by BnrSyncService; this is
+  //    the seed baseline. IRCC is published quarterly by BNR (manual refresh).
   const indicatorsData = [
-    { key: 'EUR_RON', value: 4.97, source: 'Seed (approximate)', sourceUrl: 'https://www.bnr.ro/nbrfxrates.xml' },
-    { key: 'IRCC', value: 5.86, source: 'Seed (Q1 2026 approximate)', sourceUrl: null as string | null },
+    { key: 'EUR_RON', value: 5.2359, source: 'BNR XML Feed', sourceUrl: 'https://www.bnr.ro/nbrfxrates.xml' },
+    { key: 'IRCC', value: 5.58, source: 'BNR — IRCC, valabil 1 apr–30 iun 2026', sourceUrl: 'https://www.bnr.ro/Indicele-de-referinta-pentru-creditele-acordate-consumatorilor-21331.aspx' as string | null },
   ];
   for (const ind of indicatorsData) {
     await prisma.financialIndicator.upsert({
       where: { key: ind.key },
-      update: {},
+      update: {
+        value: ind.value,
+        source: ind.source,
+        sourceUrl: ind.sourceUrl,
+        fetchedAt: new Date(),
+      },
       create: {
         key: ind.key,
         value: ind.value,
