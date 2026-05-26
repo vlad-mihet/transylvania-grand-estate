@@ -65,11 +65,11 @@ License URL: https://creativecommons.org/licenses/by-sa/4.0/
 Changes: downloaded from the source image URL and re-hosted in Revery storage.
 
 Galați city image:
-Source: Precista fortified church - Galati
-Author: fusion-of-horizons
-URL: https://www.flickr.com/photos/9019841@N08/46332272572
-License: CC BY 2.0
-License URL: https://creativecommons.org/licenses/by/2.0/
+Source: Aerial night view of Galați (Pexels stock photo 32313663)
+Author: Pexels
+URL: https://www.pexels.com/photo/32313663/
+License: Pexels License (no attribution required)
+License URL: https://www.pexels.com/license/
 Changes: downloaded from the source image URL and re-hosted in Revery storage.
 
 Oradea city image:
@@ -124,6 +124,62 @@ Târgu Mureș city image:
 Source: Palatul Culturii (Targu Mures)
 Author: Rsocol
 URL: https://commons.wikimedia.org/w/index.php?curid=5308449
+License: CC BY-SA 3.0
+License URL: https://creativecommons.org/licenses/by-sa/3.0/
+Changes: downloaded from the source image URL and re-hosted in Revery storage.
+
+Călărași city image:
+Source: File:Untitled - panoramio (1335).jpg (Borcea riverside, Călărași)
+Author: Mihai Burlacu
+URL: https://commons.wikimedia.org/wiki/File:Untitled_-_panoramio_(1335).jpg
+License: CC BY-SA 3.0
+License URL: https://creativecommons.org/licenses/by-sa/3.0/
+Changes: downloaded from the source image URL and re-hosted in Revery storage.
+
+Focșani city image:
+Source: File:Piata unirii.jpg (Union Square, Focșani)
+Author: Silvia Vrînceanu Nichita
+URL: https://commons.wikimedia.org/wiki/File:Piata_unirii.jpg
+License: CC BY-SA 4.0
+License URL: https://creativecommons.org/licenses/by-sa/4.0/
+Changes: downloaded from the source image URL and re-hosted in Revery storage.
+
+Piatra Neamț city image:
+Source: File:Turnul lui Stefan cel Mare.jpg (Stephen the Great's Tower, Piatra Neamț)
+Author: Costiflorea
+URL: https://commons.wikimedia.org/wiki/File:Turnul_lui_Stefan_cel_Mare.jpg
+License: CC BY-SA 3.0 RO
+License URL: https://creativecommons.org/licenses/by-sa/3.0/ro/
+Changes: downloaded from the source image URL and re-hosted in Revery storage.
+
+Pitești city image:
+Source: File:RO AG - Ansamblul Primăriei 1.jpg (City Hall, Pitești)
+Author: Alexandru Ene
+URL: https://commons.wikimedia.org/wiki/File:RO_AG_-_Ansamblul_Prim%C4%83riei_1.jpg
+License: CC BY-SA 3.0 RO
+License URL: https://creativecommons.org/licenses/by-sa/3.0/ro/
+Changes: downloaded from the source image URL and re-hosted in Revery storage.
+
+Râmnicu Vâlcea city image:
+Source: File:VALCEA CENTRU - panoramio (8).jpg (city centre, Râmnicu Vâlcea)
+Author: Akrep Scorpion
+URL: https://commons.wikimedia.org/wiki/File:VALCEA_CENTRU_-_panoramio_(8).jpg
+License: CC BY-SA 3.0
+License URL: https://creativecommons.org/licenses/by-sa/3.0/
+Changes: downloaded from the source image URL and re-hosted in Revery storage.
+
+Târgoviște city image:
+Source: File:Biserica Domnească Adormirea Maicii Domnului (2).jpg (Princely Court, Târgoviște)
+Author: fusion-of-horizons
+URL: https://commons.wikimedia.org/wiki/File:Biserica_Domneasc%C4%83_Adormirea_Maicii_Domnului_(2).jpg
+License: CC BY 2.0
+License URL: https://creativecommons.org/licenses/by/2.0/
+Changes: downloaded from the source image URL and re-hosted in Revery storage.
+
+Vaslui city image:
+Source: File:Palatul Administrativ Vaslui.jpg (County Council & Stephen the Great statue, Vaslui)
+Author: Bogdan29roman
+URL: https://commons.wikimedia.org/wiki/File:Palatul_Administrativ_Vaslui.jpg
 License: CC BY-SA 3.0
 License URL: https://creativecommons.org/licenses/by-sa/3.0/
 Changes: downloaded from the source image URL and re-hosted in Revery storage.
