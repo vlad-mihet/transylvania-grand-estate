@@ -266,6 +266,9 @@
       "menuDescription": "Navighează prin platformă",
       "languageLabel": "Limbă",
       "userMenuAria": "Meniu cont"
+    },
+    "tools": {
+      "navLink": "Raport de piață"
     }
   }
 }

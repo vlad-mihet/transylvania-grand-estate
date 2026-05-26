@@ -15,3 +15,5 @@ export { neighborhoods } from "./neighborhoods";
 export { testimonials } from "./testimonials";
 export { articles } from "./articles";
 export type { ArticleSeedData } from "./articles";
+export { academyCourses } from "./academy-courses";
+export type { AcademyCourseSeed, AcademyLessonSeed } from "./academy-courses";

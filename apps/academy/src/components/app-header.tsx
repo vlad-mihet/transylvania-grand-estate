@@ -50,6 +50,7 @@ export function AppHeader({ navPending = false }: { navPending?: boolean }) {
   const isDashboard = pathname === "/";
   const isCatalog =
     pathname === "/catalog" || pathname.startsWith("/courses");
+  const isTools = pathname.startsWith("/tools");
 
   async function onLogout() {
     await logout.mutateAsync();
@@ -82,6 +83,9 @@ export function AppHeader({ navPending = false }: { navPending?: boolean }) {
               </NavItem>
               <NavItem href="/catalog" active={isCatalog}>
                 {t("catalog.navLink")}
+              </NavItem>
+              <NavItem href="/tools/raport-piata" active={isTools}>
+                {t("tools.navLink")}
               </NavItem>
             </nav>
           </div>
@@ -184,6 +188,14 @@ export function AppHeader({ navPending = false }: { navPending?: boolean }) {
                 </SheetClose>
                 <SheetClose asChild>
                   <Link
+                    href="/tools/raport-piata"
+                    className="rounded-md px-3 py-2 hover:bg-[color:var(--color-muted)]"
+                  >
+                    {t("tools.navLink")}
+                  </Link>
+                </SheetClose>
+                <SheetClose asChild>
+                  <Link
                     href="/account"
                     className="rounded-md px-3 py-2 hover:bg-[color:var(--color-muted)]"
                   >
@@ -222,7 +234,7 @@ function NavItem({
   active,
   children,
 }: {
-  href: "/" | "/catalog";
+  href: "/" | "/catalog" | "/tools/raport-piata";
   active: boolean;
   children: React.ReactNode;
 }) {

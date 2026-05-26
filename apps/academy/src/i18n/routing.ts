@@ -24,5 +24,6 @@ export const routing = defineRouting({
     "/courses/[slug]/[lessonSlug]": "/courses/[slug]/[lessonSlug]",
     "/catalog": "/catalog",
     "/account": "/account",
+    "/tools/raport-piata": "/tools/raport-piata",
   },
 });

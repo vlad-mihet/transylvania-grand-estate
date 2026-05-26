@@ -266,6 +266,9 @@
       "menuDescription": "Navigate the platform",
       "languageLabel": "Language",
       "userMenuAria": "Account menu"
+    },
+    "tools": {
+      "navLink": "Market report"
     }
   }
 }

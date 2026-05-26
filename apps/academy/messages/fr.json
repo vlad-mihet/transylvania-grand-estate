@@ -266,6 +266,9 @@
       "menuDescription": "Naviguer dans la plateforme",
       "languageLabel": "Langue",
       "userMenuAria": "Menu du compte"
+    },
+    "tools": {
+      "navLink": "Rapport de marché"
     }
   }
 }

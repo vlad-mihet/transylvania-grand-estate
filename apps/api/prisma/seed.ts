@@ -23,6 +23,7 @@ import {
   neighborhoods,
   testimonials,
   articles,
+  academyCourses,
 } from '@tge/data';
 
 /**
@@ -623,6 +624,54 @@ async function main() {
     console.log(`  ${articles.length} articles seeded`);
   } else {
     console.log(`  Articles already seeded (${existingArticles} found)`);
+  }
+
+  // 6b. Seed academy courses + lessons — same SEED_RESET pattern as articles.
+  //   Courses are published + enrolled-visibility; agents see them via a
+  //   wildcard AcademyEnrollment (courseId: null) granted at invitation time.
+  //   ro-only content; the API falls back to ro for any other locale.
+  if (SEED_RESET) {
+    // Lessons cascade-delete with their course.
+    await prisma.course.deleteMany({});
+    console.log('  [SEED_RESET] academy courses wiped before re-seed');
+  }
+  const existingCourses = await prisma.course.count();
+  if (existingCourses === 0) {
+    const now = new Date();
+    for (const course of academyCourses) {
+      await prisma.course.create({
+        data: {
+          slug: course.slug,
+          title: course.title,
+          description: course.description,
+          status: 'published',
+          visibility: 'enrolled',
+          order: course.order,
+          publishedAt: now,
+          lessons: {
+            create: course.lessons.map((lesson) => ({
+              slug: lesson.slug,
+              order: lesson.order,
+              title: lesson.title,
+              excerpt: lesson.excerpt,
+              content: lesson.content,
+              type: lesson.type ?? 'text',
+              status: 'published',
+              publishedAt: now,
+            })),
+          },
+        },
+      });
+    }
+    const lessonCount = academyCourses.reduce(
+      (sum, c) => sum + c.lessons.length,
+      0,
+    );
+    console.log(
+      `  ${academyCourses.length} academy courses (${lessonCount} lessons) seeded`,
+    );
+  } else {
+    console.log(`  Academy courses already seeded (${existingCourses} found)`);
   }
 
   // 7. Seed site config
