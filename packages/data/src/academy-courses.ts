@@ -1,9 +1,13 @@
 /**
  * TGE Academy — agent-training course content.
  *
- * Source: material the client (Transilvania Grand SRL) supplied for the
- * Academy "rubrici" (sections): Legislație, AI, Proceduri de lucru, Ghidul
- * vânzărilor. Each top-level entry becomes a `Course`; each lesson a `Lesson`.
+ * Source: material the client (Transilvania Grand SRL) supplied for new
+ * Academy "rubrici" (sections): AI, Proceduri de lucru, Ghidul vânzărilor.
+ * Each top-level entry becomes a `Course`; each lesson a `Lesson`.
+ *
+ * Scope note: the prod Academy already ships "real-estate-fundamentals" and
+ * "real-estate-legislation" (Fundamente + Legislație). Those are NOT
+ * re-authored here — only the three genuinely-new sections live in this file.
  *
  * Content is **Romanian markdown** (the Academy student view renders markdown
  * via `MarkdownView`). Romanian text MUST keep full diacritics (ă â î ș ț).
@@ -14,13 +18,8 @@
  * payload is validated by Zod, but the seed writes these straight to the
  * Prisma JSON columns (no Zod gate), so `ro`-only is intentional and safe.
  *
- * Courses are seeded `status: 'published'`, `visibility: 'enrolled'` — visible
- * only to agents who hold an AcademyEnrollment (wildcard `courseId: null`
- * granted at invitation time covers all current + future courses).
- *
- * NOT included yet (pending client delivery): "Fundamentele Imobiliarelor"
- * (content never supplied) and the printable contract drafts (uploaded as
- * lesson attachments via the admin UI once received).
+ * Seeded `status: 'published'`, `visibility: 'public'` to match the two
+ * existing courses (any authenticated agent sees them without an enrollment).
  */
 
 export interface AcademyLessonSeed {
@@ -45,211 +44,7 @@ export interface AcademyCourseSeed {
 
 export const academyCourses: AcademyCourseSeed[] = [
   // ─────────────────────────────────────────────────────────────
-  // 1. Legislație Imobiliară
-  // ─────────────────────────────────────────────────────────────
-  {
-    slug: "legislatie-imobiliara",
-    order: 10,
-    title: { ro: "Legislație Imobiliară" },
-    description: {
-      ro: "Cele cinci legi fără de care nu ieși din birou, plus clauzele din contractul de vânzare-cumpărare care te scot din proces. Comisionul mare vine din încredere, încrederea vine din siguranță, iar siguranța vine din lege.",
-    },
-    lessons: [
-      {
-        slug: "gdpr-legea-190-2018",
-        order: 10,
-        title: { ro: "Legea 190/2018 + GDPR — Datele clientului nu sunt ale tale" },
-        excerpt: {
-          ro: "Nume, telefon, buletin, venit, extras CF — toate sunt date cu caracter personal. Le iei doar cu consimțământ scris și scop clar.",
-        },
-        content: {
-          ro: `## Ce zice legea
-
-Orice nume, telefon, buletin, venit sau extras CF reprezintă **date cu caracter personal**. Le poți prelucra doar cu **consimțământ scris** și un **scop clar**.
-
-## Greșeala de amator
-
-Dai numărul proprietarului la 3 cumpărători „să se înțeleagă între ei". Sau postezi pe grup poze din casă cu actele pe masă.
-
-## Ce face un agent de top
-
-1. **Acord GDPR semnat** la prima vizionare. Fără el, nu deschizi ușa.
-2. **Anonimizezi** când trimiți oferte pe WhatsApp. Ștergi numele din pozele CF.
-3. **Ștergi datele** la 30 de zile dacă nu se semnează.
-
-## Amenda
-
-Până la **4% din cifra de afaceri**. ANPC și ANSPDCP nu iartă.`,
-        },
-      },
-      {
-        slug: "legea-129-2019-spalarea-banilor",
-        order: 20,
-        title: { ro: "Legea 129/2019 — Spălarea banilor te bagă la închisoare pe tine" },
-        excerpt: {
-          ro: "Ești entitate raportoare. Orice tranzacție peste 10.000 EUR cash sau suspectă se raportează la ONPCSB în 24h.",
-        },
-        content: {
-          ro: `## Ce zice legea
-
-Ești **entitate raportoare**. Orice tranzacție peste **10.000 EUR cash** sau suspectă se raportează la **ONPCSB în 24h**.
-
-## Greșeala de amator
-
-„Lasă, șefu', că dă tataie 50.000 EUR cash, om serios." Tu iei comisionul și intri complice.
-
-## Ce face un agent de top
-
-1. **Cunoaște-ți clientul (KYC)**: copie CI, verifici beneficiarul real dacă e firmă.
-2. **Refuzi cash peste 10.000 EUR.** Punct. Legea 70/2015 interzice — doar bancar.
-3. **Raportezi suspiciuni**: client grăbit, preț umflat sau prea ieftin, nu-l interesează actele, plătește altcineva.
-
-## Riscul
-
-**3–10 ani închisoare** + interdicție de profesie. Nu merită 2% comision.`,
-        },
-      },
-      {
-        slug: "legea-196-2018-contract-intermediere",
-        order: 30,
-        title: { ro: "Legea 196/2018 — Contractul de intermediere e scutul tău" },
-        excerpt: {
-          ro: "Fără contract scris nu poți cere comision legal. Înțelegerea verbală înseamnă 0 lei în instanță.",
-        },
-        content: {
-          ro: `## Ce zice legea
-
-Fără **contract scris** nu poți cere comision legal. „Înțelegerea verbală" = **0 lei în instanță**.
-
-## Greșeala de amator
-
-Arăți 20 de case fără contract. Clientul cumpără direct cu proprietarul. Tu rămâi cu benzina consumată.
-
-## Ce face un agent de top
-
-1. **Contract de intermediere** (exclusiv sau neexclusiv) semnat **înainte** de prima vizionare.
-2. **Clauză clară**: comision %, când se datorează, pe ce perioadă.
-3. **Fișă de vizionare semnată** la fiecare casă — dovada că tu l-ai dus acolo.
-
-## Fără asta
-
-Muncești gratis. Instanța râde de tine.`,
-        },
-      },
-      {
-        slug: "cod-civil-vicii-ascunse",
-        order: 40,
-        title: { ro: "Codul Civil (art. 1650–1762) — Vicii ascunse = proces pe numele tău" },
-        excerpt: {
-          ro: "Vânzătorul răspunde de vicii ascunse 3 ani. Dacă tu știai și n-ai zis, clientul te dă în judecată pentru dol.",
-        },
-        content: {
-          ro: `## Ce zice legea
-
-Vânzătorul răspunde de vicii ascunse **3 ani**. Dar dacă tu știai de igrasie și n-ai spus, clientul te dă în judecată **pe tine** pentru dol.
-
-## Greșeala de amator
-
-„Da, șefu', e super apartament, ia-l." Peste 2 luni curge tavanul. Clientul: „agentul m-a mințit".
-
-## Ce face un agent de top
-
-1. **Due diligence minim**: ceri extras CF nou, certificat fiscal, certificat energetic, releveu.
-2. **Declari ce știi în scris**: „Clientul a fost informat de urme de igrasie în baie." Semnează.
-3. **Nu garantezi nimic**: tu nu ești constructor. „Din ce văd eu" + „verificați cu un expert".
-
-## Protecție
-
-**Asigurare de răspundere profesională** — obligatorie dacă ești serios.`,
-        },
-      },
-      {
-        slug: "oug-21-1992-publicitate-inselatoare",
-        order: 50,
-        title: { ro: "OUG 21/1992 + Legea 296/2004 — Publicitatea înșelătoare te arde" },
-        excerpt: {
-          ro: "Anunțul trebuie să fie 100% real: metri, preț, dotări, poze actuale. ANPC te face praf altfel.",
-        },
-        content: {
-          ro: `## Ce zice legea
-
-Anunțul trebuie să fie **100% real**: metri, preț, dotări, poze actuale.
-
-## Greșeala de amator
-
-Pui „metrou 2 min" când e 15 min pe jos. Sau „centrală nouă" din 2008. Sau poze randate când blocul e în șantier. ANPC te face praf.
-
-## Ce face un agent de top
-
-1. **Verifici personal**: mergi pe jos la metrou cu cronometrul. Măsori camerele.
-2. **Poze reale, dată recentă**: fără wide-angle care dublează camera, fără „mobilă doar decor".
-3. **Preț final**: treci în anunț dacă e negociabil + comision inclus sau nu.
-
-## Amenda ANPC
-
-**5.000 – 100.000 lei**, plus plângere penală pentru înșelăciune.
-
----
-
-## Bonus: Cele 3 documente fără care NU vinzi
-
-| Document | De ce îl ceri | Cine îl dă |
-|---|---|---|
-| **Extras CF de informare** | Să nu vinzi ce nu e al lui; vezi ipoteci, procese, intabulare | Proprietarul, de la ANCPI, max. 30 zile vechime |
-| **Certificat fiscal** | Fără datorii la stat; notarul nu face actul fără el | Proprietarul, de la primărie |
-| **Certificat energetic** | Obligatoriu la vânzare/închiriere din 2013 | Proprietarul, de la un auditor energetic |
-
-**Regula de aur:** fără acte, nu pui la vânzare. Punct.`,
-        },
-      },
-      {
-        slug: "contract-vanzare-cumparare-clauze",
-        order: 60,
-        title: { ro: "Contractul de Vânzare-Cumpărare — Clauzele care te scot din proces" },
-        excerpt: {
-          ro: "Notarul face actul, dar tu aduci părțile la masă. Patru clauze care te protejează pe tine și pe client.",
-        },
-        content: {
-          ro: `Notarul face actul, dar tu aduci părțile la masă. Dacă semnează o prostie, clientul te sună pe tine primul. Cere **4 clauze** care te protejează.
-
-## 1. Clauza de comision — să-ți iei banii fără să cerșești
-
-> „Comisionul agenției, în cuantum de X% + TVA din prețul final, este datorat și exigibil la data semnării prezentului contract de vânzare-cumpărare. Părțile mandatează notarul public să rețină și să vireze comisionul din prețul tranzacției."
-
-Notarul oprește banii tăi direct din tranzacție. Nu mai alergi după nimeni.
-
-## 2. Clauza „Văzut și plăcut" + declarație vicii aparente
-
-> „Cumpărătorul declară că a vizionat imobilul personal în data de…, a luat la cunoștință de starea acestuia și îl dobândește în starea «văzut și plăcut», menționând următoarele vicii aparente: [...]. Vânzătorul declară pe proprie răspundere că nu cunoaște alte vicii ascunse."
-
-Ai dovada scrisă că clientul a văzut defectele (art. 1707 Cod Civil).
-
-## 3. Clauza de preț real + metoda de plată — anti-ANAF, anti-ONPCSB
-
-> „Prețul total și real al vânzării este de XXX EUR. Plata se face integral prin transfer bancar în contul IBAN… pe numele vânzătorului. Părțile declară, sub sancțiunea art. 326 Cod Penal privind falsul în declarații, că prețul este cel real și nu există alte înțelegeri nedeclarate."
-
-Te scoți din schema lor. Dacă fac prostii, e pe declarația lor, nu pe pielea ta.
-
-## 4. Clauza de predare + penalități
-
-> „Predarea efectivă a imobilului, liber de orice bunuri și persoane, se face în termen de maxim 3 zile de la încasarea integrală a prețului, pe bază de proces-verbal. Pentru fiecare zi de întârziere, vânzătorul datorează penalități de 0,1% pe zi din prețul total."
-
----
-
-## 3 Red Flags la antecontract pe care NU le semnezi
-
-| Clauza otrăvită | De ce fugi | Ce ceri în loc |
-|---|---|---|
-| „Se vinde cum este" fără listă de vicii | Îți asumă clientul toate bombele ascunse | Listă detaliată de vicii + „vânzătorul nu cunoaște altele" |
-| „Avansul se pierde dacă banca nu dă credit" | Clientul rămâne și fără casă, și fără avans | „Avansul se restituie integral dacă respingerea nu e din culpa cumpărătorului" |
-| „Comision 0 la agenție" | Una din părți te lucrează | Refuzi tranzacția |`,
-        },
-      },
-    ],
-  },
-
-  // ─────────────────────────────────────────────────────────────
-  // 2. AI pentru Agenți Imobiliari
+  // 1. AI pentru Agenți Imobiliari
   // ─────────────────────────────────────────────────────────────
   {
     slug: "ai-pentru-agenti",
@@ -384,7 +179,7 @@ Un brand crește prin **consistență**. AI-ul îți poate organiza conținutul 
   },
 
   // ─────────────────────────────────────────────────────────────
-  // 3. Proceduri de Lucru (Fluxul Agentului)
+  // 2. Proceduri de Lucru (Fluxul Agentului)
   // ─────────────────────────────────────────────────────────────
   {
     slug: "proceduri-de-lucru",
@@ -578,7 +373,7 @@ La 7 zile suni „Totul ok?". La 30 de zile ceri review pe Google și recomandă
   },
 
   // ─────────────────────────────────────────────────────────────
-  // 4. Ghidul Vânzărilor pentru Agenți
+  // 3. Ghidul Vânzărilor pentru Agenți
   // ─────────────────────────────────────────────────────────────
   {
     slug: "ghidul-vanzarilor",

@@ -626,52 +626,66 @@ async function main() {
     console.log(`  Articles already seeded (${existingArticles} found)`);
   }
 
-  // 6b. Seed academy courses + lessons — same SEED_RESET pattern as articles.
-  //   Courses are published + enrolled-visibility; agents see them via a
-  //   wildcard AcademyEnrollment (courseId: null) granted at invitation time.
-  //   ro-only content; the API falls back to ro for any other locale.
-  if (SEED_RESET) {
-    // Lessons cascade-delete with their course.
-    await prisma.course.deleteMany({});
-    console.log('  [SEED_RESET] academy courses wiped before re-seed');
-  }
-  const existingCourses = await prisma.course.count();
-  if (existingCourses === 0) {
+  // 6b. Seed academy courses + lessons — UPSERT by slug, never wipe.
+  //   The prod Academy already hosts other courses (e.g. the 180-lesson
+  //   "real-estate-fundamentals" and "real-estate-legislation"), so this block
+  //   only adds/refreshes the slugs in `academyCourses` and leaves everything
+  //   else untouched. Deliberately NOT gated on SEED_RESET / count — a wipe
+  //   here would cascade-delete real courses, lessons and progress.
+  //   Published + public visibility to match the existing courses; ro-only
+  //   content (the API falls back to ro for any other requested locale).
+  {
     const now = new Date();
+    let lessonCount = 0;
     for (const course of academyCourses) {
-      await prisma.course.create({
-        data: {
+      const courseRow = await prisma.course.upsert({
+        where: { slug: course.slug },
+        update: {
+          title: course.title,
+          description: course.description,
+          status: 'published',
+          visibility: 'public',
+          order: course.order,
+        },
+        create: {
           slug: course.slug,
           title: course.title,
           description: course.description,
           status: 'published',
-          visibility: 'enrolled',
+          visibility: 'public',
           order: course.order,
           publishedAt: now,
-          lessons: {
-            create: course.lessons.map((lesson) => ({
-              slug: lesson.slug,
-              order: lesson.order,
-              title: lesson.title,
-              excerpt: lesson.excerpt,
-              content: lesson.content,
-              type: lesson.type ?? 'text',
-              status: 'published',
-              publishedAt: now,
-            })),
-          },
         },
       });
+      for (const lesson of course.lessons) {
+        await prisma.lesson.upsert({
+          where: { courseId_slug: { courseId: courseRow.id, slug: lesson.slug } },
+          update: {
+            order: lesson.order,
+            title: lesson.title,
+            excerpt: lesson.excerpt,
+            content: lesson.content,
+            type: lesson.type ?? 'text',
+            status: 'published',
+          },
+          create: {
+            courseId: courseRow.id,
+            slug: lesson.slug,
+            order: lesson.order,
+            title: lesson.title,
+            excerpt: lesson.excerpt,
+            content: lesson.content,
+            type: lesson.type ?? 'text',
+            status: 'published',
+            publishedAt: now,
+          },
+        });
+        lessonCount += 1;
+      }
     }
-    const lessonCount = academyCourses.reduce(
-      (sum, c) => sum + c.lessons.length,
-      0,
-    );
     console.log(
-      `  ${academyCourses.length} academy courses (${lessonCount} lessons) seeded`,
+      `  ${academyCourses.length} academy courses (${lessonCount} lessons) upserted`,
     );
-  } else {
-    console.log(`  Academy courses already seeded (${existingCourses} found)`);
   }
 
   // 7. Seed site config
