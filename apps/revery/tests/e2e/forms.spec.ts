@@ -16,6 +16,10 @@ test.describe('forms — contact form (browser)', () => {
     page.on('request', (req) => {
       if (req.method() === 'POST' && req.url().includes('/inquiries')) postCalls += 1;
     });
+    // Submit is disabled until the GDPR consent box is ticked; tick it so the
+    // button is clickable, then rely on native required-field validation to
+    // block the empty submit.
+    await page.locator('#contact-consent').click();
     const submit = page.getByRole('button', { name: /Trimite|Send|Envoyer|Senden/i }).first();
     await submit.click();
     // HTML5 validation should block submission. No network POST should fire.
@@ -33,6 +37,8 @@ test.describe('forms — contact form (browser)', () => {
     const phone = page.locator('input[type="tel"]');
     if (await phone.count()) await phone.fill(FAKE_INQUIRY.phone);
     await page.locator('textarea').fill(FAKE_INQUIRY.message);
+    // Required GDPR consent — submit stays disabled until this is ticked.
+    await page.locator('#contact-consent').click();
     await page.getByRole('button', { name: /Trimite|Send|Envoyer|Senden/i }).first().click();
     // Success state shows a heading like "Mulțumim!" / "Thank You!" / etc.
     const successHeading = page
@@ -61,6 +67,9 @@ test.describe.serial('forms — property inquiry (API contract)', () => {
         source,
         entitySlug: slug,
         propertySlug: slug,
+        // createInquirySchema requires explicit GDPR consent (the form stamps
+        // this when the privacy checkbox is ticked).
+        gdprConsent: true,
       },
       { forwardedFor: syntheticIp('forms-source-roundtrip') },
     );
@@ -78,6 +87,9 @@ test.describe.serial('forms — property inquiry (API contract)', () => {
         budget: '50kTo100k',
         message: 'too short',
         type: 'general',
+        // Consent present so the 400 is attributable to the bad email + short
+        // message, not the missing GDPR gate.
+        gdprConsent: true,
       },
       { forwardedFor: syntheticIp('forms-bad-input') },
     );

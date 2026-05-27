@@ -11,8 +11,18 @@ function Slider({
   value,
   min = 0,
   max = 100,
+  thumbAriaLabel,
   ...props
-}: React.ComponentProps<typeof SliderPrimitive.Root>) {
+}: React.ComponentProps<typeof SliderPrimitive.Root> & {
+  /**
+   * Accessible name for the draggable thumb(s). Radix renders the thumb as a
+   * bare `role="slider"` span with no inherent name, which axe flags as a
+   * serious WCAG 4.1.2 violation. Pass a string (single-thumb) or one per
+   * thumb (range). Always set this when the visible label isn't programmatically
+   * tied to the thumb.
+   */
+  thumbAriaLabel?: string | string[]
+}) {
   const _values = React.useMemo(
     () =>
       Array.isArray(value)
@@ -53,6 +63,11 @@ function Slider({
         <SliderPrimitive.Thumb
           data-slot="slider-thumb"
           key={index}
+          aria-label={
+            Array.isArray(thumbAriaLabel)
+              ? thumbAriaLabel[index]
+              : thumbAriaLabel
+          }
           className="block size-4 shrink-0 rounded-full border border-primary bg-white shadow-sm ring-ring/50 transition-[color,box-shadow] hover:ring-4 focus-visible:ring-4 focus-visible:outline-hidden disabled:pointer-events-none disabled:opacity-50"
         />
       ))}

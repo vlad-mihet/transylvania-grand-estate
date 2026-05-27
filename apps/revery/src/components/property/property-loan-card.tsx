@@ -74,6 +74,7 @@ export function PropertyLoanCard({ price }: PropertyLoanCardProps) {
                 step={1}
                 value={[downPct]}
                 onValueChange={(v) => setDownPct(v[0])}
+                thumbAriaLabel={t("loanCalc.downPayment")}
               />
             </div>
 
@@ -92,6 +93,7 @@ export function PropertyLoanCard({ price }: PropertyLoanCardProps) {
                 step={1}
                 value={[termYears]}
                 onValueChange={(v) => setTermYears(v[0])}
+                thumbAriaLabel={t("loanCalc.term")}
               />
             </div>
 
@@ -110,6 +112,7 @@ export function PropertyLoanCard({ price }: PropertyLoanCardProps) {
                 step={0.1}
                 value={[rate]}
                 onValueChange={(v) => setRate(v[0])}
+                thumbAriaLabel={t("loanCalc.rate")}
               />
             </div>
           </div>

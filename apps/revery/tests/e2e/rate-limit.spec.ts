@@ -25,6 +25,10 @@ test.describe.serial('rate-limit — POST /inquiries enforces 5/min', () => {
           budget: '50kTo100k',
           message: `Throttle probe number ${i} — exceeding the 5/min limit on purpose.`,
           type: 'general',
+          // createInquirySchema requires explicit GDPR consent; without it the
+          // payload 400s *after* the rate-limit guard has already counted the
+          // hit, so the first 5 come back 400 (not 201) and this gate flakes.
+          gdprConsent: true,
         },
         { forwardedFor: ip },
       );
