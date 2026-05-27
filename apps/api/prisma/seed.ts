@@ -711,16 +711,17 @@ async function main() {
       { platform: 'linkedin', url: 'https://linkedin.com/company/tge' },
       { platform: 'youtube', url: 'https://youtube.com/@tge' },
     ],
-    // Client-curated home-page order for the upcoming presentation. 18 cities,
-    // rendered in a uniform 3-per-row grid on TGE; same set in different order
-    // on Revery. Position in the array IS the rank — keep the order intact.
+    // Client-curated home-page order. 18 cities; position in the array IS the
+    // rank — keep the order intact. TGE renders the first 8 as large 2-per-row
+    // tiles on the home page (see city-showcase.tsx `slice(0, 8)`); the rest
+    // live on the /cities "View All" page. Client-requested home rows:
+    //   Cluj-Napoca · Timișoara / Brașov · Oradea / Arad · Sibiu / București · Iași
     tgeHomepageCities: [
-      'cluj-napoca', 'timisoara', 'brasov',
-      'sibiu', 'oradea', 'arad',
-      'targu-mures', 'alba-iulia', 'satu-mare',
-      'bucuresti', 'iasi', 'constanta',
-      'sighisoara', 'craiova', 'ploiesti',
-      'bistrita', 'suceava', 'deva',
+      'cluj-napoca', 'timisoara', 'brasov', 'oradea',
+      'arad', 'sibiu', 'bucuresti', 'iasi',
+      'targu-mures', 'alba-iulia', 'satu-mare', 'constanta',
+      'sighisoara', 'craiova', 'ploiesti', 'bistrita',
+      'suceava', 'deva',
     ],
     reveryHomepageCities: [
       'bucuresti', 'cluj-napoca', 'timisoara',
