@@ -10,6 +10,7 @@
     "reserved": "Réservé",
     "new": "Nouveau",
     "featured": "En Vedette",
+    "demoImageBadge": "Images d'illustration",
     "propertyTypes": {
       "apartment": "Appartement",
       "house": "Maison",
