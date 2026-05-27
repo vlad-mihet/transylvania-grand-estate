@@ -1,12 +1,12 @@
 Revery image credits
 
 Alba Iulia city image:
-Source: Alba Carolina Citadel, Alba Iulia, Romania
-Author: premus
-URL: https://www.flickr.com/photos/66004321@N00/21339277086
-License: CC BY 2.0
-License URL: https://creativecommons.org/licenses/by/2.0/
-Changes: downloaded from the source image URL and re-hosted in Revery storage.
+Source: Alba Carolina Citadel — Third Gate (Poarta a III-a), Alba Iulia, Romania
+Author: Andra Dunăre (Unsplash)
+URL: https://unsplash.com/photos/9Vqc7A0OISU
+License: Unsplash License (free, attribution not required)
+License URL: https://unsplash.com/license
+Changes: downloaded from the source image URL and re-hosted in shared @tge/assets.
 
 Alexandria city image:
 Source: File:Prefectura Teleorman.jpg
@@ -121,12 +121,36 @@ License URL: https://creativecommons.org/licenses/by/2.0/
 Changes: downloaded from the source image URL and re-hosted in Revery storage.
 
 Târgu Mureș city image:
-Source: Palatul Culturii (Targu Mures)
-Author: Rsocol
-URL: https://commons.wikimedia.org/w/index.php?curid=5308449
-License: CC BY-SA 3.0
-License URL: https://creativecommons.org/licenses/by-sa/3.0/
-Changes: downloaded from the source image URL and re-hosted in Revery storage.
+Source: Târgu Mureș — panoramic view of the centre with the Administrative Palace tower
+Author: Unsplash contributor (see URL)
+URL: https://unsplash.com/photos/77QHAUpzaN0
+License: Unsplash License (free, attribution not required)
+License URL: https://unsplash.com/license
+Changes: downloaded from the source image URL and re-hosted in shared @tge/assets.
+
+Brașov city image:
+Source: Brașov — old town with the Black Church, viewed toward Tâmpa
+Author: Daniela Turcanu (Unsplash)
+URL: https://unsplash.com/photos/a-scenic-view-of-a-town-in-the-mountains-v_0Nj6vdq4o
+License: Unsplash License (free, attribution not required)
+License URL: https://unsplash.com/license
+Changes: downloaded from the source image URL and re-hosted in shared @tge/assets.
+
+Sibiu city image:
+Source: Sibiu — old-town tiled rooftops with the famous "eyes" dormer windows
+Author: Unsplash contributor (see URL)
+URL: https://unsplash.com/photos/loU0DAeylF8
+License: Unsplash License (free, attribution not required)
+License URL: https://unsplash.com/license
+Changes: downloaded from the source image URL and re-hosted in shared @tge/assets.
+
+Timișoara city image:
+Source: Timișoara — aerial view of the Orthodox Metropolitan Cathedral
+Author: Bogdan Vlad (Unsplash)
+URL: https://unsplash.com/photos/J2Lb7REl5yA
+License: Unsplash License (free, attribution not required)
+License URL: https://unsplash.com/license
+Changes: downloaded from the source image URL and re-hosted in shared @tge/assets.
 
 Călărași city image:
 Source: File:Untitled - panoramio (1335).jpg (Borcea riverside, Călărași)
