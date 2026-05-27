@@ -33,12 +33,12 @@ License URL: https://creativecommons.org/licenses/by-sa/4.0/
 Changes: downloaded from the source image URL and re-hosted in Revery storage.
 
 Bistrița city image:
-Source: Bistrița văzută din Biserica Evanghelică
-Author: bortescristian
-URL: https://www.flickr.com/photos/79653482@N00/7489880804
-License: CC BY 2.0
-License URL: https://creativecommons.org/licenses/by/2.0/
-Changes: downloaded from the source image URL and re-hosted in Revery storage.
+Source: Biserica Evanghelică din Bistrița (the Evangelical church and its 75 m Gothic tower)
+Author: Cătălin Vârgă
+URL: https://commons.wikimedia.org/wiki/File:Biserica_Evanghelic%C4%83_din_Bistri%C8%9Ba.jpg
+License: CC BY-SA 3.0 RO
+License URL: https://creativecommons.org/licenses/by-sa/3.0/ro/
+Changes: downloaded from the source image URL and re-hosted in shared @tge/assets.
 
 București city image:
 Source: Bucharest - Stavropoleos Monastery
