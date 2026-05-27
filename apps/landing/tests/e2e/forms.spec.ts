@@ -29,6 +29,8 @@ test.describe("D-4 · contact form", () => {
     await page.locator("textarea").first().fill(
       "This is a QA-suite synthetic inquiry — please ignore. Long-enough message to clear the >=10 char Zod rule on the API.",
     );
+    // Required GDPR consent — the submit button is disabled until ticked.
+    await page.locator("#contact-consent").click();
     await page.getByRole("button", { name: /Trimite|Send|Submit|Envoyer|Senden/i }).click();
 
     // Success state replaces the form (CheckCircle + success.title text).
@@ -86,6 +88,8 @@ test.describe("D-4 · global inquiry modal [BUG-002 regression]", () => {
     await dialog.locator("#inquiry-message").fill(
       "Synthetic QA — modal coverage. Length ≥10. Please ignore.",
     );
+    // Required GDPR consent — the modal's submit is disabled until ticked.
+    await dialog.locator("#inquiry-consent").click();
     await dialog.getByRole("button", { name: /Trimite|Send|Submit|Envoyer|Senden/i }).click();
 
     // Success state.
@@ -126,6 +130,8 @@ test.describe("D-6 · brand isolation", () => {
     await page.locator("textarea").first().fill(
       "Synthetic QA inquiry — please ignore. Confirms X-Site stamping on client-originated submissions.",
     );
+    // Required GDPR consent — the submit button is disabled until ticked.
+    await page.locator("#contact-consent").click();
     await page.getByRole("button", { name: /Trimite|Send|Submit|Envoyer|Senden/i }).click();
     await expect(page.getByText(/Mulțumim|Thank you|Merci|Vielen Dank/i)).toBeVisible({
       timeout: 10_000,

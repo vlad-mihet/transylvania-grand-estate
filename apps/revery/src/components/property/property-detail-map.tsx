@@ -44,7 +44,10 @@ export default function PropertyDetailMap({
       iconAnchor: [18, 44],
     });
 
-    L.marker([lat, lng], { icon: pinIcon })
+    // Leaflet makes the marker keyboard-focusable (role="button"); without a
+    // name axe flags a serious `aria-command-name` violation. `title`/`alt`
+    // are applied to the marker element and give it an accessible name.
+    L.marker([lat, lng], { icon: pinIcon, title: address, alt: address })
       .bindPopup(renderAddressPopup(address))
       .addTo(map);
 

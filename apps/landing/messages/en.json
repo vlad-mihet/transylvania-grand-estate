@@ -58,7 +58,8 @@
     "cities": {
       "subtitle": "Explore By Region",
       "title": "Our Exclusive Destinations",
-      "propertyCount": "{count} properties"
+      "propertyCount": "{count} properties",
+      "viewAll": "View All Destinations"
     },
     "about": {
       "subtitle": "About Transylvania Grand Estate",

@@ -8,6 +8,7 @@ import {
   PropertyType,
 } from '@prisma/client';
 import { createTestApp } from './test-app.factory';
+import { tagCityBrands } from './brand-fixture';
 
 /**
  * Brand-isolation guard for the nested `properties` relation exposed on
@@ -62,6 +63,9 @@ describe('Developers — tier scope on nested properties (e2e)', () => {
         countyId: county.id,
       },
     });
+    // Cluj-Napoca belongs to both brands; tag it so brand-scoped property
+    // queries surface the fixtures (mirrors the seed's city_brands phase).
+    await tagCityBrands(prisma, city.id);
     const developer = await prisma.developer.create({
       data: {
         slug: 'dual-tier-dev',

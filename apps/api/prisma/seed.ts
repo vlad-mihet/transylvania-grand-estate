@@ -1,6 +1,7 @@
 import {
   PrismaClient,
   AdminRole,
+  Brand,
   HeatingType,
   OwnershipType,
   WindowType,
@@ -751,6 +752,55 @@ async function main() {
     },
   });
   console.log('  Site config seeded');
+
+  // 7b. Seed per-city brand membership (`city_brands`).
+  //
+  //   Brand visibility is gated by this join table — a city's *absence* from
+  //   it for a brand makes its properties invisible on that brand's public
+  //   site (see apps/api/src/common/site/brand-where.util.ts).
+  //
+  //   The original membership was populated by a one-time backfill migration
+  //   (20260508130000_add_brand_membership) that ran `INSERT … SELECT FROM
+  //   cities …`. That only tags cities present when the migration runs — on a
+  //   clean DB the migrations run *before* this seed, so the backfill inserts
+  //   zero rows and every city ends up untagged. We reproduce the same rules
+  //   here so a freshly-seeded DB (CI, local) has working brand isolation.
+  //   The legacy SiteConfig.tgeCountyScope / tgeHiddenCities columns were
+  //   dropped (20260508160000), so the final business config is inlined below.
+  //
+  //   Idempotent (skipDuplicates) and additive — safe to re-run against prod.
+  const TGE_COUNTY_SCOPE = new Set([
+    'alba', 'bistrita-nasaud', 'brasov', 'cluj', 'covasna', 'harghita',
+    'hunedoara', 'mures', 'salaj', 'sibiu', 'bihor', 'timis',
+  ]);
+  const TGE_HIDDEN_CITIES = new Set([
+    'tarnaveni', 'miercurea-ciuc', 'reghin', 'sfantu-gheorghe',
+  ]);
+  const TGE_HOMEPAGE_CITIES = new Set(siteConfigData.tgeHomepageCities);
+  // Mirrors geo-scope.util.ts: every city is Revery except this denylist.
+  const REVERY_HIDDEN_CITIES = new Set(['reghin', 'tarnaveni']);
+
+  const cityBrandRows: { cityId: string; brand: Brand }[] = [];
+  for (const city of cities) {
+    const cityId = cityIdBySlug.get(city.slug);
+    if (!cityId) continue;
+    const inTgeCounty =
+      !!city.countySlug && TGE_COUNTY_SCOPE.has(city.countySlug);
+    const isTge =
+      (inTgeCounty && !TGE_HIDDEN_CITIES.has(city.slug)) ||
+      TGE_HOMEPAGE_CITIES.has(city.slug);
+    if (isTge) cityBrandRows.push({ cityId, brand: Brand.tge });
+    if (!REVERY_HIDDEN_CITIES.has(city.slug)) {
+      cityBrandRows.push({ cityId, brand: Brand.revery });
+    }
+  }
+  const cityBrandResult = await prisma.cityBrand.createMany({
+    data: cityBrandRows,
+    skipDuplicates: true,
+  });
+  console.log(
+    `  ${cityBrandResult.count} city-brand memberships seeded (${cityBrandRows.length} candidates)`,
+  );
 
   // 8. Seed bank rates — 5-year-fixed nominal rates, researched May 2026 from
   //    public Romanian mortgage comparators. Noua Casă is the government

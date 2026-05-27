@@ -22,7 +22,16 @@ test.describe('routes — every public route loads in every locale', () => {
 });
 
 test.describe('routes — root locale redirects', () => {
-  test('/ redirects to default locale (/ro)', async ({ page }) => {
+  // Unprefixed paths are locale-negotiated by the proxy (see
+  // apps/revery/src/proxy.ts → resolveLocaleForUnprefixed): cookie →
+  // Accept-Language → default RO. A visitor whose browser prefers Romanian
+  // must land on the default-locale tree. (CI's Chromium otherwise defaults to
+  // en-US, which correctly negotiates to /en — not a regression.)
+  test.use({ locale: 'ro-RO' });
+
+  test('/ redirects a ro-preferring client to the default locale (/ro)', async ({
+    page,
+  }) => {
     const response = await page.goto('/');
     expect(response).not.toBeNull();
     expect(page.url()).toMatch(/\/ro(\/|$)/);

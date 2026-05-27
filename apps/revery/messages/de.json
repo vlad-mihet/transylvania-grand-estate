@@ -105,6 +105,7 @@
       "subtitle": "Explore By City",
       "title": "Popular Cities",
       "propertyCount": "{count} properties",
+      "viewAll": "Alle Städte Anzeigen",
       "tabs": {
         "all": "All Properties",
         "new": "New Listings",
