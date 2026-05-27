@@ -174,11 +174,12 @@ describe('PATCH /articles/:id — draft/publish flow (e2e)', () => {
     const article = publicRes.body.data ?? publicRes.body;
     // The contract that matters for readers: live `title` is what's served,
     // never the draft snapshot. Public consumers (revery, landing) read
-    // `article.title` and the value must be the published one.
-    expect(article.title).toEqual({
-      ro: 'Original RO',
-      en: 'Original EN',
-    });
+    // `article.title` — and because the endpoint is `@LocaleScope('public')`,
+    // the LocalizedSerializerInterceptor collapses it to the request locale
+    // (default RO). The value must be the published one ('Original RO'),
+    // never the draft ('Hidden draft RO'). Editors needing the full blob pass
+    // `?expand=allLocales`.
+    expect(article.title).toBe('Original RO');
     // Defense in depth: PrismaService omits `draft` by default, so the
     // public read path never includes it in the response. A regression
     // here would re-leak unpublished editor work.

@@ -8,7 +8,12 @@ import { postInquiry, syntheticIp } from './_fixtures/api';
 // the guard's own bucket math is unit-tested in inquiry-rate-limit.guard.spec.ts.
 test.describe.serial('rate-limit — POST /inquiries enforces 5/min', () => {
   test('the 6th inquiry within the window returns 429', async () => {
-    const ip = syntheticIp('rate-limit-burst');
+    // Unique per run so the in-memory bucket (shared across the whole API
+    // process for the job, and persisted when a dev reuses a running server)
+    // always starts empty — otherwise a stale bucket can 429 before the 6th
+    // request and flake this gate. Isolation is the whole point of the
+    // synthetic IP (see _fixtures/api.ts).
+    const ip = syntheticIp(`rate-limit-burst-${Date.now()}`);
     const burstSize = 8;
     const status: number[] = [];
     for (let i = 0; i < burstSize; i++) {

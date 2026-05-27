@@ -13,6 +13,7 @@ import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
 import { createTestApp } from './test-app.factory';
 import { bearer, seedSuperAdminAndAccessToken } from './fixtures';
+import { tagCityBrands } from './brand-fixture';
 
 /**
  * Public-projection guard for the Agent surface. Anonymous + AGENT-role
@@ -103,6 +104,9 @@ describe('Agents — public projection (e2e)', () => {
         countyId: county.id,
       },
     });
+    // Tag Cluj-Napoca for both brands so the property detail lookup resolves
+    // under the REVERY site instead of 404ing (mirrors the seed).
+    await tagCityBrands(prisma, city.id);
     const property = await prisma.property.create({
       data: {
         slug: 'pii-prop',
