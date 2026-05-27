@@ -7,15 +7,17 @@ import { Property, Locale } from "@tge/types";
 import { formatPrice, localize } from "@tge/utils";
 import { Card, PropertySpecs } from "@tge/ui";
 import { MapPin } from "lucide-react";
+import { DemoImageBadge } from "./demo-image-badge";
 
 interface PropertyCardProps {
   property: Property;
 }
 
 // Revery's property card: clean, muted, purple accents. Keeps the brand
-// divergence from landing's luxury card (different aspect ratio, no badge
-// overlay, price below image, no title) but shares the spec renderer via
-// PropertySpecs from @tge/ui — previously reimplemented inline.
+// divergence from landing's luxury card (different aspect ratio, price below
+// image, no title) but shares the spec renderer via PropertySpecs from
+// @tge/ui — previously reimplemented inline. The only image overlay is the
+// demonstrative-content badge (placeholder inventory).
 export function PropertyCard({ property }: PropertyCardProps) {
   const locale = useLocale() as Locale;
   const tTypes = useTranslations("Common.propertyTypes");
@@ -34,6 +36,7 @@ export function PropertyCard({ property }: PropertyCardProps) {
               sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 25vw"
             />
           )}
+          <DemoImageBadge className="absolute top-3 left-3" />
         </div>
         <div className="p-4">
           <p className="text-lg font-bold text-foreground mb-1">

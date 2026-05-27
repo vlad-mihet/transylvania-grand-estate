@@ -8,6 +8,7 @@ import { formatPrice, localize } from "@tge/utils";
 import { PropertySpecs, Badge } from "@tge/ui";
 import { Card, CardContent } from "@tge/ui";
 import { MapPin, ImageOff } from "lucide-react";
+import { DemoImageBadge } from "./demo-image-badge";
 
 interface PropertyCardProps {
   property: Property;
@@ -44,6 +45,7 @@ export function PropertyCard({ property }: PropertyCardProps) {
               <Badge className="bg-white/[0.08] backdrop-blur-md text-cream text-[10px] uppercase tracking-[0.15em] font-semibold border border-white/15 px-3 py-1.5">{tCommon("new")}</Badge>
             )}
           </div>
+          <DemoImageBadge className="absolute top-4 right-4" />
           <div className="absolute bottom-0 inset-x-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent p-6 pt-16">
             <span className="text-copper-light font-serif text-xl tracking-wide">
               {formatPrice(property.price, locale)}

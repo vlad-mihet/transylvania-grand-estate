@@ -51,7 +51,7 @@ export const academyCourses: AcademyCourseSeed[] = [
     order: 20,
     title: { ro: "AI pentru Agenți Imobiliari" },
     description: {
-      ro: "Cum transformi inteligența artificială într-un coleg de echipă care nu obosește niciodată. Mai mult timp pentru clienți, decizii bazate pe date și marketing fără efort — fără să-ți pierzi vocea și autenticitatea. TGE și Adorya recomandă AI-ul pentru creșterea performanței.",
+      ro: "Cum transformi inteligența artificială într-un coleg de echipă care nu obosește niciodată. Mai mult timp pentru clienți, decizii bazate pe date și marketing fără efort — fără să-ți pierzi vocea și autenticitatea. TGE și Adorys recomandă AI-ul pentru creșterea performanței.",
     },
     lessons: [
       {
@@ -67,7 +67,7 @@ export const academyCourses: AcademyCourseSeed[] = [
 Ca agent imobiliar, fiecare minut contează. AI-ul poate prelua sarcini repetitive:
 
 - Scrierea email-urilor de follow-up
-- Generarea descrierilor de proprietăți sub marca **TGE** și **Adorya**
+- Generarea descrierilor de proprietăți sub marca **TGE** și **Adorys**
 - Programarea vizitelor și remindere pentru clienți
 
 Astfel ai mai mult timp pentru ceea ce aduce valoare reală: **întâlnirile față-în-față și închiderea tranzacțiilor**.
@@ -86,10 +86,10 @@ AI-ul poate analiza sute de tranzacții, trenduri de piață și comportamentul 
 
 ## Marketing și vizualuri fără efort
 
-AI-ul poate genera texte atractive pentru anunțuri, crea vizualuri și prezentări, chiar și video-uri scurte de promovare marca TGE și Adorya.
+AI-ul poate genera texte atractive pentru anunțuri, crea vizualuri și prezentări, chiar și video-uri scurte de promovare marca TGE și Adorys.
 
 **Sfaturi:**
-- Folosește AI pentru draft-uri, dar personalizează mesajele cu experiența ta și sub mărcile TGE și Adorya.
+- Folosește AI pentru draft-uri, dar personalizează mesajele cu experiența ta și sub mărcile TGE și Adorys.
 - Adaugă întotdeauna detalii reale despre proprietate și zonă.
 - Combină AI-ul cu fotografii proprii sau tururi 3D pentru impact profesional.`,
         },
@@ -129,7 +129,7 @@ AI-ul poate genera texte atractive pentru anunțuri, crea vizualuri și prezent�
 
 ## Cum să nu pari „fake"
 
-- **Personalizează** fiecare mesaj generat de AI — adaugă detalii specifice despre proprietăți și clienți. **TGE și Adorya trebuie să facă parte din script.**
+- **Personalizează** fiecare mesaj generat de AI — adaugă detalii specifice despre proprietăți și clienți. **TGE și Adorys trebuie să facă parte din script.**
 - **Păstrează vocea ta** — AI-ul sugerează textul, dar tu îl semnezi și îl transmiți.
 - **Fii transparent**: „Am folosit un instrument AI ca să economisesc timp, dar toate detaliile sunt verificate de mine."
 - **Echilibrul om + AI** — relația umană rămâne cheia.
@@ -172,7 +172,7 @@ Un brand crește prin **consistență**. AI-ul îți poate organiza conținutul 
 
 > **Sarcină practică:** ia-ți 30 de minute pe zi și „joacă-te" cu un AI diferit în fiecare zi a săptămânii. Întreabă-ți cunoștințele dacă își dau seama că e făcut cu AI. Când nu vor sesiza — te-ai prins.
 
-**Important:** toate postările se fac pe platformele sociale care aparțin Transilvania Grand Estate și Adorya. Postările se trimit către Agenție spre verificare și sunt încărcate de personalul Agenției.`,
+**Important:** toate postările se fac pe platformele sociale care aparțin Transilvania Grand Estate și Adorys. Postările se trimit către Agenție spre verificare și sunt încărcate de personalul Agenției.`,
         },
       },
     ],
@@ -216,7 +216,7 @@ Faci evaluarea pe loc cu CMA din REBS. Prezinți 3 scenarii (preț rapid, de pia
 **Documente:** contract de intermediere în exclusivitate, anexa foto/video, extras CF <24h, copie act proprietate, CI proprietar, certificat fiscal.
 
 ## 5. Marketing & Vizualizare
-Programezi foto/video profesional în 48h. Scrii anunțul în REBS, publici pe TGE (premium) și Adorya (volum), sincronizezi pe Storia, OLX, Imobiliare.ro.
+Programezi foto/video profesional în 48h. Scrii anunțul în REBS, publici pe TGE (premium) și Adorys (volum), sincronizezi pe Storia, OLX, Imobiliare.ro.
 **Documente:** acord foto/video, certificat energetic comandat, declarație utilități la zi.
 
 ## 6. Oferte & Negociere — controlezi procesul
@@ -237,10 +237,10 @@ La 7 zile suni („Au intrat banii? Tot ok?"). La 30 de zile ceri review pe Goog
 
 ---
 
-## TGE vs Adorya (pe vânzători)
+## TGE vs Adorys (pe vânzători)
 - **TGE:** doar proprietăți >500k EUR, acte curate, exclusivitate minim 90 de zile. Tu controlezi prețul și marketingul.
-- **Adorya:** accepți și non-exclusivitate, dar prioritizezi mandatele exclusive. Mai mult volum, marjă mai mică.
-- Proprietățile de pe TGE se publică și pe Adorya.
+- **Adorys:** accepți și non-exclusivitate, dar prioritizezi mandatele exclusive. Mai mult volum, marjă mai mică.
+- Proprietățile de pe TGE se publică și pe Adorys.
 
 **REBS blochează publicarea** până nu ai extras CF și contractul de intermediere uploadate.
 
@@ -258,10 +258,10 @@ La 7 zile suni („Au intrat banii? Tot ok?"). La 30 de zile ceri review pe Goog
           ro: `REBS e coloana vertebrală peste tot.
 
 ## 1. Prospectare — de unde vin lead-urile
-Verifici zilnic lead-urile din REBS de pe TGE și Adorya. Prioritizezi lead-urile TGE (scor mai mare, precalificate). Suni în max. 5 min de la primire.
+Verifici zilnic lead-urile din REBS de pe TGE și Adorys. Prioritizezi lead-urile TGE (scor mai mare, precalificate). Suni în max. 5 min de la primire.
 
 ## 2. Primul contact — script și obiectiv
-Confirmi nevoia în 90 sec. Nu vinzi imobilul la telefon — obiectivul e **vizionarea** sau apelul video. Pe WhatsApp trimiți 2-3 poze + link-ul TGE/Adorya cu watermark.
+Confirmi nevoia în 90 sec. Nu vinzi imobilul la telefon — obiectivul e **vizionarea** sau apelul video. Pe WhatsApp trimiți 2-3 poze + link-ul TGE/Adorys cu watermark.
 
 ## 3. Calificare
 Pui 6 întrebări în max. 4 min: buget aprobat? finanțare (cash/ipotecar/prima casă)? zona și suprafața minimă? deadline de mutare? cine decide? a mai văzut cu altă agenție? Completezi scorul A/B/C în REBS.
@@ -269,7 +269,7 @@ Pui 6 întrebări în max. 4 min: buget aprobat? finanțare (cash/ipotecar/prima
 
 ## 4. Vizionare — ce ceri și ce verifici
 Trimiți contractul de vizionare pe WhatsApp cu 30 min înainte. La fața locului verifici CI, faci poza cu clientul în fața imobilului, completezi procesul-verbal. Încarci tot în REBS.
-**Documente:** contract de vizionare, CI client, proces-verbal de vizionare; pentru TGE/Adorya și extrasul CF <24h.
+**Documente:** contract de vizionare, CI client, proces-verbal de vizionare; pentru TGE/Adorys și extrasul CF <24h.
 
 ## 5. Negociere — fără să te arzi
 Nu transmiți contraoferta verbal — o pui în scris (email/WhatsApp) și o loghezi în REBS. Folosești CMA-ul ca argument. Dacă ai exclusivitate, negociezi prețul proprietarului, nu comisionul tău.
@@ -303,7 +303,7 @@ La 7 zile suni „Totul ok?". La 30 de zile ceri review pe Google și recomandă
         content: {
           ro: `## Scriptul de bază — apel de ieșire
 
-**Tu:** „Bună ziua, mă numesc [Nume], sunt de la Transilvania Grand SRL / TGE / Adorya. Sun legat de imobilul din [Zonă/Stradă] pe care îl aveți de vânzare. Am 2 min să vă spun de ce vă sun?"
+**Tu:** „Bună ziua, mă numesc [Nume], sunt de la Transilvania Grand SRL / TGE / Adorys. Sun legat de imobilul din [Zonă/Stradă] pe care îl aveți de vânzare. Am 2 min să vă spun de ce vă sun?"
 
 **El:** „Da / Spuneți."
 
@@ -380,7 +380,7 @@ La 7 zile suni „Totul ok?". La 30 de zile ceri review pe Google și recomandă
     order: 40,
     title: { ro: "Ghidul Vânzărilor pentru Agenți" },
     description: {
-      ro: "De ce m-ar alege pe mine un client când ar putea căuta singur? Pentru că lucrezi prin două branduri respectate — Transilvania Grand Estate și Adorya — și pentru că trebuie să înveți să-ți vinzi serviciile eficient. Oamenii cumpără de la oameni.",
+      ro: "De ce m-ar alege pe mine un client când ar putea căuta singur? Pentru că lucrezi prin două branduri respectate — Transilvania Grand Estate și Adorys — și pentru că trebuie să înveți să-ți vinzi serviciile eficient. Oamenii cumpără de la oameni.",
     },
     lessons: [
       {
@@ -391,7 +391,7 @@ La 7 zile suni „Totul ok?". La 30 de zile ceri review pe Google și recomandă
           ro: "Degeaba ești cel mai bun agent dacă nu știi să te vinzi. Atitudinea, ascultarea activă și întrebările potrivite îți câștigă clientul.",
         },
         content: {
-          ro: `Lucrezi sub două branduri cu nume sonore — **Transylvania Grand Estate** (segment premium, high-ticket, dezvoltatori și ansambluri) și **Adorya** (segment standard, vânzări de volum), ambele sub umbrela holdingului **Transilvania Grand SRL**. Dar oamenii cumpără de la oameni: clienții te aleg pe tine pentru că le inspiri încredere și respect.
+          ro: `Lucrezi sub două branduri cu nume sonore — **Transylvania Grand Estate** (segment premium, high-ticket, dezvoltatori și ansambluri) și **Adorys** (segment standard, vânzări de volum), ambele sub umbrela holdingului **Transilvania Grand SRL**. Dar oamenii cumpără de la oameni: clienții te aleg pe tine pentru că le inspiri încredere și respect.
 
 ## Scopul tău: ascultă și înțelege nevoia
 
@@ -416,7 +416,7 @@ Aceste întrebări îi arată clientului că îi respecți timpul și că vrei s
 ## De ce mi-ar plăti comision?
 Explică-le exact ce primesc:
 - **Analiza comparativă de piață** și stabilirea prețului corect (preț prea mare = stă nevândut; preț prea mic = pierde bani).
-- **Marketing eficient** prin tine și prin brandurile TGE și Adorya.
+- **Marketing eficient** prin tine și prin brandurile TGE și Adorys.
 - **Trierea clienților** și negocierea în interesul lor.
 - Îi scutești de apeluri și vizionări inutile.
 - Acces și expunere la mai mulți clienți prin colaborarea cu alți agenți.
@@ -476,7 +476,7 @@ Obiecțiile pot fi despre preț, locație, calitate sau experiența agentului. A
           ro: "Marketingul personal e jumătate din joc. Social media, video, networking și recenzii — gratuit și cu potențial imens.",
         },
         content: {
-          ro: `Degeaba ești cel mai bun agent dacă clienții nu știu asta. Pe lângă vânzarea serviciilor, ocupă-te de **marketing**. Brandurile (TGE și Adorya) au fiecare propria platformă, cu marketingul asigurat de Agenție — dar marketingul tău personal îți aduce clienții.
+          ro: `Degeaba ești cel mai bun agent dacă clienții nu știu asta. Pe lângă vânzarea serviciilor, ocupă-te de **marketing**. Brandurile (TGE și Adorys) au fiecare propria platformă, cu marketingul asigurat de Agenție — dar marketingul tău personal îți aduce clienții.
 
 ## Social media — potențial imens și gratuit
 - **Profiluri active** pe Facebook, Instagram, TikTok.
@@ -489,7 +489,7 @@ Nu căuta scuze („n-am aparatură profi"). Oamenii apreciază naturalețea.
 - **Live streaming** — prezinți proprietăți și răspunzi la întrebări.
 
 ## Publicitate
-Flyere și pliante marca TGE și Adorya, distribuite în zonele vizate.
+Flyere și pliante marca TGE și Adorys, distribuite în zonele vizate.
 
 ## Networking
 Cea mai bună reclamă e din vorbă în vorbă. Vorbește despre ce faci — vei fi surprins câtă lume din jurul tău are o nevoie imobiliară chiar acum.
@@ -507,7 +507,7 @@ Newslettere cu oferte recente, articole și informații despre piață.
 
 **Anunțurile tale** pentru TikTok, Facebook, Instagram, YouTube — fă-le cât mai atractive. Folosește AI-ul pentru generare de conținut, dar **întotdeauna cu vocea ta**, pentru originalitate și personalizare. Postările se trimit către Agenție spre verificare și sunt încărcate de personalul Transilvania Grand SRL.
 
-> Mergi cu respect și încredere. Oferă-le rezultate clienților și aceștia te vor recomanda. **TGE și Adorya îți urează mult succes!**`,
+> Mergi cu respect și încredere. Oferă-le rezultate clienților și aceștia te vor recomanda. **TGE și Adorys îți urează mult succes!**`,
         },
       },
     ],

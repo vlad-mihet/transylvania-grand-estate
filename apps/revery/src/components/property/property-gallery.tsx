@@ -7,6 +7,7 @@ import { PropertyImage, Locale } from "@tge/types";
 import { Dialog, DialogContent, DialogClose, DialogDescription, DialogTitle } from "@tge/ui";
 import { ChevronLeft, ChevronRight, X, ZoomIn, ZoomOut, Maximize2 } from "lucide-react";
 import { cn, localize } from "@tge/utils";
+import { DemoImageBadge } from "./demo-image-badge";
 
 interface PropertyGalleryProps {
   images: PropertyImage[];
@@ -150,6 +151,7 @@ export function PropertyGallery({ images }: PropertyGalleryProps) {
             priority
             sizes="100vw"
           />
+          <DemoImageBadge className="absolute top-3 left-3 z-10" />
         </button>
       ) : (
         <div className={cn("grid gap-2", gridColsClass)}>
@@ -169,6 +171,7 @@ export function PropertyGallery({ images }: PropertyGalleryProps) {
               priority
               sizes="(max-width: 768px) 100vw, 66vw"
             />
+            <DemoImageBadge className="absolute top-3 left-3 z-10" />
           </button>
           {thumbnails.map((img, index) => (
             <button

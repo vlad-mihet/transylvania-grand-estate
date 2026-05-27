@@ -10,6 +10,7 @@
     "reserved": "Reserved",
     "new": "New",
     "featured": "Featured",
+    "demoImageBadge": "Sample images",
     "propertyTypes": {
       "apartment": "Apartment",
       "house": "House",
