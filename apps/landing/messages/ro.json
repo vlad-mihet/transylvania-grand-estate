@@ -58,7 +58,8 @@
     "cities": {
       "subtitle": "Explorează După Regiune",
       "title": "Destinațiile Noastre Exclusive",
-      "propertyCount": "{count} proprietăți"
+      "propertyCount": "{count} proprietăți",
+      "viewAll": "Vezi Toate Destinațiile"
     },
     "about": {
       "subtitle": "Despre Transylvania Grand Estate",
