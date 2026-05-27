@@ -135,6 +135,11 @@ export function FloatingDiamond() {
       const vh = window.innerHeight;
       const vw = window.innerWidth;
 
+      // The element's CSS `top` (set below to the header-diamond center). The
+      // arrival math translates relative to this anchor, so we capture it to
+      // land the diamond at an exact viewport target.
+      let elementTop = 0;
+
       // Re-anchor every frame to the live header-diamond rect. The header is
       // fixed, but its inner layout shifts when the utility bar collapses on
       // scroll (`isScrolled` flips at scrollY > 50), which moves the header
@@ -149,6 +154,7 @@ export function FloatingDiamond() {
         elementRef.current.style.left = `${headerCenterX - FLOATING_BOX / 2}px`;
         elementRef.current.style.top = `${headerCenterY - FLOATING_BOX / 2}px`;
         initialLeftRef.current = headerCenterX - FLOATING_BOX / 2;
+        elementTop = headerCenterY - FLOATING_BOX / 2;
       }
 
       // --- Normal floating values ---
@@ -182,8 +188,16 @@ export function FloatingDiamond() {
       const initialLeft = initialLeftRef.current || 40;
       const iconHalf = 22; // half of w-11 (44px)
       const arrivedX = vw / 2 - initialLeft - iconHalf;
-      const arrivedY = ctaEl
-        ? ctaEl.getBoundingClientRect().top + 50 - 52
+      // Land the diamond just above the CTA heading rather than at the
+      // section's top edge — the section's pt-28 padding would otherwise leave
+      // it stranded ~110px above the title. Target the heading rect directly so
+      // the resting gap stays correct regardless of the section's top padding.
+      // `- elementTop` converts the viewport-space heading position into a
+      // translate offset relative to the element's anchored CSS top.
+      const headingEl = ctaEl?.querySelector("h2");
+      const GAP_ABOVE_HEADING = 24; // px between diamond bottom and heading top
+      const arrivedY = headingEl
+        ? headingEl.getBoundingClientRect().top - FLOATING_BOX - GAP_ABOVE_HEADING - elementTop
         : floatY;
       const arrivedRotation = 0;
       const arrivedScale = 1;
