@@ -300,7 +300,7 @@ export default function RaportPiataPage() {
             <article id="raport-print" className="rounded-lg border border-[color:var(--color-border)] bg-white p-8 text-sm leading-relaxed text-[#0a0a0a] shadow-sm">
               <header className="border-b border-[color:var(--color-border)] pb-4">
                 <p className="text-xs font-semibold uppercase tracking-[0.2em] text-[color:var(--color-primary)]">
-                  Transilvania Grand Estate · Adorya
+                  Transilvania Grand Estate · Adorys
                 </p>
                 <h2 className="mt-2 text-xl font-bold">Raport de Piață — Evaluare Rapidă</h2>
                 <dl className="mt-3 grid grid-cols-2 gap-x-6 gap-y-1 text-xs text-[#525252]">
@@ -406,7 +406,7 @@ function buildPlainText(r: {
 }): string {
   const lines: string[] = [];
   lines.push("RAPORT DE PIAȚĂ — EVALUARE RAPIDĂ");
-  lines.push("Transilvania Grand Estate · Adorya");
+  lines.push("Transilvania Grand Estate · Adorys");
   lines.push("");
   if (r.adresa) lines.push(`Adresă: ${r.adresa}`);
   if (r.data) lines.push(`Data: ${r.data}`);
