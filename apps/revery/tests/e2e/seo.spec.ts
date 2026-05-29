@@ -10,7 +10,7 @@ test.describe('seo — head metadata on every static route', () => {
         await page.goto(route.path(locale as Locale));
         const title = await page.title();
         expect(title.length, `${route.id} title is empty`).toBeGreaterThan(3);
-        expect(title, `${route.id} title should reference Revery`).toMatch(/Revery/i);
+        expect(title, `${route.id} title should reference Adorys`).toMatch(/Adorys/i);
         const desc = await page.locator('meta[name="description"]').getAttribute('content');
         expect(desc, `${route.id} missing meta description`).not.toBeNull();
         expect(desc!.length, `${route.id} description is empty`).toBeGreaterThan(10);
