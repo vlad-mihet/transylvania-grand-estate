@@ -133,9 +133,18 @@ export function Footer() {
             >
               {t("privacy")}
             </Link>
-            <span className="hover:text-copper transition-colors cursor-pointer">
+            <Link
+              href="/terms"
+              className="hover:text-copper transition-colors"
+            >
               {t("terms")}
-            </span>
+            </Link>
+            <Link
+              href="/cookies"
+              className="hover:text-copper transition-colors"
+            >
+              {t("cookies")}
+            </Link>
           </div>
         </Container>
       </div>

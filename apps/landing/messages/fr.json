@@ -453,7 +453,7 @@
   "PrivacyPolicy": {
     "title": "Politique de confidentialité",
     "lastUpdatedLabel": "Mise à jour",
-    "lastUpdated": "18 mai 2026",
+    "lastUpdated": "29 mai 2026",
     "intro": "Transilvania Grand SRL est le responsable de traitement pour la plateforme Transylvania Grand Estate. Nous traitons vos données personnelles en application du RGPD (Règlement UE 2016/679) et de la loi roumaine 190/2018, exclusivement pour fournir des services d'intermédiation immobilière. Cette page résume ce que nous collectons, comment nous utilisons ces données et les droits dont vous disposez.",
     "sections": {
       "collect": {
@@ -474,7 +474,11 @@
       },
       "contact": {
         "title": "Contact",
-        "body": "Pour toute question relative à la confidentialité ou pour exercer vos droits, contactez privacy@tge.com. Responsable de traitement : Transilvania Grand SRL, code fiscal 39607580, immatriculée au Registre du Commerce sous le n° J01/631/2018, dont le siège social est situé Str. Libertății 5, bl. L4, ét. 3, ap. 10, Câmpeni 515500, département d'Alba, Roumanie."
+        "body": "Pour toute question relative à la confidentialité ou pour exercer vos droits, contactez privacy@transylvaniagrandestate.ro. Responsable de traitement : Transilvania Grand SRL, code fiscal 39607580, immatriculée au Registre du Commerce sous le n° J01/631/2018, dont le siège social est situé Str. Libertății 5, bl. L4, ét. 3, ap. 10, Câmpeni 515500, département d'Alba, Roumanie."
+      },
+      "processors": {
+        "title": "Sous-traitants tiers",
+        "body": "Pour fournir nos services, nous faisons appel à un nombre restreint de prestataires de confiance qui traitent des données pour notre compte dans le cadre d'accords de traitement conclus conformément à l'article 28 du RGPD : Resend (envoi d'e-mails transactionnels) ; Fly.io (hébergement de l'application, dans la région UE / Amsterdam) ; Cloudflare R2 (stockage sécurisé des fichiers et des images) ; et Google (connexion, réservée à notre personnel et à nos agents). Chacun ne peut traiter vos données que pour nous fournir son service. Nous ne vendons ni ne louons vos données à quiconque."
       }
     }
   },
@@ -666,7 +670,8 @@
     "followUs": "Suivez-Nous",
     "copyright": "© {year} Transylvania Grand Estate. Tous droits réservés.",
     "privacy": "Politique de Confidentialité",
-    "terms": "Conditions d'Utilisation"
+    "terms": "Conditions d'Utilisation",
+    "cookies": "Politique de cookies"
   },
   "SplashOverlay": {
     "tagline": "Découvrez des Propriétés Exceptionnelles en Transylvanie",
@@ -684,5 +689,85 @@
     "description": "Nous n'avons pas pu charger ce contenu pour le moment. Veuillez réessayer.",
     "retry": "Réessayer",
     "goHome": "Accueil"
+  },
+  "TermsOfService": {
+    "title": "Conditions Générales",
+    "lastUpdatedLabel": "Mise à jour",
+    "lastUpdated": "29 mai 2026",
+    "intro": "Les présentes Conditions Générales régissent votre utilisation du site Transylvania Grand Estate. En accédant au site ou en l'utilisant, vous acceptez ces conditions. Si vous ne les acceptez pas, veuillez ne pas utiliser le site.",
+    "sections": {
+      "acceptance": {
+        "title": "Acceptation et exploitant",
+        "body": "Le site Transylvania Grand Estate est exploité par Transilvania Grand SRL, société immatriculée en Roumanie (code fiscal 39607580, n° du Registre du commerce J01/631/2018), dont le siège social est situé Str. Libertății 5, bl. L4, et. 3, ap. 10, Câmpeni 515500, département d'Alba. En naviguant sur le site ou en l'utilisant, vous confirmez que vous acceptez ces conditions et que vous avez la capacité juridique de le faire."
+      },
+      "use": {
+        "title": "Utilisation du site",
+        "body": "Vous ne pouvez utiliser le site qu'à des fins licites et conformément aux présentes conditions. Vous vous engagez à ne pas utiliser le site d'une manière contraire à la loi applicable, à ne pas tenter d'accéder sans autorisation au site ou à ses serveurs, à ne pas extraire ou collecter de contenu par des moyens automatisés sans notre accord, et à ne pas perturber le fonctionnement normal ou la sécurité du site."
+      },
+      "listings": {
+        "title": "Annonces et informations",
+        "body": "Les annonces immobilières, les prix, la disponibilité, les descriptions et les images sont fournis à titre purement informatif et peuvent être modifiés à tout moment sans préavis. Ils ne constituent ni une offre ferme, ni un contrat, ni un conseil professionnel. Nous nous efforçons raisonnablement de maintenir des informations exactes, mais nous ne pouvons garantir qu'elles soient complètes ou à jour — veuillez confirmer tout détail auprès de nous avant de vous y fier."
+      },
+      "intermediary": {
+        "title": "Notre rôle d'intermédiaire",
+        "body": "Transilvania Grand SRL agit en qualité d'intermédiaire immobilier. Le site vous aide à découvrir des biens et à nous contacter ; il ne conclut lui-même aucune vente, location ou opération d'intermédiation. Toute transaction est régie par un contrat écrit distinct signé entre les parties, dont les termes prévalent sur les présentes conditions du site."
+      },
+      "ip": {
+        "title": "Propriété intellectuelle",
+        "body": "L'ensemble du contenu du site — y compris les textes, le design, les logos, les marques et les photographies — appartient à Transilvania Grand SRL ou lui est concédé sous licence et est protégé par la loi. Vous ne pouvez pas le reproduire, le distribuer ou l'utiliser à des fins commerciales sans notre accord écrit préalable."
+      },
+      "liability": {
+        "title": "Garantie et responsabilité",
+        "body": "Le site est fourni « en l'état », sans garantie d'aucune sorte. Dans toute la mesure permise par le droit roumain, nous déclinons toute responsabilité pour les pertes indirectes ou consécutives découlant de votre utilisation du site ou de l'impossibilité de l'utiliser. Aucune disposition des présentes conditions ne limite vos droits légaux impératifs en tant que consommateur."
+      },
+      "thirdParty": {
+        "title": "Liens vers des tiers",
+        "body": "Le site peut contenir des liens vers des sites tiers que nous ne contrôlons pas. Nous ne sommes pas responsables de leur contenu, de leur exactitude ou de leurs pratiques en matière de confidentialité, et la présence d'un lien n'implique aucune approbation."
+      },
+      "privacy": {
+        "title": "Confidentialité",
+        "body": "Nous traitons les données à caractère personnel comme décrit dans notre Politique de Confidentialité, qui fait partie intégrante des présentes conditions."
+      },
+      "changes": {
+        "title": "Modification des conditions",
+        "body": "Nous pouvons mettre à jour ces conditions de temps à autre. La version publiée sur cette page, portant la date indiquée ci-dessus, est celle en vigueur. La poursuite de l'utilisation du site après la publication des modifications vaut acceptation des conditions mises à jour."
+      },
+      "law": {
+        "title": "Droit applicable et litiges",
+        "body": "Les présentes conditions sont régies par le droit roumain et tout litige sera soumis aux tribunaux roumains compétents. Si vous êtes un consommateur, vous pouvez également recourir à un règlement extrajudiciaire via l'Autorité nationale pour la protection des consommateurs (ANPC, anpc.ro) ou la plateforme de règlement en ligne des litiges de la Commission européenne, à l'adresse ec.europa.eu/consumers/odr."
+      },
+      "contact": {
+        "title": "Contact",
+        "body": "Pour toute question relative à ces conditions, contactez-nous à contact@transylvaniagrandestate.ro."
+      }
+    }
+  },
+  "CookiePolicy": {
+    "title": "Politique de Cookies",
+    "lastUpdatedLabel": "Mise à jour",
+    "lastUpdated": "29 mai 2026",
+    "intro": "Cette Politique de Cookies explique comment le site Transylvania Grand Estate utilise les cookies et technologies similaires.",
+    "sections": {
+      "what": {
+        "title": "Que sont les cookies",
+        "body": "Les cookies sont de petits fichiers texte stockés sur votre appareil lorsque vous visitez un site web. Ils sont largement utilisés pour faire fonctionner les sites, ou les faire fonctionner plus efficacement, et pour mémoriser vos préférences."
+      },
+      "essential": {
+        "title": "Les cookies que nous utilisons",
+        "body": "Nous n'utilisons que des cookies strictement nécessaires — ceux requis pour le fonctionnement du site. Cela inclut un cookie qui mémorise la langue choisie (NEXT_LOCALE) et des cookies qui sécurisent votre session. Nous n'utilisons pas de cookies d'analyse, de publicité ou de suivi tiers, et nous n'établissons aucun profil de votre navigation."
+      },
+      "control": {
+        "title": "Gérer les cookies",
+        "body": "Vous pouvez gérer ou supprimer les cookies dans les paramètres de votre navigateur et configurer celui-ci pour les bloquer. Les cookies que nous utilisons étant essentiels, leur blocage peut empêcher certaines parties du site de fonctionner correctement."
+      },
+      "changes": {
+        "title": "Modification de la politique",
+        "body": "Nous pouvons mettre à jour cette politique si notre utilisation des cookies évolue. La date indiquée ci-dessus précise la date de la dernière révision."
+      },
+      "contact": {
+        "title": "Contact",
+        "body": "Pour toute question concernant cette politique, contactez-nous à privacy@transylvaniagrandestate.ro."
+      }
+    }
   }
 }

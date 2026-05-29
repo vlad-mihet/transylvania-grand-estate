@@ -164,8 +164,8 @@ export function Footer() {
           </p>
           <div className="flex gap-4 text-xs text-muted-foreground">
             <Link href="/privacy" className="hover:text-primary transition-colors">{t("privacy")}</Link>
-            <span className="hover:text-primary transition-colors cursor-pointer">{t("terms")}</span>
-            <span className="hover:text-primary transition-colors cursor-pointer">{t("cookies")}</span>
+            <Link href="/terms" className="hover:text-primary transition-colors">{t("terms")}</Link>
+            <Link href="/cookies" className="hover:text-primary transition-colors">{t("cookies")}</Link>
             <a
               href="/image-credits.txt"
               className="hover:text-primary transition-colors"

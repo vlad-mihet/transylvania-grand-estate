@@ -47,6 +47,13 @@ export default async function PrivacyPage() {
 
         <article>
           <h2 className="font-serif text-2xl text-cream mb-3">
+            {t("sections.processors.title")}
+          </h2>
+          <p>{t("sections.processors.body")}</p>
+        </article>
+
+        <article>
+          <h2 className="font-serif text-2xl text-cream mb-3">
             {t("sections.retention.title")}
           </h2>
           <p>{t("sections.retention.body")}</p>

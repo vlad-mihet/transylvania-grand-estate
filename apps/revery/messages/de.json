@@ -727,7 +727,7 @@
   "PrivacyPolicy": {
     "title": "Datenschutzerklärung",
     "lastUpdatedLabel": "Stand",
-    "lastUpdated": "18. Mai 2026",
+    "lastUpdated": "29. Mai 2026",
     "intro": "Transilvania Grand SRL ist der für die Plattform Adorys Verantwortliche. Wir verarbeiten Ihre personenbezogenen Daten auf Grundlage der DSGVO (Verordnung (EU) 2016/679) und des rumänischen Gesetzes 190/2018, ausschließlich zur Erbringung von Immobilienvermittlungsdienstleistungen. Diese Seite fasst zusammen, welche Daten wir erheben, wie wir sie verwenden und welche Rechte Sie haben.",
     "sections": {
       "collect": {
@@ -749,6 +749,10 @@
       "contact": {
         "title": "Kontakt",
         "body": "Bei Fragen zum Datenschutz oder zur Ausübung Ihrer Rechte wenden Sie sich an privacy@adorys.ro. Verantwortlicher: Transilvania Grand SRL, Steuernummer 39607580, eingetragen beim Handelsregister unter J01/631/2018, mit Sitz in Str. Libertății 5, Bl. L4, Et. 3, Ap. 10, Câmpeni 515500, Kreis Alba, Rumänien."
+      },
+      "processors": {
+        "title": "Drittanbieter-Auftragsverarbeiter",
+        "body": "Zur Erbringung unserer Dienste greifen wir auf eine kleine Zahl vertrauenswürdiger Anbieter zurück, die Daten in unserem Auftrag auf Grundlage von gemäß Artikel 28 DSGVO geschlossenen Auftragsverarbeitungsverträgen verarbeiten: Resend (Versand transaktionaler E-Mails); Fly.io (Anwendungshosting, in der Region EU / Amsterdam); Cloudflare R2 (sichere Datei- und Bildspeicherung); und Google (Anmeldung, ausschließlich für unsere Mitarbeiter und Makler). Jeder darf Ihre Daten ausschließlich verarbeiten, um uns seinen Dienst bereitzustellen. Wir verkaufen oder vermieten Ihre Daten an niemanden."
       }
     }
   },
@@ -993,6 +997,86 @@
       "ratesFallback": "Geschätzte Zinsen werden verwendet. Live-Zinsen derzeit nicht verfügbar.",
       "totalMonthlyCost": "Monatliche Gesamtkosten",
       "totalMonthlyCostInfo": "Inklusive Versicherung und Gebühren."
+    }
+  },
+  "TermsOfService": {
+    "title": "Allgemeine Geschäftsbedingungen",
+    "lastUpdatedLabel": "Stand",
+    "lastUpdated": "29. Mai 2026",
+    "intro": "Diese Allgemeinen Geschäftsbedingungen regeln Ihre Nutzung der Website Adorys. Durch den Zugriff auf die Website oder deren Nutzung erklären Sie sich mit diesen Bedingungen einverstanden. Wenn Sie nicht einverstanden sind, nutzen Sie die Website bitte nicht.",
+    "sections": {
+      "acceptance": {
+        "title": "Annahme und Betreiber",
+        "body": "Die Website Adorys wird betrieben von Transilvania Grand SRL, einem in Rumänien eingetragenen Unternehmen (Steuernummer 39607580, Handelsregister-Nr. J01/631/2018) mit Sitz in Str. Libertății 5, bl. L4, et. 3, ap. 10, Câmpeni 515500, Kreis Alba. Durch das Aufrufen oder die Nutzung der Website bestätigen Sie, dass Sie diese Bedingungen akzeptieren und rechtlich dazu in der Lage sind."
+      },
+      "use": {
+        "title": "Nutzung der Website",
+        "body": "Sie dürfen die Website nur für rechtmäßige Zwecke und im Einklang mit diesen Bedingungen nutzen. Sie verpflichten sich, die Website nicht in einer gegen geltendes Recht verstoßenden Weise zu nutzen, nicht zu versuchen, sich unbefugt Zugang zur Website oder ihren Servern zu verschaffen, keine Inhalte mit automatisierten Mitteln ohne unsere Zustimmung auszulesen oder zu sammeln und den normalen Betrieb oder die Sicherheit der Website nicht zu beeinträchtigen."
+      },
+      "listings": {
+        "title": "Angebote und Informationen",
+        "body": "Immobilienangebote, Preise, Verfügbarkeit, Beschreibungen und Bilder dienen ausschließlich der allgemeinen Information und können jederzeit ohne Vorankündigung geändert werden. Sie stellen kein verbindliches Angebot, keinen Vertrag und keine fachliche Beratung dar. Wir bemühen uns nach Kräften um die Richtigkeit der Informationen, können jedoch nicht garantieren, dass sie vollständig oder aktuell sind — bitte bestätigen Sie jedes Detail bei uns, bevor Sie sich darauf verlassen."
+      },
+      "intermediary": {
+        "title": "Unsere Rolle als Vermittler",
+        "body": "Transilvania Grand SRL handelt als Immobilienvermittler. Die Website hilft Ihnen, Immobilien zu entdecken und mit uns Kontakt aufzunehmen; sie schließt selbst keinen Kauf, keine Vermietung und keine Vermittlung ab. Jede Transaktion unterliegt einem gesonderten schriftlichen Vertrag zwischen den Parteien, dessen Bestimmungen Vorrang vor diesen Website-Bedingungen haben."
+      },
+      "ip": {
+        "title": "Geistiges Eigentum",
+        "body": "Sämtliche Inhalte der Website — einschließlich Texte, Design, Logos und Marken — sind Eigentum von Transilvania Grand SRL oder an dieses lizenziert. Einige Fotografien werden unter Creative-Commons-Lizenzen verwendet, mit den unter /image-credits.txt aufgeführten Quellenangaben. Sie dürfen Website-Inhalte ohne unsere vorherige schriftliche Zustimmung nicht zu kommerziellen Zwecken vervielfältigen oder nutzen bzw. lizenzierte Bilder nicht über die Bedingungen der jeweiligen Lizenz hinaus verwenden."
+      },
+      "liability": {
+        "title": "Haftungsausschluss",
+        "body": "Die Website wird „wie besehen“ ohne jegliche Gewährleistung bereitgestellt. Soweit nach rumänischem Recht zulässig, haften wir nicht für indirekte Schäden oder Folgeschäden, die aus Ihrer Nutzung oder der Unmöglichkeit der Nutzung der Website entstehen. Nichts in diesen Bedingungen schränkt Ihre zwingenden gesetzlichen Rechte als Verbraucher ein."
+      },
+      "thirdParty": {
+        "title": "Links zu Dritten",
+        "body": "Die Website kann Links zu Websites Dritter enthalten, die wir nicht kontrollieren. Wir sind nicht für deren Inhalte, Richtigkeit oder Datenschutzpraktiken verantwortlich, und das Vorhandensein eines Links stellt keine Empfehlung dar."
+      },
+      "privacy": {
+        "title": "Datenschutz",
+        "body": "Wir verarbeiten personenbezogene Daten wie in unserer Datenschutzerklärung beschrieben, die Bestandteil dieser Bedingungen ist."
+      },
+      "changes": {
+        "title": "Änderungen dieser Bedingungen",
+        "body": "Wir können diese Bedingungen von Zeit zu Zeit aktualisieren. Maßgeblich ist die auf dieser Seite veröffentlichte Fassung mit dem oben angegebenen Datum. Die fortgesetzte Nutzung der Website nach Veröffentlichung von Änderungen gilt als Annahme der aktualisierten Bedingungen."
+      },
+      "law": {
+        "title": "Anwendbares Recht und Streitigkeiten",
+        "body": "Diese Bedingungen unterliegen rumänischem Recht, und alle Streitigkeiten werden den zuständigen rumänischen Gerichten vorgelegt. Wenn Sie Verbraucher sind, können Sie auch eine außergerichtliche Streitbeilegung über die Nationale Behörde für Verbraucherschutz (ANPC, anpc.ro) oder die Online-Streitbeilegungsplattform der Europäischen Kommission unter ec.europa.eu/consumers/odr in Anspruch nehmen."
+      },
+      "contact": {
+        "title": "Kontakt",
+        "body": "Bei Fragen zu diesen Bedingungen kontaktieren Sie uns unter contact@revery.ro."
+      }
+    }
+  },
+  "CookiePolicy": {
+    "title": "Cookie-Richtlinie",
+    "lastUpdatedLabel": "Stand",
+    "lastUpdated": "29. Mai 2026",
+    "intro": "Diese Cookie-Richtlinie erläutert, wie die Website Adorys Cookies und ähnliche Technologien verwendet.",
+    "sections": {
+      "what": {
+        "title": "Was Cookies sind",
+        "body": "Cookies sind kleine Textdateien, die beim Besuch einer Website auf Ihrem Gerät gespeichert werden. Sie werden weithin verwendet, damit Websites funktionieren oder effizienter funktionieren und um Ihre Präferenzen zu speichern."
+      },
+      "essential": {
+        "title": "Cookies, die wir verwenden",
+        "body": "Wir verwenden ausschließlich unbedingt erforderliche Cookies — solche, die für das Funktionieren der Website notwendig sind. Dazu gehören ein Cookie, das Ihre gewählte Sprache speichert (NEXT_LOCALE), und Cookies, die Ihre Sitzung absichern. Wir verwenden keine Analyse-, Werbe- oder Tracking-Cookies von Dritten und erstellen keine Profile Ihres Surfverhaltens."
+      },
+      "control": {
+        "title": "Cookies verwalten",
+        "body": "Sie können Cookies über die Einstellungen Ihres Browsers verwalten oder löschen und Ihren Browser so einstellen, dass er sie blockiert. Da die von uns verwendeten Cookies unerlässlich sind, kann ihre Blockierung dazu führen, dass Teile der Website nicht mehr korrekt funktionieren."
+      },
+      "changes": {
+        "title": "Änderungen dieser Richtlinie",
+        "body": "Wir können diese Richtlinie aktualisieren, wenn sich unsere Verwendung von Cookies ändert. Das oben angegebene Datum gibt an, wann sie zuletzt überarbeitet wurde."
+      },
+      "contact": {
+        "title": "Kontakt",
+        "body": "Bei Fragen zu dieser Richtlinie kontaktieren Sie uns unter privacy@adorys.ro."
+      }
     }
   }
 }

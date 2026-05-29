@@ -727,7 +727,7 @@
   "PrivacyPolicy": {
     "title": "Politica de Confidențialitate",
     "lastUpdatedLabel": "Actualizat",
-    "lastUpdated": "18 mai 2026",
+    "lastUpdated": "29 mai 2026",
     "intro": "Transilvania Grand SRL este operatorul de date pentru platforma Adorys. Prelucrăm datele tale personale în baza GDPR (Regulamentul UE 2016/679) și a Legii 190/2018, exclusiv pentru a-ți oferi servicii de intermediere imobiliară. Această pagină rezumă ce colectăm, cum folosim datele și ce drepturi ai.",
     "sections": {
       "collect": {
@@ -749,6 +749,10 @@
       "contact": {
         "title": "Contact",
         "body": "Pentru orice întrebare legată de confidențialitate sau pentru a-ți exercita drepturile, scrie-ne la privacy@adorys.ro. Operator de date: Transilvania Grand SRL, CUI 39607580, înregistrată la Registrul Comerțului sub nr. J01/631/2018, cu sediul social în Str. Libertății nr. 5, bl. L4, et. 3, ap. 10, Câmpeni 515500, jud. Alba."
+      },
+      "processors": {
+        "title": "Procesatori terți",
+        "body": "Pentru a ne furniza serviciile, ne bazăm pe un număr restrâns de furnizori de încredere care prelucrează date în numele nostru, în baza unor acorduri de prelucrare a datelor încheiate în conformitate cu articolul 28 din GDPR: Resend (livrarea e-mailurilor tranzacționale); Fly.io (găzduirea aplicației, în regiunea UE / Amsterdam); Cloudflare R2 (stocarea securizată a fișierelor și imaginilor); și Google (autentificarea, exclusiv pentru personalul și agenții noștri). Fiecare poate prelucra datele dumneavoastră exclusiv pentru a ne furniza serviciul respectiv. Nu vindem și nu închiriem datele dumneavoastră nimănui."
       }
     }
   },
@@ -993,6 +997,86 @@
       "dtiExplainer": "Reglementările BNR limitează plățile lunare totale ale datoriilor la 40% din venitul net.",
       "dtiAvailable": "Disponibil pentru credit ipotecar",
       "dtiUsed": "Utilizat de datorii existente"
+    }
+  },
+  "TermsOfService": {
+    "title": "Termeni și Condiții",
+    "lastUpdatedLabel": "Actualizat",
+    "lastUpdated": "29 mai 2026",
+    "intro": "Acești Termeni și Condiții reglementează utilizarea site-ului Adorys. Prin accesarea sau utilizarea site-ului, sunteți de acord cu acești termeni. Dacă nu sunteți de acord cu ei, vă rugăm să nu utilizați site-ul.",
+    "sections": {
+      "acceptance": {
+        "title": "Acceptare și operator",
+        "body": "Site-ul Adorys este operat de Transilvania Grand SRL, societate înregistrată în România (cod fiscal 39607580, nr. Reg. Com. J01/631/2018), cu sediul social în Str. Libertății 5, bl. L4, et. 3, ap. 10, Câmpeni 515500, județul Alba. Prin navigarea sau utilizarea site-ului confirmați că acceptați acești termeni și că aveți capacitatea legală de a-i accepta."
+      },
+      "use": {
+        "title": "Utilizarea site-ului",
+        "body": "Puteți utiliza site-ul doar în scopuri legale și în conformitate cu acești termeni. Vă obligați să nu utilizați site-ul într-un mod care încalcă legislația aplicabilă, să nu încercați accesul neautorizat la site sau la serverele acestuia, să nu extrageți sau colectați conținut prin mijloace automate fără acordul nostru și să nu perturbați funcționarea normală sau securitatea site-ului."
+      },
+      "listings": {
+        "title": "Anunțuri și informații",
+        "body": "Anunțurile imobiliare, prețurile, disponibilitatea, descrierile și imaginile sunt furnizate exclusiv cu titlu informativ și se pot modifica oricând, fără notificare. Acestea nu constituie o ofertă fermă, un contract sau consultanță de specialitate. Depunem eforturi rezonabile pentru a menține informațiile corecte, dar nu putem garanta că sunt complete sau actuale — vă rugăm să confirmați orice detaliu cu noi înainte de a vă baza pe el."
+      },
+      "intermediary": {
+        "title": "Rolul nostru de intermediar",
+        "body": "Transilvania Grand SRL acționează în calitate de intermediar imobiliar. Site-ul vă ajută să descoperiți proprietăți și să ne contactați; el nu încheie în sine nicio vânzare, închiriere sau intermediere. Orice tranzacție este guvernată de un contract scris separat, semnat între părți, ai cărui termeni prevalează asupra acestor termeni ai site-ului."
+      },
+      "ip": {
+        "title": "Proprietate intelectuală",
+        "body": "Tot conținutul site-ului — inclusiv textele, designul, siglele și mărcile — aparține Transilvania Grand SRL sau este licențiat către aceasta. Unele fotografii sunt utilizate sub licențe Creative Commons, cu atribuirile enumerate la /image-credits.txt. Nu puteți reproduce sau utiliza conținutul site-ului în scopuri comerciale fără acordul nostru scris prealabil sau, pentru imaginile licențiate, dincolo de condițiile licenței aplicabile."
+      },
+      "liability": {
+        "title": "Limitarea răspunderii",
+        "body": "Site-ul este furnizat „ca atare”, fără garanții de niciun fel. În măsura maximă permisă de legea română, nu răspundem pentru nicio pierdere indirectă sau subsecventă rezultată din utilizarea sau imposibilitatea utilizării site-ului. Niciun element din acești termeni nu vă limitează drepturile legale obligatorii în calitate de consumator."
+      },
+      "thirdParty": {
+        "title": "Linkuri către terți",
+        "body": "Site-ul poate conține linkuri către site-uri terțe pe care nu le controlăm. Nu suntem responsabili pentru conținutul, acuratețea sau practicile de confidențialitate ale acestora, iar prezența unui link nu implică o aprobare din partea noastră."
+      },
+      "privacy": {
+        "title": "Confidențialitate",
+        "body": "Prelucrăm datele cu caracter personal astfel cum este descris în Politica noastră de Confidențialitate, care face parte din acești termeni."
+      },
+      "changes": {
+        "title": "Modificarea termenilor",
+        "body": "Putem actualiza acești termeni din când în când. Versiunea publicată pe această pagină, purtând data afișată mai sus, este cea în vigoare. Continuarea utilizării site-ului după publicarea modificărilor constituie acceptarea termenilor actualizați."
+      },
+      "law": {
+        "title": "Legea aplicabilă și litigiile",
+        "body": "Acești termeni sunt guvernați de legea română, iar orice litigiu va fi supus instanțelor române competente. Dacă sunteți consumator, puteți recurge și la soluționarea extrajudiciară prin Autoritatea Națională pentru Protecția Consumatorilor (ANPC, anpc.ro) sau prin platforma de soluționare online a litigiilor a Comisiei Europene, la ec.europa.eu/consumers/odr."
+      },
+      "contact": {
+        "title": "Contact",
+        "body": "Pentru întrebări privind acești termeni, contactați-ne la contact@revery.ro."
+      }
+    }
+  },
+  "CookiePolicy": {
+    "title": "Politica de Cookie-uri",
+    "lastUpdatedLabel": "Actualizat",
+    "lastUpdated": "29 mai 2026",
+    "intro": "Această Politică de Cookie-uri explică modul în care site-ul Adorys utilizează cookie-urile și tehnologiile similare.",
+    "sections": {
+      "what": {
+        "title": "Ce sunt cookie-urile",
+        "body": "Cookie-urile sunt fișiere text de mici dimensiuni stocate pe dispozitivul dumneavoastră atunci când vizitați un site web. Ele sunt utilizate pe scară largă pentru ca site-urile să funcționeze, sau să funcționeze mai eficient, și pentru a vă reține preferințele."
+      },
+      "essential": {
+        "title": "Cookie-urile pe care le folosim",
+        "body": "Utilizăm doar cookie-uri strict necesare — cele indispensabile funcționării site-ului. Acestea includ un cookie care reține limba aleasă (NEXT_LOCALE) și cookie-uri care vă păstrează sesiunea securizată. Nu folosim cookie-uri de analiză, publicitate sau urmărire din partea terților și nu creăm profiluri ale navigării dumneavoastră."
+      },
+      "control": {
+        "title": "Gestionarea cookie-urilor",
+        "body": "Puteți gestiona sau șterge cookie-urile din setările browserului și vă puteți configura browserul să le blocheze. Întrucât cookie-urile pe care le folosim sunt esențiale, blocarea lor poate face ca anumite părți ale site-ului să nu mai funcționeze corect."
+      },
+      "changes": {
+        "title": "Modificarea politicii",
+        "body": "Putem actualiza această politică dacă modul în care folosim cookie-urile se schimbă. Data afișată mai sus indică momentul ultimei revizuiri."
+      },
+      "contact": {
+        "title": "Contact",
+        "body": "Pentru orice întrebare privind această politică, contactați-ne la privacy@adorys.ro."
+      }
     }
   }
 }
