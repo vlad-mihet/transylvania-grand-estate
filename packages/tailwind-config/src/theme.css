@@ -18,9 +18,9 @@
   --color-input: var(--input);
   --color-ring: var(--ring);
 
-  --color-copper: #C47F5A;
-  --color-copper-light: #D4956A;
-  --color-copper-dark: #A66B4A;
+  --color-copper: #c89a3c;
+  --color-copper-light: #e8c882;
+  --color-copper-dark: #8a6420;
   --color-cream: #F0EDE8;
   --color-cream-muted: #9A95A8;
   --color-amethyst: #7B68EE;
@@ -102,18 +102,25 @@
   --card-foreground: #F0EDE8;
   --popover: #1a1a20;
   --popover-foreground: #F0EDE8;
-  --primary: #C47F5A;
+  --primary: #c89a3c;
   --primary-foreground: #141418;
   --secondary: #232329;
   --secondary-foreground: #F0EDE8;
   --muted: #232329;
   --muted-foreground: #9A9A9A;
   --accent: #2c2c34;
-  --accent-foreground: #C47F5A;
+  --accent-foreground: #c89a3c;
   --destructive: #7f1d1d;
-  --border: rgba(196, 127, 90, 0.12);
-  --input: rgba(196, 127, 90, 0.12);
-  --ring: #C47F5A;
+  --border: rgba(200, 154, 60, 0.12);
+  --input: rgba(200, 154, 60, 0.12);
+  --ring: #c89a3c;
+
+  --tge-gold-gradient: linear-gradient(
+    90deg,
+    #e8c882 0%,
+    #c89a3c 45%,
+    #8a6420 100%
+  );
 
   /* Container geometry — keep in sync with Container component (max-w-7xl px-4 sm:px-6 lg:px-8) */
   --container-max-w: 80rem;
@@ -178,15 +185,22 @@
     background: linear-gradient(
       to right,
       transparent,
-      rgba(196, 127, 90, 0.12) 20%,
-      rgba(196, 127, 90, 0.12) 80%,
+      rgba(200, 154, 60, 0.12) 20%,
+      rgba(200, 154, 60, 0.12) 80%,
       transparent
     );
   }
 
   .accent-text {
     @apply text-transparent bg-clip-text;
-    background-image: linear-gradient(135deg, #A66B4A 0%, #C47F5A 25%, #D4956A 50%, #C47F5A 75%, #A66B4A 100%);
+    background-image: linear-gradient(135deg, #8a6420 0%, #c89a3c 25%, #e8c882 50%, #c89a3c 75%, #8a6420 100%);
+  }
+
+  .tge-accent {
+    background: var(--tge-gold-gradient);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
   }
 
   .section-padding {
@@ -208,11 +222,11 @@
   .nav-underline:hover::after,
   .nav-underline.active::after {
     @apply w-full;
-    box-shadow: 0 1px 8px -2px rgba(196, 127, 90, 0.25);
+    box-shadow: 0 1px 8px -2px rgba(200, 154, 60, 0.25);
   }
 
   .header-glow {
-    box-shadow: 0 1px 30px -10px rgba(196, 127, 90, 0.08);
+    box-shadow: 0 1px 30px -10px rgba(200, 154, 60, 0.08);
   }
 
   /* Radial vignette for cinematic hero */
@@ -238,7 +252,7 @@
   .decorative-quote {
     @apply absolute top-0 left-0 font-serif leading-none select-none pointer-events-none;
     font-size: 20rem;
-    color: rgba(196, 127, 90, 0.04);
+    color: rgba(200, 154, 60, 0.04);
   }
 
   /* Logo copper text glow on hover */
@@ -248,7 +262,7 @@
                 color 600ms var(--ease-luxury);
   }
   .group:hover .logo-glow {
-    text-shadow: 0 0 24px rgba(196, 127, 90, 0.15);
+    text-shadow: 0 0 24px rgba(200, 154, 60, 0.15);
   }
 
   /* Mega-menu staggered link reveal (transition-based, not animation) */
@@ -314,7 +328,7 @@
     content: '';
     @apply absolute left-0 top-0 bottom-0;
     width: 1px;
-    background: rgba(196, 127, 90, 0.35);
+    background: rgba(200, 154, 60, 0.35);
     opacity: 0;
     transition: opacity 600ms var(--ease-luxury);
     transition-delay: 80ms;
@@ -333,12 +347,12 @@
 }
 
 ::-webkit-scrollbar-thumb {
-  background: rgba(196, 127, 90, 0.2);
+  background: rgba(200, 154, 60, 0.2);
   border-radius: 4px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: rgba(196, 127, 90, 0.4);
+  background: rgba(200, 154, 60, 0.4);
 }
 
 html {

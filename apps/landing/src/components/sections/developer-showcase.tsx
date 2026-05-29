@@ -27,7 +27,7 @@ export function DeveloperShowcase({ developers }: DeveloperShowcaseProps) {
           {developers.slice(0, 3).map((developer, index) => (
             <ScrollReveal key={developer.id} delay={index * 100}>
               <Link href={`/developers/${developer.slug}`}>
-                <div className="frosted-glass p-6 h-full hover:border-copper/20 hover:shadow-[0_8px_32px_-8px_rgba(196,127,90,0.08)] transition-all duration-300 group">
+                <div className="frosted-glass p-6 h-full hover:border-copper/20 hover:shadow-[0_8px_32px_-8px_rgba(200,154,60,0.08)] transition-all duration-300 group">
                   <div className="relative w-full h-28 rounded-xl overflow-hidden mb-4 bg-white/5">
                     <Image
                       src={developer.logo}

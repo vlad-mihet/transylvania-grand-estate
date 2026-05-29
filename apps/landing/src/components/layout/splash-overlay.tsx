@@ -121,7 +121,7 @@ export function SplashOverlay({ videoSrc, onClickEnter, onFadeComplete }: Splash
             transitionDelay: "800ms",
           }}
         >
-          <span className="inline-block px-10 py-3 text-xs uppercase tracking-[0.3em] text-cream/80 border border-cream/15 rounded-none backdrop-blur-sm transition-all duration-700 group-hover:text-cream group-hover:border-copper/40 group-hover:shadow-[0_0_30px_-8px_rgba(196,127,90,0.25)]"
+          <span className="inline-block px-10 py-3 text-xs uppercase tracking-[0.3em] text-cream/80 border border-cream/15 rounded-none backdrop-blur-sm transition-all duration-700 group-hover:text-cream group-hover:border-copper/40 group-hover:shadow-[0_0_30px_-8px_rgba(200,154,60,0.25)]"
             style={{ transitionTimingFunction: "var(--ease-luxury)" }}
           >
             {t("enter")}

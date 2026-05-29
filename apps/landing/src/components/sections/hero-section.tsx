@@ -105,7 +105,7 @@ export function HeroSection({
               className={cn(
                 "w-2 h-2 rounded-full transition-all duration-300 cursor-pointer",
                 selectedIndex === index
-                  ? "bg-copper w-6 shadow-[0_0_8px_rgba(196,127,90,0.4)]"
+                  ? "bg-copper w-6 shadow-[0_0_8px_rgba(200,154,60,0.4)]"
                   : "bg-cream/25 hover:bg-cream/40"
               )}
               aria-label={`Go to slide ${index + 1}`}

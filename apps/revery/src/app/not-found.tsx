@@ -14,25 +14,25 @@ const MESSAGES: Array<{
     locale: "ro",
     title: "Pagină negăsită",
     description: "Această pagină nu există sau a fost mutată.",
-    cta: "Mergi la Revery",
+    cta: "Mergi la Adorys",
   },
   {
     locale: "en",
     title: "Page not found",
     description: "This page does not exist or was moved.",
-    cta: "Go to Revery",
+    cta: "Go to Adorys",
   },
   {
     locale: "fr",
     title: "Page introuvable",
     description: "Cette page n'existe pas ou a été déplacée.",
-    cta: "Aller à Revery",
+    cta: "Aller à Adorys",
   },
   {
     locale: "de",
     title: "Seite nicht gefunden",
     description: "Diese Seite existiert nicht oder wurde verschoben.",
-    cta: "Zu Revery",
+    cta: "Zu Adorys",
   },
 ];
 

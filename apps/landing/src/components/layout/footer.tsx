@@ -110,7 +110,7 @@ export function Footer() {
                     href={social.url}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="w-10 h-10 flex items-center justify-center rounded-full border border-copper/15 text-cream-muted/60 hover:text-copper hover:border-copper/30 hover:shadow-[0_0_12px_-3px_rgba(196,127,90,0.2)] transition-all duration-300"
+                    className="w-10 h-10 flex items-center justify-center rounded-full border border-copper/15 text-cream-muted/60 hover:text-copper hover:border-copper/30 hover:shadow-[0_0_12px_-3px_rgba(200,154,60,0.2)] transition-all duration-300"
                   >
                     <Icon className="h-4 w-4" />
                   </a>

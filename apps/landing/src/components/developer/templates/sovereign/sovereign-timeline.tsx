@@ -59,7 +59,7 @@ export function SovereignTimeline({
                     {/* Mobile layout */}
                     <div className="lg:hidden pl-14 relative">
                       {/* Year dot - mobile */}
-                      <div className="absolute left-0 top-0 w-10 h-10 rounded-full bg-copper text-background flex items-center justify-center text-xs font-bold z-10 shadow-[0_0_16px_rgba(196,127,90,0.2)]">
+                      <div className="absolute left-0 top-0 w-10 h-10 rounded-full bg-copper text-background flex items-center justify-center text-xs font-bold z-10 shadow-[0_0_16px_rgba(200,154,60,0.2)]">
                         {milestone.year.slice(-2)}
                       </div>
                       <div className="frosted-glass-refined p-6">
@@ -97,7 +97,7 @@ export function SovereignTimeline({
                       </div>
 
                       {/* Year dot - desktop */}
-                      <div className="flex-shrink-0 w-10 h-10 rounded-full bg-copper text-background flex items-center justify-center text-xs font-bold z-10 shadow-[0_0_16px_rgba(196,127,90,0.2)]">
+                      <div className="flex-shrink-0 w-10 h-10 rounded-full bg-copper text-background flex items-center justify-center text-xs font-bold z-10 shadow-[0_0_16px_rgba(200,154,60,0.2)]">
                         {milestone.year.slice(-2)}
                       </div>
 

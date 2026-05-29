@@ -15,8 +15,8 @@ export const BRAND_CONFIG: Record<SiteId, Brand> = {
   REVERY: {
     siteId: "REVERY",
     key: "revery",
-    name: "Revery",
-    tagline: "Approachable homes across Romania",
+    name: "Adorys",
+    tagline: "Casa pe care o adori",
     tier: "affordable",
     priceRange: { min: 10_000, max: 999_000 },
   },
