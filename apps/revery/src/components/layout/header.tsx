@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { useLocale, useTranslations } from "next-intl";
 import { Link, usePathname } from "@/i18n/navigation";
 import { Container } from "./container";
@@ -36,9 +37,14 @@ export function Header() {
         {/* Desktop */}
         <div className="hidden lg:flex items-center justify-between h-16">
           <Link href="/" className="shrink-0">
-            <span className="text-xl font-bold tracking-tight text-foreground">
-              Rever<span className="text-primary">y</span>
-            </span>
+            <Image
+              src="/logo.png"
+              alt="Adorys"
+              width={220}
+              height={120}
+              priority
+              className="h-9 w-auto"
+            />
           </Link>
 
           <nav aria-label={t("menuTitle")} className="flex items-center gap-1">
@@ -103,9 +109,14 @@ export function Header() {
         <div className="flex lg:hidden items-center justify-between h-14">
           <MobileNav />
           <Link href="/" className="absolute left-1/2 -translate-x-1/2">
-            <span className="text-lg font-bold tracking-tight text-foreground">
-              Rever<span className="text-primary">y</span>
-            </span>
+            <Image
+              src="/logo.png"
+              alt="Adorys"
+              width={200}
+              height={109}
+              priority
+              className="h-8 w-auto"
+            />
           </Link>
           <div className="w-10" />
         </div>

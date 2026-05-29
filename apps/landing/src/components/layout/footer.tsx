@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { useTranslations } from "next-intl";
 import { Link } from "@tge/i18n/navigation";
 import { Container } from "./container";
@@ -37,11 +38,15 @@ export function Footer() {
       <Container className="py-16">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12">
           <div>
-            <Link href="/" className="block mb-4">
-              <span className="font-serif text-xl text-cream">
-                Transylvania
-                <span className="text-copper"> Grand Estate</span>
-              </span>
+            <Link href="/" className="block mb-4" aria-label="Transylvania Grand Estate">
+              <Image
+                src="/logo.png"
+                alt="Transylvania Grand Estate"
+                width={864}
+                height={377}
+                priority={false}
+                className="h-20 w-auto"
+              />
             </Link>
             <p className="text-cream-muted text-sm leading-relaxed">
               {t("tagline")}

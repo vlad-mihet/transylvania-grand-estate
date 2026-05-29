@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import Image from "next/image";
 import { usePathname } from "@tge/i18n/navigation";
 
 export function DiamondSvg({ className }: { className?: string }) {
@@ -289,7 +290,13 @@ export function FloatingDiamond() {
       aria-hidden="true"
     >
       <div className="absolute inset-0 -m-2 rounded-full animate-diamond-glow bg-amethyst/20 blur-md" />
-      <DiamondSvg className="relative block w-11 h-11" />
+      <Image
+        src="/diamond.png"
+        alt=""
+        width={48}
+        height={48}
+        className="relative block w-11 h-11"
+      />
     </div>
   );
 }

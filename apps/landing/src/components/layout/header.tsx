@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useCallback } from "react";
+import Image from "next/image";
 import { useTranslations } from "next-intl";
 import { Link, usePathname } from "@tge/i18n/navigation";
 import { useScrollDirection } from "@tge/hooks";
@@ -136,7 +137,14 @@ export function Header({ developers, cities }: HeaderProps) {
           <div className="flex items-center gap-3">
             <div id="header-diamond" className="relative opacity-70">
               <div className="absolute inset-0 -m-2 rounded-full animate-diamond-glow bg-amethyst/20 blur-md" />
-              <DiamondSvg className="relative block w-8 h-8" />
+              <Image
+                src="/diamond.png"
+                alt=""
+                width={48}
+                height={48}
+                priority
+                className="relative block w-8 h-8"
+              />
             </div>
             <Link href="/" className="flex items-center gap-4 group">
               <span className="font-serif xl:text-[17px] 2xl:text-[20px] font-medium text-cream tracking-[0.03em] leading-none whitespace-nowrap transition-colors duration-300">

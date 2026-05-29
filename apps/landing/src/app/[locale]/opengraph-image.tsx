@@ -1,3 +1,5 @@
+import { readFileSync } from "node:fs";
+import path from "node:path";
 import { ImageResponse } from "next/og";
 import { getTranslations } from "next-intl/server";
 import { getBrand } from "@tge/branding";
@@ -7,6 +9,10 @@ export const alt = "Transylvania Grand Estate";
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 
+const LOGO_DATA_URL = `data:image/png;base64,${readFileSync(
+  path.join(process.cwd(), "public", "logo-640w.png")
+).toString("base64")}`;
+
 /**
  * Per-locale OG card. Generated at request time by Next's `next/og`
  * renderer; the convention-based filename `opengraph-image.tsx` under
@@ -14,7 +20,7 @@ export const contentType = "image/png";
  * social-share fallback. `createMetadata` in `lib/seo.ts` points
  * `openGraph.images` here when a page doesn't provide an explicit image.
  *
- * Copper-on-dark palette mirrors the landing hero. Title pulls from
+ * Gold-on-dark palette mirrors the landing hero. Title pulls from
  * `HomePage.hero.title` so the card text matches whatever the homepage
  * leads with in that locale.
  */
@@ -45,18 +51,14 @@ export default async function OpenGraphImage({
           fontFamily: "sans-serif",
         }}
       >
-        <div
-          style={{
-            display: "flex",
-            alignItems: "center",
-            fontSize: 36,
-            fontWeight: 600,
-            letterSpacing: "0.06em",
-            textTransform: "uppercase",
-            color: "#c89a3c",
-          }}
-        >
-          <span>TGE</span>
+        <div style={{ display: "flex", alignItems: "center" }}>
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src={LOGO_DATA_URL}
+            alt="Transylvania Grand Estate"
+            width={280}
+            height={153}
+          />
         </div>
         <div
           style={{

@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Image from "next/image";
 import { useLocale, useTranslations } from "next-intl";
 import { Link, usePathname } from "@/i18n/navigation";
 import { Sheet, SheetContent, SheetDescription, SheetTitle, SheetTrigger } from "@tge/ui";
@@ -48,9 +49,13 @@ export function MobileNav() {
         <SheetDescription className="sr-only">{t("menuDescription")}</SheetDescription>
         <div className="flex flex-col h-full">
           <div className="flex items-center justify-between px-6 py-5 border-b border-border">
-            <span className="text-xl font-bold tracking-tight">
-              Rever<span className="text-primary">y</span>
-            </span>
+            <Image
+              src="/logo.png"
+              alt="Adorys"
+              width={220}
+              height={120}
+              className="h-9 w-auto"
+            />
             <button
               type="button"
               onClick={() => setOpen(false)}
