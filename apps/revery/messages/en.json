@@ -20,7 +20,7 @@
   },
   "HomePage": {
     "hero": {
-      "title": "Find Your Perfect Home",
+      "title": "The home you'll adore",
       "subtitle": "Quality properties across Romania — from cozy apartments to family houses, all within your reach.",
       "cta": "Browse Properties",
       "propertyCount": "{count} properties available",
@@ -48,17 +48,17 @@
       }
     },
     "valueProposition": {
-      "title": "Why Revery",
+      "title": "Why Adorys",
       "subtitle": "A property platform that works differently.",
       "features": {
         "approach": {
           "title": "Fewer listings, better vetted",
-          "description": "Most platforms dump thousands of listings and leave you to figure it out. We're building Revery around a different idea — a smaller selection of properties, each one reviewed, with someone local to help you through the process.",
+          "description": "Most platforms dump thousands of listings and leave you to figure it out. We're building Adorys around a different idea — a smaller selection of properties, each one reviewed, with someone local to help you through the process.",
           "cta": "Browse properties"
         },
         "curated": {
           "title": "Every listing is reviewed",
-          "description": "Before a property goes live on Revery, it goes through our review process. We check the details, flag anything that doesn't add up, and only publish listings we'd be comfortable recommending.",
+          "description": "Before a property goes live on Adorys, it goes through our review process. We check the details, flag anything that doesn't add up, and only publish listings we'd be comfortable recommending.",
           "cta": "See our selection"
         },
         "guidance": {
@@ -117,11 +117,11 @@
       "viewAll": "View All FAQ",
       "items": {
         "0": {
-          "question": "What is Revery and how can it help me?",
-          "answer": "Revery is a real estate platform focused on affordable, quality properties across Romania. We help buyers find carefully curated homes priced up to €999,999, with transparent listings and expert agent support throughout the process."
+          "question": "What is Adorys and how can it help me?",
+          "answer": "Adorys is a real estate platform focused on affordable, quality properties across Romania. We help buyers find carefully curated homes priced up to €999,999, with transparent listings and expert agent support throughout the process."
         },
         "1": {
-          "question": "What types of properties can I find on Revery?",
+          "question": "What types of properties can I find on Adorys?",
           "answer": "You can find apartments, houses, villas, terrains, penthouses, and more. We cover a wide range of property types across multiple cities in Romania, all within the affordable price segment."
         },
         "2": {
@@ -129,15 +129,15 @@
           "answer": "We currently feature properties in Cluj-Napoca, Oradea, Timișoara, Brașov, and Sibiu — with more cities being added regularly."
         },
         "3": {
-          "question": "How does the buying process work through Revery?",
+          "question": "How does the buying process work through Adorys?",
           "answer": "Browse our listings, contact our agents for viewings, and get guided support through the entire purchase process including documentation, negotiations, and closing. Our agents are here to make it seamless."
         },
         "4": {
-          "question": "Are Revery listings verified?",
-          "answer": "Yes. Every property listed on Revery goes through a review process. We verify ownership, accuracy of descriptions, and ensure photos accurately represent the property."
+          "question": "Are Adorys listings verified?",
+          "answer": "Yes. Every property listed on Adorys goes through a review process. We verify ownership, accuracy of descriptions, and ensure photos accurately represent the property."
         },
         "5": {
-          "question": "Is it free to use Revery as a buyer?",
+          "question": "Is it free to use Adorys as a buyer?",
           "answer": "Absolutely. Browsing properties, contacting agents, and scheduling viewings is completely free for buyers. There are no hidden fees or registration requirements."
         }
       }
@@ -430,8 +430,8 @@
       "title": "Your Agent",
       "callAgent": "Call Agent",
       "emailAgent": "Email Agent",
-      "roleAgent": "Revery Agent",
-      "roleTeam": "Revery Team"
+      "roleAgent": "Adorys Agent",
+      "roleTeam": "Adorys Team"
     }
   },
   "CitiesPage": {
@@ -496,15 +496,15 @@
   "FAQPage": {
     "hero": {
       "title": "Frequently Asked Questions",
-      "subtitle": "Find answers to common questions about Revery and how we can help you."
+      "subtitle": "Find answers to common questions about Adorys and how we can help you."
     },
     "items": {
       "0": {
-        "question": "What is Revery and how can it help me?",
-        "answer": "Revery is a real estate platform focused on affordable, quality properties across Romania. We help buyers find carefully curated homes priced up to €999,999, with transparent listings and expert agent support throughout the process."
+        "question": "What is Adorys and how can it help me?",
+        "answer": "Adorys is a real estate platform focused on affordable, quality properties across Romania. We help buyers find carefully curated homes priced up to €999,999, with transparent listings and expert agent support throughout the process."
       },
       "1": {
-        "question": "What types of properties can I find on Revery?",
+        "question": "What types of properties can I find on Adorys?",
         "answer": "You can find apartments, houses, villas, terrains, penthouses, and more. We cover a wide range of property types across multiple cities in Romania, all within the affordable price segment."
       },
       "2": {
@@ -512,15 +512,15 @@
         "answer": "We currently feature properties in Cluj-Napoca, Oradea, Timișoara, Brașov, and Sibiu — with more cities being added regularly."
       },
       "3": {
-        "question": "How does the buying process work through Revery?",
+        "question": "How does the buying process work through Adorys?",
         "answer": "Browse our listings, contact our agents for viewings, and get guided support through the entire purchase process including documentation, negotiations, and closing. Our agents are here to make it seamless."
       },
       "4": {
-        "question": "Are Revery listings verified?",
-        "answer": "Yes. Every property listed on Revery goes through a review process. We verify ownership, accuracy of descriptions, and ensure photos accurately represent the property."
+        "question": "Are Adorys listings verified?",
+        "answer": "Yes. Every property listed on Adorys goes through a review process. We verify ownership, accuracy of descriptions, and ensure photos accurately represent the property."
       },
       "5": {
-        "question": "Is it free to use Revery as a buyer?",
+        "question": "Is it free to use Adorys as a buyer?",
         "answer": "Absolutely. Browsing properties, contacting agents, and scheduling viewings is completely free for buyers. There are no hidden fees or registration requirements."
       },
       "6": {
@@ -532,8 +532,8 @@
         "answer": "You can reach our agents through the contact form on any property page, via the inquiry modal, or by visiting our Agents page to find a specialist in your preferred city."
       },
       "8": {
-        "question": "Does Revery offer properties for rent?",
-        "answer": "Currently, Revery focuses on properties for sale. We are considering expanding to rentals in the future — stay tuned for updates."
+        "question": "Does Adorys offer properties for rent?",
+        "answer": "Currently, Adorys focuses on properties for sale. We are considering expanding to rentals in the future — stay tuned for updates."
       },
       "9": {
         "question": "What documents do I need to buy a property?",
@@ -579,13 +579,13 @@
     "hero": {
       "badge": "About Us",
       "title": "Building the Path to Your Home in Romania",
-      "description": "Revery connects you with quality, affordable properties across Romania's most vibrant cities. No inflated prices, no hidden fees — just honest real estate for real people."
+      "description": "Adorys connects you with quality, affordable properties across Romania's most vibrant cities. No inflated prices, no hidden fees — just honest real estate for real people."
     },
     "story": {
       "badge": "Our Story",
-      "title": "Why We Started Revery",
+      "title": "Why We Started Adorys",
       "paragraph1": "We saw a problem that too many families in Romania were facing: a housing market full of overpriced listings, misleading photos, and agents who cared more about commission than finding the right fit. Good homes existed, but finding them felt like searching for a needle in a haystack.",
-      "paragraph2": "Revery was born from a simple idea — what if there was a platform that only listed quality properties at fair prices, backed by agents who actually know the neighborhoods? We started in Cluj-Napoca and grew to cover Brașov, Sibiu, Oradea, and Timișoara. Every property on Revery is reviewed before it goes live, because we believe you deserve to trust what you see.",
+      "paragraph2": "Adorys was born from a simple idea — what if there was a platform that only listed quality properties at fair prices, backed by agents who actually know the neighborhoods? We started in Cluj-Napoca and grew to cover Brașov, Sibiu, Oradea, and Timișoara. Every property on Adorys is reviewed before it goes live, because we believe you deserve to trust what you see.",
       "imageAlt": "A charming neighborhood in Romania"
     },
     "stats": {
@@ -630,7 +630,7 @@
     "howItWorks": {
       "badge": "Simple Process",
       "title": "How It Works",
-      "subtitle": "Finding your home through Revery is straightforward. Three steps, no surprises.",
+      "subtitle": "Finding your home through Adorys is straightforward. Three steps, no surprises.",
       "steps": {
         "browse": {
           "title": "Browse & Discover",
@@ -728,7 +728,7 @@
     "title": "Privacy Policy",
     "lastUpdatedLabel": "Last updated",
     "lastUpdated": "18 May 2026",
-    "intro": "Transilvania Grand SRL is the data controller for the Revery platform. We process your personal data under the GDPR (EU Regulation 2016/679) and Romanian Law 190/2018, solely to provide real-estate brokerage services. This page summarises what we collect, how we use it, and the rights you have.",
+    "intro": "Transilvania Grand SRL is the data controller for the Adorys platform. We process your personal data under the GDPR (EU Regulation 2016/679) and Romanian Law 190/2018, solely to provide real-estate brokerage services. This page summarises what we collect, how we use it, and the rights you have.",
     "sections": {
       "collect": {
         "title": "What we collect",
@@ -748,7 +748,7 @@
       },
       "contact": {
         "title": "Contact",
-        "body": "For any privacy-related question or to exercise your rights, contact privacy@reveria.com. Data controller: Transilvania Grand SRL, fiscal code 39607580, registered with the Trade Register under no. J01/631/2018, registered office at Str. Libertății 5, bl. L4, et. 3, ap. 10, Câmpeni 515500, Alba County, Romania."
+        "body": "For any privacy-related question or to exercise your rights, contact privacy@adorys.ro. Data controller: Transilvania Grand SRL, fiscal code 39607580, registered with the Trade Register under no. J01/631/2018, registered office at Str. Libertății 5, bl. L4, et. 3, ap. 10, Câmpeni 515500, Alba County, Romania."
       }
     }
   },
@@ -812,12 +812,12 @@
     "followUs": "Follow Us",
     "social": {
       "navLabel": "Follow us on social media",
-      "instagram": "Revery on Instagram",
-      "facebook": "Revery on Facebook",
-      "linkedin": "Revery on LinkedIn",
-      "youtube": "Revery on YouTube"
+      "instagram": "Adorys on Instagram",
+      "facebook": "Adorys on Facebook",
+      "linkedin": "Adorys on LinkedIn",
+      "youtube": "Adorys on YouTube"
     },
-    "copyright": "© {year} Revery. All rights reserved.",
+    "copyright": "© {year} Adorys. All rights reserved.",
     "privacy": "Privacy Policy",
     "terms": "Terms of Service",
     "cookies": "Cookie Policy",

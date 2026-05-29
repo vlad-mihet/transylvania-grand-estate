@@ -3,7 +3,7 @@ import { getTranslations } from "next-intl/server";
 import { getBrand } from "@tge/branding";
 import type { Locale } from "@tge/types";
 
-export const alt = "Revery";
+export const alt = "Adorys";
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 
@@ -43,8 +43,8 @@ export default async function OpenGraphImage({
             letterSpacing: "-0.02em",
           }}
         >
-          <span>Rever</span>
-          <span style={{ color: "#F5F3FF" }}>y</span>
+          <span>Ador</span>
+          <span style={{ color: "#F5F3FF" }}>ys</span>
         </div>
         <div
           style={{

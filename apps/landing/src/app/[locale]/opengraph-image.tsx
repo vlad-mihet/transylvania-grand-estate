@@ -53,7 +53,7 @@ export default async function OpenGraphImage({
             fontWeight: 600,
             letterSpacing: "0.06em",
             textTransform: "uppercase",
-            color: "#C47F5A",
+            color: "#c89a3c",
           }}
         >
           <span>TGE</span>

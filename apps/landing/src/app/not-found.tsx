@@ -61,7 +61,7 @@ export default function RootNotFound() {
               fontFamily: "'Playfair Display', Georgia, serif",
               fontSize: "6rem",
               lineHeight: 1,
-              color: "#C47F5A",
+              color: "#c89a3c",
               margin: "0 0 1rem 0",
               userSelect: "none",
             }}
@@ -101,7 +101,7 @@ export default function RootNotFound() {
             style={{
               display: "inline-block",
               marginTop: "0.75rem",
-              background: "#C47F5A",
+              background: "#c89a3c",
               color: "#141418",
               padding: "0.65rem 1.25rem",
               borderRadius: 6,

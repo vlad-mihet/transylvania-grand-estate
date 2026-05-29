@@ -81,7 +81,7 @@ export function GlobalLoader() {
           </div>
           <span className="font-serif text-2xl sm:text-3xl md:text-4xl font-medium text-cream tracking-[0.03em] leading-none whitespace-nowrap">
             Transylvania
-            <span className="text-copper logo-glow"> Grand Estate</span>
+            <span className="tge-accent text-copper logo-glow"> Grand Estate</span>
           </span>
         </div>
         <div className="flex flex-col items-center gap-3">

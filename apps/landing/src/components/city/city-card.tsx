@@ -18,7 +18,7 @@ export function CityCard({ city, developerCount }: CityCardProps) {
 
   return (
     <Link href={`/cities/${city.slug}`}>
-      <div className="frosted-glass overflow-hidden group hover:border-copper/20 hover:shadow-[0_8px_32px_-8px_rgba(196,127,90,0.08)] transition-all duration-300">
+      <div className="frosted-glass overflow-hidden group hover:border-copper/20 hover:shadow-[0_8px_32px_-8px_rgba(200,154,60,0.08)] transition-all duration-300">
         <div className="relative aspect-[3/2] overflow-hidden">
           <Image
             src={city.image}

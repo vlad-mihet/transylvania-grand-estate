@@ -20,7 +20,7 @@
   },
   "HomePage": {
     "hero": {
-      "title": "Find Your Perfect Home",
+      "title": "La maison que vous adorerez",
       "subtitle": "Quality properties across Romania — from cozy apartments to family houses, all within your reach.",
       "cta": "Browse Properties",
       "propertyCount": "{count} properties available",
@@ -48,17 +48,17 @@
       }
     },
     "valueProposition": {
-      "title": "Why Revery",
+      "title": "Why Adorys",
       "subtitle": "A property platform that works differently.",
       "features": {
         "approach": {
           "title": "Fewer listings, better vetted",
-          "description": "Most platforms dump thousands of listings and leave you to figure it out. We're building Revery around a different idea — a smaller selection of properties, each one reviewed, with someone local to help you through the process.",
+          "description": "Most platforms dump thousands of listings and leave you to figure it out. We're building Adorys around a different idea — a smaller selection of properties, each one reviewed, with someone local to help you through the process.",
           "cta": "Browse properties"
         },
         "curated": {
           "title": "Every listing is reviewed",
-          "description": "Before a property goes live on Revery, it goes through our review process. We check the details, flag anything that doesn't add up, and only publish listings we'd be comfortable recommending.",
+          "description": "Before a property goes live on Adorys, it goes through our review process. We check the details, flag anything that doesn't add up, and only publish listings we'd be comfortable recommending.",
           "cta": "See our selection"
         },
         "guidance": {
@@ -117,11 +117,11 @@
       "viewAll": "View All FAQ",
       "items": {
         "0": {
-          "question": "What is Revery and how can it help me?",
-          "answer": "Revery is a real estate platform focused on affordable, quality properties across Romania. We help buyers find carefully curated homes priced up to €999,999, with transparent listings and expert agent support throughout the process."
+          "question": "What is Adorys and how can it help me?",
+          "answer": "Adorys is a real estate platform focused on affordable, quality properties across Romania. We help buyers find carefully curated homes priced up to €999,999, with transparent listings and expert agent support throughout the process."
         },
         "1": {
-          "question": "What types of properties can I find on Revery?",
+          "question": "What types of properties can I find on Adorys?",
           "answer": "You can find apartments, houses, villas, terrains, penthouses, and more. We cover a wide range of property types across multiple cities in Romania, all within the affordable price segment."
         },
         "2": {
@@ -129,15 +129,15 @@
           "answer": "We currently feature properties in Cluj-Napoca, Oradea, Timișoara, Brașov, and Sibiu — with more cities being added regularly."
         },
         "3": {
-          "question": "How does the buying process work through Revery?",
+          "question": "How does the buying process work through Adorys?",
           "answer": "Browse our listings, contact our agents for viewings, and get guided support through the entire purchase process including documentation, negotiations, and closing. Our agents are here to make it seamless."
         },
         "4": {
-          "question": "Are Revery listings verified?",
-          "answer": "Yes. Every property listed on Revery goes through a review process. We verify ownership, accuracy of descriptions, and ensure photos accurately represent the property."
+          "question": "Are Adorys listings verified?",
+          "answer": "Yes. Every property listed on Adorys goes through a review process. We verify ownership, accuracy of descriptions, and ensure photos accurately represent the property."
         },
         "5": {
-          "question": "Is it free to use Revery as a buyer?",
+          "question": "Is it free to use Adorys as a buyer?",
           "answer": "Absolutely. Browsing properties, contacting agents, and scheduling viewings is completely free for buyers. There are no hidden fees or registration requirements."
         }
       }
@@ -291,8 +291,8 @@
       "title": "Your Agent",
       "callAgent": "Call Agent",
       "emailAgent": "Email Agent",
-      "roleAgent": "Agent Revery",
-      "roleTeam": "Équipe Revery"
+      "roleAgent": "Agent Adorys",
+      "roleTeam": "Équipe Adorys"
     },
     "save": "Enregistrer",
     "share": "Partager",
@@ -496,15 +496,15 @@
   "FAQPage": {
     "hero": {
       "title": "Questions fréquentes",
-      "subtitle": "Trouvez les réponses aux questions courantes sur Reveria et la façon dont nous pouvons vous accompagner."
+      "subtitle": "Trouvez les réponses aux questions courantes sur Adorys et la façon dont nous pouvons vous accompagner."
     },
     "items": {
       "0": {
-        "question": "Qu'est-ce que Reveria et comment peut-elle m'aider ?",
-        "answer": "Reveria est une plateforme immobilière dédiée aux propriétés abordables et de qualité dans toute la Roumanie. Nous aidons les acheteurs à trouver des biens soigneusement sélectionnés jusqu'à 999 999 €, avec des annonces transparentes et l'accompagnement d'agents experts tout au long du processus."
+        "question": "Qu'est-ce que Adorys et comment peut-elle m'aider ?",
+        "answer": "Adorys est une plateforme immobilière dédiée aux propriétés abordables et de qualité dans toute la Roumanie. Nous aidons les acheteurs à trouver des biens soigneusement sélectionnés jusqu'à 999 999 €, avec des annonces transparentes et l'accompagnement d'agents experts tout au long du processus."
       },
       "1": {
-        "question": "Quels types de propriétés puis-je trouver sur Reveria ?",
+        "question": "Quels types de propriétés puis-je trouver sur Adorys ?",
         "answer": "Vous pouvez trouver des appartements, maisons, villas, terrains, penthouses et bien plus encore. Nous couvrons un large éventail de types de biens dans plusieurs villes de Roumanie, tous dans le segment de prix abordable."
       },
       "2": {
@@ -512,15 +512,15 @@
         "answer": "Nous proposons actuellement des biens à Cluj-Napoca, Oradea, Timișoara, Brașov et Sibiu — d'autres villes sont ajoutées régulièrement."
       },
       "3": {
-        "question": "Comment se déroule le processus d'achat avec Reveria ?",
+        "question": "Comment se déroule le processus d'achat avec Adorys ?",
         "answer": "Parcourez nos annonces, contactez nos agents pour des visites et bénéficiez d'un accompagnement guidé tout au long de l'achat : documentation, négociation et signature. Nos agents sont là pour simplifier chaque étape."
       },
       "4": {
-        "question": "Les annonces Reveria sont-elles vérifiées ?",
-        "answer": "Oui. Chaque propriété listée sur Reveria passe par un processus de vérification. Nous contrôlons la propriété, l'exactitude des descriptions et nous assurons que les photos reflètent fidèlement le bien."
+        "question": "Les annonces Adorys sont-elles vérifiées ?",
+        "answer": "Oui. Chaque propriété listée sur Adorys passe par un processus de vérification. Nous contrôlons la propriété, l'exactitude des descriptions et nous assurons que les photos reflètent fidèlement le bien."
       },
       "5": {
-        "question": "L'utilisation de Reveria est-elle gratuite pour les acheteurs ?",
+        "question": "L'utilisation de Adorys est-elle gratuite pour les acheteurs ?",
         "answer": "Tout à fait. Parcourir les annonces, contacter les agents et planifier des visites sont entièrement gratuits pour les acheteurs. Aucun frais caché ni inscription obligatoire."
       },
       "6": {
@@ -532,8 +532,8 @@
         "answer": "Vous pouvez joindre nos agents via le formulaire de contact sur chaque page de propriété, via la fenêtre de demande, ou en visitant notre page Agents pour trouver un spécialiste dans la ville qui vous intéresse."
       },
       "8": {
-        "question": "Reveria propose-t-elle des biens à louer ?",
-        "answer": "Pour le moment, Reveria se concentre sur les biens à vendre. Nous envisageons d'élargir notre offre à la location à l'avenir — restez à l'écoute pour les nouveautés."
+        "question": "Adorys propose-t-elle des biens à louer ?",
+        "answer": "Pour le moment, Adorys se concentre sur les biens à vendre. Nous envisageons d'élargir notre offre à la location à l'avenir — restez à l'écoute pour les nouveautés."
       },
       "9": {
         "question": "Quels documents me faut-il pour acheter un bien ?",
@@ -579,13 +579,13 @@
     "hero": {
       "badge": "À propos de nous",
       "title": "Le chemin vers votre futur logement en Roumanie",
-      "description": "Reveria vous met en relation avec des propriétés de qualité et abordables dans les villes les plus dynamiques de Roumanie. Pas de prix gonflés, pas de frais cachés — simplement de l'immobilier honnête pour des gens vrais."
+      "description": "Adorys vous met en relation avec des propriétés de qualité et abordables dans les villes les plus dynamiques de Roumanie. Pas de prix gonflés, pas de frais cachés — simplement de l'immobilier honnête pour des gens vrais."
     },
     "story": {
       "badge": "Notre histoire",
-      "title": "Pourquoi nous avons créé Reveria",
+      "title": "Pourquoi nous avons créé Adorys",
       "paragraph1": "Nous avons constaté un problème auquel trop de familles roumaines étaient confrontées : un marché immobilier saturé d'annonces surévaluées, de photos trompeuses et d'agents plus soucieux de leur commission que de trouver le bien adapté. De bons logements existaient, mais les dénicher relevait du parcours du combattant.",
-      "paragraph2": "Reveria est née d'une idée simple : et s'il existait une plateforme listant uniquement des biens de qualité à des prix justes, accompagnée par des agents qui connaissent vraiment les quartiers ? Nous avons commencé à Cluj-Napoca et nous nous sommes étendus à Brașov, Sibiu, Oradea et Timișoara. Chaque propriété sur Reveria est vérifiée avant publication, car nous pensons que vous méritez de pouvoir faire confiance à ce que vous voyez.",
+      "paragraph2": "Adorys est née d'une idée simple : et s'il existait une plateforme listant uniquement des biens de qualité à des prix justes, accompagnée par des agents qui connaissent vraiment les quartiers ? Nous avons commencé à Cluj-Napoca et nous nous sommes étendus à Brașov, Sibiu, Oradea et Timișoara. Chaque propriété sur Adorys est vérifiée avant publication, car nous pensons que vous méritez de pouvoir faire confiance à ce que vous voyez.",
       "imageAlt": "Un quartier charmant en Roumanie"
     },
     "stats": {
@@ -630,7 +630,7 @@
     "howItWorks": {
       "badge": "Un parcours simple",
       "title": "Comment ça marche",
-      "subtitle": "Trouver votre logement avec Reveria est simple. Trois étapes, aucune mauvaise surprise.",
+      "subtitle": "Trouver votre logement avec Adorys est simple. Trois étapes, aucune mauvaise surprise.",
       "steps": {
         "browse": {
           "title": "Explorez et découvrez",
@@ -728,7 +728,7 @@
     "title": "Politique de confidentialité",
     "lastUpdatedLabel": "Mise à jour",
     "lastUpdated": "18 mai 2026",
-    "intro": "Transilvania Grand SRL est le responsable de traitement pour la plateforme Revery. Nous traitons vos données personnelles en application du RGPD (Règlement UE 2016/679) et de la loi roumaine 190/2018, exclusivement pour fournir des services d'intermédiation immobilière. Cette page résume ce que nous collectons, comment nous utilisons ces données et les droits dont vous disposez.",
+    "intro": "Transilvania Grand SRL est le responsable de traitement pour la plateforme Adorys. Nous traitons vos données personnelles en application du RGPD (Règlement UE 2016/679) et de la loi roumaine 190/2018, exclusivement pour fournir des services d'intermédiation immobilière. Cette page résume ce que nous collectons, comment nous utilisons ces données et les droits dont vous disposez.",
     "sections": {
       "collect": {
         "title": "Ce que nous collectons",
@@ -748,7 +748,7 @@
       },
       "contact": {
         "title": "Contact",
-        "body": "Pour toute question relative à la confidentialité ou pour exercer vos droits, contactez privacy@reveria.com. Responsable de traitement : Transilvania Grand SRL, code fiscal 39607580, immatriculée au Registre du Commerce sous le n° J01/631/2018, dont le siège social est situé Str. Libertății 5, bl. L4, ét. 3, ap. 10, Câmpeni 515500, département d'Alba, Roumanie."
+        "body": "Pour toute question relative à la confidentialité ou pour exercer vos droits, contactez privacy@adorys.ro. Responsable de traitement : Transilvania Grand SRL, code fiscal 39607580, immatriculée au Registre du Commerce sous le n° J01/631/2018, dont le siège social est situé Str. Libertății 5, bl. L4, ét. 3, ap. 10, Câmpeni 515500, département d'Alba, Roumanie."
       }
     }
   },
@@ -812,12 +812,12 @@
     "followUs": "Follow Us",
     "social": {
       "navLabel": "Suivez-nous sur les réseaux sociaux",
-      "instagram": "Revery sur Instagram",
-      "facebook": "Revery sur Facebook",
-      "linkedin": "Revery sur LinkedIn",
-      "youtube": "Revery sur YouTube"
+      "instagram": "Adorys sur Instagram",
+      "facebook": "Adorys sur Facebook",
+      "linkedin": "Adorys sur LinkedIn",
+      "youtube": "Adorys sur YouTube"
     },
-    "copyright": "© {year} Revery. All rights reserved.",
+    "copyright": "© {year} Adorys. All rights reserved.",
     "privacy": "Privacy Policy",
     "terms": "Terms of Service",
     "cookies": "Cookie Policy",

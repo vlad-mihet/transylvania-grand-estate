@@ -22,7 +22,7 @@ export function PropertyCard({ property }: PropertyCardProps) {
 
   return (
     <Link href={`/properties/${property.slug}`}>
-      <Card className="bg-card border-copper/[0.08] overflow-hidden group cursor-pointer p-0 gap-0 shadow-none hover:border-copper/20 hover:shadow-[0_12px_48px_-12px_rgba(196,127,90,0.12)] transition-all duration-700">
+      <Card className="bg-card border-copper/[0.08] overflow-hidden group cursor-pointer p-0 gap-0 shadow-none hover:border-copper/20 hover:shadow-[0_12px_48px_-12px_rgba(200,154,60,0.12)] transition-all duration-700">
         <div className="relative aspect-[4/3] overflow-hidden">
           {heroImage ? (
             <Image

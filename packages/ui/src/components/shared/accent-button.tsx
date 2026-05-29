@@ -23,11 +23,11 @@ export function AccentButton({
       className={cn(
         "font-medium tracking-[0.02em] text-sm rounded-md transition-all duration-500 ease-luxury",
         accentVariant === "solid" &&
-          "bg-copper text-background border border-copper shadow-sm hover:bg-copper-light hover:border-copper-light hover:shadow-[0_6px_24px_-6px_rgba(196,127,90,0.35)] hover:-translate-y-px",
+          "bg-[image:var(--tge-gold-gradient)] text-background border border-copper shadow-sm hover:border-copper-light hover:shadow-[0_6px_24px_-6px_rgba(200,154,60,0.35)] hover:-translate-y-px",
         accentVariant === "outline" &&
           "border border-copper/30 text-copper bg-transparent hover:border-copper hover:bg-copper/[0.04]",
         accentVariant === "splash" &&
-          "font-normal uppercase tracking-[0.3em] text-xs rounded-none border border-cream/15 text-cream/80 bg-transparent backdrop-blur-sm duration-700 hover:text-cream hover:border-copper/40 hover:shadow-[0_0_30px_-8px_rgba(196,127,90,0.25)]",
+          "font-normal uppercase tracking-[0.3em] text-xs rounded-none border border-cream/15 text-cream/80 bg-transparent backdrop-blur-sm duration-700 hover:text-cream hover:border-copper/40 hover:shadow-[0_0_30px_-8px_rgba(200,154,60,0.25)]",
         className
       )}
       {...props}

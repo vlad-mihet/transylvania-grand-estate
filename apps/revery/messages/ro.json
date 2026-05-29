@@ -20,7 +20,7 @@
   },
   "HomePage": {
     "hero": {
-      "title": "Găsește Casa Perfectă",
+      "title": "Casa pe care o adori",
       "subtitle": "Proprietăți de calitate în toată România — de la apartamente confortabile la case de familie, toate la îndemâna ta.",
       "cta": "Răsfoiește Proprietăți",
       "propertyCount": "{count} proprietăți disponibile",
@@ -48,17 +48,17 @@
       }
     },
     "valueProposition": {
-      "title": "De Ce Revery",
+      "title": "De Ce Adorys",
       "subtitle": "O platformă imobiliară care funcționează altfel.",
       "features": {
         "approach": {
           "title": "Mai puține anunțuri, mai bine verificate",
-          "description": "Majoritatea platformelor aruncă mii de anunțuri și te lasă să te descurci singur. Construim Revery în jurul unei idei diferite — o selecție mai mică de proprietăți, fiecare verificată, cu cineva local care să te ajute pe tot parcursul.",
+          "description": "Majoritatea platformelor aruncă mii de anunțuri și te lasă să te descurci singur. Construim Adorys în jurul unei idei diferite — o selecție mai mică de proprietăți, fiecare verificată, cu cineva local care să te ajute pe tot parcursul.",
           "cta": "Răsfoiește proprietăți"
         },
         "curated": {
           "title": "Fiecare anunț e verificat",
-          "description": "Înainte să apară pe Revery, fiecare proprietate trece prin procesul nostru de verificare. Controlăm detaliile, semnalăm ce nu se leagă și publicăm doar anunțurile pe care le-am recomanda cu încredere.",
+          "description": "Înainte să apară pe Adorys, fiecare proprietate trece prin procesul nostru de verificare. Controlăm detaliile, semnalăm ce nu se leagă și publicăm doar anunțurile pe care le-am recomanda cu încredere.",
           "cta": "Vezi selecția noastră"
         },
         "guidance": {
@@ -117,11 +117,11 @@
       "viewAll": "Vezi toate întrebările",
       "items": {
         "0": {
-          "question": "Ce este Revery și cum mă poate ajuta?",
-          "answer": "Revery este o platformă imobiliară focalizată pe proprietăți accesibile și de calitate din România. Ajutăm cumpărătorii să găsească case atent selectate cu prețuri până la €999.999, cu anunțuri transparente și suport expert din partea agenților."
+          "question": "Ce este Adorys și cum mă poate ajuta?",
+          "answer": "Adorys este o platformă imobiliară focalizată pe proprietăți accesibile și de calitate din România. Ajutăm cumpărătorii să găsească case atent selectate cu prețuri până la €999.999, cu anunțuri transparente și suport expert din partea agenților."
         },
         "1": {
-          "question": "Ce tipuri de proprietăți pot găsi pe Revery?",
+          "question": "Ce tipuri de proprietăți pot găsi pe Adorys?",
           "answer": "Poți găsi apartamente, case, vile, terenuri, penthouse-uri și altele. Acoperim o gamă largă de tipuri de proprietăți în mai multe orașe din România, toate în segmentul de preț accesibil."
         },
         "2": {
@@ -129,15 +129,15 @@
           "answer": "În prezent avem proprietăți în Cluj-Napoca, Oradea, Timișoara, Brașov și Sibiu — cu mai multe orașe adăugate în mod regulat."
         },
         "3": {
-          "question": "Cum funcționează procesul de cumpărare prin Revery?",
+          "question": "Cum funcționează procesul de cumpărare prin Adorys?",
           "answer": "Răsfoiește anunțurile, contactează agenții noștri pentru vizionări și primește suport ghidat pe tot parcursul procesului de achiziție, inclusiv documentație, negocieri și finalizare."
         },
         "4": {
-          "question": "Sunt anunțurile Revery verificate?",
-          "answer": "Da. Fiecare proprietate listată pe Revery trece printr-un proces de verificare. Verificăm proprietatea, acuratețea descrierilor și ne asigurăm că fotografiile reprezintă fidel proprietatea."
+          "question": "Sunt anunțurile Adorys verificate?",
+          "answer": "Da. Fiecare proprietate listată pe Adorys trece printr-un proces de verificare. Verificăm proprietatea, acuratețea descrierilor și ne asigurăm că fotografiile reprezintă fidel proprietatea."
         },
         "5": {
-          "question": "Este gratuit să folosesc Revery ca și cumpărător?",
+          "question": "Este gratuit să folosesc Adorys ca și cumpărător?",
           "answer": "Absolut. Răsfoirea proprietăților, contactarea agenților și programarea vizionărilor este complet gratuită pentru cumpărători. Nu există taxe ascunse sau cerințe de înregistrare."
         }
       }
@@ -430,8 +430,8 @@
       "title": "Agentul Tău",
       "callAgent": "Sună Agentul",
       "emailAgent": "Trimite Email Agentului",
-      "roleAgent": "Agent Revery",
-      "roleTeam": "Echipa Revery"
+      "roleAgent": "Agent Adorys",
+      "roleTeam": "Echipa Adorys"
     }
   },
   "CitiesPage": {
@@ -496,15 +496,15 @@
   "FAQPage": {
     "hero": {
       "title": "Întrebări Frecvente",
-      "subtitle": "Găsește răspunsuri la întrebările frecvente despre Revery și cum te putem ajuta."
+      "subtitle": "Găsește răspunsuri la întrebările frecvente despre Adorys și cum te putem ajuta."
     },
     "items": {
       "0": {
-        "question": "Ce este Revery și cum mă poate ajuta?",
-        "answer": "Revery este o platformă imobiliară focalizată pe proprietăți accesibile și de calitate din România. Ajutăm cumpărătorii să găsească case atent selectate cu prețuri până la €999.999, cu anunțuri transparente și suport expert din partea agenților."
+        "question": "Ce este Adorys și cum mă poate ajuta?",
+        "answer": "Adorys este o platformă imobiliară focalizată pe proprietăți accesibile și de calitate din România. Ajutăm cumpărătorii să găsească case atent selectate cu prețuri până la €999.999, cu anunțuri transparente și suport expert din partea agenților."
       },
       "1": {
-        "question": "Ce tipuri de proprietăți pot găsi pe Revery?",
+        "question": "Ce tipuri de proprietăți pot găsi pe Adorys?",
         "answer": "Poți găsi apartamente, case, vile, terenuri, penthouse-uri și altele. Acoperim o gamă largă de tipuri de proprietăți în mai multe orașe din România, toate în segmentul de preț accesibil."
       },
       "2": {
@@ -512,15 +512,15 @@
         "answer": "În prezent avem proprietăți în Cluj-Napoca, Oradea, Timișoara, Brașov și Sibiu — cu mai multe orașe adăugate în mod regulat."
       },
       "3": {
-        "question": "Cum funcționează procesul de cumpărare prin Revery?",
+        "question": "Cum funcționează procesul de cumpărare prin Adorys?",
         "answer": "Răsfoiește anunțurile, contactează agenții noștri pentru vizionări și primește suport ghidat pe tot parcursul procesului de achiziție, inclusiv documentație, negocieri și finalizare."
       },
       "4": {
-        "question": "Sunt anunțurile Revery verificate?",
-        "answer": "Da. Fiecare proprietate listată pe Revery trece printr-un proces de verificare. Verificăm proprietatea, acuratețea descrierilor și ne asigurăm că fotografiile reprezintă fidel proprietatea."
+        "question": "Sunt anunțurile Adorys verificate?",
+        "answer": "Da. Fiecare proprietate listată pe Adorys trece printr-un proces de verificare. Verificăm proprietatea, acuratețea descrierilor și ne asigurăm că fotografiile reprezintă fidel proprietatea."
       },
       "5": {
-        "question": "Este gratuit să folosesc Revery ca și cumpărător?",
+        "question": "Este gratuit să folosesc Adorys ca și cumpărător?",
         "answer": "Absolut. Răsfoirea proprietăților, contactarea agenților și programarea vizionărilor este complet gratuită pentru cumpărători. Nu există taxe ascunse sau cerințe de înregistrare."
       },
       "6": {
@@ -532,8 +532,8 @@
         "answer": "Poți contacta agenții noștri prin formularul de contact de pe pagina oricărei proprietăți, prin modalul de cerere sau vizitând pagina Agenți pentru a găsi un specialist în orașul preferat."
       },
       "8": {
-        "question": "Oferă Revery proprietăți de închiriat?",
-        "answer": "În prezent, Revery se concentrează pe proprietăți de vânzare. Luăm în considerare extinderea către chirii în viitor — rămâi la curent cu noutățile."
+        "question": "Oferă Adorys proprietăți de închiriat?",
+        "answer": "În prezent, Adorys se concentrează pe proprietăți de vânzare. Luăm în considerare extinderea către chirii în viitor — rămâi la curent cu noutățile."
       },
       "9": {
         "question": "Ce documente am nevoie pentru a cumpăra o proprietate?",
@@ -579,13 +579,13 @@
     "hero": {
       "badge": "Despre Noi",
       "title": "Construim Drumul Către Casa Ta din România",
-      "description": "Revery te conectează cu proprietăți de calitate și accesibile din cele mai vibrante orașe ale României. Fără prețuri umflate, fără taxe ascunse — doar imobiliare oneste pentru oameni reali."
+      "description": "Adorys te conectează cu proprietăți de calitate și accesibile din cele mai vibrante orașe ale României. Fără prețuri umflate, fără taxe ascunse — doar imobiliare oneste pentru oameni reali."
     },
     "story": {
       "badge": "Povestea Noastră",
-      "title": "De Ce Am Creat Revery",
+      "title": "De Ce Am Creat Adorys",
       "paragraph1": "Am văzut o problemă cu care se confruntau prea multe familii din România: o piață imobiliară plină de anunțuri supraevaluate, fotografii înșelătoare și agenți cărora le păsa mai mult de comision decât de a găsi potrivirea perfectă. Casele bune existau, dar a le găsi era ca și cum ai căuta un ac într-un car de fân.",
-      "paragraph2": "Revery s-a născut dintr-o idee simplă — ce-ar fi dacă ar exista o platformă care listează doar proprietăți de calitate la prețuri corecte, susținută de agenți care chiar cunosc cartierele? Am început în Cluj-Napoca și am crescut pentru a acoperi Brașovul, Sibiul, Oradea și Timișoara. Fiecare proprietate de pe Revery este verificată înainte de publicare, pentru că noi credem că meriți să ai încredere în ceea ce vezi.",
+      "paragraph2": "Adorys s-a născut dintr-o idee simplă — ce-ar fi dacă ar exista o platformă care listează doar proprietăți de calitate la prețuri corecte, susținută de agenți care chiar cunosc cartierele? Am început în Cluj-Napoca și am crescut pentru a acoperi Brașovul, Sibiul, Oradea și Timișoara. Fiecare proprietate de pe Adorys este verificată înainte de publicare, pentru că noi credem că meriți să ai încredere în ceea ce vezi.",
       "imageAlt": "Un cartier fermecător din România"
     },
     "stats": {
@@ -630,7 +630,7 @@
     "howItWorks": {
       "badge": "Proces Simplu",
       "title": "Cum Funcționează",
-      "subtitle": "Să-ți găsești casa prin Revery este simplu. Trei pași, fără surprize.",
+      "subtitle": "Să-ți găsești casa prin Adorys este simplu. Trei pași, fără surprize.",
       "steps": {
         "browse": {
           "title": "Caută și Descoperă",
@@ -728,7 +728,7 @@
     "title": "Politica de Confidențialitate",
     "lastUpdatedLabel": "Actualizat",
     "lastUpdated": "18 mai 2026",
-    "intro": "Transilvania Grand SRL este operatorul de date pentru platforma Revery. Prelucrăm datele tale personale în baza GDPR (Regulamentul UE 2016/679) și a Legii 190/2018, exclusiv pentru a-ți oferi servicii de intermediere imobiliară. Această pagină rezumă ce colectăm, cum folosim datele și ce drepturi ai.",
+    "intro": "Transilvania Grand SRL este operatorul de date pentru platforma Adorys. Prelucrăm datele tale personale în baza GDPR (Regulamentul UE 2016/679) și a Legii 190/2018, exclusiv pentru a-ți oferi servicii de intermediere imobiliară. Această pagină rezumă ce colectăm, cum folosim datele și ce drepturi ai.",
     "sections": {
       "collect": {
         "title": "Ce colectăm",
@@ -748,7 +748,7 @@
       },
       "contact": {
         "title": "Contact",
-        "body": "Pentru orice întrebare legată de confidențialitate sau pentru a-ți exercita drepturile, scrie-ne la privacy@reveria.com. Operator de date: Transilvania Grand SRL, CUI 39607580, înregistrată la Registrul Comerțului sub nr. J01/631/2018, cu sediul social în Str. Libertății nr. 5, bl. L4, et. 3, ap. 10, Câmpeni 515500, jud. Alba."
+        "body": "Pentru orice întrebare legată de confidențialitate sau pentru a-ți exercita drepturile, scrie-ne la privacy@adorys.ro. Operator de date: Transilvania Grand SRL, CUI 39607580, înregistrată la Registrul Comerțului sub nr. J01/631/2018, cu sediul social în Str. Libertății nr. 5, bl. L4, et. 3, ap. 10, Câmpeni 515500, jud. Alba."
       }
     }
   },
@@ -812,12 +812,12 @@
     "followUs": "Urmărește-ne",
     "social": {
       "navLabel": "Urmărește-ne pe rețelele sociale",
-      "instagram": "Revery pe Instagram",
-      "facebook": "Revery pe Facebook",
-      "linkedin": "Revery pe LinkedIn",
-      "youtube": "Revery pe YouTube"
+      "instagram": "Adorys pe Instagram",
+      "facebook": "Adorys pe Facebook",
+      "linkedin": "Adorys pe LinkedIn",
+      "youtube": "Adorys pe YouTube"
     },
-    "copyright": "© {year} Revery. Toate drepturile rezervate.",
+    "copyright": "© {year} Adorys. Toate drepturile rezervate.",
     "privacy": "Politica de Confidențialitate",
     "terms": "Termeni și Condiții",
     "cookies": "Politica Cookie-uri",

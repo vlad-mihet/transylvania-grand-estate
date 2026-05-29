@@ -141,7 +141,7 @@ export function Header({ developers, cities }: HeaderProps) {
             <Link href="/" className="flex items-center gap-4 group">
               <span className="font-serif xl:text-[17px] 2xl:text-[20px] font-medium text-cream tracking-[0.03em] leading-none whitespace-nowrap transition-colors duration-300">
                 Transylvania
-                <span className="text-copper logo-glow group-hover:text-copper-light">
+                <span className="tge-accent text-copper logo-glow group-hover:text-copper-light">
                   {" "}Grand Estate
                 </span>
               </span>
@@ -186,7 +186,7 @@ export function Header({ developers, cities }: HeaderProps) {
           <Link href="/" className="absolute left-1/2 -translate-x-1/2">
             <span className="font-serif text-lg sm:text-xl text-cream tracking-[0.03em] leading-none whitespace-nowrap">
               Transylvania
-              <span className="text-copper"> Grand Estate</span>
+              <span className="tge-accent text-copper"> Grand Estate</span>
             </span>
           </Link>
           {/* Spacer to balance hamburger for centering */}
