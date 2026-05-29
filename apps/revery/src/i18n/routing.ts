@@ -26,6 +26,8 @@ export const routing = defineRouting({
     "/blog": "/blog",
     "/blog/[slug]": "/blog/[slug]",
     "/privacy": "/privacy",
+    "/terms": "/terms",
+    "/cookies": "/cookies",
     "/instrumente": {
       en: "/tools",
       ro: "/instrumente",
