@@ -1,3 +1,5 @@
+import { cache } from "react";
+
 export interface ApiResponse<T> {
   success: boolean;
   data: T;
@@ -169,10 +171,16 @@ async function fetchWithAuth(
   });
 }
 
-export async function fetchApi<T>(
+// Wrapped in React `cache()` so identical (path, options) fetches within a
+// single RSC render share one network request. The landing app's layout +
+// page both call `/cities?featured=true` per render — dedup turns that into
+// one fetch and one X-Request-Id, halving the throttler pressure on repeated
+// SSR paths. Cache scope is per-request: no cross-request leakage. On the
+// client (rare for these helpers), cache() degrades to a pass-through.
+const fetchApiInner = async <T>(
   path: string,
   options?: FetchOptions,
-): Promise<T> {
+): Promise<T> => {
   const res = await fetchWithAuth(`${getApiBase()}${path}`, {
     next: { revalidate: options?.revalidate ?? 60, tags: options?.tags },
     headers: withCorrelationHeaders(options?.headers),
@@ -182,12 +190,14 @@ export async function fetchApi<T>(
   }
   const json = (await res.json()) as ApiResponse<T>;
   return json.data;
-}
+};
 
-export async function fetchApiSafe<T>(
+export const fetchApi = cache(fetchApiInner);
+
+const fetchApiSafeInner = async <T>(
   path: string,
   options?: FetchOptions,
-): Promise<SafeResult<T>> {
+): Promise<SafeResult<T>> => {
   try {
     const res = await fetchWithAuth(`${getApiBase()}${path}`, {
       next: { revalidate: options?.revalidate ?? 60, tags: options?.tags },
@@ -205,7 +215,9 @@ export async function fetchApiSafe<T>(
     const message = err instanceof Error ? err.message : "Unknown fetch error";
     return { ok: false, error: new ApiError(0, message, path) };
   }
-}
+};
+
+export const fetchApiSafe = cache(fetchApiSafeInner);
 
 export async function mutateApi<T>(
   path: string,

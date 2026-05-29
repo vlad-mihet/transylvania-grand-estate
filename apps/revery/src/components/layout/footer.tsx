@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { useLocale, useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
 import { Container } from "./container";
@@ -32,9 +33,13 @@ export function Footer() {
           {/* Brand */}
           <div className="col-span-2 sm:col-span-3 md:col-span-4 lg:col-span-1">
             <Link href="/" className="block mb-3">
-              <span className="text-xl font-bold tracking-tight">
-                Rever<span className="text-primary">y</span>
-              </span>
+              <Image
+                src="/logo.png"
+                alt="Adorys"
+                width={240}
+                height={131}
+                className="h-10 w-auto"
+              />
             </Link>
             <p className="text-muted-foreground text-sm leading-relaxed">
               {t("tagline")}

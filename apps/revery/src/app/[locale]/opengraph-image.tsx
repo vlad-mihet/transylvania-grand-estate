@@ -1,3 +1,5 @@
+import { readFileSync } from "node:fs";
+import path from "node:path";
 import { ImageResponse } from "next/og";
 import { getTranslations } from "next-intl/server";
 import { getBrand } from "@tge/branding";
@@ -6,6 +8,10 @@ import type { Locale } from "@tge/types";
 export const alt = "Adorys";
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
+
+const LOGO_DATA_URL = `data:image/png;base64,${readFileSync(
+  path.join(process.cwd(), "public", "logo-640w.png")
+).toString("base64")}`;
 
 export default async function OpenGraphImage({
   params,
@@ -34,17 +40,14 @@ export default async function OpenGraphImage({
           fontFamily: "sans-serif",
         }}
       >
-        <div
-          style={{
-            display: "flex",
-            alignItems: "center",
-            fontSize: 44,
-            fontWeight: 700,
-            letterSpacing: "-0.02em",
-          }}
-        >
-          <span>Ador</span>
-          <span style={{ color: "#F5F3FF" }}>ys</span>
+        <div style={{ display: "flex", alignItems: "center" }}>
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src={LOGO_DATA_URL}
+            alt="Adorys"
+            width={280}
+            height={153}
+          />
         </div>
         <div
           style={{

@@ -27,7 +27,7 @@ export default async function TermsPage() {
   const t = await getTranslations("TermsOfService");
 
   return (
-    <main className="container mx-auto max-w-3xl px-6 py-20">
+    <main className="container mx-auto max-w-3xl px-6 pt-40 pb-20">
       <p className="text-xs uppercase tracking-[0.2em] text-cream-muted mb-4">
         {t("lastUpdatedLabel")} {t("lastUpdated")}
       </p>
