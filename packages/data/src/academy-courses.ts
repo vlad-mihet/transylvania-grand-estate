@@ -512,4 +512,284 @@ Newslettere cu oferte recente, articole și informații despre piață.
       },
     ],
   },
+
+  // ─────────────────────────────────────────────────────────────
+  // 4. Reprezentarea Exclusivă în Imobiliare
+  // ─────────────────────────────────────────────────────────────
+  {
+    slug: "reprezentarea-exclusiva",
+    order: 50,
+    title: { ro: "Reprezentarea Exclusivă în Imobiliare" },
+    description: {
+      ro: "De ce un singur agent dedicat aduce un preț mai bun și mai puțin stres decât zece anunțuri paralele. Ce este exclusivitatea, cum o explici proprietarului, ce conține contractul și cum vinzi acest serviciu — totul sub brandurile Transilvania Grand Estate și Adorys.",
+    },
+    lessons: [
+      {
+        slug: "ce-este-reprezentarea-exclusiva",
+        order: 10,
+        title: { ro: "Ce este reprezentarea exclusivă și cum diferă de intermedierea liberă" },
+        excerpt: {
+          ro: "Două moduri de a colabora cu proprietarul: intermedierea liberă, unde mai mulți agenți concurează haotic, și reprezentarea exclusivă, unde un singur agent răspunde 100% de rezultat.",
+        },
+        content: {
+          ro: `Când vine vorba de vânzarea unei proprietăți, există două moduri principale prin care un agent imobiliar poate colabora cu proprietarul: **intermedierea liberă** și **reprezentarea exclusivă**.
+
+## Intermedierea liberă
+
+Orice agent poate lucra la vânzarea proprietății, iar proprietarul poate lucra cu mai mulți agenți simultan sau chiar vinde singur. De obicei, acest model creează o competiție nesănătoasă între agenți și poate duce la un serviciu superficial, prețuri fluctuante și confuzie pentru vânzător.
+
+- Mai mulți agenți pot intermedia vânzarea aceleiași proprietăți.
+- Există riscul promovării cu prețuri și abordări diferite (inclusiv inducerea în eroare a clienților, voită sau nu).
+- Proprietarul poate lista pe mai multe canale, ceea ce reduce valoarea percepută de cumpărători și crește șansa ca o parte din clienți să-l contacteze direct.
+- Agenții nu investesc în marketing de calitate, pentru că nu au siguranța unei tranzacții reușite.
+
+## Reprezentarea exclusivă
+
+Un singur agent imobiliar se ocupă de tranzacție, oferind un serviciu complet, personalizat și concentrat 100% pe obiectivul clientului. Acesta investește timp, bani și resurse pentru a obține cel mai bun preț și cele mai bune condiții pentru proprietar.
+
+- Agentul are un contract exclusiv cu proprietarul și este singura persoană responsabilă de promovarea și vânzarea proprietății.
+- Oferă servicii premium: strategie personalizată de marketing, promovare avansată, suport juridic.
+- Se semnează un contract ferm, cu drepturi și obligații clare.
+- Agentul primește comision indiferent cum se finalizează tranzacția — chiar dacă proprietarul găsește singur clientul sau dacă agentul colaborează cu alți agenți, comisionul stabilit revine agentului cu contract de exclusivitate.
+
+## Comparație directă
+
+| Criteriu | Reprezentare exclusivă | Intermediere liberă |
+|---|---|---|
+| Cine vinde | Un singur agent dedicat | Mai mulți agenți în paralel |
+| Marketing | Strategie premium, investiție reală | Anunțuri copy-paste, fără investiție |
+| Prețul afișat | Unic și controlat | Diferit pe fiecare canal |
+| Comision agent | Garantat prin contract | Nesigur — descurajează efortul |
+| Experiența proprietarului | Un punct de contact, claritate | Haos, negocieri paralele, confuzie |
+
+> **Pe scurt:** exclusivitatea nu limitează numărul de cumpărători — îi concentrează. Un singur agent răspunde de rezultat, în loc ca nimeni să răspundă de nimic.`,
+        },
+      },
+      {
+        slug: "avantajele-reprezentarii-exclusive",
+        order: 20,
+        title: { ro: "Avantajele reprezentării exclusive (proprietar + agent)" },
+        excerpt: {
+          ro: "Mulți proprietari cred că exclusivitatea le limitează cumpărătorii. Realitatea e exact opusă — pentru proprietar înseamnă preț mai bun și mai puțin stres, iar pentru agent, un comision garantat.",
+        },
+        content: {
+          ro: `Mulți proprietari ezită să semneze un contract de exclusivitate, de teamă că ar limita numărul de cumpărători interesați. Realitatea este exact opusă.
+
+## Pentru proprietar
+
+- **Serviciu complet:** agentul dedicat se ocupă de tot procesul — evaluare, promovare, negociere și finalizarea tranzacției.
+- **Preț mai bun:** o strategie clară de vânzare asigură obținerea prețului maxim.
+- **Marketing personalizat:** campanii targetate, fotografii profesionale, tururi virtuale, reclame plătite.
+- **Economie de timp:** se evită haosul vizionărilor multiple cu agenți diferiți.
+- **Siguranță juridică:** totul se desfășoară legal, fără riscuri ascunse.
+- **Implicare 100%:** având siguranța comisionului, agentul se poate dedica complet promovării proprietății.
+- **Un singur punct de contact:** fără confuzii și fără negocieri paralele.
+- **Mai puțin stres și mai multă transparență** pe tot parcursul vânzării.
+
+Agentul reprezintă interesele proprietarului și construiește o strategie personalizată pentru a obține cel mai bun preț.
+
+## Pentru agent
+
+Pentru agentul imobiliar, acest tip de contract este calea sigură spre succes:
+
+- **Comision garantat** — nu mai există riscul de a lucra gratuit.
+- **Control asupra tranzacției** — agenții nu se concurează reciproc, ci colaborează.
+- **Client mai mulțumit** — proprietarii primesc servicii premium.
+- **Branding personal** — devii expertul din zona ta.
+
+> **Reține:** sub brandurile **Transilvania Grand Estate** (premium) și **Adorys** (volum), exclusivitatea îți permite să investești cu încredere în marketing, pentru că rezultatul muncii tale e protejat prin contract.`,
+        },
+      },
+      {
+        slug: "cum-convingi-proprietarul",
+        order: 30,
+        title: { ro: "Cum convingi un proprietar să semneze exclusivitate" },
+        excerpt: {
+          ro: "Cheia este educarea clientului. Majoritatea nu înțeleg beneficiile exclusivității — așa că le explici concret, le demonstrezi valoarea serviciului și le adresezi obiecțiile.",
+        },
+        content: {
+          ro: `Cheia este **educarea clientului**. Majoritatea proprietarilor nu înțeleg beneficiile exclusivității, așa că trebuie să le explici clar.
+
+## 1. Prezintă avantajele concrete
+
+Fă o comparație directă între intermedierea liberă și exclusivitate (exact ce ai învățat în lecțiile anterioare) și folosește exemple de succes. Proprietarul trebuie să vadă, punct cu punct, ce câștigă.
+
+## 2. Demonstrează valoarea serviciului tău
+
+- Arată-i strategia ta de marketing detaliată și diferența dintre o promovare potrivită și o mulțime de anunțuri copy-paste publicate de mai mulți agenți, care induc în eroare clienții interesați și îi fac să renunțe la contactarea proprietății.
+- Explică procesul de selecție a cumpărătorilor potriviți — posibil tocmai datorită relației mult mai detaliate pe care o ai cu proprietarul.
+
+## 3. Abordează obiecțiile
+
+**„Dar dacă alt agent are un cumpărător?"**
+→ „Colaborăm cu alți agenți prin MLS-uri, grupuri și networking personal. Expunerea rămâne la fel de mare — diferența e că eu țin legătura cu ceilalți agenți, nu dumneavoastră."
+
+**„De ce să aleg un singur agent?"**
+→ „Un singur agent dedicat lucrează 100% pentru dumneavoastră, mai ales fiind sigur că încasează comisionul din tranzacție."
+
+> **Ideea de bază:** nu te impui, ci explici. Proprietarul semnează când înțelege că exclusivitatea lucrează în favoarea lui, nu împotriva lui.`,
+        },
+      },
+      {
+        slug: "contractul-de-exclusivitate",
+        order: 40,
+        title: { ro: "Contractul de exclusivitate, obligațiile părților și comisioanele" },
+        excerpt: {
+          ro: "Ce trebuie să conțină un contract solid, ce obligații are fiecare parte, comisioanele standard (3-5%) și cum împarți comisionul atunci când colaborezi cu alți agenți.",
+        },
+        content: {
+          ro: `Un contract solid elimină temerile proprietarului și protejează ambele părți.
+
+> **Resurse:** descarcă draftul de contract de exclusivitate din secțiunea **RESURSE**, studiază-l și stăpânește-l înainte de a-l propune unui proprietar.
+
+## Ce trebuie să conțină contractul
+
+- Identificarea părților și a proprietății.
+- Durata contractului (de obicei 3-6 luni).
+- Comisionul agentului.
+- Obligațiile agentului: marketing, negociere, verificarea actelor.
+- Obligațiile proprietarului: disponibilitate pentru vizionări, exclusivitate.
+
+## Obligațiile fiecărei părți
+
+**Agentul trebuie să:**
+- promoveze activ proprietatea;
+- informeze constant clientul despre stadiul și evoluția proprietății listate;
+- organizeze vizionări și negocieri eficiente.
+
+**Proprietarul trebuie să:**
+- ofere acces la proprietate;
+- colaboreze și să nu listeze proprietatea la alți agenți.
+
+## Comisioanele standard și colaborarea cu alți agenți
+
+- Standard, comisionul pentru reprezentare exclusivă este de **3-5% din prețul de vânzare**.
+- Colaborarea cu alți agenți este esențială. De obicei, comisionul total se împarte **50%-50%**, dar te poți înțelege și la alte procente cu agentul cu care colaborezi.
+- **Cumpărătorul nu este comisionat** — proprietarul plătește serviciul, pentru că el beneficiază de promovare, negociere și securitatea tranzacției.
+
+> **Exemplu:** ai un comision de 4% de la proprietar (standard). Poți ceda agentului colaborator 1% sau 2% din comisionul tău. Procentul se negociază de la caz la caz, sau îți poți stabili deja public oferta de colaborare.`,
+        },
+      },
+      {
+        slug: "strategii-de-marketing-personalizat",
+        order: 50,
+        title: { ro: "Strategii de marketing personalizat pentru reprezentarea exclusivă" },
+        excerpt: {
+          ro: "Tehnicile care atrag cumpărătorii potriviți și maximizează vizibilitatea: fotografii și tururi virtuale, social media, anunțuri optimizate, email marketing, networking și colaborarea prin MLS.",
+        },
+        content: {
+          ro: `Pentru că ai siguranța comisionului, te poți implica 100% în promovare. Iată cele mai eficiente metode pentru a atrage cumpărătorii potriviți și a maximiza vizibilitatea ofertelor.
+
+## Fotografii calitative și tururi virtuale
+
+Prima impresie contează: circa **90% dintre cumpărători își bazează decizia pe imagini**. Fotografiile de calitate sporesc interesul și aduc mai multe vizionări.
+
+Elemente esențiale pentru fotografii imobiliare bune:
+- iluminare naturală și unghiuri potrivite;
+- evidențierea punctelor forte ale proprietății;
+- editare profesională pentru claritate și atractivitate.
+
+> **Atenție:** editarea profesională nu înseamnă să ștergi defecte sau să faci retușuri mincinoase. Proprietatea trebuie să arate real.
+
+Folosește și **tururi video** pentru o experiență interactivă, videoclipuri de prezentare pentru storytelling imobiliar și, unde se potrivește, transmisiuni live.
+
+## Promovare pe rețelele sociale
+
+- **Facebook și Instagram:** targetare precisă pe baza intereselor și comportamentului utilizatorilor.
+- **TikTok și YouTube:** conținut video captivant care generează engagement.
+- **LinkedIn:** networking cu investitori și profesioniști din industrie.
+
+Strategii eficiente: conținut valoros (postări educaționale, studii de caz, povești de succes), reclame plătite targetate și colaborări cu influenceri imobiliari pentru credibilitate.
+
+## Anunțuri optimizate
+
+- Selectează platformele potrivite: **Imobiliare.ro, Storia, OLX, Idealista** (expunere națională și internațională).
+- Scrie descrieri care evidențiază beneficiile unice ale proprietății.
+- Folosește cuvinte cheie pentru SEO imobiliar.
+- Folosește pachete premium pentru promovare extinsă și poziționare prioritară.
+
+## Puterea email marketingului
+
+- Construiește o bază de date cu clienți și investitori potențiali.
+- Automatizează campaniile pentru nurturing (ex.: follow-up-uri strategice).
+- Trimite newslettere lunare cu oferte exclusive, tendințe de piață și sfaturi utile.
+
+## Networking strategic
+
+- Evenimente de profil și conferințe imobiliare.
+- Parteneriate cu dezvoltatori, arhitecți și firme de design interior.
+- Open house-uri pentru agenți și cumpărători VIP.
+
+## Colaborări cu alți agenți prin MLS
+
+**MLS (Multiple Listing Service)** este o platformă prin care agenții își împărtășesc ofertele (grupuri, aplicații etc.). Interesează-te cum găsești un astfel de MLS în orașul tău (caută pe Google, social media etc.).
+
+Beneficii ale colaborării prin MLS:
+- acces la un număr mai mare de cumpărători interesați;
+- credibilitate și profesionalism crescute în industrie;
+- reducerea timpului de vânzare prin cooperare activă.
+
+Metoda de colaborare cu agentul care vine cu clientul: îi cedezi o parte din comisionul primit de la proprietar. De exemplu, dintr-un comision de 4% îi poți ceda 1-2%; procentul se negociază sau îl stabilești public ca ofertă de colaborare.`,
+        },
+      },
+      {
+        slug: "vanzarea-serviciului-de-exclusivitate",
+        order: 60,
+        title: { ro: "Vânzarea eficientă a serviciului de exclusivitate către proprietari" },
+        excerpt: {
+          ro: "Cum vinzi serviciul de exclusivitate: construiește-ți autoritatea, fii transparent în fiecare etapă, demonstrează rezultate prin studii de caz și testimoniale, apoi închide profesionist.",
+        },
+        content: {
+          ro: `În primul rând, stabilește o **întâlnire în persoană** cu proprietarul căruia urmează să-i vinzi acest serviciu. În cazuri excepționale poți apela la Zoom sau alte aplicații de ședințe online. Important este să stabilești o conexiune personalizată cu clientul.
+
+## 1. Construiește-ți autoritatea
+
+Proprietarii au nevoie de încredere înainte de a-ți încredința vânzarea. Agenții percepuți ca experți atrag mai mulți clienți fără efort suplimentar.
+
+> **Atenție:** vorbim despre **agenți**, nu despre agenții! Scoate-ți din cap ideea că ai nevoie de o agenție mare în spate ca să poți vinde servicii de exclusivitate.
+
+Canale eficiente pentru autoritate:
+- Scrie articole despre avantajele exclusivității și despre tendințele pieței.
+- Oferă potențialilor clienți materiale educative care explică avantajele acestui tip de colaborare.
+- Creează videoclipuri scurte (1-3 min) în care explici de ce reprezentarea exclusivă funcționează mai bine. Postează pe YouTube, Facebook, Instagram și TikTok. (Exemplu: „5 greșeli pe care proprietarii le fac când listează cu mai mulți agenți".)
+- Pe social media, arată că ești activ: distribuie vânzări recente, tururi video și feedback de la clienți; folosește grupurile imobiliare pentru a interacționa direct.
+- Prin email marketing, construiește o listă de proprietari și trimite periodic newslettere utile (ex.: „De ce este periculos să colaborezi cu mai mulți agenți?").
+
+## 2. Fii transparent — explică fiecare etapă
+
+Mulți proprietari sunt sceptici tocmai pentru că nu înțeleg avantajele. Claritatea le dă siguranță.
+
+**Mit:** „Dacă lucrez cu mai mulți agenți, am șanse mai mari să vând repede."
+**Realitate:** „Când mai mulți agenți listează aceeași proprietate, nu investesc în marketing și scad prețul ca să grăbească vânzarea."
+
+Explică-i că **tu** vei colabora cu ceilalți agenți din oraș și că expunerea va fi la fel de bună sau chiar mai bună — avantajul fiind că tu ții legătura cu ei, nu proprietarul, scutindu-l de muncă.
+
+Procesul, pas cu pas:
+1. **Evaluare corectă a prețului** — analize de piață pentru un preț competitiv.
+2. **Marketing personalizat** — fotografii profesionale, tururi virtuale, reclame plătite.
+3. **Screening-ul cumpărătorilor** — doar clienți serioși ajung la proprietate.
+4. **Negociere profesionistă** — obținerea celui mai bun preț.
+5. **Ghidare până la finalizare** — asistență juridică și logistică.
+
+Fii sincer despre așteptări și rezultate: spune clar ce poate și ce nu poate face exclusivitatea și estimează timpul de vânzare pe baza unor date reale. Oferă un contract clar, explicat pas cu pas — scopul tău este să protejezi interesele proprietarului, spre deosebire de colaborarea la liber cu un agent care reprezintă interesele cumpărătorului.
+
+## 3. Demonstrează rezultatele — studii de caz și testimoniale
+
+- **Studii de caz reale:** compară două proprietăți similare, una vândută exclusiv vs. una în regim deschis. („Am vândut un apartament în 30 de zile, în timp ce altele listate fără exclusivitate au rămas pe piață luni întregi.")
+- **Testimoniale:** culege recenzii video sau text de la foști clienți și postează-le pe site și social media. Folosește întrebări strategice: „Ce diferență a făcut exclusivitatea în procesul de vânzare?"
+- **Statistici relevante:** „Proprietățile vândute în exclusivitate se tranzacționează cu circa 15% mai rapid." / „80% dintre clienții mei au obținut un preț mai bun prin reprezentare exclusivă."
+- **Before & after:** arată cum ai preluat o proprietate fără succes în regim deschis și ai vândut-o rapid prin exclusivitate (poze cu îmbunătățiri prin staging, noi strategii de marketing etc.).
+
+## Tehnici de încheiere
+
+- **Conștientizează problemele colaborării fără exclusivitate:** „Dacă agenții nu investesc în promovare, cine pierde?" / „Ce se întâmplă dacă prețul scade din cauza concurenței nesănătoase?" Un anunț postat de mai mulți agenți cu prețuri diferite denotă neseriozitate și alungă clienții.
+- **Creează urgență (reală):** „Acum este un moment bun pentru a vinde." / „Avem deja cumpărători interesați de acest tip de proprietate."
+- **Oferă o garanție:** „Dacă în X zile nu aduc vizionări relevante, revizuim strategia." / „Promit transparență totală și actualizări constante."
+- **Închide direct și profesionist:** „Dacă sunteți de acord, putem începe chiar acum. Când ați avea timp pentru o întâlnire?"
+
+> **Sarcină practică:** descarcă draftul de contract și studiază-l până îl stăpânești. Sună 5 proprietari și propune-le întâlniri în zilele următoare. Întâlnește-te cu fiecare și aplică, pas cu pas, vânzarea învățată aici. Urmărește rezultatul și notează ce consideri că nu ai făcut bine.`,
+        },
+      },
+    ],
+  },
 ];
