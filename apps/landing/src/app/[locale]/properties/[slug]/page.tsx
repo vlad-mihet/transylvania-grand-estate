@@ -31,9 +31,9 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const { slug, locale } = await params;
   try {
-    const raw = await fetchApi<ApiProperty>(`/properties/${slug}`);
-    const property = mapApiProperty(raw);
     const loc = locale as Locale;
+    const raw = await fetchApi<ApiProperty>(`/properties/${slug}?locale=${loc}`);
+    const property = mapApiProperty(raw);
     return {
       title: localize(property.title, loc),
       description: localize(property.shortDescription, loc),
@@ -49,11 +49,12 @@ export default async function PropertyDetailPage({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
+  const locale = (await getLocale()) as Locale;
 
   let property;
   let agent: { firstName: string; lastName: string; phone: string; photo?: string } | null = null;
   try {
-    const raw = await fetchApi<ApiProperty>(`/properties/${slug}`);
+    const raw = await fetchApi<ApiProperty>(`/properties/${slug}?locale=${locale}`);
     property = mapApiProperty(raw);
     if (raw.agent && raw.agent.phone) {
       agent = {
@@ -67,14 +68,13 @@ export default async function PropertyDetailPage({
     notFound();
   }
 
-  const locale = (await getLocale()) as Locale;
   const t = await getTranslations("PropertyDetail");
   const tBreadcrumb = await getTranslations("Breadcrumb");
 
   // Similar-properties sidebar — degrade to an empty list on failure rather
   // than 500ing the entire detail page.
   const similarResult = await fetchApiSafe<ApiProperty[]>(
-    `/properties?city=${property.location.citySlug}&limit=4`,
+    `/properties?city=${property.location.citySlug}&limit=4&locale=${locale}`,
   );
   const similar = mapApiProperties(similarResult.ok ? similarResult.data : [])
     .filter((p) => p.slug !== slug)

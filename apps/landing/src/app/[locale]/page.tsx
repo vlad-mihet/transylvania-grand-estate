@@ -1,7 +1,7 @@
-import { getTranslations } from "next-intl/server";
+import { getLocale, getTranslations } from "next-intl/server";
 import { fetchApi } from "@tge/api-client";
 import { mapApiProperties } from "@tge/api-client";
-import type { City, Developer, Testimonial, ApiProperty } from "@tge/types";
+import type { City, Developer, Testimonial, ApiProperty, Locale } from "@tge/types";
 import { HomeHeroWithSplash } from "@/components/sections/home-hero-with-splash";
 import { FeaturedProperties } from "@/components/sections/featured-properties";
 import { ZigZagShowcase } from "@/components/sections/zigzag-showcase";
@@ -16,9 +16,10 @@ import { PartnerLogoTicker } from "@/components/sections/partner-logo-ticker";
 
 export default async function HomePage() {
   const t = await getTranslations("HomePage");
+  const locale = (await getLocale()) as Locale;
 
   const [propertiesRaw, cities, developers, testimonials] = await Promise.all([
-    fetchApi<ApiProperty[]>("/properties?featured=true&limit=6"),
+    fetchApi<ApiProperty[]>(`/properties?featured=true&limit=6&locale=${locale}`),
     fetchApi<City[]>("/cities?featured=true"),
     fetchApi<Developer[]>("/developers?featured=true"),
     fetchApi<Testimonial[]>("/testimonials"),

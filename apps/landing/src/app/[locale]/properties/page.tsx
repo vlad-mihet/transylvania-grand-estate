@@ -38,7 +38,7 @@ export default async function PropertiesPage({
   // so fetchApiSafe swallows per-request errors while we still surface the
   // primary listing failure if `/properties` is down.
   const [raw, contextCityResult, contextDeveloperResult] = await Promise.all([
-    fetchApi<ApiProperty[]>("/properties?limit=100"),
+    fetchApi<ApiProperty[]>(`/properties?limit=100&locale=${locale}`),
     fromContext === "city" && citySlug
       ? fetchApiSafe<ApiCity>(`/cities/${citySlug}`)
       : Promise.resolve({ ok: false as const, error: null }),
