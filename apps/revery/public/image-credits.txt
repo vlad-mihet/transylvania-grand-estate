@@ -81,12 +81,12 @@ License URL: https://creativecommons.org/licenses/by-sa/2.0/
 Changes: downloaded from the source image URL and re-hosted in Adorys storage.
 
 Sfântu Gheorghe city image:
-Source: Sfantu wiki
-Author: Compactforever
-URL: https://commons.wikimedia.org/w/index.php?curid=10239236
-License: CC BY 2.5
-License URL: https://creativecommons.org/licenses/by/2.5/
-Changes: downloaded from the source image URL and re-hosted in Adorys storage.
+Source: Winter golden-hour view of the fortified Reformed Church (Vártemplom) above the town, Sfântu Gheorghe (Covasna)
+Author: carpathianland (Flickr)
+URL: https://www.flickr.com/photos/carpathianland/8369186932
+License: CC BY-NC 2.0 (non-commercial — TO BE CLEARED for commercial use)
+License URL: https://creativecommons.org/licenses/by-nc/2.0/
+Changes: downloaded, top-biased crop to 16:10 and re-hosted in shared @tge/assets.
 
 Slatina city image:
 Source: RO OT Slatina center from Gradiste hill 1
@@ -238,4 +238,28 @@ Author: Gabriel Vasiliu (Unsplash @gabimedia)
 URL: https://unsplash.com/photos/C8qx3J72De4
 License: Unsplash License (free, attribution not required)
 License URL: https://unsplash.com/license
+Changes: downloaded, centre-cropped to 16:10 and re-hosted in shared @tge/assets.
+
+Botoșani city image:
+Source: Historic pedestrian centre of Botoșani
+Author: Bogdan29roman (Wikimedia Commons)
+URL: https://commons.wikimedia.org/wiki/File:Casco_antiguo_Bt.jpg
+License: CC BY-SA 3.0 RO
+License URL: https://creativecommons.org/licenses/by-sa/3.0/ro/
+Changes: downloaded, centre-cropped to 16:10 and re-hosted in shared @tge/assets.
+
+Miercurea Ciuc city image:
+Source: Mikó Castle in warm afternoon light, Miercurea Ciuc
+Author: Andrei Stroe (Wikimedia Commons)
+URL: https://commons.wikimedia.org/wiki/File:RO_HR_Miercurea_Ciuc_Miko_castle.jpg
+License: CC BY-SA 3.0
+License URL: https://creativecommons.org/licenses/by-sa/3.0/
+Changes: downloaded, centre-cropped to 16:10 and re-hosted in shared @tge/assets.
+
+Slobozia city image:
+Source: Aerial winter view of the Ascension Cathedral (Catedrala Înălțarea Domnului), Slobozia
+Author: Episcopia Sloboziei și Călărașilor (Biroul Mass-Media)
+URL: https://www.sfesc.ro/p/catedrala-din-slobozia-sub-mantia
+License: Diocese-owned, license unconfirmed (TO BE CLEARED)
+License URL: n/a
 Changes: downloaded, centre-cropped to 16:10 and re-hosted in shared @tge/assets.
