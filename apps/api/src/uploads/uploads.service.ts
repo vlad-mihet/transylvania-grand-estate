@@ -1,5 +1,9 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { StorageService, UploadResult } from './storage/storage.interface';
+import {
+  StorageService,
+  UploadFromUrlOptions,
+  UploadResult,
+} from './storage/storage.interface';
 
 @Injectable()
 export class UploadsService {
@@ -20,6 +24,19 @@ export class UploadsService {
     directory: string,
   ): Promise<UploadResult[]> {
     return Promise.all(files.map((file) => this.storageService.upload(file, directory)));
+  }
+
+  /**
+   * Mirror a remote image URL into our own storage (CRM feeds forbid
+   * hotlinking). Returns the same `UploadResult` shape as a multipart upload;
+   * `filePath` is the storage key to persist for later cleanup.
+   */
+  async uploadFromUrl(
+    url: string,
+    directory: string,
+    options?: UploadFromUrlOptions,
+  ): Promise<UploadResult> {
+    return this.storageService.uploadFromUrl(url, directory, options);
   }
 
   async deleteFile(filePath: string): Promise<void> {

@@ -4,7 +4,12 @@ import * as fs from 'fs/promises';
 import * as path from 'path';
 import { v4 as uuid } from 'uuid';
 import { resolveUploadsDir } from '../../common/config/uploads-path';
-import { StorageService, UploadResult } from './storage.interface';
+import {
+  StorageService,
+  UploadFromUrlOptions,
+  UploadResult,
+} from './storage.interface';
+import { downloadRemoteImage } from './download-image.util';
 
 @Injectable()
 export class LocalStorageService implements StorageService {
@@ -35,6 +40,30 @@ export class LocalStorageService implements StorageService {
       originalName: file.originalname,
       mimeType: file.mimetype,
       size: file.size,
+    };
+  }
+
+  async uploadFromUrl(
+    url: string,
+    directory: string,
+    options?: UploadFromUrlOptions,
+  ): Promise<UploadResult> {
+    const { buffer, mimeType, ext, size } = await downloadRemoteImage(url, {
+      signal: options?.signal,
+      allowedHosts: options?.allowedHosts,
+    });
+    const filename = `${uuid()}${ext}`;
+    const dirPath = path.join(this.uploadDir, directory);
+    await fs.mkdir(dirPath, { recursive: true });
+    const urlPath = path.posix.join(directory, filename);
+    const fsPath = path.join(directory, filename);
+    await fs.writeFile(path.join(this.uploadDir, fsPath), buffer);
+    return {
+      filePath: urlPath,
+      publicUrl: this.getPublicUrl(urlPath),
+      originalName: url,
+      mimeType,
+      size,
     };
   }
 

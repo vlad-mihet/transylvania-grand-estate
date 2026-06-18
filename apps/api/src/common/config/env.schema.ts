@@ -103,6 +103,35 @@ const baseSchema = z.object({
   // directly — so the parsing and naming live in one place.
   EMAIL_VERIFICATION_DISABLED: z.enum(['0', '1']).optional(),
   GOOGLE_AUTH_DISABLED: z.enum(['0', '1']).optional(),
+
+  // ── CRM listing sync (REBS) ──────────────────────────────
+  // Optional everywhere: the REBS API key is issued manually by the vendor and
+  // not yet in hand. When REBS_API_KEY is unset (or REBS_SYNC_ENABLED is not
+  // '1') the sync no-ops with a warn — the rest of the API boots normally. A
+  // base URL is still useful without the key for pointing local/dev runs at
+  // the demo instance (https://demo.crmrebs.com/api/public) or a fixture.
+  REBS_API_KEY: z.string().optional(),
+  REBS_BASE_URL: z
+    .string()
+    .url()
+    .optional()
+    .default('https://client-396fe343.crmrebs.com/api/public'),
+  REBS_SYNC_ENABLED: z.enum(['0', '1']).optional(),
+  // Reconcile circuit breaker: the sync refuses to soft-unpublish more than
+  // this share of a source's live catalog in a single run (a mass drop is an
+  // upstream anomaly, not a wave of sales). 0–1; default 0.2 in the
+  // orchestrator when unset/invalid.
+  CRM_RECONCILE_MAX_UNPUBLISH_RATIO: z.coerce.number().min(0).max(1).optional(),
+  // SSRF allowlist for mirrored image hosts (the media mirror downloads URLs
+  // straight from the feed). Comma-separated; a host matches if it equals or is
+  // a subdomain of an entry. Empty disables the allowlist but the private/
+  // link-local/metadata-IP block always applies. Defaults to REBS's domain.
+  // TODO(M1): confirm the REAL REBS image host against a live feed response
+  // before flipping REBS_SYNC_ENABLED=1. The API is on *.crmrebs.com but image
+  // URLs may be served from another host (fixtures use cdn.rebs.ro). If the
+  // default doesn't cover the actual CDN, every photo download is rejected by
+  // the allowlist and listings import with NO images (only a buried warn).
+  CRM_IMAGE_HOST_ALLOWLIST: z.string().optional().default('crmrebs.com'),
 });
 
 const productionSchema = baseSchema.extend({
