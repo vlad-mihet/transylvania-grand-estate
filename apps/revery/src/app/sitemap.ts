@@ -59,7 +59,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   // Pull everything in parallel; any single failure yields an empty list so
   // the sitemap still ships the static routes when the backend is flaky.
   const [properties, cities, developers, agents, articles] = await Promise.all([
-    safe<ApiProperty>(() => fetchProperties({ limit: 1000 })),
+    safe<ApiProperty>(() => fetchProperties({ limit: 1000 }, defaultLocale)),
     safe<City>(() => fetchApi<City[]>("/cities")),
     safe<ApiDeveloper>(() => fetchApi<ApiDeveloper[]>("/developers")),
     safe<Agent>(() => fetchApi<Agent[]>("/agents?active=true")),

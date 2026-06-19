@@ -51,7 +51,7 @@ export default async function DeveloperDetailPage({ params }: { params: Promise<
   } catch {
     notFound();
   }
-  const propertiesRaw = await fetchPropertiesByDeveloper(dev.id, 24);
+  const propertiesRaw = await fetchPropertiesByDeveloper(dev.id, locale, 24);
   const properties = mapApiProperties(propertiesRaw);
 
   return (

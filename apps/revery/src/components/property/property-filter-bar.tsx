@@ -1,7 +1,8 @@
 "use client";
 
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import { useRouter } from "@/i18n/navigation";
+import type { Locale } from "@tge/types";
 import { useSearchParams } from "next/navigation";
 import { Input } from "@tge/ui";
 import {
@@ -184,6 +185,7 @@ export function PropertyFilterBar({
   const [countLoading, setCountLoading] = useState(false);
   const countReqIdRef = useRef(0);
   const isFirstCountEffect = useRef(true);
+  const locale = useLocale() as Locale;
 
   useEffect(() => {
     // Skip the first pass: `initialResultCount` already reflects the URL
@@ -225,7 +227,7 @@ export function PropertyFilterBar({
 
     const timer = setTimeout(async () => {
       try {
-        const total = await fetchPropertiesCount(params);
+        const total = await fetchPropertiesCount(params, locale);
         if (reqId === countReqIdRef.current) setResultCount(total);
       } catch (err) {
         console.error("Failed to fetch property count", err);
@@ -235,7 +237,7 @@ export function PropertyFilterBar({
     }, COUNT_DEBOUNCE_MS);
 
     return () => clearTimeout(timer);
-  }, [filters, locationSelections]);
+  }, [filters, locationSelections, locale]);
 
   return (
     <div className="bg-card border-b border-border">
