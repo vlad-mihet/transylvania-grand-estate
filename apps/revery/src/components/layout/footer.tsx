@@ -17,7 +17,7 @@ const socialLinks = [
 const contact = {
   phone: CONTACT_PHONE.display,
   tel: CONTACT_PHONE.tel,
-  email: "contact@revery.ro",
+  email: "contact@adorys.ro",
 };
 
 export function Footer() {

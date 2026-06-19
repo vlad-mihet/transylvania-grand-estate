@@ -98,10 +98,10 @@ export default async function ContactPage({
                       Email
                     </p>
                     <a
-                      href="mailto:hello@revery.ro"
+                      href="mailto:contact@adorys.ro"
                       className="text-muted-foreground text-sm hover:text-primary transition-colors"
                     >
-                      hello@revery.ro
+                      contact@adorys.ro
                     </a>
                   </div>
                 </div>
