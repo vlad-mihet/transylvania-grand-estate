@@ -45,7 +45,7 @@ export default async function CityDetailPage({ params }: { params: Promise<Param
   try {
     [city, propertiesRaw] = await Promise.all([
       fetchApi<City>(`/cities/${slug}`),
-      fetchPropertiesByCity(slug, 24),
+      fetchPropertiesByCity(slug, locale, 24),
     ]);
   } catch {
     notFound();

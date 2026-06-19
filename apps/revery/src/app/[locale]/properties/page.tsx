@@ -62,13 +62,13 @@ export default async function PropertiesPage({
     contextCityResult,
     initialResultCount,
   ] = await Promise.all([
-    fetchProperties({ limit: 100 }),
-    fetchPropertyMapPins(),
+    fetchProperties({ limit: 100 }, locale),
+    fetchPropertyMapPins({}, locale),
     fetchApi<ApiCounty[]>("/counties"),
     fromContext === "city" && citySlug
       ? fetchApiSafe<ApiCity>(`/cities/${citySlug}`)
       : Promise.resolve(null),
-    fetchPropertiesCount(filterQs),
+    fetchPropertiesCount(filterQs, locale),
   ]);
 
   const properties = mapApiProperties(raw);

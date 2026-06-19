@@ -34,7 +34,7 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const { slug, locale } = await params;
   try {
-    const raw = await fetchPropertyBySlug(slug);
+    const raw = await fetchPropertyBySlug(slug, locale);
     if (raw.tier && raw.tier !== REVERY_TIER) {
       return {};
     }
@@ -74,7 +74,7 @@ export default async function PropertyDetailPage({
   let property;
   let agent: PropertyAgent | null = null;
   try {
-    const raw = await fetchPropertyBySlug(slug);
+    const raw = await fetchPropertyBySlug(slug, locale);
     // Slug lookups ignore tier on the API side, so we 404 luxury properties
     // here to keep them from leaking into the Revery frontend via direct URL.
     if (raw.tier && raw.tier !== REVERY_TIER) {
@@ -95,6 +95,7 @@ export default async function PropertyDetailPage({
 
   const similarRaw = await fetchPropertiesByCity(
     property.location.citySlug,
+    locale,
     5,
   );
   const similar = mapApiProperties(similarRaw)

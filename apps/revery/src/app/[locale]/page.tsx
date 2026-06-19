@@ -1,4 +1,4 @@
-import { getTranslations } from "next-intl/server";
+import { getLocale, getTranslations } from "next-intl/server";
 import { fetchApi, fetchApiSafe } from "@tge/api-client";
 import { mapApiProperties, mapApiArticles, mapApiCounties } from "@tge/api-client";
 import { fetchProperties } from "@/lib/properties";
@@ -32,10 +32,11 @@ export async function generateMetadata({ params }: { params: Promise<PageParams>
 }
 
 export default async function HomePage() {
+  const locale = (await getLocale()) as Locale;
   const t = await getTranslations("HomePage");
 
   const [propertiesRaw, cities, countiesRaw, articlesResult] = await Promise.all([
-    fetchProperties({ limit: 8, sort: "newest" }),
+    fetchProperties({ limit: 8, sort: "newest" }, locale),
     fetchApi<City[]>("/cities?featured=true"),
     fetchApi<ApiCounty[]>("/counties"),
     fetchApiSafe<ApiArticle[]>(

@@ -52,7 +52,7 @@ export default async function AgentDetailPage({ params }: { params: Promise<Para
   }
   const name = `${agent.firstName} ${agent.lastName}`;
 
-  const propertiesRaw = await fetchPropertiesByAgent(agent.id, 24);
+  const propertiesRaw = await fetchPropertiesByAgent(agent.id, locale, 24);
   const properties = mapApiProperties(propertiesRaw);
 
   return (
