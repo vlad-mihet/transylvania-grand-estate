@@ -16,6 +16,7 @@
     "seed:academy": "node --env-file=apps/api/.env scripts/seed-academy.mjs",
     "seed:academy:lessons": "node --env-file=apps/api/.env scripts/import-lessons-from-whatsapp.mjs",
     "seed:academy:legal": "node --env-file=apps/api/.env scripts/import-legal-lessons.mjs",
+    "rebs:validate": "node --env-file=apps/api/.env scripts/validate-rebs-feed.mjs",
     "lint": "nx lint landing",
     "lint:all": "nx run-many --target=lint"
   },
