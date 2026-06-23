@@ -27,6 +27,7 @@ import { AdminDashboardModule } from './admin/dashboard/admin-dashboard.module';
 import { CountiesModule } from './counties/counties.module';
 import { LocationsModule } from './locations/locations.module';
 import { FinancialDataModule } from './financial-data/financial-data.module';
+import { CrmSyncModule } from './crm-sync/crm-sync.module';
 import { HealthModule } from './health/health.module';
 import { SearchModule } from './search/search.module';
 import { JwtAuthGuard } from './common/guards/jwt-auth.guard';
@@ -203,6 +204,7 @@ const serveStaticModules =
     CountiesModule,
     LocationsModule,
     FinancialDataModule,
+    CrmSyncModule,
     HealthModule,
     SearchModule,
   ],

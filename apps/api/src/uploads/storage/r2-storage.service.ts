@@ -4,6 +4,7 @@ import { S3Client, PutObjectCommand, DeleteObjectCommand } from '@aws-sdk/client
 import { v4 as uuid } from 'uuid';
 import * as path from 'path';
 import { StorageService, UploadResult } from './storage.interface';
+import { downloadRemoteImage } from './download-image.util';
 
 @Injectable()
 export class R2StorageService implements StorageService {
@@ -48,6 +49,35 @@ export class R2StorageService implements StorageService {
       originalName: file.originalname,
       mimeType: file.mimetype,
       size: file.size,
+    };
+  }
+
+  async uploadFromUrl(
+    url: string,
+    directory: string,
+    signal?: AbortSignal,
+  ): Promise<UploadResult> {
+    const { buffer, mimeType, ext, size } = await downloadRemoteImage(
+      url,
+      signal,
+    );
+    const key = `${directory}/${uuid()}${ext}`;
+
+    await this.s3.send(
+      new PutObjectCommand({
+        Bucket: this.bucket,
+        Key: key,
+        Body: buffer,
+        ContentType: mimeType,
+      }),
+    );
+
+    return {
+      filePath: key,
+      publicUrl: this.getPublicUrl(key),
+      originalName: url,
+      mimeType,
+      size,
     };
   }
 

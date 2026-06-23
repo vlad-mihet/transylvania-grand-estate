@@ -22,6 +22,19 @@ export class UploadsService {
     return Promise.all(files.map((file) => this.storageService.upload(file, directory)));
   }
 
+  /**
+   * Mirror a remote image URL into our own storage (CRM feeds forbid
+   * hotlinking). Returns the same `UploadResult` shape as a multipart upload;
+   * `filePath` is the storage key to persist for later cleanup.
+   */
+  async uploadFromUrl(
+    url: string,
+    directory: string,
+    signal?: AbortSignal,
+  ): Promise<UploadResult> {
+    return this.storageService.uploadFromUrl(url, directory, signal);
+  }
+
   async deleteFile(filePath: string): Promise<void> {
     return this.storageService.delete(filePath);
   }

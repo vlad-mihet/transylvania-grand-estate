@@ -416,6 +416,26 @@ model Property {
   //   shortDescription: LocalizedString, address: LocalizedString }
   draft Json?
 
+  // ── CRM sync provenance (CRM-agnostic) ──────────────────
+  // `source` names the originating adapter ('rebs' | null = native/admin).
+  // `externalId` is that adapter's stable id (REBS internal_id, stringified).
+  // The composite unique is the upsert key; both nullable so native rows
+  // (source = null) are never constrained and two CRMs can share an id value.
+  source           String?   // 'rebs' | null
+  externalId       String?   @map("external_id")
+  // CRM's own last-modified timestamp — drives change detection and the
+  // media re-download gate. Distinct from `updatedAt` (our row's mtime).
+  sourceModifiedAt DateTime? @map("source_modified_at")
+  // Ingestion state, ORTHOGONAL to the commercial `status` enum. Set when the
+  // feed drops a listing (per-item 404 or absent-from-walk) or when an import
+  // is quarantined (unknown city). Public reads filter `unpublishedAt IS NULL`;
+  // admin sees everything. Sync never touches `status`/`tier` — those stay
+  // human-owned after the first insert.
+  unpublishedAt    DateTime? @map("unpublished_at")
+  // Imported RO-only content was mirrored into `en`; flags rows a later
+  // (deferred) translation pass should backfill. Native rows stay false.
+  needsTranslation Boolean   @default(false) @map("needs_translation")
+
   // Relations
   developerId String?    @map("developer_id")
   developer   Developer? @relation(fields: [developerId], references: [id], onDelete: SetNull)
@@ -463,6 +483,11 @@ model Property {
   // bedrooms/bathrooms/area sliders on the search page.
   @@index([tier, citySlug, price])
   @@index([tier, bedrooms, bathrooms, area])
+  // Upsert key for CRM-sourced listings; both columns nullable (native rows
+  // are unconstrained — Postgres treats NULLs as distinct in a unique index).
+  @@unique([source, externalId], name: "source_external_id")
+  @@index([source])
+  @@index([unpublishedAt])
   @@map("properties")
 }
 
@@ -473,11 +498,20 @@ model PropertyImage {
   isHero    Boolean @default(false) @map("is_hero")
   sortOrder Int     @default(0) @map("sort_order")
 
+  // CRM-sync bookkeeping. `sourceUrl` is the original (forbidden-to-hotlink)
+  // CRM image URL — the dedupe key: a sync re-downloads only when the URL
+  // changes. `storageKey` is the R2/local object key, kept so cleanup can call
+  // storage.delete() directly without re-deriving the key from `src`. Both
+  // null for admin-uploaded images.
+  sourceUrl  String? @map("source_url")
+  storageKey String? @map("storage_key")
+
   propertyId String   @map("property_id")
   property   Property @relation(fields: [propertyId], references: [id], onDelete: Cascade)
 
   createdAt DateTime @default(now()) @map("created_at")
 
+  @@index([propertyId, sourceUrl])
   @@map("property_images")
 }
 
