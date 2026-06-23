@@ -9,34 +9,51 @@ import { RebsProperty } from './rebs.types';
 
 /**
  * Maps a raw REBS property into the canonical model. This is the ONLY file
- * that knows REBS field names. It is lossy by design: REBS fields with no
- * canonical home are dropped; nullable canonical fields stay null for the core
- * to default.
+ * that knows REBS field names + code tables. It is lossy by design: REBS fields
+ * with no canonical home are dropped; nullable canonical fields stay null for
+ * the core to default.
  *
  * Returns a skip result (rather than throwing) for listings we deliberately
- * don't import — not for-sale, no price, unmappable type, missing id/city —
- * so the adapter can log and continue the walk.
+ * don't import — not for-sale, no price, unsupported currency, non-residential
+ * type, missing id/city — so the adapter can log and continue the walk.
+ *
+ * Code tables verified against https://demo.crmrebs.com/api/doc/ + live demo data.
  */
 export type MapResult =
   | { ok: true; listing: CanonicalListingInput }
   | { ok: false; reason: string };
 
-/** REBS `property_type` (free text, Romanian) → our PropertyType enum. */
-function mapPropertyType(raw: string | null | undefined): PropertyType | null {
-  const t = (raw ?? '').toLowerCase();
-  if (!t) return null;
-  if (t.includes('apartament') || t.includes('garsonier') || t.includes('apart'))
-    return PropertyType.apartment;
-  if (t.includes('penthouse')) return PropertyType.penthouse;
-  if (t.includes('vil')) return PropertyType.villa;
-  if (t.includes('conac') || t.includes('mansion')) return PropertyType.mansion;
-  if (t.includes('palat') || t.includes('palace')) return PropertyType.palace;
-  if (t.includes('cabana') || t.includes('chalet')) return PropertyType.chalet;
-  if (t.includes('teren') || t.includes('lot') || t.includes('terrain'))
-    return PropertyType.terrain;
-  if (t.includes('casa') || t.includes('casă') || t.includes('house'))
-    return PropertyType.house;
-  return null;
+/**
+ * REBS numeric `property_type` → our PropertyType. REBS codes:
+ *   1 Apartment · 3 House/Villa · 4 Office · 5 Commercial · 6 Land ·
+ *   7 Industrial · 8 Hotel/Guesthouse · 9 Special.   (No code 2 in REBS.)
+ * Only residential + land map onto our enum; office/commercial/industrial/
+ * hotel/special have no home here and are skipped (logged) — out of scope for
+ * the REVERY/affordable brand in Phase 1.
+ */
+const REBS_PROPERTY_TYPE: Record<number, PropertyType> = {
+  1: PropertyType.apartment,
+  3: PropertyType.house,
+  6: PropertyType.terrain,
+};
+
+/** REBS numeric `currency_sale` → ISO. We price in EUR and convert RON; USD (3)
+ * and any other code are out of scope and skipped. */
+const REBS_CURRENCY: Record<number, string> = {
+  1: 'EUR',
+  2: 'RON',
+};
+
+function mapPropertyType(raw: unknown): PropertyType | null {
+  const code = Number(raw);
+  if (!Number.isInteger(code)) return null;
+  return REBS_PROPERTY_TYPE[code] ?? null;
+}
+
+function mapCurrency(raw: unknown): string | null {
+  const code = Number(raw);
+  if (!Number.isInteger(code)) return null;
+  return REBS_CURRENCY[code] ?? null;
 }
 
 /** REBS tag (Romanian) → amenity boolean key. Unmatched tags become features. */
@@ -62,6 +79,8 @@ const TAG_AMENITY_MAP: Array<[RegExp, string]> = [
 ];
 
 export function mapRebsProperty(raw: RebsProperty): MapResult {
+  // REBS `internal_id` is frequently empty in practice; fall back to the
+  // numeric `id` (stable) so the (source, externalId) key is always populated.
   const externalId = str(raw.internal_id) || str(raw.id);
   if (!externalId) return { ok: false, reason: 'missing internal_id/id' };
 
@@ -74,19 +93,28 @@ export function mapRebsProperty(raw: RebsProperty): MapResult {
     return { ok: false, reason: `${externalId}: no sale price` };
   }
 
+  const currency = mapCurrency(raw.currency_sale);
+  if (!currency) {
+    return {
+      ok: false,
+      reason: `${externalId}: unsupported currency_sale code "${raw.currency_sale}"`,
+    };
+  }
+
   const type = mapPropertyType(raw.property_type);
   if (!type) {
     return {
       ok: false,
-      reason: `${externalId}: unmapped property_type "${raw.property_type ?? ''}"`,
+      reason: `${externalId}: non-residential/unmapped property_type "${raw.property_type}"`,
     };
   }
 
   const cityName = str(raw.city);
   if (!cityName) return { ok: false, reason: `${externalId}: no city` };
 
-  const titleRo = str(raw.title) || `${cityName}`;
+  const titleRo = str(raw.title) || cityName;
   const descriptionRo = str(raw.description) || titleRo;
+  const descriptionEn = str(raw.description_en);
   const addressRo =
     [str(raw.street), str(raw.location_number), str(raw.zone), cityName]
       .filter(Boolean)
@@ -106,17 +134,23 @@ export function mapRebsProperty(raw: RebsProperty): MapResult {
     externalId,
     sourceModifiedAt: parseDate(raw.date_modified),
 
-    title: ro(titleRo),
-    description: ro(descriptionRo),
-    shortDescription: ro(truncateForShort(descriptionRo)),
+    // REBS carries English in title_en/description_en — use it when present so
+    // we ship real English rather than an RO placeholder. The core sets
+    // `needsTranslation` only for the fields where EN is still missing.
+    title: loc(titleRo, raw.title_en),
+    description: loc(descriptionRo, raw.description_en),
+    shortDescription: loc(
+      truncateForShort(descriptionRo),
+      descriptionEn ? truncateForShort(descriptionEn) : undefined,
+    ),
     price,
-    currency: (str(raw.currency_sale) || 'EUR').toUpperCase(),
+    currency,
     type,
 
     city: cityName,
     citySlug: slugify(cityName),
     neighborhood: str(raw.zone) || cityName,
-    address: ro(addressRo),
+    address: loc(addressRo), // REBS has no address_en
     coordinates,
 
     bedrooms: num(raw.bedrooms) ?? num(raw.rooms) ?? null,
@@ -137,8 +171,12 @@ export function mapRebsProperty(raw: RebsProperty): MapResult {
 
 // ── helpers ───────────────────────────────────────────────
 
-function ro(value: string): ImportedLocalizedStringInput {
-  return { ro: value };
+/** Build a localized value, attaching `en` only when REBS supplied it. */
+function loc(ro: string, en?: unknown): ImportedLocalizedStringInput {
+  const out: ImportedLocalizedStringInput = { ro };
+  const e = str(en);
+  if (e) out.en = e;
+  return out;
 }
 
 function str(v: unknown): string {

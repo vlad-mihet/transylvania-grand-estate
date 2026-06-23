@@ -30,8 +30,11 @@ export const rebsPropertySchema = z
     date_modified: text,
 
     title: text,
+    title_en: text,
     description: text,
-    property_type: text,
+    description_en: text,
+    // REBS sends property_type / currency as numeric codes (see rebs.mapper).
+    property_type: z.union([z.number(), z.string()]).nullable().optional(),
 
     city: text,
     region: text,
@@ -52,8 +55,8 @@ export const rebsPropertySchema = z
 
     price_sale: numeric,
     price_rent: numeric,
-    currency_sale: text,
-    currency_rent: text,
+    currency_sale: numeric, // numeric code: 1=EUR, 2=RON, 3=USD
+    currency_rent: numeric,
     for_sale: flag,
     for_rent: flag,
     availability: flag,

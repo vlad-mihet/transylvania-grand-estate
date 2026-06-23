@@ -119,10 +119,10 @@ class FakePrisma {
 function rebsListing(over: Partial<RebsProperty> = {}): RebsProperty {
   return {
     internal_id: 'REBS-1',
-    property_type: 'Apartament',
+    property_type: 1, // 1 = Apartment
     for_sale: true,
     price_sale: 200000,
-    currency_sale: 'EUR',
+    currency_sale: 1, // 1 = EUR
     title: 'Apartament 2 camere',
     description: 'Frumos apartament.',
     city: 'Cluj-Napoca',

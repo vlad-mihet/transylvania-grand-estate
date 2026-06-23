@@ -35,15 +35,24 @@ if (!API_KEY) {
   process.exit(1);
 }
 
-/** Mirrors mapPropertyType() keyword recognition (diagnostic only). */
+// REBS numeric code tables (verified vs the demo doc). Mirrors rebs.mapper.ts —
+// keep in sync. Residential codes 1/3/6 import; the rest are skipped.
+const PROPERTY_TYPE_LABELS = {
+  1: 'Apartment → apartment',
+  3: 'House/Villa → house',
+  4: 'Office → SKIP',
+  5: 'Commercial → SKIP',
+  6: 'Land → terrain',
+  7: 'Industrial → SKIP',
+  8: 'Hotel → SKIP',
+  9: 'Special → SKIP',
+};
+const CURRENCY_LABELS = { 1: 'EUR', 2: 'RON', 3: 'USD (skip)' };
+const MAPPED_TYPES = new Set([1, 3, 6]);
+
+/** Does the mapper import this numeric property_type? (diagnostic only) */
 function recognizesType(raw) {
-  const t = (raw ?? '').toLowerCase();
-  if (!t) return false;
-  return [
-    'apartament', 'garsonier', 'apart', 'penthouse', 'vil', 'conac',
-    'mansion', 'palat', 'palace', 'cabana', 'chalet', 'teren', 'lot',
-    'terrain', 'casa', 'casă', 'house',
-  ].some((k) => t.includes(k));
+  return MAPPED_TYPES.has(Number(raw));
 }
 
 function truthy(v) {
@@ -140,9 +149,11 @@ function printTally(label, map) {
     for (const o of objects) {
       total++;
       tally(forSale, truthy(o.for_sale) ? 'for_sale=true' : 'for_sale=false/absent');
-      const pt = (o.property_type ?? '(none)').toString();
-      tally(types, recognizesType(o.property_type) ? pt : `⚠ UNMAPPED: ${pt}`);
-      tally(currencies, (o.currency_sale ?? '(none)').toString());
+      const ptCode = Number(o.property_type);
+      const ptLabel = PROPERTY_TYPE_LABELS[ptCode] ?? `unknown code ${o.property_type}`;
+      tally(types, recognizesType(o.property_type) ? `${ptCode}: ${ptLabel}` : `⚠ SKIP — ${ptCode}: ${ptLabel}`);
+      const curCode = Number(o.currency_sale);
+      tally(currencies, `${o.currency_sale} → ${CURRENCY_LABELS[curCode] ?? 'unknown'}`);
 
       for (const field of ['full_images', 'resized_images', 'sketches']) {
         const arr = o[field];
@@ -180,14 +191,19 @@ function printTally(label, map) {
   console.log('\nsample objects:');
   console.log(JSON.stringify(samples, null, 2));
 
-  const unmapped = [...types.keys()].filter((k) => k.startsWith('⚠ UNMAPPED'));
-  if (unmapped.length > 0) {
+  const unknown = [...types.keys()].filter((k) => k.includes('unknown code'));
+  const skipped = [...types.keys()].filter((k) => k.startsWith('⚠ SKIP'));
+  if (unknown.length > 0) {
     console.log(
-      `\n⚠ ${unmapped.length} property_type value(s) are NOT recognized by the mapper and would be skipped. ` +
-        `Extend mapPropertyType() in apps/api/src/crm-sync/adapters/rebs/rebs.mapper.ts before go-live.`,
+      `\n❗ ${unknown.length} UNKNOWN property_type code(s) seen — not in the REBS table we mapped. ` +
+        `Confirm with REBS and extend rebs.mapper.ts before go-live.`,
+    );
+  } else if (skipped.length > 0) {
+    console.log(
+      `\nℹ ${skipped.length} non-residential type(s) intentionally skipped (office/commercial/etc.) — expected for the REVERY brand.`,
     );
   } else {
-    console.log('\n✅ All observed property_type values are handled by the mapper.');
+    console.log('\n✅ All observed property_type values map to residential types.');
   }
 })().catch((err) => {
   console.error('\n❌ validation failed:', err?.message ?? err);
