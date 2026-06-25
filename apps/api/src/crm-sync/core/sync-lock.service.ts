@@ -44,15 +44,19 @@ export class SyncLockService {
   }
 
   private async tryAcquire(key: number): Promise<boolean> {
+    // Cast both args to int4: Postgres only has pg_try_advisory_lock(int,int)
+    // and (bigint) — Prisma binds JS numbers as bigint, so without the casts
+    // the two-arg call resolves to a non-existent (bigint,bigint) overload
+    // (P2010 / 42883). The keys are int32 by construction.
     const rows = await this.prisma.$queryRaw<{ locked: boolean }[]>`
-      SELECT pg_try_advisory_lock(${SyncLockService.CLASS_ID}, ${key}) AS locked
+      SELECT pg_try_advisory_lock(${SyncLockService.CLASS_ID}::int, ${key}::int) AS locked
     `;
     return rows[0]?.locked === true;
   }
 
   private async release(key: number): Promise<void> {
     await this.prisma
-      .$queryRaw`SELECT pg_advisory_unlock(${SyncLockService.CLASS_ID}, ${key})`.then(
+      .$queryRaw`SELECT pg_advisory_unlock(${SyncLockService.CLASS_ID}::int, ${key}::int)`.then(
       () => undefined,
       (err: unknown) =>
         this.logger.warn(
