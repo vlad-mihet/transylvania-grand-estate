@@ -35,6 +35,7 @@ import {
   ImageGalleryManager,
   GalleryImage,
 } from "@/components/shared/image-gallery-manager";
+import { AddressGeocodeField } from "@/components/forms/address-geocode-field";
 import { useApiFormErrors } from "@tge/hooks";
 import { useUnsavedChangesWarning } from "@/hooks/use-unsaved-changes-warning";
 import { toast } from "@/lib/toast";
@@ -541,6 +542,9 @@ function PropertyMetadataFields({
         </MetaField>
         <MetaField id="property-neighborhood" label={t("neighborhood")}>
           <Input id="property-neighborhood" {...form.register("neighborhood")} />
+        </MetaField>
+        <MetaField id="property-geocode" label="Find address">
+          <AddressGeocodeField />
         </MetaField>
         <MetaField id="property-latitude" label={t("latitude")}>
           <Input
