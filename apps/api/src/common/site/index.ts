@@ -7,6 +7,7 @@ export { CurrentSite } from './site.decorator';
 export { tierScopeFilter, scopedPropertiesInclude } from './tier-scope.util';
 export {
   brandFromSiteId,
+  brandForTier,
   cityBrandWhere,
   propertyBrandWhere,
   isCityInBrand,

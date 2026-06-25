@@ -109,6 +109,10 @@ export function PropertyForm({
       currency: "EUR",
       type: "apartment",
       status: "available",
+      // Brand/tier the listing belongs to. luxury → TGE, affordable → REVERY.
+      // Without this the API defaults to luxury and the listing only ever
+      // shows on TGE — the form must let the agent choose.
+      tier: "luxury",
       city: "",
       citySlug: "",
       neighborhood: "",
@@ -360,6 +364,25 @@ function PropertyMetadataFields({
                   {t(`statuses.${status}`)}
                 </SelectItem>
               ))}
+            </SelectContent>
+          </Select>
+        </MetaField>
+        {/* Brand/tier selector. Labels are literal (brand names are proper
+            nouns); i18n keys are a follow-up polish. Drives which site the
+            listing publishes to — luxury → TGE, affordable → REVERY. */}
+        <MetaField id="property-tier" label="Brand / Tier">
+          <Select
+            value={form.watch("tier") ?? "luxury"}
+            onValueChange={(v) =>
+              form.setValue("tier", v as PropertyFormValues["tier"])
+            }
+          >
+            <SelectTrigger id="property-tier">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="luxury">Luxury — TGE</SelectItem>
+              <SelectItem value="affordable">Affordable — REVERY</SelectItem>
             </SelectContent>
           </Select>
         </MetaField>

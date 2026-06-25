@@ -1,5 +1,15 @@
-import { Brand, type Prisma } from '@prisma/client';
+import { Brand, PropertyTier, type Prisma } from '@prisma/client';
 import { SiteContext, SiteId } from './site.types';
+
+/**
+ * Map a property's tier to the brand whose site shows it. Mirrors the
+ * tier↔brand pairing enforced on reads (`SITE_TIER_SCOPE`): luxury ↔ TGE,
+ * affordable ↔ REVERY. Used on write so an admin-created listing's city is
+ * auto-tagged for the right brand (otherwise it saves but never appears).
+ */
+export function brandForTier(tier: PropertyTier): Brand {
+  return tier === PropertyTier.luxury ? Brand.tge : Brand.revery;
+}
 
 /**
  * Bridge between the legacy `SiteId` enum (carried on every request via the
