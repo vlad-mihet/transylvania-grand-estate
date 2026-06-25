@@ -2,7 +2,12 @@
 
 import type { ReactNode } from "react";
 import { useEffect, useState } from "react";
-import { FormProvider, useForm, useFormContext } from "react-hook-form";
+import {
+  FormProvider,
+  useFieldArray,
+  useForm,
+  useFormContext,
+} from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useQuery } from "@tanstack/react-query";
 import { useTranslations } from "next-intl";
@@ -72,6 +77,46 @@ const PROPERTY_TYPE_VALUES = [
 
 const PROPERTY_STATUS_VALUES = ["available", "reserved", "sold"] as const;
 
+// The 18 amenity flags (mirror the Prisma boolean columns / amenityFlagsSchema).
+// Labels are literal English for now — i18n keys are a follow-up, same as the
+// brand/tier picker.
+const AMENITY_FIELDS = [
+  ["hasBalcony", "Balcony"],
+  ["hasTerrace", "Terrace"],
+  ["hasParking", "Parking"],
+  ["hasGarage", "Garage"],
+  ["hasSeparateKitchen", "Separate kitchen"],
+  ["hasStorage", "Storage"],
+  ["hasElevator", "Elevator"],
+  ["hasInteriorStaircase", "Interior staircase"],
+  ["hasWashingMachine", "Washing machine"],
+  ["hasFridge", "Fridge"],
+  ["hasStove", "Stove"],
+  ["hasOven", "Oven"],
+  ["hasAC", "Air conditioning"],
+  ["hasBlinds", "Blinds"],
+  ["hasArmoredDoors", "Armored doors"],
+  ["hasIntercom", "Intercom"],
+  ["hasInternet", "Internet"],
+  ["hasCableTV", "Cable TV"],
+] as const;
+
+// Optional classification enums (values mirror the Prisma enums). Each renders
+// as a Select with a "—" (none) option since they're optional.
+const CLASSIFICATION_FIELDS = [
+  ["furnishing", "Furnishing", ["unfurnished", "semi_furnished", "furnished", "luxury"]],
+  ["material", "Construction", ["brick", "concrete", "bca", "wood", "stone", "mixed"]],
+  ["condition", "Condition", ["new_build", "renovated", "good", "needs_renovation", "under_construction"]],
+  ["sellerType", "Seller", ["private_seller", "agency", "developer"]],
+  ["heating", "Heating", ["central_gas", "centralized", "block_central", "electric", "heat_pump", "solid_fuel", "none"]],
+  ["ownership", "Ownership", ["personal", "company", "mixed"]],
+  ["windowType", "Windows", ["pvc_double", "pvc_triple", "wood", "aluminum", "mixed"]],
+] as const;
+
+const NONE = "__none__";
+const humanize = (s: string) =>
+  (s.charAt(0).toUpperCase() + s.slice(1)).replace(/_/g, " ");
+
 interface PropertyFormProps {
   defaultValues?: Partial<PropertyFormValues>;
   images?: GalleryImage[];
@@ -125,6 +170,13 @@ export function PropertyForm({
       features: [],
       featured: false,
       isNew: false,
+      // 18 amenity flags default off so their Switches render controlled.
+      hasBalcony: false, hasTerrace: false, hasParking: false, hasGarage: false,
+      hasSeparateKitchen: false, hasStorage: false, hasElevator: false,
+      hasInteriorStaircase: false, hasWashingMachine: false, hasFridge: false,
+      hasStove: false, hasOven: false, hasAC: false, hasBlinds: false,
+      hasArmoredDoors: false, hasIntercom: false, hasInternet: false,
+      hasCableTV: false,
       ...defaultValues,
     },
   });
@@ -276,6 +328,11 @@ function PropertyMetadataFields({
 }) {
   const tc = useTranslations("Common");
   const form = useFormContext<PropertyFormValues>();
+  const {
+    fields: featureFields,
+    append: appendFeature,
+    remove: removeFeature,
+  } = useFieldArray({ control: form.control, name: "features" });
 
   const { data: developers } = useQuery({
     queryKey: ["developers-select"],
@@ -571,6 +628,78 @@ function PropertyMetadataFields({
           checked={form.watch("pool")}
           onCheckedChange={(v) => form.setValue("pool", v)}
         />
+      </MetaSection>
+
+      <MetaSection title="Classification">
+        {CLASSIFICATION_FIELDS.map(([name, label, options]) => (
+          <MetaField key={name} id={`property-${name}`} label={label}>
+            <Select
+              value={(form.watch(name) as string | undefined) ?? NONE}
+              onValueChange={(v) =>
+                form.setValue(name, (v === NONE ? undefined : v) as never)
+              }
+            >
+              <SelectTrigger id={`property-${name}`}>
+                <SelectValue placeholder="—" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value={NONE}>—</SelectItem>
+                {options.map((o) => (
+                  <SelectItem key={o} value={o}>
+                    {humanize(o)}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </MetaField>
+        ))}
+      </MetaSection>
+
+      <MetaSection title="Amenities">
+        {AMENITY_FIELDS.map(([name, label]) => (
+          <SwitchRow
+            key={name}
+            label={label}
+            checked={form.watch(name) as boolean | undefined}
+            onCheckedChange={(v) => form.setValue(name, v as never)}
+          />
+        ))}
+      </MetaSection>
+
+      <MetaSection title="Features">
+        <div className="flex flex-col gap-2">
+          {featureFields.map((field, i) => (
+            <div key={field.id} className="flex items-center gap-2">
+              <Input
+                placeholder="RO"
+                {...form.register(`features.${i}.ro` as const)}
+                className="flex-1"
+              />
+              <Input
+                placeholder="EN"
+                {...form.register(`features.${i}.en` as const)}
+                className="flex-1"
+              />
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                onClick={() => removeFeature(i)}
+                aria-label="Remove feature"
+              >
+                ✕
+              </Button>
+            </div>
+          ))}
+          <Button
+            type="button"
+            variant="outline"
+            size="sm"
+            onClick={() => appendFeature({ en: "", ro: "" })}
+          >
+            + Add feature
+          </Button>
+        </div>
       </MetaSection>
     </div>
   );
