@@ -16,6 +16,7 @@ import { localizedJsonContainsAny } from '../common/utils/localized-search';
 import {
   SITE_TIER_SCOPE,
   SiteContext,
+  SiteId,
   brandForTier,
   isCityInBrand,
   propertyBrandWhere,
@@ -116,6 +117,7 @@ export class PropertiesService {
   ): Promise<Prisma.PropertyWhereInput> {
     const where: Prisma.PropertyWhereInput = {};
     this.applyScopeFilters(where, query, site);
+    this.applyVisibilityScope(where, site);
     this.applyBrandGeoScope(where, site);
     this.applyRangeFilters(where, query);
     this.applyClassificationFilters(where, query);
@@ -146,6 +148,21 @@ export class PropertiesService {
       : where.AND
         ? [where.AND, clause]
         : [clause];
+  }
+
+  /**
+   * Hide soft-unpublished listings from public surfaces. Imported (CRM-synced)
+   * rows get `unpublishedAt` set when they're dropped from the feed or held for
+   * an unknown-city quarantine; native rows never set it. ADMIN sees everything
+   * (so quarantined imports can be reviewed); every other site is clamped to
+   * live rows only.
+   */
+  private applyVisibilityScope(
+    where: Prisma.PropertyWhereInput,
+    site: SiteContext,
+  ): void {
+    if (site.id === SiteId.ADMIN) return;
+    where.unpublishedAt = null;
   }
 
   /**
@@ -590,6 +607,7 @@ export class PropertiesService {
       }),
       'Property',
     );
+    this.assertVisible(property.unpublishedAt, site);
     this.assertTierInScope(property.tier, site);
     await this.assertGeoInScope(property.cityRef?.slug ?? null, site);
     this.assertAgentOwns(property.agentId, user);
@@ -613,10 +631,24 @@ export class PropertiesService {
       }),
       'Property',
     );
+    this.assertVisible(property.unpublishedAt, site);
     this.assertTierInScope(property.tier, site);
     await this.assertGeoInScope(property.cityRef?.slug ?? null, site);
     this.assertAgentOwns(property.agentId, user);
     return property;
+  }
+
+  /**
+   * 404 (not 403) when a soft-unpublished listing is requested by a public
+   * surface — same existence-hiding rationale as `assertTierInScope`. ADMIN
+   * may still read quarantined/unpublished imports for review.
+   */
+  private assertVisible(
+    unpublishedAt: Date | null,
+    site: SiteContext,
+  ): void {
+    if (site.id === SiteId.ADMIN) return;
+    if (unpublishedAt) throw new NotFoundException('Property not found');
   }
 
   /**

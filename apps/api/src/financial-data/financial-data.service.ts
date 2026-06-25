@@ -126,6 +126,21 @@ export class FinancialDataService {
     });
   }
 
+  /**
+   * EUR/RON rate (RON per 1 EUR) for currency conversion, or null when the
+   * indicator has never been synced. Non-throwing — callers that only need it
+   * opportunistically (e.g. the CRM sync converting RON prices) can fall back
+   * to skipping conversion rather than failing the whole run.
+   */
+  async getEurRonRate(): Promise<number | null> {
+    const indicator = await this.prisma.financialIndicator.findUnique({
+      where: { key: 'EUR_RON' },
+      select: { value: true },
+    });
+    if (!indicator || !(indicator.value > 0)) return null;
+    return indicator.value;
+  }
+
   // ─── Combined Config (one call for frontend) ────────────
 
   async getCalculatorConfig() {

@@ -6,6 +6,7 @@ export * from "./article";
 export * from "./auth";
 export * from "./city";
 export * from "./county";
+export * from "./crm-listing";
 export * from "./dashboard";
 export * from "./developer";
 export * from "./financial-data";
