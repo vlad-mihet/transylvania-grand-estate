@@ -46,7 +46,7 @@ export default async function DevelopersPage() {
             {developers.map((dev) => (
               <Link
                 key={dev.slug}
-                href={{ pathname: "/developers/[slug]", params: { slug: dev.slug } }}
+                href={`/developers/${dev.slug}`}
                 className="group"
               >
                 <div className="bg-card rounded-xl border border-border p-6 h-full hover:shadow-lg hover:border-primary/20 transition-all">

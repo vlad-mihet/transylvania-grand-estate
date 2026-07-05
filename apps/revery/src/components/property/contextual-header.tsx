@@ -40,14 +40,14 @@ export function ContextualHeader({
               { label: t.breadcrumbCities, href: "/cities" },
               {
                 label: city.name,
-                href: { pathname: "/cities/[slug]", params: { slug: city.slug } },
+                href: `/cities/${city.slug}`,
               },
               { label: t.breadcrumbProperties },
             ]}
           />
           <div className="mt-6">
             <Link
-              href={{ pathname: "/cities/[slug]", params: { slug: city.slug } }}
+              href={`/cities/${city.slug}`}
               className="inline-flex items-center gap-1.5 text-primary text-sm hover:underline mb-4"
             >
               <ArrowLeft className="h-3.5 w-3.5" />
@@ -75,14 +75,14 @@ export function ContextualHeader({
               { label: t.breadcrumbDevelopers, href: "/developers" },
               {
                 label: developer.name,
-                href: { pathname: "/developers/[slug]", params: { slug: developer.slug } },
+                href: `/developers/${developer.slug}`,
               },
               { label: t.breadcrumbProperties },
             ]}
           />
           <div className="mt-6">
             <Link
-              href={{ pathname: "/developers/[slug]", params: { slug: developer.slug } }}
+              href={`/developers/${developer.slug}`}
               className="inline-flex items-center gap-1.5 text-primary text-sm hover:underline mb-4"
             >
               <ArrowLeft className="h-3.5 w-3.5" />

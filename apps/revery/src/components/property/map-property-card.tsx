@@ -20,7 +20,7 @@ export function MapPropertyCard({ property, isActive, onHover }: MapPropertyCard
 
   return (
     <Link
-      href={{ pathname: "/properties/[slug]", params: { slug: property.slug } }}
+      href={`/properties/${property.slug}`}
       onMouseEnter={() => onHover?.(property.slug)}
       onMouseLeave={() => onHover?.(null)}
     >

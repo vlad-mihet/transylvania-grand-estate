@@ -1,62 +1,17 @@
 import { defineRouting } from "next-intl/routing";
 import { locales, defaultLocale } from "@tge/i18n";
 
-// Revery keeps the file-system paths in /instrumente/* (Romanian) but shows
-// locale-appropriate URLs to visitors via next-intl pathnames. Every other
-// route maps identity. When adding a new /app/[locale] route here, remember
-// to also list it in this map — pathnames is authoritative for Link typing.
+// Pathnames-free routing, mirroring the shared TGE/landing config
+// (`@tge/i18n/routing`). A `pathnames` map here — even identity entries —
+// breaks every 2+-segment route under next-intl@4.8.3 + next@16.1.6: the
+// localized-rewrite path only resolves single-segment URLs, so
+// `/properties/[slug]`, `/cities/[slug]`, `/blog/[slug]`, and the nested
+// `/instrumente/*` tool pages all 404. Dropping the map restores them at the
+// cost of the localized tool-URL aliases (/tools · /outils · /werkzeuge) —
+// tool pages now use the canonical `/instrumente/*` segment in every locale.
 export const routing = defineRouting({
   locales,
   defaultLocale,
   localePrefix: "always",
   localeDetection: false,
-  pathnames: {
-    "/": "/",
-    "/about": "/about",
-    "/contact": "/contact",
-    "/faq": "/faq",
-    "/properties": "/properties",
-    "/properties/[slug]": "/properties/[slug]",
-    "/cities": "/cities",
-    "/cities/[slug]": "/cities/[slug]",
-    "/agents": "/agents",
-    "/agents/[slug]": "/agents/[slug]",
-    "/developers": "/developers",
-    "/developers/[slug]": "/developers/[slug]",
-    "/blog": "/blog",
-    "/blog/[slug]": "/blog/[slug]",
-    "/privacy": "/privacy",
-    "/terms": "/terms",
-    "/cookies": "/cookies",
-    "/instrumente": {
-      en: "/tools",
-      ro: "/instrumente",
-      fr: "/outils",
-      de: "/werkzeuge",
-    },
-    "/instrumente/calculator-ipotecar": {
-      en: "/tools/mortgage-calculator",
-      ro: "/instrumente/calculator-ipotecar",
-      fr: "/outils/calculateur-hypothecaire",
-      de: "/werkzeuge/hypothekenrechner",
-    },
-    "/instrumente/costuri-achizitie": {
-      en: "/tools/purchase-costs",
-      ro: "/instrumente/costuri-achizitie",
-      fr: "/outils/frais-d-achat",
-      de: "/werkzeuge/kaufkosten",
-    },
-    "/instrumente/randament-inchiriere": {
-      en: "/tools/rental-yield",
-      ro: "/instrumente/randament-inchiriere",
-      fr: "/outils/rendement-locatif",
-      de: "/werkzeuge/mietrendite",
-    },
-    "/instrumente/capacitate-imprumut": {
-      en: "/tools/borrowing-capacity",
-      ro: "/instrumente/capacitate-imprumut",
-      fr: "/outils/capacite-emprunt",
-      de: "/werkzeuge/kreditkapazitaet",
-    },
-  },
 });

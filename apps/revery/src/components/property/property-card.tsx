@@ -24,7 +24,7 @@ export function PropertyCard({ property }: PropertyCardProps) {
   const heroImage = property.images.find((img) => img.isHero) || property.images[0];
 
   return (
-    <Link href={{ pathname: "/properties/[slug]", params: { slug: property.slug } }}>
+    <Link href={`/properties/${property.slug}`}>
       <Card className="overflow-hidden group cursor-pointer border border-border hover:shadow-md transition-shadow duration-300 p-0 gap-0 bg-card rounded-xl">
         <div className="relative aspect-[16/10] overflow-hidden">
           {heroImage && (

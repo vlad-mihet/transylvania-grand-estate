@@ -196,10 +196,7 @@ export default async function PropertyDetailPage({
               },
               {
                 label: property.location.city,
-                href: {
-                  pathname: "/cities/[slug]",
-                  params: { slug: property.location.citySlug },
-                },
+                href: `/cities/${property.location.citySlug}`,
               },
               { label: property.location.neighborhood },
               { label: title },
