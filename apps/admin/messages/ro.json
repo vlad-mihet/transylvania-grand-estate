@@ -1233,6 +1233,8 @@
     "description": "Descriere",
     "propertyCount": "Număr proprietăți",
     "cityImage": "Imagine oraș",
+    "cityImageTge": "Imagine TGE (suprascriere)",
+    "cityImageRevery": "Imagine Adorys (suprascriere)",
     "brands": "Branduri",
     "brandsHelper": "Alege ce site-uri afișează acest oraș."
   },

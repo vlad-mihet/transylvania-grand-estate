@@ -1233,6 +1233,8 @@
     "description": "Beschreibung",
     "propertyCount": "Anzahl Immobilien",
     "cityImage": "Stadtbild",
+    "cityImageTge": "TGE-Bild (Überschreibung)",
+    "cityImageRevery": "Adorys-Bild (Überschreibung)",
     "brands": "Marken",
     "brandsHelper": "Wähle die Seiten, die diese Stadt anzeigen."
   },

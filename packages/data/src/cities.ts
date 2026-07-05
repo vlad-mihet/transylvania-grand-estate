@@ -9,6 +9,10 @@ export const cities: City[] = [
       ro: "Centrul tehnologic vibrant al României și capitala culturală a Transilvaniei, cunoscut pentru arhitectura istorică și stilul de viață modern.",
     },
     image: "/images/cities/cluj-napoca.jpg",
+    brandImages: {
+      tge: "/images/cities/tge/cluj-napoca.jpg",
+      revery: "/images/cities/revery/cluj-napoca.jpg",
+    },
     propertyCount: 2,
     latitude: 46.7712,
     longitude: 23.6236,
@@ -22,6 +26,10 @@ export const cities: City[] = [
       ro: "Bijuteria Art Nouveau a României, cu o arhitectură uimitoare din era habsburgică și cultură termală.",
     },
     image: "/images/cities/oradea.jpg",
+    brandImages: {
+      tge: "/images/cities/tge/oradea.jpg",
+      revery: "/images/cities/revery/oradea.jpg",
+    },
     propertyCount: 5,
     latitude: 47.0465,
     longitude: 21.9189,
@@ -35,6 +43,9 @@ export const cities: City[] = [
       ro: "Capitala Europeană a Culturii 2023, un oraș cosmopolit care îmbină moștenirea barocă cu inovația contemporană.",
     },
     image: "/images/cities/timisoara.jpg",
+    brandImages: {
+      revery: "/images/cities/revery/timisoara.jpg",
+    },
     propertyCount: 2,
     latitude: 45.7489,
     longitude: 21.2087,
@@ -48,6 +59,9 @@ export const cities: City[] = [
       ro: "Așezat la poalele Munților Carpați, oferind un trai de lux alpin cu farmec medieval.",
     },
     image: "/images/cities/brasov.jpg",
+    brandImages: {
+      revery: "/images/cities/revery/brasov.jpg",
+    },
     propertyCount: 2,
     latitude: 45.6427,
     longitude: 25.5887,
@@ -61,6 +75,10 @@ export const cities: City[] = [
       ro: "O bijuterie medievală cu străzi pavate, biserici fortificate și o scenă culturală înfloritoare.",
     },
     image: "/images/cities/sibiu.jpg",
+    brandImages: {
+      tge: "/images/cities/tge/sibiu.jpg",
+      revery: "/images/cities/revery/sibiu.jpg",
+    },
     propertyCount: 5,
     latitude: 45.7983,
     longitude: 24.1256,
@@ -74,6 +92,10 @@ export const cities: City[] = [
       ro: "Un oraș transilvănean multicultural, renumit pentru Palatul Culturii în stil Secession și Piața Trandafirilor — o piață rezidențială în creștere, susținută de angajatori din medicină, tehnologie și industrie.",
     },
     image: "/images/cities/targu-mures.jpg",
+    brandImages: {
+      tge: "/images/cities/tge/targu-mures.jpg",
+      revery: "/images/cities/revery/targu-mures.jpg",
+    },
     propertyCount: 3,
     latitude: 46.5455,
     longitude: 24.5625,
@@ -87,6 +109,10 @@ export const cities: City[] = [
       ro: "O cetate medievală vie și sit UNESCO — locul de naștere al lui Vlad Țepeș și cel mai emblematic oraș fortificat al Transilvaniei, cu case săsești colorate adunate la poalele Turnului cu Ceas.",
     },
     image: "/images/cities/sighisoara.jpg",
+    brandImages: {
+      tge: "/images/cities/tge/sighisoara.jpg",
+      revery: "/images/cities/revery/sighisoara.jpg",
+    },
     propertyCount: 3,
     latitude: 46.2182,
     longitude: 24.7935,
@@ -139,6 +165,9 @@ export const cities: City[] = [
       ro: "Capitala istorică a Transilvaniei și locul Marii Uniri din 1918 — o cetate bastionară în stil Vauban transformată într-un cartier cultural elegant, cu străzi pavate.",
     },
     image: "/images/cities/alba-iulia.jpg",
+    brandImages: {
+      revery: "/images/cities/revery/alba-iulia.jpg",
+    },
     propertyCount: 3,
     latitude: 46.0710,
     longitude: 23.5700,
@@ -165,6 +194,10 @@ export const cities: City[] = [
       ro: "Un oraș de frontieră pe Mureș, al cărui centru secesionist, bulevardele largi și legăturile comerciale cu Ungaria îl fac unul dintre cele mai plăcute orașe secundare din vestul României.",
     },
     image: "/images/cities/arad.jpg",
+    brandImages: {
+      tge: "/images/cities/tge/arad.jpg",
+      revery: "/images/cities/revery/arad.jpg",
+    },
     propertyCount: 0,
     latitude: 46.1866,
     longitude: 21.3123,
@@ -204,6 +237,9 @@ export const cities: City[] = [
       ro: "Un oraș transilvănean de origine săsească, unde turnul bisericii evanghelice și piața centrală cu arcade conturează un centru istoric compact, la marginea Bârgaielor.",
     },
     image: "/images/cities/bistrita.jpg",
+    brandImages: {
+      revery: "/images/cities/revery/bistrita.jpg",
+    },
     propertyCount: 3,
     latitude: 47.1333,
     longitude: 24.5000,
@@ -230,6 +266,9 @@ export const cities: City[] = [
       ro: "Un port dunărean cu un plan stradal unic, în evantai pornind de la faleză — un oraș negustoresc multicultural, cu fațade eclectice din secolul XIX și moștenire grecească, armenească și lipovenească.",
     },
     image: "/images/cities/braila.jpg",
+    brandImages: {
+      revery: "/images/cities/revery/braila.jpg",
+    },
     propertyCount: 0,
     latitude: 45.2692,
     longitude: 27.9574,
@@ -243,6 +282,9 @@ export const cities: City[] = [
       ro: "Reședința județului Ilfov, pe centura de lacuri și păduri din nordul Bucureștiului — acasă la MediaPro Studios și un cartier-dormitor și de case de weekend foarte căutat de bucureșteni.",
     },
     image: "/images/cities/buftea.jpg",
+    brandImages: {
+      revery: "/images/cities/revery/buftea.jpg",
+    },
     propertyCount: 0,
     latitude: 44.5625,
     longitude: 25.9489,
@@ -256,6 +298,9 @@ export const cities: City[] = [
       ro: "O răscruce între Muntenia și Moldova, poartă către Carpații Buzăului, Vulcanii Noroioși și podgoria Bisoca — o capitală regională compactă, cu faleza pe Buzău în revitalizare.",
     },
     image: "/images/cities/buzau.jpg",
+    brandImages: {
+      revery: "/images/cities/revery/buzau.jpg",
+    },
     propertyCount: 0,
     latitude: 45.1503,
     longitude: 26.8248,
@@ -269,6 +314,9 @@ export const cities: City[] = [
       ro: "Un oraș pe Dunăre și Borcea, în plină câmpie a Bărăganului, clădit în jurul unui port negustoresc din secolul XVIII și al unei lunci pline de păsări care încă îi definește orizontul.",
     },
     image: "/images/cities/calarasi.jpg",
+    brandImages: {
+      revery: "/images/cities/revery/calarasi.jpg",
+    },
     propertyCount: 0,
     latitude: 44.2058,
     longitude: 27.3306,
@@ -282,6 +330,9 @@ export const cities: City[] = [
       ro: "Capitala românească a Mării Negre și anticul Tomis — un oraș port cu ruine romane, Cazinoul Art Nouveau, litoralul Mamaia și cea mai efervescentă piață imobiliară estivală din țară.",
     },
     image: "/images/cities/constanta.jpg",
+    brandImages: {
+      tge: "/images/cities/tge/constanta.jpg",
+    },
     propertyCount: 0,
     latitude: 44.1598,
     longitude: 28.6348,
@@ -295,6 +346,10 @@ export const cities: City[] = [
       ro: "Capitala Olteniei și al șaselea oraș al României — acasă la uzina Ford Otosan, la lucrările timpurii ale lui Brâncuși și la un centru pietonal restaurat care a readus investiția serioasă în sud.",
     },
     image: "/images/cities/craiova.jpg",
+    brandImages: {
+      tge: "/images/cities/tge/craiova.jpg",
+      revery: "/images/cities/revery/craiova.jpg",
+    },
     propertyCount: 0,
     latitude: 44.3302,
     longitude: 23.7949,
@@ -308,6 +363,9 @@ export const cities: City[] = [
       ro: "Reședința județului Hunedoara, vegheată de cetatea de pe deal, cu Castelul Corvinilor din Hunedoara la câțiva kilometri — un oraș transilvănean compact, pe câmpia Mureșului.",
     },
     image: "/images/cities/deva.jpg",
+    brandImages: {
+      revery: "/images/cities/revery/deva.jpg",
+    },
     propertyCount: 3,
     latitude: 45.8797,
     longitude: 22.9147,
@@ -321,6 +379,9 @@ export const cities: City[] = [
       ro: "Un oraș dunărean la porțile Porților de Fier — acolo unde ruinele podului lui Traian, un castru roman și un oraș boieresc de secol XIX împart aceeași faleză.",
     },
     image: "/images/cities/drobeta-turnu-severin.jpg",
+    brandImages: {
+      revery: "/images/cities/revery/drobeta-turnu-severin.jpg",
+    },
     propertyCount: 0,
     latitude: 44.6269,
     longitude: 22.6590,
@@ -347,6 +408,9 @@ export const cities: City[] = [
       ro: "Un oraș port și șantier naval la confluența a trei râuri, cu o faleză lungă pe Dunăre și un centru istoric în curs de revitalizare, cu fațade Art Deco.",
     },
     image: "/images/cities/galati.jpg",
+    brandImages: {
+      revery: "/images/cities/revery/galati.jpg",
+    },
     propertyCount: 0,
     latitude: 45.4353,
     longitude: 28.0080,
@@ -360,6 +424,9 @@ export const cities: City[] = [
       ro: "Un oraș de graniță pe Dunăre, înfrățit cu Ruse peste Podul Prieteniei — un oraș fluvial liniștit, definit de Turnul Ceasornic, de trecutul de târg cerealier și de legătura directă cu Bulgaria.",
     },
     image: "/images/cities/giurgiu.jpg",
+    brandImages: {
+      revery: "/images/cities/revery/giurgiu.jpg",
+    },
     propertyCount: 0,
     latitude: 43.9037,
     longitude: 25.9699,
@@ -373,6 +440,9 @@ export const cities: City[] = [
       ro: "Capitala istorică a Moldovei și cel mai vechi oraș universitar al României — un oraș de bulevarde Belle Époque, cu Palatul Culturii, peste treizeci de mănăstiri și o economie IT în plină creștere.",
     },
     image: "/images/cities/iasi.jpg",
+    brandImages: {
+      revery: "/images/cities/revery/iasi.jpg",
+    },
     propertyCount: 0,
     latitude: 47.1585,
     longitude: 27.6014,
@@ -386,6 +456,9 @@ export const cities: City[] = [
       ro: "Capitala secuiască a Harghitei — un oraș montan cu ierni aspre, cunoscut pentru Cetatea Mikó, o berărie veche de peste un secol și o cultură puternică a hocheiului.",
     },
     image: "/images/cities/miercurea-ciuc.jpg",
+    brandImages: {
+      revery: "/images/cities/revery/miercurea-ciuc.jpg",
+    },
     propertyCount: 0,
     latitude: 46.3615,
     longitude: 25.8023,
@@ -470,6 +543,22 @@ export const cities: City[] = [
     countySlug: "satu-mare",
   },
   {
+    name: "Sebeș",
+    slug: "sebes",
+    description: {
+      en: "A former Saxon market town at the crossroads of Transylvania's main routes, gathered around a Gothic evangelical church — an affordable Alba county base within easy reach of Alba Iulia and Sibiu.",
+      ro: "Un fost târg săsesc la răscrucea marilor drumuri ale Transilvaniei, adunat în jurul bisericii evanghelice gotice — o bază accesibilă în județul Alba, aproape de Alba Iulia și Sibiu.",
+    },
+    image: "/images/cities/sebes.jpg",
+    brandImages: {
+      revery: "/images/cities/revery/sebes.jpg",
+    },
+    propertyCount: 0,
+    latitude: 45.9564,
+    longitude: 23.5702,
+    countySlug: "alba",
+  },
+  {
     name: "Sfântu Gheorghe",
     slug: "sfantu-gheorghe",
     description: {
@@ -490,6 +579,9 @@ export const cities: City[] = [
       ro: "Reședința județului Olt, pe malurile Oltului — un oraș industrial modern, ancorat în combinatul de aluminiu Alro, cu un centru istoric compact și pietonal.",
     },
     image: "/images/cities/slatina.jpg",
+    brandImages: {
+      revery: "/images/cities/revery/slatina.jpg",
+    },
     propertyCount: 0,
     latitude: 44.4304,
     longitude: 24.3647,
@@ -503,6 +595,9 @@ export const cities: City[] = [
       ro: "Reședința județului Ialomița, în plin Bărăgan — un oraș agroindustrial modern cu o surprinzătoare replică la scară reală a Turnului Eiffel în peisajul urban.",
     },
     image: "/images/cities/slobozia.jpg",
+    brandImages: {
+      revery: "/images/cities/revery/slobozia.jpg",
+    },
     propertyCount: 0,
     latitude: 44.5643,
     longitude: 27.3781,
@@ -516,6 +611,9 @@ export const cities: City[] = [
       ro: "Fosta capitală a Moldovei lui Ștefan cel Mare și poarta spre mănăstirile pictate ale Bucovinei — un oraș mediu ale cărui ruine de cetate veghează încă valea Siretului.",
     },
     image: "/images/cities/suceava.jpg",
+    brandImages: {
+      revery: "/images/cities/revery/suceava.jpg",
+    },
     propertyCount: 0,
     latitude: 47.6514,
     longitude: 26.2556,
@@ -555,6 +653,9 @@ export const cities: City[] = [
       ro: "Orașul-poartă al Deltei Dunării, sit UNESCO — un port așezat pe coline la vărsarea Dunării, acolo unde fluviul se desface în evantai către Marea Neagră.",
     },
     image: "/images/cities/tulcea.jpg",
+    brandImages: {
+      revery: "/images/cities/revery/tulcea.jpg",
+    },
     propertyCount: 0,
     latitude: 45.1812,
     longitude: 28.8050,

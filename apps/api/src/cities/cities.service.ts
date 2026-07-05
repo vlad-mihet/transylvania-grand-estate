@@ -4,6 +4,7 @@ import { PrismaService } from '../prisma/prisma.service';
 import { UploadsService } from '../uploads/uploads.service';
 import { SiteConfigService } from '../site-config/site-config.service';
 import {
+  brandFromSiteId,
   cityBrandWhere,
   isCityInBrand,
   SiteContext,
@@ -71,23 +72,43 @@ export class CitiesService {
    * `propertyCount` field clients already consume, plus flatten the
    * `CityBrand[]` relation into `brands: Brand[]` so the admin can render
    * badges without an extra fetch.
+   *
+   * Image resolution is brand-aware: a public site (tge/revery) gets the
+   * effective image (`CityBrand.image ?? City.image`) in the existing `image`
+   * field so frontends stay untouched; raw per-brand values never leak
+   * publicly. ADMIN (brand === null) keeps the base `image` and additionally
+   * gets the `brandImages` map for the edit form.
    */
   private withLiveCount<
     T extends {
+      image: string;
       _count: { properties: number };
-      brands?: { brand: Brand }[];
+      brands?: { brand: Brand; image: string | null }[];
     },
   >(
     row: T,
+    site: SiteContext,
   ): Omit<T, '_count' | 'brands'> & {
     propertyCount: number;
     brands: Brand[];
+    brandImages?: Partial<Record<Brand, string | null>>;
   } {
     const { _count, brands, ...rest } = row;
-    return {
+    const base = {
       ...rest,
       propertyCount: _count.properties,
       brands: (brands ?? []).map((b) => b.brand),
+    };
+    const brand = brandFromSiteId(site.id);
+    if (brand !== null) {
+      const override = (brands ?? []).find((b) => b.brand === brand)?.image;
+      return { ...base, image: override ?? row.image };
+    }
+    return {
+      ...base,
+      brandImages: Object.fromEntries(
+        (brands ?? []).map((b) => [b.brand, b.image]),
+      ),
     };
   }
 
@@ -132,7 +153,7 @@ export class CitiesService {
         const featuredInclude = {
           county: true,
           _count: { select: this.propertyCountSelect(site) },
-          brands: { select: { brand: true } },
+          brands: { select: { brand: true, image: true } },
         } satisfies Prisma.CityInclude;
         const featuredWhere: Prisma.CityWhereInput = brandFilter
           ? { AND: [{ slug: { in: [...slugs] } }, brandFilter] }
@@ -148,7 +169,7 @@ export class CitiesService {
         return slugs
           .map((slug) => bySlug.get(slug))
           .filter((r): r is (typeof rows)[number] => r !== undefined)
-          .map((r) => this.withLiveCount(r));
+          .map((r) => this.withLiveCount(r, site));
       }
       this.logger.warn(
         `Homepage cities not configured for site ${site.id}; falling back to default listing`,
@@ -177,7 +198,7 @@ export class CitiesService {
     const include = {
       county: true,
       _count: { select: this.propertyCountSelect(site) },
-      brands: { select: { brand: true } },
+      brands: { select: { brand: true, image: true } },
     } satisfies Prisma.CityInclude;
     const orderBy = resolveCitySort(query.sort);
 
@@ -203,7 +224,10 @@ export class CitiesService {
         page,
         limit,
       );
-      return { ...result, data: result.data.map((r) => this.withLiveCount(r)) };
+      return {
+        ...result,
+        data: result.data.map((r) => this.withLiveCount(r, site)),
+      };
     }
 
     const rows = await this.prisma.city.findMany({
@@ -217,7 +241,7 @@ export class CitiesService {
         `Cities unpaginated cap hit (${UNPAGINATED_CAP}) — switch the caller to pagination.`,
       );
     }
-    return rows.map((r) => this.withLiveCount(r));
+    return rows.map((r) => this.withLiveCount(r, site));
   }
 
   async findById(id: string, site: SiteContext) {
@@ -227,13 +251,13 @@ export class CitiesService {
         include: {
           county: true,
           _count: { select: this.propertyCountSelect(site) },
-          brands: { select: { brand: true } },
+          brands: { select: { brand: true, image: true } },
         },
       }),
       'City',
     );
     await this.assertInBrand(city.slug, site);
-    return this.withLiveCount(city);
+    return this.withLiveCount(city, site);
   }
 
   async findBySlug(slug: string, site: SiteContext) {
@@ -243,13 +267,13 @@ export class CitiesService {
         include: {
           county: true,
           _count: { select: this.propertyCountSelect(site) },
-          brands: { select: { brand: true } },
+          brands: { select: { brand: true, image: true } },
         },
       }),
       'City',
     );
     await this.assertInBrand(city.slug, site);
-    return this.withLiveCount(city);
+    return this.withLiveCount(city, site);
   }
 
   async findNeighborhoods(citySlug: string, site: SiteContext) {
@@ -310,21 +334,35 @@ export class CitiesService {
     if (dto.image !== undefined) data.image = dto.image;
     if (dto.propertyCount !== undefined) data.propertyCount = dto.propertyCount;
 
+    // Per-brand image override writes: only keys present in the DTO are
+    // touched (null clears). Applied via updateMany so a value for a brand
+    // the city isn't tagged with is a deliberate no-op — membership stays
+    // governed by `brands`.
+    const brandImageEntries = Object.entries(dto.brandImages ?? {}).filter(
+      (e): e is [Brand, string | null] => e[1] !== undefined,
+    );
+
     // Brand membership diff. The form sends the whole desired set; we read
     // the current rows and reconcile with INSERT/DELETE so the city ends up
     // tagged with exactly `dto.brands`. Wrapped in a single transaction with
     // the row update so a partial failure doesn't leave the city's brand set
     // half-applied.
     let updated;
-    if (dto.brands !== undefined) {
-      const desired = new Set<Brand>(dto.brands);
-      const current = await this.prisma.cityBrand.findMany({
+    let removedBrandRows: { brand: Brand; image: string | null }[] = [];
+    let currentBrandRows: { brand: Brand; image: string | null }[] = [];
+    if (dto.brands !== undefined || brandImageEntries.length > 0) {
+      currentBrandRows = await this.prisma.cityBrand.findMany({
         where: { cityId: id },
-        select: { brand: true },
+        select: { brand: true, image: true },
       });
-      const currentSet = new Set<Brand>(current.map((r) => r.brand));
+      const currentSet = new Set<Brand>(currentBrandRows.map((r) => r.brand));
+      const desired =
+        dto.brands !== undefined ? new Set<Brand>(dto.brands) : currentSet;
       const toAdd: Brand[] = [...desired].filter((b) => !currentSet.has(b));
       const toRemove: Brand[] = [...currentSet].filter((b) => !desired.has(b));
+      removedBrandRows = currentBrandRows.filter((r) =>
+        toRemove.includes(r.brand),
+      );
 
       updated = await this.prisma.$transaction(async (tx) => {
         const u = await tx.city.update({ where: { id }, data });
@@ -337,6 +375,14 @@ export class CitiesService {
         if (toRemove.length > 0) {
           await tx.cityBrand.deleteMany({
             where: { cityId: id, brand: { in: toRemove } },
+          });
+        }
+        // After the membership reconcile so add-brand + set-image works in a
+        // single PATCH, and a simultaneous removal wins (row gone → no-op).
+        for (const [brand, image] of brandImageEntries) {
+          await tx.cityBrand.updateMany({
+            where: { cityId: id, brand },
+            data: { image },
           });
         }
         return u;
@@ -355,20 +401,64 @@ export class CitiesService {
     ) {
       await this.uploadsService.deleteByPublicUrl(existing.image, 'cities');
     }
+    // Same orphan cleanup for replaced/cleared per-brand overrides and for
+    // overrides whose brand row was just removed.
+    const replacedOverrides = brandImageEntries.flatMap(([brand, image]) => {
+      const prev = currentBrandRows.find((r) => r.brand === brand)?.image;
+      return prev && prev !== image ? [prev] : [];
+    });
+    const orphanedOverrides = removedBrandRows.flatMap((r) =>
+      r.image ? [r.image] : [],
+    );
+    for (const url of [...replacedOverrides, ...orphanedOverrides]) {
+      await this.uploadsService.deleteByPublicUrl(url, 'cities');
+    }
     return updated;
   }
 
   async remove(id: string) {
-    const existing = await this.ensureExists(id);
+    const existing = await ensureFound(
+      this.prisma.city.findUnique({
+        where: { id },
+        include: { brands: { select: { image: true } } },
+      }),
+      'City',
+    );
     const deleted = await this.prisma.city.delete({ where: { id } });
     // City.image is often a seed-baked /images/cities/<slug>.jpg static path;
     // extractStoragePath filters those out so we only touch real uploads.
+    // CityBrand rows cascade-delete, but their uploaded overrides don't.
     await this.uploadsService.deleteByPublicUrl(existing.image, 'cities');
+    for (const b of existing.brands) {
+      if (b.image) {
+        await this.uploadsService.deleteByPublicUrl(b.image, 'cities');
+      }
+    }
     return deleted;
   }
 
-  async uploadImage(id: string, file: Express.Multer.File) {
+  async uploadImage(id: string, file: Express.Multer.File, brand?: Brand) {
     const existing = await this.ensureExists(id);
+    if (brand !== undefined) {
+      this.assertBrand(brand);
+      const row = await this.prisma.cityBrand.findUnique({
+        where: { cityId_brand: { cityId: id, brand } },
+      });
+      if (!row) {
+        throw new BadRequestException(
+          `City is not tagged with brand: ${brand}`,
+        );
+      }
+      const result = await this.uploadsService.uploadFile(file, 'cities');
+      const updated = await this.prisma.cityBrand.update({
+        where: { cityId_brand: { cityId: id, brand } },
+        data: { image: result.publicUrl },
+      });
+      if (row.image && row.image !== result.publicUrl) {
+        await this.uploadsService.deleteByPublicUrl(row.image, 'cities');
+      }
+      return updated;
+    }
     const result = await this.uploadsService.uploadFile(file, 'cities');
     const updated = await this.prisma.city.update({
       where: { id },
@@ -403,9 +493,18 @@ export class CitiesService {
   async removeBrand(id: string, brand: Brand) {
     await this.ensureExists(id);
     this.assertBrand(brand);
+    const row = await this.prisma.cityBrand.findUnique({
+      where: { cityId_brand: { cityId: id, brand } },
+      select: { image: true },
+    });
     await this.prisma.cityBrand.deleteMany({
       where: { cityId: id, brand },
     });
+    // Dropping a membership must not orphan its uploaded override (static
+    // /images/... paths no-op via extractStoragePath).
+    if (row?.image) {
+      await this.uploadsService.deleteByPublicUrl(row.image, 'cities');
+    }
     return { cityId: id, brand };
   }
 

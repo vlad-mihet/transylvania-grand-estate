@@ -10,7 +10,7 @@ import { Link, useRouter } from "@/i18n/navigation";
 import { toast } from "@/lib/toast";
 import { apiClient } from "@/lib/api-client";
 import { usePermissions } from "@/components/auth/auth-provider";
-import { CityForm } from "@/components/forms/city-form";
+import { CityForm, type BrandImageFiles } from "@/components/forms/city-form";
 import { EntityDeleteButton } from "@/components/shared/entity-delete-button";
 import { DetailPageShell } from "@/components/resource/detail-page-shell";
 import { CityFormValues } from "@/lib/validations/city";
@@ -31,16 +31,33 @@ export default function EditCityPage() {
     mutationFn: async ({
       data,
       image,
+      brandImages,
     }: {
       data: CityFormValues;
       image: File | null;
+      brandImages: BrandImageFiles;
     }) => {
+      // PATCH first so a brand added in this same save is tagged before its
+      // per-brand upload hits the membership check.
       await apiClient(`/cities/${id}`, { method: "PATCH", body: data });
       if (image) {
         const fd = new FormData();
         fd.append("image", image);
         try {
           await apiClient(`/cities/${id}/image`, {
+            method: "POST",
+            body: fd,
+          });
+        } catch {
+          toast.warning(t("imageUploadFailed"));
+        }
+      }
+      for (const [brand, file] of Object.entries(brandImages)) {
+        if (!file) continue;
+        const fd = new FormData();
+        fd.append("image", file);
+        try {
+          await apiClient(`/cities/${id}/image?brand=${brand}`, {
             method: "POST",
             body: fd,
           });
@@ -80,13 +97,23 @@ export default function EditCityPage() {
           </div>
           <CityForm
             cancelHref={`/cities/${id}`}
+            // Only form fields — the schema is .strict(), so spreading the
+            // whole ApiCity (id, county, createdAt, brandImages, …) makes
+            // zodResolver reject the submit with invisible root-level errors.
             defaultValues={{
-              ...city,
-              countySlug: city.countySlug ?? undefined,
+              name: city.name,
+              slug: city.slug,
+              countySlug: city.countySlug ?? city.county?.slug ?? undefined,
+              description: city.description,
               image: city.image ?? undefined,
+              propertyCount: city.propertyCount,
+              brands: city.brands ?? [],
             }}
             imageUrl={city.image}
-            onSubmit={(data, image) => updateMutation.mutate({ data, image })}
+            brandImageUrls={city.brandImages}
+            onSubmit={(data, image, brandImages) =>
+              updateMutation.mutate({ data, image, brandImages })
+            }
             loading={updateMutation.isPending}
             submissionError={updateMutation.error}
             title={city.name}
