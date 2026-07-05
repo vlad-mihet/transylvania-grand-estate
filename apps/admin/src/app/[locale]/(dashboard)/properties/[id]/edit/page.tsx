@@ -14,7 +14,7 @@ import { PropertyForm } from "@/components/forms/property-form";
 import { EntityDeleteButton } from "@/components/shared/entity-delete-button";
 import { DetailPageShell } from "@/components/resource/detail-page-shell";
 import { PropertyFormValues } from "@/lib/validations/property";
-import { toPropertyPayload } from "@/lib/transform-property";
+import { toFormValues, toPropertyPayload } from "@/lib/transform-property";
 import { GalleryImage } from "@/components/shared/image-gallery-manager";
 
 export default function EditPropertyPage() {
@@ -75,35 +75,7 @@ export default function EditPropertyPage() {
       enabled={!!id}
       notFoundTitle={t("notFound")}
       render={(property) => {
-        const defaultValues: Partial<PropertyFormValues> = {
-          title: property.title,
-          description: property.description,
-          shortDescription: property.shortDescription,
-          slug: property.slug,
-          price: property.price,
-          currency: property.currency,
-          type: property.type,
-          status: property.status,
-          city: property.city,
-          citySlug: property.citySlug,
-          neighborhood: property.neighborhood ?? "",
-          address: property.address ?? { en: "", ro: "" },
-          latitude: property.latitude ?? undefined,
-          longitude: property.longitude ?? undefined,
-          bedrooms: property.bedrooms ?? undefined,
-          bathrooms: property.bathrooms ?? undefined,
-          area: property.area ?? undefined,
-          landArea: property.landArea ?? undefined,
-          floors: property.floors ?? undefined,
-          yearBuilt: property.yearBuilt ?? undefined,
-          garage: property.garage ?? undefined,
-          pool: property.pool ?? undefined,
-          features: property.features ?? [],
-          featured: property.featured,
-          isNew: property.isNew,
-          developerId: property.developerId,
-          agentId: property.agentId,
-        };
+        const defaultValues: Partial<PropertyFormValues> = toFormValues(property);
 
         const existingImages: GalleryImage[] = (property.images ?? []).map(
           (img: ApiPropertyImage) => ({
