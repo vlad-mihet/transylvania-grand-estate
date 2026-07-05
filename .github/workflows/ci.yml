@@ -372,3 +372,118 @@ jobs:
           name: playwright-revery-report
           path: apps/revery/playwright-report
           retention-days: 7
+
+  playwright-admin:
+    name: Playwright (admin)
+    # The admin suite rotted silently while it was local-only (2026-07-06:
+    # broken session wiring, throttle collisions, an impossible reorder
+    # assertion) — this job makes it a gate. Admin's playwright.config.ts
+    # webServer boots `next dev` on 3051 itself; we provide Postgres + the
+    # seeded API. consumer-render.spec.ts is excluded: it smoke-tests the
+    # landing/revery/academy apps, which this job doesn't boot (landing and
+    # revery have their own jobs).
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_USER: ci
+          POSTGRES_PASSWORD: ci
+          POSTGRES_DB: ci
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+    env:
+      DATABASE_URL: postgresql://ci:ci@localhost:5432/ci
+      JWT_ADMIN_ACCESS_SECRET: ci_admin_access_secret_ge_32_chars_xxx
+      JWT_ADMIN_REFRESH_SECRET: ci_admin_refresh_secret_ge_32_chars_xx
+      JWT_ACADEMY_ACCESS_SECRET: ci_academy_access_secret_ge_32_chars_x
+      JWT_ACADEMY_REFRESH_SECRET: ci_academy_refresh_secret_ge_32_chars
+      INVITATION_TOKEN_SECRET: ci_invitation_secret_ge_32_chars_xxxxxx
+      AUDIT_IP_PEPPER: ci_audit_pepper_ge_16_chars
+      ADMIN_PUBLIC_URL: http://localhost:3051
+      CORS_ORIGINS: http://localhost:3050,http://localhost:3051,http://localhost:3052,http://localhost:3053
+      PORT: 4000
+      NEXT_PUBLIC_API_URL: http://localhost:4000/api/v1
+      # The admin BFF routes (src/app/api/auth/*) proxy to NestJS server-side.
+      API_URL: http://localhost:4000/api/v1
+      # Pins the seeded super-admin password; auth.setup.ts + the loginAsAdmin
+      # fixture read the same variable.
+      SEED_ADMIN_PASSWORD: ci_admin_e2e_password_1
+      # See playwright-landing: the suite's SSR + fixture logins share one IP.
+      # The login-specific 5/min limit stays covered by the loginAsAdmin
+      # fixture's synthetic-IP buckets when this flag is absent locally.
+      DEV_AUTH_THROTTLE_DISABLED: "1"
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Generate Prisma client
+        run: pnpm --filter @tge/api exec prisma generate
+
+      - name: Build shared types
+        run: pnpm --filter @tge/types build
+
+      # prisma db seed runs prisma/seed.ts which imports from @tge/data;
+      # without this step the package's dist/ is missing and seed crashes
+      # with MODULE_NOT_FOUND. The later "Build API" step builds it via
+      # api's prebuild, but that runs after the seed step.
+      - name: Build shared data
+        run: pnpm --filter @tge/data build
+
+      - name: Apply migrations + seed
+        run: |
+          pnpm --filter @tge/api exec prisma migrate deploy
+          pnpm --filter @tge/api exec prisma db seed
+
+      - name: Build API
+        run: pnpm --filter @tge/api build
+
+      - name: Start API in background
+        run: |
+          pnpm --filter @tge/api start:prod > /tmp/api.log 2>&1 &
+          echo "API_PID=$!" >> $GITHUB_ENV
+
+      - name: Wait for API health
+        run: |
+          for i in {1..60}; do
+            if curl -sf http://localhost:4000/api/v1/health > /dev/null; then
+              echo "API up"
+              exit 0
+            fi
+            sleep 2
+          done
+          echo "API did not become healthy in 120s. Last logs:"
+          tail -100 /tmp/api.log
+          exit 1
+
+      - name: Install Playwright browsers
+        run: pnpm --filter @tge/admin exec playwright install --with-deps chromium
+
+      - name: Run admin Playwright suite (consumer-render excluded)
+        run: pnpm --filter @tge/admin exec playwright test --grep-invert "consumer-app render smoke"
+
+      - name: Upload Playwright report on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-admin-report
+          path: apps/admin/playwright-report
+          retention-days: 7
