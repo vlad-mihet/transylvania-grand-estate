@@ -52,7 +52,7 @@ export default async function CityDetailPage({ params }: CityDetailPageProps) {
   }
   const [developersResult, propertiesResult] = await Promise.all([
     fetchApiSafe<Developer[]>(`/developers?city=${slug}`),
-    fetchApiSafe<ApiProperty[]>(`/properties?city=${slug}&limit=100`),
+    fetchApiSafe<ApiProperty[]>(`/properties?city=${slug}&limit=100&locale=${locale}`),
   ]);
 
   const city = mapApiCity(cityRaw);

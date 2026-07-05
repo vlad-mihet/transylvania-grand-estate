@@ -19,7 +19,7 @@ export async function generateMetadata(): Promise<Metadata> {
 export default async function ContactPage() {
   const t = await getTranslations("ContactPage");
   const locale = (await getLocale()) as Locale;
-  const raw = await fetchApi<ApiProperty[]>("/properties?limit=100");
+  const raw = await fetchApi<ApiProperty[]>(`/properties?limit=100&locale=${locale}`);
   const properties = mapApiProperties(raw);
 
   return (

@@ -4,7 +4,7 @@ import { locales, defaultLocale, type Locale } from "@tge/i18n";
 import { getPathname } from "@/i18n/navigation";
 
 // Canonical origin resolution chain:
-//   1. NEXT_PUBLIC_SITE_URL — operator-set custom domain (e.g. revery.ro).
+//   1. NEXT_PUBLIC_SITE_URL — operator-set custom domain (e.g. adorys.ro).
 //      Treated as authoritative canonical; site becomes indexable.
 //   2. VERCEL_PROJECT_PRODUCTION_URL — Vercel's stable production alias.
 //   3. VERCEL_URL — Vercel's per-deployment URL (previews/branches).
