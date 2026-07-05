@@ -47,7 +47,7 @@ export default async function CitiesPage({
             {cities.map((city) => (
               <Link
                 key={city.slug}
-                href={{ pathname: "/cities/[slug]", params: { slug: city.slug } }}
+                href={`/cities/${city.slug}`}
                 className="group"
               >
                 <div className="bg-card rounded-xl border border-border overflow-hidden hover:shadow-lg transition-shadow">

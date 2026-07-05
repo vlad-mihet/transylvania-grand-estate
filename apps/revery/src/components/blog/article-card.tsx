@@ -27,7 +27,7 @@ export function ArticleCard({ article }: ArticleCardProps) {
 
   return (
     <Link
-      href={{ pathname: "/blog/[slug]", params: { slug: article.slug } }}
+      href={`/blog/${article.slug}`}
       className="group block h-full"
     >
       <div className="bg-card rounded-xl border border-border overflow-hidden hover:shadow-md transition-shadow h-full flex flex-col">
