@@ -2,7 +2,13 @@
 
 import type { ReactNode } from "react";
 import { useEffect, useState } from "react";
-import { FormProvider, useForm, useFormContext } from "react-hook-form";
+import {
+  FormProvider,
+  useFieldArray,
+  useForm,
+  useFormContext,
+  useFormState,
+} from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useQuery } from "@tanstack/react-query";
 import { useTranslations } from "next-intl";
@@ -30,6 +36,7 @@ import {
   ImageGalleryManager,
   GalleryImage,
 } from "@/components/shared/image-gallery-manager";
+import { AddressGeocodeField } from "@/components/forms/address-geocode-field";
 import { useApiFormErrors } from "@tge/hooks";
 import { useUnsavedChangesWarning } from "@/hooks/use-unsaved-changes-warning";
 import { toast } from "@/lib/toast";
@@ -72,6 +79,46 @@ const PROPERTY_TYPE_VALUES = [
 
 const PROPERTY_STATUS_VALUES = ["available", "reserved", "sold"] as const;
 
+// The 18 amenity flags (mirror the Prisma boolean columns / amenityFlagsSchema).
+// Labels are literal English for now — i18n keys are a follow-up, same as the
+// brand/tier picker.
+const AMENITY_FIELDS = [
+  ["hasBalcony", "Balcony"],
+  ["hasTerrace", "Terrace"],
+  ["hasParking", "Parking"],
+  ["hasGarage", "Garage"],
+  ["hasSeparateKitchen", "Separate kitchen"],
+  ["hasStorage", "Storage"],
+  ["hasElevator", "Elevator"],
+  ["hasInteriorStaircase", "Interior staircase"],
+  ["hasWashingMachine", "Washing machine"],
+  ["hasFridge", "Fridge"],
+  ["hasStove", "Stove"],
+  ["hasOven", "Oven"],
+  ["hasAC", "Air conditioning"],
+  ["hasBlinds", "Blinds"],
+  ["hasArmoredDoors", "Armored doors"],
+  ["hasIntercom", "Intercom"],
+  ["hasInternet", "Internet"],
+  ["hasCableTV", "Cable TV"],
+] as const;
+
+// Optional classification enums (values mirror the Prisma enums). Each renders
+// as a Select with a "—" (none) option since they're optional.
+const CLASSIFICATION_FIELDS = [
+  ["furnishing", "Furnishing", ["unfurnished", "semi_furnished", "furnished", "luxury"]],
+  ["material", "Construction", ["brick", "concrete", "bca", "wood", "stone", "mixed"]],
+  ["condition", "Condition", ["new_build", "renovated", "good", "needs_renovation", "under_construction"]],
+  ["sellerType", "Seller", ["private_seller", "agency", "developer"]],
+  ["heating", "Heating", ["central_gas", "centralized", "block_central", "electric", "heat_pump", "solid_fuel", "none"]],
+  ["ownership", "Ownership", ["personal", "company", "mixed"]],
+  ["windowType", "Windows", ["pvc_double", "pvc_triple", "wood", "aluminum", "mixed"]],
+] as const;
+
+const NONE = "__none__";
+const humanize = (s: string) =>
+  (s.charAt(0).toUpperCase() + s.slice(1)).replace(/_/g, " ");
+
 interface PropertyFormProps {
   defaultValues?: Partial<PropertyFormValues>;
   images?: GalleryImage[];
@@ -109,6 +156,10 @@ export function PropertyForm({
       currency: "EUR",
       type: "apartment",
       status: "available",
+      // Brand/tier the listing belongs to. luxury → TGE, affordable → REVERY.
+      // Without this the API defaults to luxury and the listing only ever
+      // shows on TGE — the form must let the agent choose.
+      tier: "luxury",
       city: "",
       citySlug: "",
       neighborhood: "",
@@ -121,6 +172,13 @@ export function PropertyForm({
       features: [],
       featured: false,
       isNew: false,
+      // 18 amenity flags default off so their Switches render controlled.
+      hasBalcony: false, hasTerrace: false, hasParking: false, hasGarage: false,
+      hasSeparateKitchen: false, hasStorage: false, hasElevator: false,
+      hasInteriorStaircase: false, hasWashingMachine: false, hasFridge: false,
+      hasStove: false, hasOven: false, hasAC: false, hasBlinds: false,
+      hasArmoredDoors: false, hasIntercom: false, hasInternet: false,
+      hasCableTV: false,
       ...defaultValues,
     },
   });
@@ -135,9 +193,24 @@ export function PropertyForm({
   // catches the common footgun.
   useUnsavedChangesWarning(form.formState.isDirty);
 
-  const handleFormSubmit = form.handleSubmit((data) => {
-    onSubmit(data, galleryImages);
-  });
+  const handleFormSubmit = form.handleSubmit(
+    (data) => {
+      onSubmit(data, galleryImages);
+    },
+    // Without an invalid handler a blocked submit is completely silent — and
+    // several required fields (slug, city, neighborhood, yearBuilt) live in
+    // sections far from the localized tabs, so the user sees nothing happen.
+    // Surface a toast; the per-field errors + locale-switcher badges point to
+    // where. RHF's shouldFocusError also scrolls to the first offender.
+    (errors) => {
+      const count = Object.keys(errors).length;
+      toast.error(
+        count > 0
+          ? `Please fix ${count} field${count === 1 ? "" : "s"} before saving — check the highlighted fields.`
+          : "Please review the highlighted fields before saving.",
+      );
+    },
+  );
 
   return (
     <FormProvider {...form}>
@@ -272,6 +345,19 @@ function PropertyMetadataFields({
 }) {
   const tc = useTranslations("Common");
   const form = useFormContext<PropertyFormValues>();
+  // Subscribe to validation errors so non-localized (MetaField) inputs can
+  // render their message. Previously these errors existed in RHF state but
+  // were never displayed, so a save blocked on e.g. an empty `neighborhood`
+  // or `yearBuilt` failed silently.
+  const { errors } = useFormState({ control: form.control });
+  const fe = (name: keyof PropertyFormValues): string | undefined =>
+    (errors as Record<string, { message?: string } | undefined>)[name as string]
+      ?.message;
+  const {
+    fields: featureFields,
+    append: appendFeature,
+    remove: removeFeature,
+  } = useFieldArray({ control: form.control, name: "features" });
 
   const { data: developers } = useQuery({
     queryKey: ["developers-select"],
@@ -308,7 +394,7 @@ function PropertyMetadataFields({
   return (
     <div className="flex flex-col gap-5">
       <MetaSection title={t("basicInfo")}>
-        <MetaField id="property-slug" label={t("slug")}>
+        <MetaField id="property-slug" label={t("slug")} error={fe("slug")}>
           <div className="flex gap-2">
             <Input
               id="property-slug"
@@ -363,10 +449,29 @@ function PropertyMetadataFields({
             </SelectContent>
           </Select>
         </MetaField>
+        {/* Brand/tier selector. Labels are literal (brand names are proper
+            nouns); i18n keys are a follow-up polish. Drives which site the
+            listing publishes to — luxury → TGE, affordable → REVERY. */}
+        <MetaField id="property-tier" label="Brand / Tier">
+          <Select
+            value={form.watch("tier") ?? "luxury"}
+            onValueChange={(v) =>
+              form.setValue("tier", v as PropertyFormValues["tier"])
+            }
+          >
+            <SelectTrigger id="property-tier">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="luxury">Luxury — TGE</SelectItem>
+              <SelectItem value="affordable">Affordable — REVERY</SelectItem>
+            </SelectContent>
+          </Select>
+        </MetaField>
       </MetaSection>
 
       <MetaSection title={t("details")}>
-        <MetaField id="property-price" label={t("price")}>
+        <MetaField id="property-price" label={t("price")} error={fe("price")}>
           <Input
             id="property-price"
             type="number"
@@ -445,7 +550,11 @@ function PropertyMetadataFields({
       </MetaSection>
 
       <MetaSection title={t("location")}>
-        <MetaField id="property-city" label={t("city")}>
+        <MetaField
+          id="property-city"
+          label={t("city")}
+          error={fe("citySlug") ?? fe("city")}
+        >
           <Select value={form.watch("citySlug")} onValueChange={handleCityChange}>
             <SelectTrigger id="property-city">
               <SelectValue placeholder={t("selectCity")} />
@@ -459,10 +568,17 @@ function PropertyMetadataFields({
             </SelectContent>
           </Select>
         </MetaField>
-        <MetaField id="property-neighborhood" label={t("neighborhood")}>
+        <MetaField
+          id="property-neighborhood"
+          label={t("neighborhood")}
+          error={fe("neighborhood")}
+        >
           <Input id="property-neighborhood" {...form.register("neighborhood")} />
         </MetaField>
-        <MetaField id="property-latitude" label={t("latitude")}>
+        <MetaField id="property-geocode" label="Find address">
+          <AddressGeocodeField />
+        </MetaField>
+        <MetaField id="property-latitude" label={t("latitude")} error={fe("latitude")}>
           <Input
             id="property-latitude"
             type="number"
@@ -471,7 +587,7 @@ function PropertyMetadataFields({
             className="mono"
           />
         </MetaField>
-        <MetaField id="property-longitude" label={t("longitude")}>
+        <MetaField id="property-longitude" label={t("longitude")} error={fe("longitude")}>
           <Input
             id="property-longitude"
             type="number"
@@ -485,7 +601,7 @@ function PropertyMetadataFields({
       <MetaSection title={t("specifications")}>
         {!isTerrain ? (
           <>
-            <MetaField id="property-bedrooms" label={t("bedrooms")}>
+            <MetaField id="property-bedrooms" label={t("bedrooms")} error={fe("bedrooms")}>
               <Input
                 id="property-bedrooms"
                 type="number"
@@ -493,7 +609,7 @@ function PropertyMetadataFields({
                 className="mono"
               />
             </MetaField>
-            <MetaField id="property-bathrooms" label={t("bathrooms")}>
+            <MetaField id="property-bathrooms" label={t("bathrooms")} error={fe("bathrooms")}>
               <Input
                 id="property-bathrooms"
                 type="number"
@@ -501,7 +617,7 @@ function PropertyMetadataFields({
                 className="mono"
               />
             </MetaField>
-            <MetaField id="property-floors" label={t("floors")}>
+            <MetaField id="property-floors" label={t("floors")} error={fe("floors")}>
               <Input
                 id="property-floors"
                 type="number"
@@ -509,7 +625,7 @@ function PropertyMetadataFields({
                 className="mono"
               />
             </MetaField>
-            <MetaField id="property-year-built" label={t("yearBuilt")}>
+            <MetaField id="property-year-built" label={t("yearBuilt")} error={fe("yearBuilt")}>
               <Input
                 id="property-year-built"
                 type="number"
@@ -517,7 +633,7 @@ function PropertyMetadataFields({
                 className="mono"
               />
             </MetaField>
-            <MetaField id="property-garage" label={t("garageSpots")}>
+            <MetaField id="property-garage" label={t("garageSpots")} error={fe("garage")}>
               <Input
                 id="property-garage"
                 type="number"
@@ -527,7 +643,7 @@ function PropertyMetadataFields({
             </MetaField>
           </>
         ) : null}
-        <MetaField id="property-area" label={t("area")}>
+        <MetaField id="property-area" label={t("area")} error={fe("area")}>
           <Input
             id="property-area"
             type="number"
@@ -535,7 +651,7 @@ function PropertyMetadataFields({
             className="mono"
           />
         </MetaField>
-        <MetaField id="property-land-area" label={t("landArea")}>
+        <MetaField id="property-land-area" label={t("landArea")} error={fe("landArea")}>
           <Input
             id="property-land-area"
             type="number"
@@ -548,6 +664,78 @@ function PropertyMetadataFields({
           checked={form.watch("pool")}
           onCheckedChange={(v) => form.setValue("pool", v)}
         />
+      </MetaSection>
+
+      <MetaSection title="Classification">
+        {CLASSIFICATION_FIELDS.map(([name, label, options]) => (
+          <MetaField key={name} id={`property-${name}`} label={label}>
+            <Select
+              value={(form.watch(name) as string | undefined) ?? NONE}
+              onValueChange={(v) =>
+                form.setValue(name, (v === NONE ? undefined : v) as never)
+              }
+            >
+              <SelectTrigger id={`property-${name}`}>
+                <SelectValue placeholder="—" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value={NONE}>—</SelectItem>
+                {options.map((o) => (
+                  <SelectItem key={o} value={o}>
+                    {humanize(o)}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </MetaField>
+        ))}
+      </MetaSection>
+
+      <MetaSection title="Amenities">
+        {AMENITY_FIELDS.map(([name, label]) => (
+          <SwitchRow
+            key={name}
+            label={label}
+            checked={form.watch(name) as boolean | undefined}
+            onCheckedChange={(v) => form.setValue(name, v as never)}
+          />
+        ))}
+      </MetaSection>
+
+      <MetaSection title="Features">
+        <div className="flex flex-col gap-2">
+          {featureFields.map((field, i) => (
+            <div key={field.id} className="flex items-center gap-2">
+              <Input
+                placeholder="RO"
+                {...form.register(`features.${i}.ro` as const)}
+                className="flex-1"
+              />
+              <Input
+                placeholder="EN"
+                {...form.register(`features.${i}.en` as const)}
+                className="flex-1"
+              />
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                onClick={() => removeFeature(i)}
+                aria-label="Remove feature"
+              >
+                ✕
+              </Button>
+            </div>
+          ))}
+          <Button
+            type="button"
+            variant="outline"
+            size="sm"
+            onClick={() => appendFeature({ en: "", ro: "" })}
+          >
+            + Add feature
+          </Button>
+        </div>
       </MetaSection>
     </div>
   );

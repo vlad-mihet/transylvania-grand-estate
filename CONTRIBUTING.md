@@ -16,6 +16,18 @@ This is idempotent (every write is an upsert keyed by a natural id, and `SEED_RE
 
 Production seed gating: the `admin@transylvaniagrandestate.ro` / `editor@transylvaniagrandestate.ro` / `agent@transylvaniagrandestate.ro` admin-user fixtures are dev/QA scaffolding and are **skipped** when `NODE_ENV=production` (which is set on the Fly app). All other seed data — counties, cities, properties, agents, developers, site config, bank rates — runs unconditionally. To bootstrap a fresh prod DB before the invitation flow has anyone to invite from, set `SEED_FORCE_FIXTURES=true` and `SEED_ADMIN_PASSWORD=<value>` for that one run, then unset both.
 
+## Turning on the REBS listing sync (go-live)
+
+The CRM → platform listing sync (REBS) is dormant in prod until two Fly secrets are set. Validate the live feed first, then follow the cutover checklist: [`docs/rebs-sync-go-live.md`](docs/rebs-sync-go-live.md). Quick reference:
+
+```bash
+pnpm rebs:validate                                              # 0. prove the key + inspect the feed (no deploy)
+# merge feat/crm-rebs-sync → main (CI deploys + migrates)       # 1.
+fly secrets set REBS_API_KEY=<key> REBS_SYNC_ENABLED=1 -a tge-api  # 2. the switch
+# POST /api/v1/crm-sync/sync (admin) or wait for the hourly cron # 3.
+fly secrets set REBS_SYNC_ENABLED=0 -a tge-api                  # kill-switch
+```
+
 ## Rotating the Fly deploy token
 
 `FLY_API_TOKEN` lives in GitHub repo secrets (`vlad-mihet/transylvania-grand-estate`). The token was installed on **2026-04-18** with a 1-year expiry — it will stop working around **2027-04-18**.

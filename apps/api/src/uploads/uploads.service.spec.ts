@@ -31,6 +31,7 @@ import { LessonProgressService } from '../academy/progress/lesson-progress.servi
 describe('UploadsService.extractStoragePath', () => {
   const stubStorage: StorageService = {
     upload: jest.fn(),
+    uploadFromUrl: jest.fn(),
     delete: jest.fn(),
     getPublicUrl: (filePath: string) => `/uploads/${filePath}`,
   };
@@ -88,6 +89,7 @@ describe('UploadsService.deleteByPublicUrl', () => {
     const deleteFn = jest.fn();
     const stubStorage: StorageService = {
       upload: jest.fn(),
+      uploadFromUrl: jest.fn(),
       delete: deleteFn,
       getPublicUrl: (filePath: string) => `/uploads/${filePath}`,
     };
@@ -104,6 +106,7 @@ describe('UploadsService.deleteByPublicUrl', () => {
     const deleteFn = jest.fn().mockResolvedValue(undefined);
     const stubStorage: StorageService = {
       upload: jest.fn(),
+      uploadFromUrl: jest.fn(),
       delete: deleteFn,
       getPublicUrl: (filePath: string) => `/uploads/${filePath}`,
     };
@@ -118,6 +121,7 @@ describe('UploadsService.deleteByPublicUrl', () => {
     const deleteFn = jest.fn().mockRejectedValue(new Error('S3 unreachable'));
     const stubStorage: StorageService = {
       upload: jest.fn(),
+      uploadFromUrl: jest.fn(),
       delete: deleteFn,
       getPublicUrl: (filePath: string) => `/uploads/${filePath}`,
     };

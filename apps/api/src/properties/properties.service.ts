@@ -16,6 +16,8 @@ import { localizedJsonContainsAny } from '../common/utils/localized-search';
 import {
   SITE_TIER_SCOPE,
   SiteContext,
+  SiteId,
+  brandForTier,
   isCityInBrand,
   propertyBrandWhere,
   tierScopeFilter,
@@ -115,6 +117,7 @@ export class PropertiesService {
   ): Promise<Prisma.PropertyWhereInput> {
     const where: Prisma.PropertyWhereInput = {};
     this.applyScopeFilters(where, query, site);
+    this.applyVisibilityScope(where, site);
     this.applyBrandGeoScope(where, site);
     this.applyRangeFilters(where, query);
     this.applyClassificationFilters(where, query);
@@ -145,6 +148,21 @@ export class PropertiesService {
       : where.AND
         ? [where.AND, clause]
         : [clause];
+  }
+
+  /**
+   * Hide soft-unpublished listings from public surfaces. Imported (CRM-synced)
+   * rows get `unpublishedAt` set when they're dropped from the feed or held for
+   * an unknown-city quarantine; native rows never set it. ADMIN sees everything
+   * (so quarantined imports can be reviewed); every other site is clamped to
+   * live rows only.
+   */
+  private applyVisibilityScope(
+    where: Prisma.PropertyWhereInput,
+    site: SiteContext,
+  ): void {
+    if (site.id === SiteId.ADMIN) return;
+    where.unpublishedAt = null;
   }
 
   /**
@@ -589,6 +607,7 @@ export class PropertiesService {
       }),
       'Property',
     );
+    this.assertVisible(property.unpublishedAt, site);
     this.assertTierInScope(property.tier, site);
     await this.assertGeoInScope(property.cityRef?.slug ?? null, site);
     this.assertAgentOwns(property.agentId, user);
@@ -612,10 +631,54 @@ export class PropertiesService {
       }),
       'Property',
     );
+    this.assertVisible(property.unpublishedAt, site);
     this.assertTierInScope(property.tier, site);
     await this.assertGeoInScope(property.cityRef?.slug ?? null, site);
     this.assertAgentOwns(property.agentId, user);
     return property;
+  }
+
+  /**
+   * Resolve a CRM-imported listing by its (source, externalId) sync key — the
+   * REBS docs ask consuming sites to serve a `/id/<crm-id>/` deep-link so the
+   * CRM can jump to the imported page. Same visibility gates as findBySlug.
+   */
+  async findByExternalId(
+    source: string,
+    externalId: string,
+    site: SiteContext,
+    user?: CurrentUserPayload | null,
+  ) {
+    const property = await ensureFound(
+      this.prisma.property.findUnique({
+        where: { source_external_id: { source, externalId } },
+        include: {
+          images: { orderBy: { sortOrder: 'asc' } },
+          developer: true,
+          agent: { select: selectForCaller(user) },
+          cityRef: { include: { county: true } },
+        },
+      }),
+      'Property',
+    );
+    this.assertVisible(property.unpublishedAt, site);
+    this.assertTierInScope(property.tier, site);
+    await this.assertGeoInScope(property.cityRef?.slug ?? null, site);
+    this.assertAgentOwns(property.agentId, user);
+    return property;
+  }
+
+  /**
+   * 404 (not 403) when a soft-unpublished listing is requested by a public
+   * surface — same existence-hiding rationale as `assertTierInScope`. ADMIN
+   * may still read quarantined/unpublished imports for review.
+   */
+  private assertVisible(
+    unpublishedAt: Date | null,
+    site: SiteContext,
+  ): void {
+    if (site.id === SiteId.ADMIN) return;
+    if (unpublishedAt) throw new NotFoundException('Property not found');
   }
 
   /**
@@ -663,6 +726,41 @@ export class PropertiesService {
     }
   }
 
+  /**
+   * Link a listing to its `City` FK by slug and ensure the city is tagged for
+   * the listing's brand, so it's actually visible on the public site. Public
+   * reads gate visibility through `cityRef.brands` (see `propertyBrandWhere`):
+   * a property with a NULL `cityId` — or a city not tagged for its brand —
+   * saves fine but never appears. Returns the resolved `cityId` (or null when
+   * the slug matches no City, which shouldn't happen via the admin city
+   * picker; we log rather than hard-fail so an edit isn't blocked).
+   *
+   * Tagging is add-only (never removes a `CityBrand`): removing one could hide
+   * other listings in that city. Mirrors the CRM sync's `ensureCityBrand`.
+   */
+  private async linkCityForBrand(
+    citySlug: string,
+    tier: PropertyTier,
+  ): Promise<string | null> {
+    const city = await this.prisma.city.findUnique({
+      where: { slug: citySlug },
+      select: { id: true },
+    });
+    if (!city) {
+      this.logger.warn(
+        `Property city "${citySlug}" matches no City row — listing will not be brand-visible until linked`,
+      );
+      return null;
+    }
+    const brand = brandForTier(tier);
+    await this.prisma.cityBrand.upsert({
+      where: { cityId_brand: { cityId: city.id, brand } },
+      create: { cityId: city.id, brand },
+      update: {},
+    });
+    return city.id;
+  }
+
   async create(dto: CreatePropertyDto) {
     await Promise.all([
       ensureSlugUnique(dto.slug, 'Property', (slug) =>
@@ -673,6 +771,9 @@ export class PropertiesService {
       ),
       this.validateRefs(dto.developerId, dto.agentId),
     ]);
+
+    const tier = dto.tier ?? PropertyTier.luxury;
+    const cityId = await this.linkCityForBrand(dto.citySlug, tier);
 
     const created = await this.prisma.property.create({
       data: {
@@ -685,7 +786,8 @@ export class PropertiesService {
         currency: dto.currency ?? 'EUR',
         type: dto.type,
         status: dto.status ?? PropertyStatus.available,
-        tier: dto.tier,
+        tier,
+        cityId,
         city: dto.city,
         citySlug: dto.citySlug,
         neighborhood: dto.neighborhood,
@@ -731,7 +833,11 @@ export class PropertiesService {
     dto: UpdatePropertyDto,
     user?: CurrentUserPayload | null,
   ) {
-    await this.ensureExists(id);
+    const existing = await this.prisma.property.findUnique({
+      where: { id },
+      select: { tier: true, citySlug: true },
+    });
+    if (!existing) throw new NotFoundException('Property not found');
     const effective =
       user?.role === AdminRole.AGENT ? sanitizeForAgent(dto) : dto;
     await this.validateRefs(effective.developerId, effective.agentId);
@@ -797,6 +903,18 @@ export class PropertiesService {
     if (effective.agentId !== undefined) {
       data.agent = effective.agentId
         ? { connect: { id: effective.agentId } }
+        : { disconnect: true };
+    }
+
+    // Keep the City FK + brand membership in sync whenever the city or tier
+    // changes, so the listing stays visible on the right brand's site (public
+    // reads gate on `cityRef.brands` — a stale/NULL link silently hides it).
+    if (effective.citySlug !== undefined || effective.tier !== undefined) {
+      const effTier = effective.tier ?? existing.tier;
+      const effCitySlug = effective.citySlug ?? existing.citySlug;
+      const cityId = await this.linkCityForBrand(effCitySlug, effTier);
+      data.cityRef = cityId
+        ? { connect: { id: cityId } }
         : { disconnect: true };
     }
 

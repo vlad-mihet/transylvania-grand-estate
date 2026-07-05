@@ -1,4 +1,10 @@
-import { test, expect } from '@playwright/test';
+import {
+  test,
+  expect,
+  type BrowserContext,
+  type Page,
+} from '@playwright/test';
+import { loginAsAdmin } from './_fixtures/api';
 
 /**
  * Smoke for the unified command palette + global search.
@@ -8,18 +14,41 @@ import { test, expect } from '@playwright/test';
  * inside the result list still work because cmdk + Radix Dialog own those
  * behaviors internally; they're modal/listbox accessibility primitives.
  *
- * Auth comes from the shared `auth.setup.ts` storageState, so every test
- * starts logged in as SUPER_ADMIN.
+ * Auth: the shared `auth.setup.ts` storageState carries no admin-app session
+ * cookie (the setup logs into NestJS directly), and a per-test BFF login
+ * would trip the auth throttler (5/min) across this file's 6 tests. So the
+ * whole file runs serially on ONE context: a single BFF login plants the
+ * httpOnly refresh cookie in its jar, and every test re-navigates on the
+ * shared page (which resets the palette UI state).
  */
 
 const ROOT = '/ro';
 
 /** Locate the header trigger pill (or icon button on mobile). */
-const openPalette = (page: import('@playwright/test').Page) =>
+const openPalette = (page: Page) =>
   page.getByRole('button', { name: /search anything|caut(ă|a)/i }).first().click();
 
 test.describe('command palette', () => {
-  test('clicking the header trigger opens the palette and focuses the input', async ({ page }) => {
+  test.describe.configure({ mode: 'serial' });
+
+  let context: BrowserContext;
+  let page: Page;
+
+  test.beforeAll(async ({ browser }) => {
+    // browser.newContext() doesn't inherit the config's baseURL — mirror it.
+    const baseURL =
+      process.env.ADMIN_BASE_URL ??
+      `http://localhost:${process.env.ADMIN_PORT ?? 3051}`;
+    context = await browser.newContext({ baseURL });
+    await loginAsAdmin(context, 'command-palette');
+    page = await context.newPage();
+  });
+
+  test.afterAll(async () => {
+    await context?.close();
+  });
+
+  test('clicking the header trigger opens the palette and focuses the input', async () => {
     await page.goto(`${ROOT}`);
     await expect(
       page.getByRole('button', { name: /search anything|caut(ă|a)/i }).first(),
@@ -32,7 +61,7 @@ test.describe('command palette', () => {
     await expect(input).toBeFocused();
   });
 
-  test('typing shows entity groups', async ({ page }) => {
+  test('typing shows entity groups', async () => {
     await page.goto(`${ROOT}`);
     await openPalette(page);
 
@@ -45,7 +74,7 @@ test.describe('command palette', () => {
     await expect(page.locator('[cmdk-group-heading]').first()).toBeVisible();
   });
 
-  test('Esc closes the palette and clears state', async ({ page }) => {
+  test('Esc closes the palette and clears state', async () => {
     await page.goto(`${ROOT}`);
     await openPalette(page);
     const input = page.getByPlaceholder(/search anything|caut(ă|a) orice/i);
@@ -58,7 +87,7 @@ test.describe('command palette', () => {
     await expect(input).toHaveValue('');
   });
 
-  test('vertical rail renders the role-allowed categories on desktop', async ({ page }) => {
+  test('vertical rail renders the role-allowed categories on desktop', async () => {
     await page.setViewportSize({ width: 1440, height: 900 });
     await page.goto(`${ROOT}`);
     await openPalette(page);
@@ -68,7 +97,7 @@ test.describe('command palette', () => {
     expect(await tabs.count()).toBeGreaterThanOrEqual(2);
   });
 
-  test('rail click issues a scoped /search request', async ({ page }) => {
+  test('rail click issues a scoped /search request', async () => {
     await page.setViewportSize({ width: 1440, height: 900 });
     await page.goto(`${ROOT}`);
     await openPalette(page);
@@ -91,7 +120,7 @@ test.describe('command palette', () => {
     }
   });
 
-  test('horizontal scope chips appear below md viewport', async ({ page }) => {
+  test('horizontal scope chips appear below md viewport', async () => {
     await page.setViewportSize({ width: 600, height: 800 });
     await page.goto(`${ROOT}`);
     await openPalette(page);

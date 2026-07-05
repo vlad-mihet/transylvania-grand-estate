@@ -69,7 +69,7 @@ export function PropertyPriceBlock({
           <span>
             {neighborhood},{" "}
             <Link
-              href={{ pathname: "/cities/[slug]", params: { slug: citySlug } }}
+              href={`/cities/${citySlug}`}
               className="text-primary hover:underline underline-offset-2"
             >
               {city}

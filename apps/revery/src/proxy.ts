@@ -10,9 +10,9 @@ import { routing } from "./i18n/routing";
 const intl = createIntlMiddleware(routing);
 
 /**
- * Public marketing site — no auth gate. Same shape as landing's proxy,
- * but uses revery's typed routing (per-locale pathname rewrites for
- * `/instrumente` ↔ `/tools` / `/outils` / `/werkzeuge`).
+ * Public marketing site — no auth gate. Same shape as landing's proxy and
+ * uses the same pathnames-free routing (locale prefix only, no per-locale
+ * URL rewrites).
  *
  * File name + default-export name follow Next 16's `proxy.ts` convention.
  */

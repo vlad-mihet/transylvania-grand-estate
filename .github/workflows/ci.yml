@@ -190,6 +190,12 @@ jobs:
       CORS_ORIGINS: http://localhost:3050,http://localhost:3051,http://localhost:3052,http://localhost:3053
       PORT: 4000
       NEXT_PUBLIC_API_URL: http://localhost:4000/api/v1
+      # The route sweep renders every page × 4 locales; all SSR fetches come
+      # from one IP, so the global @nestjs/throttler bucket (60/min) 429s
+      # them nondeterministically. This flag skips ONLY the throttler module
+      # (validateEnv forbids it under NODE_ENV=production); the inquiry
+      # rate-limit gate is a separate custom guard and still enforces.
+      DEV_AUTH_THROTTLE_DISABLED: "1"
     steps:
       - uses: actions/checkout@v4
 
@@ -293,6 +299,10 @@ jobs:
       PORT: 4000
       NEXT_PUBLIC_API_URL: http://localhost:4000/api/v1
       REVERY_API_URL: http://localhost:4000/api/v1
+      # See playwright-landing: prevents SSR fetches from tripping the global
+      # throttler during the full route sweep. Inquiry rate-limit gate
+      # (rate-limit.spec.ts) uses its own guard and is unaffected.
+      DEV_AUTH_THROTTLE_DISABLED: "1"
     steps:
       - uses: actions/checkout@v4
 
