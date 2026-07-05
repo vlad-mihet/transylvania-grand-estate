@@ -24,6 +24,30 @@ create and delete freely.
 
 ---
 
+## ✅ Fixes applied since your last run (please re-verify)
+
+Your 3-bug report was triaged and the two real bugs are fixed on the running stack:
+
+- **Bug 2 — Revery nested routes 404 (REAL, fixed).** Root cause was a next-intl
+  `pathnames` map incompatible with next-intl@4.8.3 + next@16.1.6, which 404'd every
+  2+-segment route. The map was removed. **Verified:** `/ro/instrumente/calculator-ipotecar`
+  and `/ro/cities/<slug>` now return 200. Please re-check property details, city, agent,
+  developer, blog, and tool pages open normally. **Note:** tool pages now use the canonical
+  `/instrumente/*` URL in every locale (the localized `/tools` · `/outils` · `/werkzeuge`
+  aliases were dropped) — that's expected, not a bug.
+- **Bug 3 — Edit form showed wrong tier / would wipe amenities & classification (REAL, fixed).**
+  The edit page now hydrates the full form. **Please verify:** open an existing **affordable**
+  listing → Brand/Tier reads **"Affordable — REVERY"**, amenities + classification are
+  populated from saved data, and the form is **not** "unsaved" on load. Toggle one amenity,
+  save, reopen → tier unchanged and amenities/classification retained.
+- **Bug 1 — Locale fields "wipe" on tab switch (NOT a product bug).** The localized inputs are
+  react-hook-form controlled fields; every locale persists in the form store (the identical
+  editor powers the article form and works). The symptom comes from setting a value on the DOM
+  without firing React's `onChange`. **When testing, type into fields with real key events
+  (not value-set/paste),** fill both RO + EN, then save — it should submit fine.
+
+---
+
 ## Plan A — Admin listing management (no external deps)
 
 Goal: confirm a manually-created listing reaches the right public site, on **both** brands, with
