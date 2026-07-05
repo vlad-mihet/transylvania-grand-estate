@@ -31,6 +31,14 @@ pnpm rebs:validate
 
 Review the report:
 - **Auth** — must say `✅ Authenticated`. A `401/403` means the key or instance is wrong.
+- **`total_count: 0` with a valid key** — the feed exports only listings with
+  Valabilitate **"Activă"** (`availability=1`), and own-site export is governed by
+  the CRM admin module **"Promovare Site Propriu"**. If the CRM shows active
+  listings but the feed is empty: open the listing and confirm it's literally
+  "Activă" (not "Incompletă" — REBS's default until required fields are complete)
+  and enabled for own-site promotion; otherwise it's agency-manager/REBS-support
+  territory, not a bug on our side. (Sanity check the key sees data at all:
+  `/api/public/agent/` and `/api/public/region/` should have non-zero counts.)
 - **`property_type`** — any line flagged `⚠ UNMAPPED` is a type the mapper would skip.
   If you see real types we don't handle, extend `mapPropertyType()` in
   `apps/api/src/crm-sync/adapters/rebs/rebs.mapper.ts` (+ its spec) on the branch.

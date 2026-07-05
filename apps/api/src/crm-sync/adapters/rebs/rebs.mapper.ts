@@ -134,9 +134,11 @@ export function mapRebsProperty(raw: RebsProperty): MapResult {
     externalId,
     sourceModifiedAt: parseDate(raw.date_modified),
 
-    // REBS carries English in title_en/description_en — use it when present so
-    // we ship real English rather than an RO placeholder. The core sets
-    // `needsTranslation` only for the fields where EN is still missing.
+    // English: our live instance's schema only exposes tags_en/nearby_en —
+    // title_en/description_en are NOT in it (verified against
+    // /api/public/property/schema/, 2026-07-05), so today these stay RO-only
+    // and the core flags `needsTranslation`. Kept as forward-compat: REBS
+    // exports extra fields on request, and `loc()` no-ops when absent.
     title: loc(titleRo, raw.title_en),
     description: loc(descriptionRo, raw.description_en),
     shortDescription: loc(

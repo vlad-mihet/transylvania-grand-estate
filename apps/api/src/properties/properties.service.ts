@@ -639,6 +639,36 @@ export class PropertiesService {
   }
 
   /**
+   * Resolve a CRM-imported listing by its (source, externalId) sync key — the
+   * REBS docs ask consuming sites to serve a `/id/<crm-id>/` deep-link so the
+   * CRM can jump to the imported page. Same visibility gates as findBySlug.
+   */
+  async findByExternalId(
+    source: string,
+    externalId: string,
+    site: SiteContext,
+    user?: CurrentUserPayload | null,
+  ) {
+    const property = await ensureFound(
+      this.prisma.property.findUnique({
+        where: { source_external_id: { source, externalId } },
+        include: {
+          images: { orderBy: { sortOrder: 'asc' } },
+          developer: true,
+          agent: { select: selectForCaller(user) },
+          cityRef: { include: { county: true } },
+        },
+      }),
+      'Property',
+    );
+    this.assertVisible(property.unpublishedAt, site);
+    this.assertTierInScope(property.tier, site);
+    await this.assertGeoInScope(property.cityRef?.slug ?? null, site);
+    this.assertAgentOwns(property.agentId, user);
+    return property;
+  }
+
+  /**
    * 404 (not 403) when a soft-unpublished listing is requested by a public
    * surface — same existence-hiding rationale as `assertTierInScope`. ADMIN
    * may still read quarantined/unpublished imports for review.

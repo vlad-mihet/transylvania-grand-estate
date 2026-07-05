@@ -94,6 +94,26 @@ export class PropertiesController {
     return this.propertiesService.findById(id, site, user);
   }
 
+  // CRM deep-link (REBS "Link din CRM către site"): resolve an imported
+  // listing by its (source, externalId) sync key. Declared before ':slug'
+  // so the static prefix isn't shadowed by the catch-all.
+  @Public()
+  @LocaleScope('public')
+  @Get('external/:source/:externalId')
+  async findByExternalId(
+    @Param('source') source: string,
+    @Param('externalId') externalId: string,
+    @CurrentSite() site: SiteContext,
+    @CurrentUser() user: CurrentUserPayload | null,
+  ) {
+    return this.propertiesService.findByExternalId(
+      source,
+      externalId,
+      site,
+      user,
+    );
+  }
+
   @Public()
   @LocaleScope('public')
   @Get(':slug')
