@@ -8,24 +8,22 @@ export function localePath(locale: Locale, path: string = ''): string {
   return trimmed ? `/${locale}/${trimmed}` : `/${locale}`;
 }
 
-const TOOLS_SEGMENT: Record<Locale, string> = {
-  ro: 'instrumente',
-  en: 'tools',
-  fr: 'outils',
-  de: 'werkzeuge',
-};
+// Tool URLs use the canonical Romanian segments in EVERY locale: the per-locale
+// `pathnames` rewrite map was removed (incompatible with next-intl@4.8.3 +
+// next@16 — it 404'd all nested routes), so /en/tools/... etc. no longer exist.
+const TOOLS_SEGMENT = 'instrumente';
 
 const TOOL_SLUGS = {
-  mortgage: { ro: 'calculator-ipotecar', en: 'mortgage-calculator', fr: 'calculateur-hypothecaire', de: 'hypothekenrechner' },
-  borrowing: { ro: 'capacitate-imprumut', en: 'borrowing-capacity', fr: 'capacite-emprunt', de: 'kreditkapazitaet' },
-  purchase: { ro: 'costuri-achizitie', en: 'purchase-costs', fr: 'frais-d-achat', de: 'kaufkosten' },
-  rental: { ro: 'randament-inchiriere', en: 'rental-yield', fr: 'rendement-locatif', de: 'mietrendite' },
+  mortgage: 'calculator-ipotecar',
+  borrowing: 'capacitate-imprumut',
+  purchase: 'costuri-achizitie',
+  rental: 'randament-inchiriere',
 } as const;
 
 export function toolsHubPath(locale: Locale): string {
-  return localePath(locale, TOOLS_SEGMENT[locale]);
+  return localePath(locale, TOOLS_SEGMENT);
 }
 
 export function toolPath(locale: Locale, tool: keyof typeof TOOL_SLUGS): string {
-  return localePath(locale, `${TOOLS_SEGMENT[locale]}/${TOOL_SLUGS[tool][locale]}`);
+  return localePath(locale, `${TOOLS_SEGMENT}/${TOOL_SLUGS[tool]}`);
 }
