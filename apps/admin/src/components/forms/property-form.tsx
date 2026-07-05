@@ -7,6 +7,7 @@ import {
   useFieldArray,
   useForm,
   useFormContext,
+  useFormState,
 } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useQuery } from "@tanstack/react-query";
@@ -192,9 +193,24 @@ export function PropertyForm({
   // catches the common footgun.
   useUnsavedChangesWarning(form.formState.isDirty);
 
-  const handleFormSubmit = form.handleSubmit((data) => {
-    onSubmit(data, galleryImages);
-  });
+  const handleFormSubmit = form.handleSubmit(
+    (data) => {
+      onSubmit(data, galleryImages);
+    },
+    // Without an invalid handler a blocked submit is completely silent — and
+    // several required fields (slug, city, neighborhood, yearBuilt) live in
+    // sections far from the localized tabs, so the user sees nothing happen.
+    // Surface a toast; the per-field errors + locale-switcher badges point to
+    // where. RHF's shouldFocusError also scrolls to the first offender.
+    (errors) => {
+      const count = Object.keys(errors).length;
+      toast.error(
+        count > 0
+          ? `Please fix ${count} field${count === 1 ? "" : "s"} before saving — check the highlighted fields.`
+          : "Please review the highlighted fields before saving.",
+      );
+    },
+  );
 
   return (
     <FormProvider {...form}>
@@ -329,6 +345,14 @@ function PropertyMetadataFields({
 }) {
   const tc = useTranslations("Common");
   const form = useFormContext<PropertyFormValues>();
+  // Subscribe to validation errors so non-localized (MetaField) inputs can
+  // render their message. Previously these errors existed in RHF state but
+  // were never displayed, so a save blocked on e.g. an empty `neighborhood`
+  // or `yearBuilt` failed silently.
+  const { errors } = useFormState({ control: form.control });
+  const fe = (name: keyof PropertyFormValues): string | undefined =>
+    (errors as Record<string, { message?: string } | undefined>)[name as string]
+      ?.message;
   const {
     fields: featureFields,
     append: appendFeature,
@@ -370,7 +394,7 @@ function PropertyMetadataFields({
   return (
     <div className="flex flex-col gap-5">
       <MetaSection title={t("basicInfo")}>
-        <MetaField id="property-slug" label={t("slug")}>
+        <MetaField id="property-slug" label={t("slug")} error={fe("slug")}>
           <div className="flex gap-2">
             <Input
               id="property-slug"
@@ -447,7 +471,7 @@ function PropertyMetadataFields({
       </MetaSection>
 
       <MetaSection title={t("details")}>
-        <MetaField id="property-price" label={t("price")}>
+        <MetaField id="property-price" label={t("price")} error={fe("price")}>
           <Input
             id="property-price"
             type="number"
@@ -526,7 +550,11 @@ function PropertyMetadataFields({
       </MetaSection>
 
       <MetaSection title={t("location")}>
-        <MetaField id="property-city" label={t("city")}>
+        <MetaField
+          id="property-city"
+          label={t("city")}
+          error={fe("citySlug") ?? fe("city")}
+        >
           <Select value={form.watch("citySlug")} onValueChange={handleCityChange}>
             <SelectTrigger id="property-city">
               <SelectValue placeholder={t("selectCity")} />
@@ -540,13 +568,17 @@ function PropertyMetadataFields({
             </SelectContent>
           </Select>
         </MetaField>
-        <MetaField id="property-neighborhood" label={t("neighborhood")}>
+        <MetaField
+          id="property-neighborhood"
+          label={t("neighborhood")}
+          error={fe("neighborhood")}
+        >
           <Input id="property-neighborhood" {...form.register("neighborhood")} />
         </MetaField>
         <MetaField id="property-geocode" label="Find address">
           <AddressGeocodeField />
         </MetaField>
-        <MetaField id="property-latitude" label={t("latitude")}>
+        <MetaField id="property-latitude" label={t("latitude")} error={fe("latitude")}>
           <Input
             id="property-latitude"
             type="number"
@@ -555,7 +587,7 @@ function PropertyMetadataFields({
             className="mono"
           />
         </MetaField>
-        <MetaField id="property-longitude" label={t("longitude")}>
+        <MetaField id="property-longitude" label={t("longitude")} error={fe("longitude")}>
           <Input
             id="property-longitude"
             type="number"
@@ -569,7 +601,7 @@ function PropertyMetadataFields({
       <MetaSection title={t("specifications")}>
         {!isTerrain ? (
           <>
-            <MetaField id="property-bedrooms" label={t("bedrooms")}>
+            <MetaField id="property-bedrooms" label={t("bedrooms")} error={fe("bedrooms")}>
               <Input
                 id="property-bedrooms"
                 type="number"
@@ -577,7 +609,7 @@ function PropertyMetadataFields({
                 className="mono"
               />
             </MetaField>
-            <MetaField id="property-bathrooms" label={t("bathrooms")}>
+            <MetaField id="property-bathrooms" label={t("bathrooms")} error={fe("bathrooms")}>
               <Input
                 id="property-bathrooms"
                 type="number"
@@ -585,7 +617,7 @@ function PropertyMetadataFields({
                 className="mono"
               />
             </MetaField>
-            <MetaField id="property-floors" label={t("floors")}>
+            <MetaField id="property-floors" label={t("floors")} error={fe("floors")}>
               <Input
                 id="property-floors"
                 type="number"
@@ -593,7 +625,7 @@ function PropertyMetadataFields({
                 className="mono"
               />
             </MetaField>
-            <MetaField id="property-year-built" label={t("yearBuilt")}>
+            <MetaField id="property-year-built" label={t("yearBuilt")} error={fe("yearBuilt")}>
               <Input
                 id="property-year-built"
                 type="number"
@@ -601,7 +633,7 @@ function PropertyMetadataFields({
                 className="mono"
               />
             </MetaField>
-            <MetaField id="property-garage" label={t("garageSpots")}>
+            <MetaField id="property-garage" label={t("garageSpots")} error={fe("garage")}>
               <Input
                 id="property-garage"
                 type="number"
@@ -611,7 +643,7 @@ function PropertyMetadataFields({
             </MetaField>
           </>
         ) : null}
-        <MetaField id="property-area" label={t("area")}>
+        <MetaField id="property-area" label={t("area")} error={fe("area")}>
           <Input
             id="property-area"
             type="number"
@@ -619,7 +651,7 @@ function PropertyMetadataFields({
             className="mono"
           />
         </MetaField>
-        <MetaField id="property-land-area" label={t("landArea")}>
+        <MetaField id="property-land-area" label={t("landArea")} error={fe("landArea")}>
           <Input
             id="property-land-area"
             type="number"

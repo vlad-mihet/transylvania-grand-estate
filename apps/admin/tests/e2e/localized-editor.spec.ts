@@ -55,4 +55,30 @@ test.describe('localized editor — per-locale value persistence', () => {
     await page.getByRole('tab', { name: /English/ }).click();
     await expect(activeTitle).toHaveValue('REPRO-EN-TITLE');
   });
+
+  // Cowork e2e follow-up: a save blocked by RHF validation used to do nothing
+  // at all — no toast, no visible error — because the metadata inputs never
+  // rendered their errors and handleSubmit had no invalid handler. Required
+  // fields like `neighborhood`/`yearBuilt` sit far from the locale tabs, so the
+  // form failed silently and looked like a Bug 1 relapse.
+  test('a blocked save surfaces feedback instead of failing silently', async ({
+    page,
+  }) => {
+    await page.goto('/ro/properties/new');
+    await expect(page.locator('input[id^="title-"]:visible')).toBeVisible();
+
+    // Submit with the required metadata fields still empty.
+    await page.getByRole('button', { name: /Salv/i }).first().click();
+
+    // 1) A global signal fires (the new invalid-submit toast).
+    await expect(page.getByText(/before saving/i)).toBeVisible();
+
+    // 2) The offending metadata field now shows its own inline error (these
+    //    were previously computed by RHF but never rendered).
+    await expect(
+      page.locator(
+        'div:has(> input#property-neighborhood) > p.text-destructive',
+      ),
+    ).toBeVisible();
+  });
 });
