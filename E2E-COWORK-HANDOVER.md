@@ -51,6 +51,17 @@ Your 3-bug report was triaged and the two real bugs are fixed on the running sta
   fields, and save → it should POST and appear in the Revery catalog. The RO→EN→RO round-trip no
   longer blanks fields.
 
+### A2 follow-up fixes (from your last pass)
+- **Silent save failure (fixed).** A save blocked by validation used to do *nothing* — no toast,
+  no error — because metadata inputs never rendered their errors and there was no invalid handler.
+  Now: a toast fires ("fix N fields before saving"), and each field (neighborhood, yearBuilt, slug,
+  city…) shows its own inline error. Note **neighborhood + yearBuilt are still required** by design
+  (pending a product call on whether to relax them) — they'll just tell you now instead of failing
+  silently.
+- **0-image detail page crash (fixed).** A listing with no images tripped the Adorys detail error
+  boundary. Now it renders a "Fără imagini" placeholder. Verified on the Sibiu test listing (200,
+  renders). You can re-check that listing's detail page.
+
 ---
 
 ## Plan A — Admin listing management (no external deps)
