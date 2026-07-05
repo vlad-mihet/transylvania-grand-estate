@@ -1233,6 +1233,8 @@
     "description": "Description",
     "propertyCount": "Nombre de propriétés",
     "cityImage": "Image de la ville",
+    "cityImageTge": "Image TGE (remplacement)",
+    "cityImageRevery": "Image Adorys (remplacement)",
     "brands": "Marques",
     "brandsHelper": "Choisissez les sites qui affichent cette ville."
   },

@@ -131,6 +131,12 @@ export interface ApiCity {
   countySlug?: string | null;
   county?: Pick<ApiCounty, "id" | "name" | "slug" | "code"> | null;
   brands?: ApiBrand[];
+  /**
+   * Per-brand image overrides (null = no override, falls back to `image`).
+   * Present only on ADMIN-context responses; public sites receive the
+   * already-resolved `image` for their own brand.
+   */
+  brandImages?: Partial<Record<ApiBrand, string | null>>;
 }
 
 export interface ApiDeveloper {

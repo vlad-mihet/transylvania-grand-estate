@@ -652,6 +652,10 @@ model CityBrand {
   brand  Brand
   city   City   @relation(fields: [cityId], references: [id], onDelete: Cascade)
 
+  // Per-brand hero image override. NULL falls back to City.image, so a city
+  // can show a different hero on TGE vs Revery without duplicating the row.
+  image String?
+
   createdAt DateTime @default(now()) @map("created_at")
 
   @@id([cityId, brand])

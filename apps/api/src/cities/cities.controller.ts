@@ -122,8 +122,13 @@ export class CitiesController {
   async uploadImage(
     @Param('id', ParseUUIDPipe) id: string,
     @UploadedFile() file: Express.Multer.File,
+    // Optional per-brand override target; absent = base City.image. Validated
+    // on the way in like the findAll brand filter.
+    @Query('brand') brand?: string,
   ) {
-    return this.citiesService.uploadImage(id, file);
+    const brandTarget =
+      brand === 'tge' || brand === 'revery' ? brand : undefined;
+    return this.citiesService.uploadImage(id, file, brandTarget);
   }
 
   @Roles(AdminRole.ADMIN, AdminRole.SUPER_ADMIN)

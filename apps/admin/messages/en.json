@@ -1233,6 +1233,8 @@
     "description": "Description",
     "propertyCount": "Property Count",
     "cityImage": "City Image",
+    "cityImageTge": "TGE Image (override)",
+    "cityImageRevery": "Adorys Image (override)",
     "brands": "Brands",
     "brandsHelper": "Choose which sites surface this city."
   },

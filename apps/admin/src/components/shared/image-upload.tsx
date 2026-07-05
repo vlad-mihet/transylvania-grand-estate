@@ -15,6 +15,9 @@ interface ImageUploadProps {
 
 export function ImageUpload({ value, onChange, label }: ImageUploadProps) {
   const [preview, setPreview] = useState<string | null>(null);
+  // X on the existing image hides it so the dropzone becomes reachable —
+  // without this, a value-backed widget could never offer a replacement.
+  const [cleared, setCleared] = useState(false);
   const t = useTranslations("Common");
 
   const onDrop = useCallback(
@@ -36,12 +39,17 @@ export function ImageUpload({ value, onChange, label }: ImageUploadProps) {
     maxSize: 10 * 1024 * 1024,
   });
 
-  const displaySrc = preview || value;
+  const displaySrc = preview || (cleared ? null : value);
 
   const clear = () => {
-    if (preview) URL.revokeObjectURL(preview);
+    if (preview) {
+      // Cancel a staged selection — fall back to showing the existing value.
+      URL.revokeObjectURL(preview);
+      setPreview(null);
+    } else {
+      setCleared(true);
+    }
     onChange(null);
-    setPreview(null);
   };
 
   return (

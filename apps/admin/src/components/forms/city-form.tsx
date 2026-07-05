@@ -32,10 +32,19 @@ import { citySchema, CityFormValues } from "@/lib/validations/city";
 import type { ApiBrand, ApiCounty } from "@tge/types";
 import { BrandBadges } from "@/components/shared/brand-badges";
 
+/** Per-brand hero replacements staged for upload; absent key = untouched. */
+export type BrandImageFiles = Partial<Record<ApiBrand, File>>;
+
 interface CityFormProps {
   defaultValues?: Partial<CityFormValues>;
   imageUrl?: string | null;
-  onSubmit: (data: CityFormValues, imageFile: File | null) => void;
+  /** Existing per-brand overrides (ADMIN responses carry `brandImages`). */
+  brandImageUrls?: Partial<Record<ApiBrand, string | null>>;
+  onSubmit: (
+    data: CityFormValues,
+    imageFile: File | null,
+    brandImageFiles: BrandImageFiles,
+  ) => void;
   loading?: boolean;
   submissionError?: unknown;
   /** Where Cancel navigates (detail page on edit, list on create). */
@@ -47,6 +56,7 @@ interface CityFormProps {
 export function CityForm({
   defaultValues,
   imageUrl,
+  brandImageUrls,
   onSubmit,
   loading,
   submissionError,
@@ -55,6 +65,7 @@ export function CityForm({
   breadcrumb,
 }: CityFormProps) {
   const [imageFile, setImageFile] = useState<File | null>(null);
+  const [brandImageFiles, setBrandImageFiles] = useState<BrandImageFiles>({});
   const tc = useTranslations("Common");
 
   const form = useForm<CityFormValues>({
@@ -79,13 +90,26 @@ export function CityForm({
   return (
     <FormProvider {...form}>
       <EntryLocaleProvider>
-        <form onSubmit={form.handleSubmit((data) => onSubmit(data, imageFile))}>
+        <form
+          onSubmit={form.handleSubmit((data) =>
+            onSubmit(data, imageFile, brandImageFiles),
+          )}
+        >
           <CityFormBody
             cancelHref={cancelHref}
             loading={loading}
             dirty={form.formState.isDirty}
             imageUrl={imageUrl}
             onImageFileChange={setImageFile}
+            brandImageUrls={brandImageUrls}
+            onBrandImageFileChange={(brand, file) =>
+              setBrandImageFiles((prev) => {
+                if (file) return { ...prev, [brand]: file };
+                const next = { ...prev };
+                delete next[brand];
+                return next;
+              })
+            }
             title={title}
             breadcrumb={breadcrumb}
           />
@@ -101,6 +125,8 @@ interface BodyProps {
   dirty: boolean;
   imageUrl?: string | null;
   onImageFileChange: (file: File | null) => void;
+  brandImageUrls?: Partial<Record<ApiBrand, string | null>>;
+  onBrandImageFileChange: (brand: ApiBrand, file: File | null) => void;
   title: ReactNode;
   breadcrumb?: ReactNode;
 }
@@ -111,10 +137,14 @@ function CityFormBody({
   dirty,
   imageUrl,
   onImageFileChange,
+  brandImageUrls,
+  onBrandImageFileChange,
   title,
   breadcrumb,
 }: BodyProps) {
   const t = useTranslations("CityForm");
+  const form = useFormContext<CityFormValues>();
+  const selectedBrands = form.watch("brands") ?? [];
   const { completeness, errorCounts } = useLocaleCompleteness<CityFormValues>(
     ["description"],
   );
@@ -138,11 +168,26 @@ function CityFormBody({
         />
       }
       extraSection={
-        <div>
-          <p className="mb-3 text-[11px] font-semibold tracking-[0.08em] uppercase text-muted-foreground">
-            {t("cityImage")}
-          </p>
-          <ImageUpload value={imageUrl} onChange={onImageFileChange} />
+        <div className="space-y-6">
+          <div>
+            <p className="mb-3 text-[11px] font-semibold tracking-[0.08em] uppercase text-muted-foreground">
+              {t("cityImage")}
+            </p>
+            <ImageUpload value={imageUrl} onChange={onImageFileChange} />
+          </div>
+          {(["tge", "revery"] as const)
+            .filter((brand) => selectedBrands.includes(brand))
+            .map((brand) => (
+              <div key={brand}>
+                <p className="mb-3 text-[11px] font-semibold tracking-[0.08em] uppercase text-muted-foreground">
+                  {t(brand === "tge" ? "cityImageTge" : "cityImageRevery")}
+                </p>
+                <ImageUpload
+                  value={brandImageUrls?.[brand]}
+                  onChange={(file) => onBrandImageFileChange(brand, file)}
+                />
+              </div>
+            ))}
         </div>
       }
       metadataFields={<CityMetadataFields t={t} />}

@@ -877,6 +877,8 @@ async function main() {
     "miercurea-ciuc",
     "reghin",
     "sfantu-gheorghe",
+    // Sebeș is Adorys-only despite Alba being in the TGE county scope.
+    "sebes",
   ]);
   const TGE_HOMEPAGE_CITIES = new Set(siteConfigData.tgeHomepageCities);
   // Mirrors geo-scope.util.ts: every city is Revery except this denylist.
@@ -903,6 +905,28 @@ async function main() {
   console.log(
     `  ${cityBrandResult.count} city-brand memberships seeded (${cityBrandRows.length} candidates)`,
   );
+
+  // 7c. Per-brand hero overrides (`CityBrand.image`). Second pass so it also
+  //   covers memberships that already existed before this run. `updateMany`
+  //   keeps membership additive-only — a `brandImages` entry for a brand the
+  //   city isn't tagged with is a deliberate no-op, and rows without a
+  //   declared value are never touched (admin-set overrides survive reseeds).
+  let brandImageCount = 0;
+  for (const city of cities) {
+    if (!city.brandImages) continue;
+    const cityId = cityIdBySlug.get(city.slug);
+    if (!cityId) continue;
+    for (const brand of [Brand.tge, Brand.revery]) {
+      const image = city.brandImages[brand];
+      if (!image) continue;
+      const res = await prisma.cityBrand.updateMany({
+        where: { cityId, brand },
+        data: { image },
+      });
+      brandImageCount += res.count;
+    }
+  }
+  console.log(`  ${brandImageCount} per-brand city images set`);
 
   // 8. Seed bank rates — 5-year-fixed nominal rates, researched May 2026 from
   //    public Romanian mortgage comparators. Noua Casă is the government

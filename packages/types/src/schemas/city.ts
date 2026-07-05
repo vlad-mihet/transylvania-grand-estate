@@ -26,7 +26,22 @@ export const createCitySchema = z
 
 export const updateCitySchema = createCitySchema
   .partial()
-  .extend({ mode: entryModeSchema })
+  .extend({
+    mode: entryModeSchema,
+    /**
+     * Per-brand image overrides. `null` clears an override (fall back to
+     * `image`), an absent key leaves it unchanged. Setting an override for a
+     * brand the city isn't tagged with is a no-op — membership stays governed
+     * by `brands`.
+     */
+    brandImages: z
+      .object({
+        tge: z.string().max(500).nullable().optional(),
+        revery: z.string().max(500).nullable().optional(),
+      })
+      .strict()
+      .optional(),
+  })
   .strict();
 
 export type CreateCityInput = z.infer<typeof createCitySchema>;

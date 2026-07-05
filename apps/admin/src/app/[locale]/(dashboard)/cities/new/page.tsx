@@ -8,7 +8,7 @@ import { Link, useRouter } from "@/i18n/navigation";
 import { toast } from "@/lib/toast";
 import { apiClient } from "@/lib/api-client";
 import { usePermissions } from "@/components/auth/auth-provider";
-import { CityForm } from "@/components/forms/city-form";
+import { CityForm, type BrandImageFiles } from "@/components/forms/city-form";
 import { CityFormValues } from "@/lib/validations/city";
 
 export default function NewCityPage() {
@@ -25,9 +25,11 @@ export default function NewCityPage() {
     mutationFn: async ({
       data,
       image,
+      brandImages,
     }: {
       data: CityFormValues;
       image: File | null;
+      brandImages: BrandImageFiles;
     }) => {
       const city = await apiClient<{ id: string }>("/cities", {
         method: "POST",
@@ -38,6 +40,19 @@ export default function NewCityPage() {
         fd.append("image", image);
         try {
           await apiClient(`/cities/${city.id}/image`, {
+            method: "POST",
+            body: fd,
+          });
+        } catch {
+          toast.warning(t("imageUploadFailed"));
+        }
+      }
+      for (const [brand, file] of Object.entries(brandImages)) {
+        if (!file) continue;
+        const fd = new FormData();
+        fd.append("image", file);
+        try {
+          await apiClient(`/cities/${city.id}/image?brand=${brand}`, {
             method: "POST",
             body: fd,
           });
@@ -58,7 +73,9 @@ export default function NewCityPage() {
   return (
     <CityForm
       cancelHref="/cities"
-      onSubmit={(data, image) => createMutation.mutate({ data, image })}
+      onSubmit={(data, image, brandImages) =>
+        createMutation.mutate({ data, image, brandImages })
+      }
       loading={createMutation.isPending}
       submissionError={createMutation.error}
       title={t("newCity")}
