@@ -94,6 +94,14 @@ const baseSchema = z.object({
   // production schema below rejects the value entirely so it can't ship.
   DEV_AUTH_THROTTLE_DISABLED: z.enum(['0', '1']).optional(),
 
+  // Global ThrottlerGuard baseline (requests / minute / IP). Per-route
+  // @Throttle overrides (auth login 5/min, inquiries, etc.) are unaffected.
+  // Raise it if consumer-app SSR starts 429ing: every SSR fetch from one
+  // app instance shares that instance's egress IP, so a burst of page
+  // renders can exhaust the default bucket (observed as nondeterministic
+  // 500s during CI route sweeps, 2026-07-06).
+  THROTTLE_GLOBAL_LIMIT: z.coerce.number().int().positive().default(60),
+
   // Permanent feature flags. Default unset = feature behaves normally.
   // EMAIL_VERIFICATION_DISABLED=1 makes Academy self-service signup auto-
   // verify the new account and return tokens directly (no inbox round-trip).

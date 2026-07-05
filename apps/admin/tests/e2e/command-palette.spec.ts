@@ -66,10 +66,15 @@ test.describe('command palette', () => {
     await openPalette(page);
 
     const input = page.getByPlaceholder(/search anything|caut(ă|a) orice/i);
-    await input.fill('an');
-    await page.waitForResponse((res) =>
-      res.url().includes('/search?') && res.status() === 200,
+    // Register the waiter BEFORE typing — fill() debounces into the /search
+    // request, and a response that lands before waitForResponse is armed
+    // would strand the wait (or let assertions run against a half-rendered
+    // palette).
+    const search = page.waitForResponse(
+      (res) => res.url().includes('/search?') && res.status() === 200,
     );
+    await input.fill('an');
+    await search;
 
     await expect(page.locator('[cmdk-group-heading]').first()).toBeVisible();
   });
@@ -103,10 +108,15 @@ test.describe('command palette', () => {
     await openPalette(page);
 
     const input = page.getByPlaceholder(/search anything|caut(ă|a) orice/i);
-    await input.fill('an');
-    await page.waitForResponse((res) =>
-      res.url().includes('/search?') && res.status() === 200,
+    // Register the waiter BEFORE typing — fill() debounces into the /search
+    // request, and a response that lands before waitForResponse is armed
+    // would strand the wait (or let assertions run against a half-rendered
+    // palette).
+    const search = page.waitForResponse(
+      (res) => res.url().includes('/search?') && res.status() === 200,
     );
+    await input.fill('an');
+    await search;
 
     const propertiesTab = page.getByRole('tab', { name: /^Proprietăți$|^Properties$/i });
     if (await propertiesTab.isVisible()) {
@@ -126,14 +136,20 @@ test.describe('command palette', () => {
     await openPalette(page);
 
     const input = page.getByPlaceholder(/search anything|caut(ă|a) orice/i);
-    await input.fill('an');
-    await page.waitForResponse((res) =>
-      res.url().includes('/search?') && res.status() === 200,
+    // Register the waiter BEFORE typing — fill() debounces into the /search
+    // request, and a response that lands before waitForResponse is armed
+    // would strand the wait (or let assertions run against a half-rendered
+    // palette).
+    const search = page.waitForResponse(
+      (res) => res.url().includes('/search?') && res.status() === 200,
     );
+    await input.fill('an');
+    await search;
 
-    await expect(page.locator('nav[aria-label]')).toHaveCount(0).catch(() => {});
-
+    // Chips render a beat after the response lands — use a retrying
+    // visibility assertion, not an instant count().
     const chips = page.locator('[aria-pressed]');
+    await expect(chips.first()).toBeVisible();
     expect(await chips.count()).toBeGreaterThan(0);
   });
 });

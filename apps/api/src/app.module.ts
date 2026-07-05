@@ -156,8 +156,12 @@ const serveStaticModules =
       }),
     }),
     ScheduleModule.forRoot(),
-    // Global baseline: 60 requests / minute / IP. Per-endpoint decorators
-    // (e.g. @Throttle on auth/login, inquiries) can tighten this further.
+    // Global baseline: THROTTLE_GLOBAL_LIMIT requests / minute / IP
+    // (default 60). Per-endpoint decorators (e.g. @Throttle on auth/login,
+    // inquiries) can tighten this further. The knob exists because SSR
+    // traffic from one consumer-app instance shares a single egress IP —
+    // a burst of page renders can exhaust the default bucket and 500 the
+    // pages (seen in CI route sweeps); ops can raise it without a deploy.
     //
     // Dev-only escape hatch: set `DEV_AUTH_THROTTLE_DISABLED=1` in `.env` to
     // bypass *all* throttling (global + per-route @Throttle). Used during
@@ -167,7 +171,9 @@ const serveStaticModules =
     ThrottlerModule.forRootAsync({
       inject: [ConfigService],
       useFactory: (cfg: ConfigService) => ({
-        throttlers: [{ ttl: 60_000, limit: 60 }],
+        throttlers: [
+          { ttl: 60_000, limit: cfg.get<number>('THROTTLE_GLOBAL_LIMIT') ?? 60 },
+        ],
         skipIf: () => cfg.get<string>('DEV_AUTH_THROTTLE_DISABLED') === '1',
       }),
     }),
