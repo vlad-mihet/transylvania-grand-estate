@@ -40,11 +40,16 @@ Your 3-bug report was triaged and the two real bugs are fixed on the running sta
   listing → Brand/Tier reads **"Affordable — REVERY"**, amenities + classification are
   populated from saved data, and the form is **not** "unsaved" on load. Toggle one amenity,
   save, reopen → tier unchanged and amenities/classification retained.
-- **Bug 1 — Locale fields "wipe" on tab switch (NOT a product bug).** The localized inputs are
-  react-hook-form controlled fields; every locale persists in the form store (the identical
-  editor powers the article form and works). The symptom comes from setting a value on the DOM
-  without firing React's `onChange`. **When testing, type into fields with real key events
-  (not value-set/paste),** fill both RO + EN, then save — it should submit fine.
+- **Bug 1 — Locale fields wiped on tab switch (REAL, fixed).** Your clean-keystroke re-test was
+  right and my first triage was wrong. The localized editor bound a single react-hook-form
+  controller to `title.${active}` and swapped `active` on tab change — a name-changing controller
+  drops the previous locale's value, so only the active locale stayed registered and every save
+  validated the inactive locales as `undefined` (never reaching the API). Fixed: one controller
+  per locale, static names, only the active one visible. A Playwright regression
+  (`localized-editor.spec.ts`) covers it — confirmed failing on the old code, passing on the fix.
+  **Please re-run A2:** on a fresh form, type RO + EN with real keystrokes, set the required
+  fields, and save → it should POST and appear in the Revery catalog. The RO→EN→RO round-trip no
+  longer blanks fields.
 
 ---
 
