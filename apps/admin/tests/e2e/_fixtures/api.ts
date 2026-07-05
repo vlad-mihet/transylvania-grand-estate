@@ -76,6 +76,48 @@ export function postInquiryAsBrand(
   });
 }
 
+/**
+ * Browser-session login for UI specs, immune to the per-IP auth throttle
+ * (login = 5/min, shared by every BFF login in a run): logs into NestJS
+ * directly under a synthetic X-Forwarded-For (the dev API sets
+ * `trust proxy`, so the throttler buckets per synthetic IP), then plants
+ * the refreshToken cookie exactly as the BFF would have. AuthProvider
+ * restores the session from that cookie on the first navigation.
+ */
+export async function loginAsAdmin(
+  context: import('@playwright/test').BrowserContext,
+  seed: string,
+): Promise<void> {
+  const email = process.env.ADMIN_EMAIL ?? 'admin@transylvaniagrandestate.ro';
+  const password = process.env.SEED_ADMIN_PASSWORD;
+  if (!password) throw new Error('SEED_ADMIN_PASSWORD env var required');
+  const res = await fetch(`${API_BASE}/auth/login`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'X-Site': 'ADMIN',
+      'X-Forwarded-For': syntheticIp(seed),
+    },
+    body: JSON.stringify({ email, password }),
+  });
+  if (!res.ok) throw new Error(`admin login failed: ${res.status}`);
+  const body = (await res.json()) as {
+    data: { refreshToken: string };
+  };
+  const adminBase =
+    process.env.ADMIN_BASE_URL ??
+    `http://localhost:${process.env.ADMIN_PORT ?? 3051}`;
+  await context.addCookies([
+    {
+      name: 'refreshToken',
+      value: body.data.refreshToken,
+      url: adminBase,
+      httpOnly: true,
+      sameSite: 'Lax',
+    },
+  ]);
+}
+
 /** RFC 5737 TEST-NET-1 IP for throttle isolation. Same helper as Revery. */
 export function syntheticIp(seed: string): string {
   const hash = [...seed].reduce(

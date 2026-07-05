@@ -71,13 +71,15 @@ test.describe('academy course + lessons lifecycle', () => {
         lessonIds.push(res.data.id);
       }
 
-      // 3. Reorder via the move-by-id endpoint: walk the array from the
-      //    end and move each lesson to position 1, which by induction
-      //    produces the reversed sequence. The legacy bulk-reorder
-      //    endpoint was retired so admin pagination + drag-drop can
-      //    coexist; this loop is the closest equivalent.
+      // 3. Reorder via the move-by-id endpoint: move each lesson to the top
+      //    in CREATION order — the last one moved lands first, so the final
+      //    sequence is the reverse of creation order. (Iterating the
+      //    reversed array here would reproduce the original order — the
+      //    last mover always ends on top.) The legacy bulk-reorder endpoint
+      //    was retired so admin pagination + drag-drop can coexist; this
+      //    loop is the closest equivalent.
       const reversed = [...lessonIds].reverse();
-      for (const lessonId of reversed) {
+      for (const lessonId of lessonIds) {
         await adminApi(
           token,
           `/admin/academy/courses/${courseId}/lessons/${lessonId}/move`,

@@ -1,4 +1,5 @@
 import { test, expect } from '@playwright/test';
+import { loginAsAdmin } from './_fixtures/api';
 
 /**
  * Regression for Cowork e2e "Bug 1": localized fields lost the inactive
@@ -18,17 +19,12 @@ import { test, expect } from '@playwright/test';
  */
 test.describe('localized editor — per-locale value persistence', () => {
   // The shared storageState carries no admin-app session cookie (the setup
-  // logs into NestJS directly). Log in through the BFF on the page's context
-  // so its httpOnly refresh cookie lands on the browser jar and AuthProvider
-  // restores the session on first navigation.
-  test.beforeEach(async ({ page }) => {
-    const email = process.env.ADMIN_EMAIL ?? 'admin@transylvaniagrandestate.ro';
-    const password = process.env.SEED_ADMIN_PASSWORD;
-    if (!password) throw new Error('SEED_ADMIN_PASSWORD env var required');
-    const res = await page.request.post('/api/auth/login', {
-      data: { email, password },
-    });
-    expect(res.ok(), `BFF login failed: ${res.status()}`).toBeTruthy();
+  // logs into NestJS directly). loginAsAdmin plants the httpOnly refresh
+  // cookie in the browser jar under a synthetic throttle bucket, so
+  // AuthProvider restores the session on first navigation without eating
+  // into the shared 5/min BFF-login budget.
+  test.beforeEach(async ({ page }, testInfo) => {
+    await loginAsAdmin(page.context(), `localized-editor-${testInfo.testId}`);
   });
 
   test('typed values survive switching the editing locale', async ({ page }) => {
