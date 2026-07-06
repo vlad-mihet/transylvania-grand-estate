@@ -61,8 +61,17 @@ export const rebsPropertySchema = z
     for_rent: flag,
     availability: flag,
 
-    tags: z.array(z.string()).nullable().optional(),
-    tags_en: z.array(z.string()).nullable().optional(),
+    // Demo instances send flat arrays; LIVE instances group tags by category:
+    // { "Utilități generale": ["Apă", …], … } (observed 2026-07-06). Accept
+    // both; the mapper flattens.
+    tags: z
+      .union([z.array(z.string()), z.record(z.string(), z.array(z.string()))])
+      .nullable()
+      .optional(),
+    tags_en: z
+      .union([z.array(z.string()), z.record(z.string(), z.array(z.string()))])
+      .nullable()
+      .optional(),
     nearby: z.union([z.string(), z.array(z.string())]).nullable().optional(),
     nearby_en: z.union([z.string(), z.array(z.string())]).nullable().optional(),
 

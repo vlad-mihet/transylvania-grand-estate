@@ -44,6 +44,13 @@ const REBS_CURRENCY: Record<number, string> = {
   2: 'RON',
 };
 
+/** Romanian display labels for the fallback title (see mapRebsProperty). */
+const TYPE_LABEL_RO: Record<PropertyType, string> = {
+  [PropertyType.apartment]: 'Apartament',
+  [PropertyType.house]: 'Casă',
+  [PropertyType.terrain]: 'Teren',
+} as Record<PropertyType, string>;
+
 function mapPropertyType(raw: unknown): PropertyType | null {
   const code = Number(raw);
   if (!Number.isInteger(code)) return null;
@@ -112,7 +119,11 @@ export function mapRebsProperty(raw: RebsProperty): MapResult {
   const cityName = str(raw.city);
   if (!cityName) return { ok: false, reason: `${externalId}: no city` };
 
-  const titleRo = str(raw.title) || cityName;
+  // Live instances leave `title`/`description` EMPTY unless the agent typed a
+  // custom one (REBS auto-generates its own display title outside the API) —
+  // compose a usable fallback instead of degrading to the bare city name.
+  const titleRo =
+    str(raw.title) || `${TYPE_LABEL_RO[type]} de vânzare în ${cityName}`;
   const descriptionRo = str(raw.description) || titleRo;
   const descriptionEn = str(raw.description_en);
   const addressRo =
@@ -205,24 +216,62 @@ function parseDate(v: string | null | undefined): Date | null {
   return isNaN(d.getTime()) ? null : d;
 }
 
+/**
+ * REBS tag payloads come in two shapes: a flat string array (demo instance)
+ * or a category-grouped record — `{ "Utilități generale": ["Apă", …], … }` —
+ * on live instances. Normalize to a list of groups (a flat array is one
+ * group) so RO/EN pairing can work per group.
+ */
+function tagGroups(
+  raw: string[] | Record<string, string[]> | null | undefined,
+): string[][] {
+  if (Array.isArray(raw)) return raw.length ? [raw] : [];
+  if (raw && typeof raw === 'object') return Object.values(raw);
+  return [];
+}
+
+/**
+ * Pair each RO tag group with its EN counterpart. Group NAMES are localized
+ * and group ORDER differs between locales on live instances, so match groups
+ * by item count first (exact when counts are distinct — the common case) and
+ * fall back to position. Tags within a group are index-aligned.
+ */
+function pairTagGroups(
+  ro: string[][],
+  en: string[][],
+): Array<[string[], string[] | undefined]> {
+  const used = new Set<number>();
+  return ro.map((group, i) => {
+    let match = en.findIndex(
+      (candidate, j) => !used.has(j) && candidate.length === group.length,
+    );
+    if (match < 0 && !used.has(i) && en[i]) match = i;
+    if (match >= 0) used.add(match);
+    return [group, match >= 0 ? en[match] : undefined];
+  });
+}
+
 function mapTags(raw: RebsProperty): {
   amenities: Record<string, boolean>;
   features: ImportedLocalizedStringInput[];
 } {
   const amenities: Record<string, boolean> = {};
   const features: ImportedLocalizedStringInput[] = [];
-  const tags = raw.tags ?? [];
-  const tagsEn = raw.tags_en ?? [];
 
-  tags.forEach((tag, i) => {
-    const match = TAG_AMENITY_MAP.find(([re]) => re.test(tag));
-    if (match) {
-      amenities[match[1]] = true;
-    } else {
-      const en = tagsEn[i];
-      features.push(en ? { ro: tag, en } : { ro: tag });
-    }
-  });
+  for (const [group, groupEn] of pairTagGroups(
+    tagGroups(raw.tags),
+    tagGroups(raw.tags_en),
+  )) {
+    group.forEach((tag, i) => {
+      const match = TAG_AMENITY_MAP.find(([re]) => re.test(tag));
+      if (match) {
+        amenities[match[1]] = true;
+      } else {
+        const en = groupEn?.[i];
+        features.push(en ? { ro: tag, en } : { ro: tag });
+      }
+    });
+  }
 
   // `nearby` / `nearby_en` is the one RO+EN pair REBS gives us — fold into features.
   const nearby = Array.isArray(raw.nearby) ? raw.nearby : [str(raw.nearby)];
