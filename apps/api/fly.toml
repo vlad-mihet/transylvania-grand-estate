@@ -17,7 +17,11 @@ primary_region = 'ams'
   force_https = true
   auto_stop_machines = 'stop'
   auto_start_machines = true
-  min_machines_running = 0
+  # Keep one machine awake: the API hosts @Cron jobs (hourly REBS listing
+  # sync, crm-sync.cron.ts) which silently never fire while ALL machines are
+  # auto-stopped — observed 2026-07-06: both machines asleep at the top of
+  # the hour, no sync run. The second machine still scales to zero.
+  min_machines_running = 1
 
 # Separate live + ready probes so Fly can tell "process is up" from "process
 # can serve traffic". `live` is cheap; `ready` touches Postgres and returns
