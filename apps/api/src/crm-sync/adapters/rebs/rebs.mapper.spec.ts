@@ -155,4 +155,40 @@ describe('mapRebsProperty', () => {
     expect(r.listing.currency).toBe('EUR');
     expect(r.listing.area).toBe(64.5);
   });
+
+  // Live instances (vs the demo) group tags by category, localize the group
+  // names, AND order the groups differently per locale — observed 2026-07-06
+  // on client-396fe343. Pairing is per-group by item count.
+  it('flattens category-grouped tags and pairs RO/EN groups by item count', () => {
+    const r = mapRebsProperty(
+      base({
+        tags: {
+          'Amenajare străzi': ['Străzi asfaltate', 'Iluminat stradal'],
+          'Utilități generale': ['Apă', 'Canalizare', 'Internet'],
+        },
+        tags_en: {
+          // EN groups arrive in a DIFFERENT order than RO.
+          'General utilities': ['Water', 'Sewage', 'Internet'],
+          'Street amenities': ['Asphalted streets', 'Street lighting'],
+        },
+      }),
+    );
+    if (!r.ok) throw new Error('expected ok');
+    // "Internet" matches an amenity regex; the rest become features with the
+    // EN from the count-matched group, not the position-matched one.
+    expect(r.listing.amenities.hasInternet).toBe(true);
+    expect(r.listing.features).toContainEqual({
+      ro: 'Străzi asfaltate',
+      en: 'Asphalted streets',
+    });
+    expect(r.listing.features).toContainEqual({ ro: 'Apă', en: 'Water' });
+  });
+
+  it('composes a type+city fallback title when the feed title is empty (live behavior)', () => {
+    const r = mapRebsProperty(base({ title: '', title_en: '', description: '' }));
+    if (!r.ok) throw new Error('expected ok');
+    expect(r.listing.title.ro).toBe('Apartament de vânzare în Cluj-Napoca');
+    expect(r.listing.title.en).toBeUndefined();
+    expect(r.listing.description.ro).toBe(r.listing.title.ro);
+  });
 });

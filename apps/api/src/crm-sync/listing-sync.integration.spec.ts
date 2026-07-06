@@ -39,7 +39,12 @@ class FakePrisma {
 
   // Advisory lock — always granted in the fake.
   $queryRaw = jest.fn(async () => [{ locked: true }]);
-  $transaction = async (ops: Promise<unknown>[]) => Promise.all(ops);
+  // Supports both forms: array-of-ops, and the interactive callback the
+  // xact-scoped sync lock uses (callback receives this fake as `tx`).
+  $transaction = async (
+    arg: Promise<unknown>[] | ((tx: unknown) => Promise<unknown>),
+    _opts?: unknown,
+  ) => (typeof arg === 'function' ? arg(this) : Promise.all(arg));
 
   property = {
     findUnique: async ({ where }: any) => {

@@ -10,10 +10,16 @@ import { PrismaService } from '../../prisma/prisma.service';
  * Correctness note: the pipeline is idempotent by construction (upserts on a
  * unique key, deterministic slugs, URL-keyed media dedupe), so overlapping
  * runs cannot corrupt data — this lock is an optimization + a reconcile guard,
- * not the safety net. Advisory locks are session-scoped and released
- * automatically if the connection dies, so a crashed run cannot wedge the lock
- * permanently. (Under Prisma's pool the unlock is best-effort across
- * connections; the auto-release on disconnect is the backstop.)
+ * not the safety net.
+ *
+ * The lock is TRANSACTION-scoped (`pg_try_advisory_xact_lock`) inside one
+ * interactive transaction that owns the lock's entire lifetime. The previous
+ * session-scoped version acquired and unlocked via separate `$queryRaw` calls,
+ * which Prisma routes onto ARBITRARY pool connections: the unlock silently
+ * no-oped on a different session, the acquiring connection idled in the pool
+ * still holding the lock, and every subsequent run was skipped (observed
+ * 2026-07-06 on the first live feed run). A xact lock cannot leak — it
+ * releases on commit, rollback, timeout, or connection death.
  */
 @Injectable()
 export class SyncLockService {
@@ -21,6 +27,13 @@ export class SyncLockService {
 
   /** Namespacing class id for all CRM-sync advisory locks ("CRM" in hex). */
   private static readonly CLASS_ID = 0x43524d;
+
+  /**
+   * Upper bound on one sync run. The lock's transaction idles while the run
+   * executes; if a run wedges past this, Prisma aborts the transaction and
+   * the lock frees for the next cron tick (idempotency makes a torn run safe).
+   */
+  private static readonly RUN_TIMEOUT_MS = 30 * 60_000;
 
   constructor(private readonly prisma: PrismaService) {}
 
@@ -30,41 +43,35 @@ export class SyncLockService {
    */
   async withLock<T>(source: string, fn: () => Promise<T>): Promise<T | null> {
     const key = SyncLockService.objectId(source);
-    if (!(await this.tryAcquire(key))) {
+    let acquired = false;
+    let result: T | null = null;
+
+    await this.prisma.$transaction(
+      async (tx) => {
+        // Cast both args to int4: Postgres only has (int,int) and (bigint)
+        // overloads — Prisma binds JS numbers as bigint, so without the casts
+        // the two-arg call resolves to a non-existent (bigint,bigint)
+        // overload (P2010 / 42883). The keys are int32 by construction.
+        const rows = await tx.$queryRaw<{ locked: boolean }[]>`
+          SELECT pg_try_advisory_xact_lock(${SyncLockService.CLASS_ID}::int, ${key}::int) AS locked
+        `;
+        if (rows[0]?.locked !== true) return;
+        acquired = true;
+        // fn's own DB writes use the normal pooled client and commit
+        // independently — this transaction exists only to pin the lock to
+        // one session for exactly the duration of the run.
+        result = await fn();
+      },
+      { maxWait: 10_000, timeout: SyncLockService.RUN_TIMEOUT_MS },
+    );
+
+    if (!acquired) {
       this.logger.log(
         `sync for "${source}" already running on another instance — skipping`,
       );
       return null;
     }
-    try {
-      return await fn();
-    } finally {
-      await this.release(key);
-    }
-  }
-
-  private async tryAcquire(key: number): Promise<boolean> {
-    // Cast both args to int4: Postgres only has pg_try_advisory_lock(int,int)
-    // and (bigint) — Prisma binds JS numbers as bigint, so without the casts
-    // the two-arg call resolves to a non-existent (bigint,bigint) overload
-    // (P2010 / 42883). The keys are int32 by construction.
-    const rows = await this.prisma.$queryRaw<{ locked: boolean }[]>`
-      SELECT pg_try_advisory_lock(${SyncLockService.CLASS_ID}::int, ${key}::int) AS locked
-    `;
-    return rows[0]?.locked === true;
-  }
-
-  private async release(key: number): Promise<void> {
-    await this.prisma
-      .$queryRaw`SELECT pg_advisory_unlock(${SyncLockService.CLASS_ID}::int, ${key}::int)`.then(
-      () => undefined,
-      (err: unknown) =>
-        this.logger.warn(
-          `advisory unlock failed (will auto-release on disconnect): ${
-            err instanceof Error ? err.message : 'unknown error'
-          }`,
-        ),
-    );
+    return result;
   }
 
   /** Stable signed-int32 hash of the source name for the lock's object id. */
