@@ -63,7 +63,7 @@ export default async function ContactPage({
                       Cluj-Napoca
                     </p>
                     <p className="text-muted-foreground text-sm">
-                      România
+                      Cluj, România
                     </p>
                   </div>
                 </div>

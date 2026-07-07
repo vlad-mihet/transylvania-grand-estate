@@ -1,0 +1,116 @@
+{
+  "meta": {
+    "generated": "2026-07-07",
+    "batch": "Round 2 (WhatsApp 06/07/2026)",
+    "brand_codes": {
+      "TGE": "landing / tge",
+      "Adorys": "revery"
+    },
+    "decision": "All 9 cities already exist as records and already have curated, credited images LIVE. These sends are low-res. DO NOT SEED — keep live images; use only as a 'his-picks vs live' review for Claudiu. See HANDOFF-round2-addendum.md section A.",
+    "counts": {
+      "images": 8,
+      "broken": 1
+    }
+  },
+  "images": [
+    {
+      "city": "București",
+      "county": "București",
+      "county_slug": "bucuresti",
+      "city_slug": "bucuresti",
+      "brand": "Adorys",
+      "dims": "1600x1000",
+      "quality": "Weak (1600px cap)",
+      "renamed": "adorys_bucuresti.jpg",
+      "orig": "00000952-PHOTO-2026-07-06-17-12-57.jpg"
+    },
+    {
+      "city": "Bacău",
+      "county": "Bacău",
+      "county_slug": "bacau",
+      "city_slug": "bacau",
+      "brand": "Adorys",
+      "dims": "675x390",
+      "quality": "Thumbnail-grade",
+      "renamed": "adorys_bacau.jpg",
+      "orig": "00000954-PHOTO-2026-07-06-17-49-50.jpg"
+    },
+    {
+      "city": "Baia Mare",
+      "county": "Maramureș",
+      "county_slug": "maramures",
+      "city_slug": "baia-mare",
+      "brand": "Adorys",
+      "dims": "675x390",
+      "quality": "Thumbnail-grade",
+      "renamed": "adorys_baia-mare.jpg",
+      "orig": "00000956-PHOTO-2026-07-06-17-50-18.jpg"
+    },
+    {
+      "city": "Reșița",
+      "county": "Caraș-Severin",
+      "county_slug": "caras-severin",
+      "city_slug": "resita",
+      "brand": "Adorys",
+      "dims": "675x390",
+      "quality": "Thumbnail-grade",
+      "renamed": "adorys_resita.jpg",
+      "orig": "00000958-PHOTO-2026-07-06-17-50-35.jpg"
+    },
+    {
+      "city": "Vaslui",
+      "county": "Vaslui",
+      "county_slug": "vaslui",
+      "city_slug": "vaslui",
+      "brand": "Adorys",
+      "dims": "—",
+      "quality": "BROKEN — saved Google Photos webpage, no image",
+      "renamed": null,
+      "orig": "00000960-Vaslui 2.html"
+    },
+    {
+      "city": "Sfântu Gheorghe",
+      "county": "Covasna",
+      "county_slug": "covasna",
+      "city_slug": "sfantu-gheorghe",
+      "brand": "Adorys",
+      "dims": "675x390",
+      "quality": "Thumbnail-grade",
+      "renamed": "adorys_sfantu-gheorghe.jpg",
+      "orig": "00000962-PHOTO-2026-07-06-17-51-15.jpg"
+    },
+    {
+      "city": "Târgoviște",
+      "county": "Dâmbovița",
+      "county_slug": "dambovita",
+      "city_slug": "targoviste",
+      "brand": "Adorys",
+      "dims": "675x390",
+      "quality": "Thumbnail-grade",
+      "renamed": "adorys_targoviste.jpg",
+      "orig": "00000964-PHOTO-2026-07-06-17-51-30.jpg"
+    },
+    {
+      "city": "Bistrița",
+      "county": "Bistrița-Năsăud",
+      "county_slug": "bistrita-nasaud",
+      "city_slug": "bistrita",
+      "brand": "TGE",
+      "dims": "1000x666",
+      "quality": "Too small",
+      "renamed": "tge_bistrita.jpg",
+      "orig": "00000967-PHOTO-2026-07-06-18-03-55.jpg"
+    },
+    {
+      "city": "Zalău",
+      "county": "Sălaj",
+      "county_slug": "salaj",
+      "city_slug": "zalau",
+      "brand": "TGE",
+      "dims": "250x187",
+      "quality": "Thumbnail-grade",
+      "renamed": "tge_zalau.webp",
+      "orig": "00000970-Zalau-zilah1.webp"
+    }
+  ]
+}

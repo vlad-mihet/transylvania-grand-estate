@@ -257,9 +257,17 @@ License URL: https://creativecommons.org/licenses/by-sa/3.0/
 Changes: downloaded, centre-cropped to 16:10 and re-hosted in shared @tge/assets.
 
 Slobozia city image:
-Source: Aerial winter view of the Ascension Cathedral (Catedrala Înălțarea Domnului), Slobozia
-Author: Episcopia Sloboziei și Călărașilor (Biroul Mass-Media)
-URL: https://www.sfesc.ro/p/catedrala-din-slobozia-sub-mantia
-License: Diocese-owned, license unconfirmed (TO BE CLEARED)
-License URL: n/a
-Changes: downloaded, centre-cropped to 16:10 and re-hosted in shared @tge/assets.
+Source: Aerial view of the "Ascension of the Lord" Episcopal Cathedral (Catedrala Episcopală „Înălțarea Domnului"), Slobozia
+Author: MarianDobre2000 (Wikimedia Commons)
+URL: https://commons.wikimedia.org/wiki/File:Catedrala_Episcopal%C4%83_%E2%80%9E%C3%8En%C4%83l%C8%9Barea_Domnului%E2%80%9D_din_Slobozia,_sediul_Episcopiei_Sloboziei_%C8%99i_C%C4%83l%C4%83ra%C8%99ilor._Foto.jpg
+License: CC BY-SA 4.0
+License URL: https://creativecommons.org/licenses/by-sa/4.0/
+Changes: downscaled to 2560px long edge (no crop) and re-hosted in shared @tge/assets.
+
+Sebeș city image:
+Source: The fortified Evangelical (Lutheran) Church of Sebeș, with its tiled clock tower
+Author: Turbojet (Wikimedia Commons)
+URL: https://commons.wikimedia.org/wiki/File:Sebes,_Biserica_evanghelica.jpg
+License: CC BY-SA 4.0
+License URL: https://creativecommons.org/licenses/by-sa/4.0/
+Changes: downscaled to 2560px long edge (no crop) and re-hosted in shared @tge/assets.
