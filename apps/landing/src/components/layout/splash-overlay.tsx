@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useCallback } from "react";
 import { useTranslations } from "next-intl";
+import { HeroVideoSources } from "@/components/sections/hero-video-sources";
 
 interface SplashOverlayProps {
   videoSrc: string;
@@ -56,7 +57,7 @@ export function SplashOverlay({ videoSrc, onClickEnter, onFadeComplete }: Splash
         preload="auto"
         className="absolute inset-0 w-full h-full object-cover"
       >
-        <source src={videoSrc} type="video/mp4" />
+        <HeroVideoSources videoSrc={videoSrc} />
       </video>
 
       {/* Dark overlay + vignette */}

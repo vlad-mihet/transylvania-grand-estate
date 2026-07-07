@@ -5,6 +5,7 @@ import Image from "next/image";
 import { Volume2, VolumeX, ChevronDown } from "lucide-react";
 import { AccentButton } from "@tge/ui";
 import { Link } from "@tge/i18n/navigation";
+import { HeroVideoSources } from "./hero-video-sources";
 
 interface VideoHeroSectionProps {
   videoSrc: string;
@@ -128,7 +129,7 @@ export function VideoHeroSection({
           onError={() => setVideoFailed(true)}
           className="absolute inset-0 w-full h-full object-cover"
         >
-          <source src={videoSrc} type="video/mp4" />
+          <HeroVideoSources videoSrc={videoSrc} />
         </video>
       )}
 
