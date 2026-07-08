@@ -139,21 +139,6 @@ export function VideoHeroSection({
 
       {/* Content — animations controlled by `revealed` prop */}
       <div className="relative z-10 flex flex-col items-center justify-center h-full text-center px-4">
-        {/* Brass sigil crest — decorative brand mark above the headline.
-            Raster mockup; swap for a vector before using as the primary mark. */}
-        <Image
-          src="/sigil.jpg"
-          alt="Transylvania Grand Estate"
-          width={816}
-          height={446}
-          priority
-          className="w-[clamp(200px,32vw,340px)] h-auto mb-8 rounded-md shadow-2xl ring-1 ring-copper/25"
-          style={{
-            opacity: revealed ? 1 : 0,
-            transform: revealed ? "translateY(0)" : "translateY(15px)",
-            transition: "opacity 0.9s var(--ease-luxury), transform 0.9s var(--ease-luxury)",
-          }}
-        />
         {subtitle && (
           <p
             className="text-copper uppercase tracking-[0.25em] text-sm md:text-base mb-5"

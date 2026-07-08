@@ -146,21 +146,13 @@ export function Header({ developers, cities }: HeaderProps) {
                 className="relative block w-8 h-8"
               />
             </div>
-            <Link
-              href="/"
-              className="flex items-center group"
-              aria-label="Transylvania Grand Estate"
-            >
-              {/* Brass sigil lockup (carries the wordmark). Decorative raster —
-                  a vector is still needed before this becomes the primary mark. */}
-              <Image
-                src="/sigil.jpg"
-                alt="Transylvania Grand Estate"
-                width={816}
-                height={446}
-                priority
-                className="h-12 w-auto rounded-[3px] shadow-sm transition-transform duration-300 group-hover:scale-[1.02]"
-              />
+            <Link href="/" className="flex items-center gap-4 group">
+              <span className="font-serif xl:text-[17px] 2xl:text-[20px] font-medium text-cream tracking-[0.03em] leading-none whitespace-nowrap transition-colors duration-300">
+                Transylvania
+                <span className="tge-accent text-copper logo-glow group-hover:text-copper-light">
+                  {" "}Grand Estate
+                </span>
+              </span>
             </Link>
           </div>
 
@@ -199,19 +191,11 @@ export function Header({ developers, cities }: HeaderProps) {
         {/* Mobile nav (<lg) — centered logo with hamburger */}
         <div className="flex xl:hidden items-center justify-between h-16">
           <MobileNav cities={cities} />
-          <Link
-            href="/"
-            className="absolute left-1/2 -translate-x-1/2"
-            aria-label="Transylvania Grand Estate"
-          >
-            <Image
-              src="/sigil.jpg"
-              alt="Transylvania Grand Estate"
-              width={816}
-              height={446}
-              priority
-              className="h-9 w-auto rounded-[3px] shadow-sm"
-            />
+          <Link href="/" className="absolute left-1/2 -translate-x-1/2">
+            <span className="font-serif text-lg sm:text-xl text-cream tracking-[0.03em] leading-none whitespace-nowrap">
+              Transylvania
+              <span className="tge-accent text-copper"> Grand Estate</span>
+            </span>
           </Link>
           {/* Spacer to balance hamburger for centering */}
           <div className="w-10" />
