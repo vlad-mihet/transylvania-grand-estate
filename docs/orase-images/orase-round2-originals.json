@@ -1,0 +1,130 @@
+{
+  "meta": {
+    "generated": "2026-07-08",
+    "batch": "Round 2 exact-originals (reverse-searched via TinEye + Google Lens)",
+    "summary": {
+      "stock_paid": 6,
+      "free": 1,
+      "tourism_gray": 1,
+      "none": 1
+    },
+    "verdict": "Claudiu grabbed watermark-free STOCK previews for 6 of 9. The 'exact original' for those = the paid stock asset (buy for clean full-res). Zalau = free Wikimedia. Sfantu Gheorghe = tourism-board promo (gray). Vaslui = no image sent.",
+    "apply_now_free": [
+      "zalau"
+    ],
+    "needs_purchase": [
+      "bucuresti",
+      "bacau",
+      "baia-mare",
+      "resita",
+      "targoviste",
+      "bistrita",
+      "sfantu-gheorghe (or free alt)",
+      "vaslui (or free alt)"
+    ]
+  },
+  "cities": [
+    {
+      "city": "București",
+      "brand": "Adorys",
+      "slug": "bucuresti",
+      "subject": "Palace of Parliament, sunset",
+      "type": "STOCK (paid)",
+      "exact_original": "Shutterstock #1102419524 · iStock gm966486626 · Alamy #187889620 · Adobe #207319769",
+      "get": "https://www.shutterstock.com/image-photo/palace-parliament-bucharest-romania-1102419524",
+      "best_res": "stock full-res",
+      "note": "His 1600x1000 is a preview-grade copy."
+    },
+    {
+      "city": "Bacău",
+      "brand": "Adorys",
+      "slug": "bacau",
+      "subject": "Ștefan cel Mare statue + cathedral",
+      "type": "STOCK (paid)",
+      "exact_original": "Shutterstock #1729397695/#867634054 · iStock gm1224392538 · Alamy #357191770",
+      "get": "https://www.shutterstock.com/image-photo/statue-stefan-cel-mare-cathedral-center-1729397695",
+      "best_res": "stock full-res (a 7277x4346 copy is loose on a news CDN)",
+      "note": ""
+    },
+    {
+      "city": "Baia Mare",
+      "brand": "Adorys",
+      "slug": "baia-mare",
+      "subject": "Orthodox cathedral + buildings",
+      "type": "STOCK (paid)",
+      "exact_original": "Shutterstock #2621111247 · iStock gm2212894484 · Alamy #703104343",
+      "get": "https://www.shutterstock.com/image-photo/orthodox-cathedral-several-buildings-baia-mare-2621111247",
+      "best_res": "stock full-res",
+      "note": "Only on stock sites."
+    },
+    {
+      "city": "Reșița",
+      "brand": "Adorys",
+      "slug": "resita",
+      "subject": "Valley cityscape",
+      "type": "STOCK (paid)",
+      "exact_original": "Shutterstock #1081038752 · iStock gm1125885680",
+      "get": "https://www.shutterstock.com/image-photo/romanian-city-resita-1081038752",
+      "best_res": "stock full-res",
+      "note": ""
+    },
+    {
+      "city": "Sfântu Gheorghe",
+      "brand": "Adorys",
+      "slug": "sfantu-gheorghe",
+      "subject": "Main square, cobblestone plaza",
+      "type": "gray original → use clean alt",
+      "exact_original": "romaniatourism.com promo photo (not stock, not clearly free)",
+      "get": "https://romaniatourism.com/",
+      "best_res": "unknown",
+      "note": "Copyright-gray — not a clean buy. Use it, or source a clean alternative.",
+      "alternative": "BUY stock central-square (fountain+clock tower): shutterstock.com/search/sfantu-gheorghe or Dreamstime. OR free Wikimedia (do a Commons MediaSearch 'Sfântu Gheorghe'/'Sepsiszentgyörgy' — category naming inconsistent), attribute. Recommend stock for a guaranteed clean hero."
+    },
+    {
+      "city": "Târgoviște",
+      "brand": "Adorys",
+      "slug": "targoviste",
+      "subject": "Princely Court ruins, aerial",
+      "type": "STOCK (paid)",
+      "exact_original": "iStock gm539853834 · Adobe #109171021 · DepositPhotos #107803666",
+      "get": "https://www.istockphoto.com/photo/targoviste-old-town-ruins-gm539853834-96303149",
+      "best_res": "stock full-res",
+      "note": ""
+    },
+    {
+      "city": "Bistrița",
+      "brand": "TGE",
+      "slug": "bistrita",
+      "subject": "Sunrise aerial old-town",
+      "type": "STOCK (paid)",
+      "exact_original": "Shutterstock #650103832",
+      "get": "https://www.shutterstock.com/image-photo/sunrise-bistrita-650103832",
+      "best_res": "stock full-res",
+      "note": ""
+    },
+    {
+      "city": "Zalău",
+      "brand": "TGE",
+      "slug": "zalau",
+      "subject": "Reformed Church",
+      "type": "FREE (Wikimedia)",
+      "exact_original": "Wikimedia Commons File:Zilah_009.jpg",
+      "get": "https://commons.wikimedia.org/wiki/File:Zilah_009.jpg",
+      "best_res": "1600x1200",
+      "note": "Exact original, free. Fetch from the Commons file page, read license there (old upload — CC BY-SA/GFDL), attribute.",
+      "status": "APPLY NOW (free)"
+    },
+    {
+      "city": "Vaslui",
+      "brand": "Adorys",
+      "slug": "vaslui",
+      "subject": "(unknown)",
+      "type": "no source → use clean alt",
+      "exact_original": "— he sent a saved Google Photos webpage, not an image",
+      "get": "",
+      "best_res": "—",
+      "note": "No source to trace. Needs a real photo from Claudiu, or source a clean Vaslui hero.",
+      "alternative": "Thin town. BUY stock — Stephen the Great equestrian statue is the landmark: shutterstock.com/search/vaslui or Dreamstime. OR free-but-mediocre Wikimedia Category:Views_of_Vaslui (best: File:Peisaj.... - panoramio.jpg 2048x1536, or File:Râul Vaslui.JPG 3072x2304). Recommend stock."
+    }
+  ]
+}
