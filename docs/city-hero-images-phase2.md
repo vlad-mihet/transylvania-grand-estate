@@ -76,3 +76,39 @@ Pixabay/Pexels/Unsplash need no attribution but note the source in
   their finals.
 - **Iași**: Claudiu's original showed Roznovanu Palace; the curated free final
   is the Palace of Culture.
+
+## Round-2 demo placeholders — BUY + SWAP after the demo
+
+Shipped 2026-07-08 (branch `feat/orase-round2-demo-heroes`). Claudiu's Round-2
+staged copies were applied **as a demo stopgap by explicit decision** to get the
+correct subject live now. **These 6 are copyright-gray stock previews — not
+cleared for reuse.** Buy the exact original (or a clean alt) and overwrite the
+same base file (`packages/assets/public/images/cities/<slug>.jpg`; Bistrița also
+`.../revery/bistrita.jpg`) — filename unchanged, no re-seed. Full provenance in
+`orase-images/orase-round2-originals.json`.
+
+| City | Brand | Live now (placeholder) | Buy exact original |
+|---|---|---|---|
+| București | Adorys | Palace of Parliament, sunset | Shutterstock #1102419524 (iStock gm966486626 / Adobe #207319769) |
+| Bacău | Adorys | Ștefan cel Mare statue + cathedral | Shutterstock #1729397695 / #867634054 |
+| Baia Mare | Adorys | Orthodox cathedral | Shutterstock #2621111247 (iStock gm2212894484) |
+| Reșița | Adorys | Valley cityscape | Shutterstock #1081038752 (iStock gm1125885680) |
+| Târgoviște | Adorys | Princely Court ruins, aerial | iStock gm539853834 (Adobe #109171021) |
+| Bistrița | TGE | Sunrise aerial old-town | Shutterstock #650103832 |
+
+Tip: a one-month Shutterstock/Adobe subscription covers the whole batch cheaper
+than à-la-carte.
+
+Also demo-grade (upgrade later, not in the buy list above):
+- **Sfântu Gheorghe** (Adorys): staged copy is a **gray tourism-board promo** —
+  source a clean central-square stock (fountain + clock tower) or a free
+  Wikimedia alt (`Sfântu Gheorghe` / `Sepsiszentgyörgy`) + attribution.
+- **Vaslui** (Adorys): **left unchanged** — kept the existing County-Council +
+  Ștefan-cel-Mare-statue landmark (Wikimedia CC BY-SA 3.0, already credited).
+  Every free `Category:Views_of_Vaslui` alt was a downgrade. Optional future
+  upgrade: a purchased Ștefan-cel-Mare-statue hero.
+
+Cleared free finals shipped this round (no purchase needed):
+- **Zalău** (TGE+Adorys): Wikimedia **Public-domain** Reformed Church
+  (`File:Reformed_Church,_2006_Zilah_009.jpg`, Mtomi). Attributed in
+  `apps/revery/public/image-credits.txt`.

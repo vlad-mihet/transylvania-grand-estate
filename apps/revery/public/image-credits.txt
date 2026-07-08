@@ -25,28 +25,28 @@ License URL: https://creativecommons.org/licenses/by/2.0/
 Changes: downloaded from the source image URL and re-hosted in Adorys storage.
 
 Baia Mare city image:
-Source: Sunset sky over the city of Baia Mare
-Author: Ioan Schlosser (Unsplash @nelucalator)
-URL: https://commons.wikimedia.org/wiki/File:Sunset_sky_over_the_city_of_Baia_Mare_(Unsplash).jpg
-License: CC0 1.0 (public domain, no attribution required)
-License URL: https://creativecommons.org/publicdomain/zero/1.0/
-Changes: downloaded, centre-cropped to 16:10 and re-hosted in shared @tge/assets.
+Source: Temporary demo placeholder (staged copy) — subject: Orthodox cathedral above the city
+Author: — (unlicensed stock-preview copy; not cleared for reuse)
+URL: —
+License: NOT CLEARED — demo stopgap pending a purchased/licensed original; see docs/city-hero-images-phase2.md
+License URL: n/a
+Changes: low-res staged copy applied for the demo; to be replaced by a licensed hero. (Prior free CC0 "Sunset sky over Baia Mare" image was swapped out at Claudiu's request for the correct subject.)
 
 Bistrița city image:
-Source: Biserica Evanghelică din Bistrița (the Evangelical church and its 75 m Gothic tower)
-Author: Cătălin Vârgă
-URL: https://commons.wikimedia.org/wiki/File:Biserica_Evanghelic%C4%83_din_Bistri%C8%9Ba.jpg
-License: CC BY-SA 3.0 RO
-License URL: https://creativecommons.org/licenses/by-sa/3.0/ro/
-Changes: downloaded from the source image URL and re-hosted in shared @tge/assets.
+Source: Temporary demo placeholder (staged copy) — subject: sunrise aerial of the old town
+Author: — (unlicensed stock-preview copy; not cleared for reuse)
+URL: —
+License: NOT CLEARED — demo stopgap pending a purchased/licensed original; see docs/city-hero-images-phase2.md
+License URL: n/a
+Changes: low-res staged copy applied to both brand slots for the demo; to be replaced by a licensed hero. (Prior free "Biserica Evanghelică din Bistrița" CC BY-SA image was swapped out at Claudiu's request for the aerial old-town subject.)
 
 București city image:
-Source: Bucharest - Stavropoleos Monastery
-Author: stefanjurca
-URL: https://www.flickr.com/photos/84275777@N08/28648667365
-License: CC BY 2.0
-License URL: https://creativecommons.org/licenses/by/2.0/
-Changes: downloaded from the source image URL and re-hosted in Adorys storage.
+Source: Temporary demo placeholder (staged copy) — subject: Palace of the Parliament at sunset
+Author: — (unlicensed stock-preview copy; not cleared for reuse)
+URL: —
+License: NOT CLEARED — demo stopgap pending a purchased/licensed original; see docs/city-hero-images-phase2.md
+License URL: n/a
+Changes: staged copy applied for the demo; to be replaced by a licensed hero. (Prior free "Stavropoleos Monastery" CC BY image was swapped out at Claudiu's request for the Palace of Parliament subject.)
 
 Craiova city image:
 Source: Tram Craiova Teatru
@@ -81,12 +81,12 @@ License URL: https://creativecommons.org/licenses/by-sa/2.0/
 Changes: downloaded from the source image URL and re-hosted in Adorys storage.
 
 Sfântu Gheorghe city image:
-Source: Winter golden-hour view of the fortified Reformed Church (Vártemplom) above the town, Sfântu Gheorghe (Covasna)
-Author: carpathianland (Flickr)
-URL: https://www.flickr.com/photos/carpathianland/8369186932
-License: CC BY-NC 2.0 (non-commercial — TO BE CLEARED for commercial use)
-License URL: https://creativecommons.org/licenses/by-nc/2.0/
-Changes: downloaded, top-biased crop to 16:10 and re-hosted in shared @tge/assets.
+Source: Temporary demo placeholder (staged copy) — subject: central square / plaza
+Author: — (tourism-board promo copy; not cleared for reuse)
+URL: —
+License: NOT CLEARED — demo stopgap pending a clean licensed original; see docs/city-hero-images-phase2.md
+License URL: n/a
+Changes: staged copy applied for the demo; to be replaced by a clean licensed hero. (Prior CC BY-NC "fortified Reformed Church" image — never cleared for commercial use — was swapped out at Claudiu's request for the main-square subject.)
 
 Slatina city image:
 Source: RO OT Slatina center from Gradiste hill 1
@@ -193,12 +193,12 @@ License URL: https://creativecommons.org/licenses/by-sa/3.0/
 Changes: downloaded from the source image URL and re-hosted in Adorys storage.
 
 Târgoviște city image:
-Source: File:Biserica Domnească Adormirea Maicii Domnului (2).jpg (Princely Court, Târgoviște)
-Author: fusion-of-horizons
-URL: https://commons.wikimedia.org/wiki/File:Biserica_Domneasc%C4%83_Adormirea_Maicii_Domnului_(2).jpg
-License: CC BY 2.0
-License URL: https://creativecommons.org/licenses/by/2.0/
-Changes: downloaded from the source image URL and re-hosted in Adorys storage.
+Source: Temporary demo placeholder (staged copy) — subject: Princely Court ruins (aerial)
+Author: — (unlicensed stock-preview copy; not cleared for reuse)
+URL: —
+License: NOT CLEARED — demo stopgap pending a purchased/licensed original; see docs/city-hero-images-phase2.md
+License URL: n/a
+Changes: staged copy applied for the demo; to be replaced by a licensed hero. (Prior free "Biserica Domnească" CC BY image was swapped out at Claudiu's request for the aerial Princely-Court-ruins subject.)
 
 Vaslui city image:
 Source: File:Palatul Administrativ Vaslui.jpg (County Council & Stephen the Great statue, Vaslui)
@@ -225,12 +225,12 @@ License URL: https://creativecommons.org/licenses/by-sa/4.0/
 Changes: downloaded, centre-cropped to 16:10 and re-hosted in shared @tge/assets.
 
 Reșița city image:
-Source: Aerial view of the open-air steam-locomotive museum, Reșița (2017)
-Author: Ovid Teodoriu
-URL: https://commons.wikimedia.org/wiki/File:RO-RESITA_-_Freilicht-Dampflokomotiven-Museum_---_01_Übersicht-Luftaufnahme_(2017).jpg
-License: CC BY-SA 4.0
-License URL: https://creativecommons.org/licenses/by-sa/4.0/
-Changes: downloaded, centre-cropped to 16:10 and re-hosted in shared @tge/assets.
+Source: Temporary demo placeholder (staged copy) — subject: valley cityscape
+Author: — (unlicensed stock-preview copy; not cleared for reuse)
+URL: —
+License: NOT CLEARED — demo stopgap pending a purchased/licensed original; see docs/city-hero-images-phase2.md
+License URL: n/a
+Changes: staged copy applied for the demo; to be replaced by a licensed hero. (Prior free "steam-locomotive museum" CC BY-SA image was swapped out at Claudiu's request for the valley-cityscape subject.)
 
 Drobeta-Turnu Severin city image:
 Source: View over Drobeta-Turnu Severin rooftops toward the Danube
@@ -270,4 +270,12 @@ Author: Turbojet (Wikimedia Commons)
 URL: https://commons.wikimedia.org/wiki/File:Sebes,_Biserica_evanghelica.jpg
 License: CC BY-SA 4.0
 License URL: https://creativecommons.org/licenses/by-sa/4.0/
+Changes: downscaled to 2560px long edge (no crop) and re-hosted in shared @tge/assets.
+
+Zalău city image:
+Source: Reformed Church of Zalău (Zilah), 2006
+Author: Mtomi (Wikimedia Commons)
+URL: https://commons.wikimedia.org/wiki/File:Reformed_Church,_2006_Zilah_009.jpg
+License: Public domain
+License URL: n/a
 Changes: downscaled to 2560px long edge (no crop) and re-hosted in shared @tge/assets.
