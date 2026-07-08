@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import Image from "next/image";
 import { ChevronDown } from "lucide-react";
+import { HeroVideoSources } from "./hero-video-sources";
 
 interface CinematicHeroProps {
   videoSrc: string;
@@ -72,7 +73,7 @@ export function CinematicHero({
           className="absolute inset-0 w-full h-full object-cover transition-opacity duration-[1200ms] ease-out"
           style={{ opacity: stage >= 1 ? 1 : 0 }}
         >
-          <source src={videoSrc} type="video/mp4" />
+          <HeroVideoSources videoSrc={videoSrc} />
         </video>
       )}
 

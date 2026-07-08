@@ -1,1 +1,5 @@
 .vercel
+
+# Local, un-served backup of the original hero video (pre-Mozart soundtrack).
+# Kept out of git — git history preserves the original bytes as the durable fallback.
+videos-backup/
