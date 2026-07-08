@@ -207,6 +207,7 @@ export function PropertyGallery({ images }: PropertyGalleryProps) {
                 className="object-cover"
                 sizes="(max-width: 768px) 50vw, 25vw"
               />
+              <DemoImageBadge compact className="absolute top-2 left-2 z-10" />
             </button>
           ))}
         </div>
@@ -299,6 +300,8 @@ export function PropertyGallery({ images }: PropertyGalleryProps) {
                 priority
               />
             </div>
+
+            <DemoImageBadge className="absolute bottom-4 left-4 z-10" />
 
             {images.length > 1 && (
               <button

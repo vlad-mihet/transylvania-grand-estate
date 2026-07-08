@@ -40,12 +40,12 @@ export function Footer() {
           <div>
             <Link href="/" className="block mb-4" aria-label="Transylvania Grand Estate">
               <Image
-                src="/logo.png"
+                src="/sigil.jpg"
                 alt="Transylvania Grand Estate"
-                width={864}
-                height={377}
+                width={816}
+                height={446}
                 priority={false}
-                className="h-20 w-auto"
+                className="h-20 w-auto rounded-[3px]"
               />
             </Link>
             <p className="text-cream-muted text-sm leading-relaxed">

@@ -10,17 +10,26 @@ import { cn } from "@tge/utils";
 // to remove it site-wide once real listings are published.
 const DEMO_CONTENT = process.env.NEXT_PUBLIC_DEMO_CONTENT !== "false";
 
-export function DemoImageBadge({ className }: { className?: string }) {
+// `compact` renders the one-word label ("Example") for small surfaces like
+// gallery thumbnails, where the full disclaimer would wrap and clutter.
+export function DemoImageBadge({
+  className,
+  compact = false,
+}: {
+  className?: string;
+  compact?: boolean;
+}) {
   const t = useTranslations("Common");
   if (!DEMO_CONTENT) return null;
   return (
     <Badge
       className={cn(
-        "bg-black/55 backdrop-blur-md text-cream/95 text-[10px] uppercase tracking-[0.15em] font-semibold border border-white/15 px-3 py-1.5 pointer-events-none",
+        "bg-black/55 backdrop-blur-md text-cream/95 uppercase tracking-[0.15em] font-semibold border border-white/15 pointer-events-none",
+        compact ? "text-[9px] px-2 py-0.5" : "text-[10px] px-3 py-1.5",
         className,
       )}
     >
-      {t("demoImageBadge")}
+      {t(compact ? "demoImageBadgeShort" : "demoImageBadge")}
     </Badge>
   );
 }

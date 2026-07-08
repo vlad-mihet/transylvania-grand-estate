@@ -156,6 +156,7 @@ export function PropertyGallery({ images }: PropertyGalleryProps) {
               className="object-cover hover:scale-105 transition-transform duration-500"
               sizes="(max-width: 768px) 50vw, 25vw"
             />
+            <DemoImageBadge compact className="absolute top-3 left-3 z-10" />
           </div>
         ))}
       </div>
@@ -244,6 +245,8 @@ export function PropertyGallery({ images }: PropertyGalleryProps) {
                 priority
               />
             </div>
+
+            <DemoImageBadge className="absolute bottom-4 left-4 z-10" />
 
             {images.length > 1 && (
               <button

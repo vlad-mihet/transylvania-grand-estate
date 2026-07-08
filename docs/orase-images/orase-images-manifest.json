@@ -1,0 +1,499 @@
+{
+  "meta": {
+    "generated": "2026-07-06",
+    "purpose": "Wire 35 city hero images into TGE (tge) and Adorys (revery) for local + prod.",
+    "source_sheets": [
+      "orase-platforme-mapping.xlsx",
+      "orase-surse-imagini.xlsx",
+      "orase-origini-reverse.xlsx"
+    ],
+    "whatsapp_files_dir": "orase-mapping/renamed/  (slug-named low-res WhatsApp copies, for first-pass seed only)",
+    "brand_codes": {
+      "tge": "Transylvania Grand Estate (luxury)",
+      "revery": "Adorys (mass-market; code identifier stays 'revery')"
+    },
+    "counts": {
+      "cities": 27,
+      "image_slots": 35,
+      "tge_slots": 9,
+      "revery_slots": 26
+    },
+    "final_plan_legend": {
+      "use_free_original": "Claudiu's own source is free (Pixabay/Wikimedia) and downloadable at good res — use it directly.",
+      "use_curated_free": "Original is stock/tourism/gray — replace with the vetted free alternative (Unsplash/Pexels/Wikimedia).",
+      "buy_stock": "No clean free option (premium TGE or thin small-town) — purchase from the linked stock page."
+    },
+    "IMPORTANT_schema_gap": "City.image is ONE image per city; brands are a join table (city_brands). There is NO per-brand image column. The 8 dual cities below (both tge+revery) cannot store two images without a schema change. See handoff brief Decision 1."
+  },
+  "cities": [
+    {
+      "city_slug": "cluj-napoca",
+      "county": "Cluj",
+      "county_slug": "cluj",
+      "brands": {
+        "tge": {
+          "whatsapp_file": "tge_cluj-napoca.jpg",
+          "original_copyright": "stock",
+          "final_plan": "buy_stock",
+          "final_asset_url": "https://www.shutterstock.com/image-photo/clujnapoca-romania-october-13-2018-city-1320062051",
+          "final_license": "paid",
+          "note": "Claudiu's exact = this stock. Premium alt (aerial): stock.adobe.com/images/aerial-view-of-cluj-napoca-romania/142178162"
+        },
+        "revery": {
+          "whatsapp_file": "adorys_cluj-napoca.jpg",
+          "original_copyright": "mixed",
+          "final_plan": "use_curated_free",
+          "final_asset_url": "https://unsplash.com/photos/brown-and-white-concrete-houses-under-white-clouds-during-daytime-LC54UhNn95M",
+          "final_license": "Unsplash (free, no attribution)",
+          "note": "Curated clean alt (Tamas Pap)."
+        }
+      }
+    },
+    {
+      "city_slug": "bistrita",
+      "county": "Bistrița-Năsăud",
+      "county_slug": "bistrita-nasaud",
+      "brands": {
+        "revery": {
+          "whatsapp_file": "adorys_bistrita.jpg",
+          "original_copyright": "stock",
+          "final_plan": "use_curated_free",
+          "final_asset_url": "https://commons.wikimedia.org/wiki/Category:Historical_monuments_in_Bistri%C8%9Ba",
+          "final_license": "Wikimedia CC BY-SA (attribution)",
+          "note": "Original is stock; use clean Wikimedia landmark. VERIFY res on file page."
+        },
+        "tge": {
+          "whatsapp_file": "tge_bistrita.jpg",
+          "original_copyright": "tourism-thumb",
+          "final_plan": "buy_stock",
+          "final_asset_url": "https://www.shutterstock.com/image-photo/drone-view-bistrita-city-nasaud-county-1180051111",
+          "final_license": "paid",
+          "note": "WhatsApp orig was 250x155 junk. Premium drone shot via stock."
+        }
+      }
+    },
+    {
+      "city_slug": "timisoara",
+      "county": "Timiș",
+      "county_slug": "timis",
+      "brands": {
+        "revery": {
+          "whatsapp_file": "adorys_timisoara.jpg",
+          "original_copyright": "news/web",
+          "final_plan": "use_curated_free",
+          "final_asset_url": "https://unsplash.com/photos/brown-buildings-LzPY4Pj26gY",
+          "final_license": "Unsplash (free, no attribution)",
+          "note": "Piata Unirii pastel baroque (Laura Ghise)."
+        }
+      }
+    },
+    {
+      "city_slug": "oradea",
+      "county": "Bihor",
+      "county_slug": "bihor",
+      "brands": {
+        "tge": {
+          "whatsapp_file": "tge_oradea.jpg",
+          "original_copyright": "FREE (Pixabay)",
+          "final_plan": "use_free_original",
+          "final_asset_url": "https://pixabay.com/photos/romania-oradea-city-center-3283909/",
+          "final_license": "Pixabay (free)",
+          "note": "Claudiu's own source; download full-res free (~1920px)."
+        },
+        "revery": {
+          "whatsapp_file": "adorys_oradea.jpg",
+          "original_copyright": "FREE (Pixabay)",
+          "final_plan": "use_free_original",
+          "final_asset_url": "https://pixabay.com/photos/oradea-city-transylvania-crisana-1098930/",
+          "final_license": "Pixabay (free)",
+          "note": "Free; up to 4608x1929."
+        }
+      }
+    },
+    {
+      "city_slug": "arad",
+      "county": "Arad",
+      "county_slug": "arad",
+      "brands": {
+        "tge": {
+          "whatsapp_file": "tge_arad.jpg",
+          "original_copyright": "FREE (Pixabay)",
+          "final_plan": "use_free_original",
+          "final_asset_url": "https://pixabay.com/photos/arad-rail-train-station-2871908/",
+          "final_license": "Pixabay (free)",
+          "note": "Free."
+        },
+        "revery": {
+          "whatsapp_file": "adorys_arad.jpg",
+          "original_copyright": "FREE (Pixabay)",
+          "final_plan": "use_free_original",
+          "final_asset_url": "https://pixabay.com/photos/historic-building-arad-town-hall-5513910/",
+          "final_license": "Pixabay (free)",
+          "note": "Free; Town Hall."
+        }
+      }
+    },
+    {
+      "city_slug": "sibiu",
+      "county": "Sibiu",
+      "county_slug": "sibiu",
+      "brands": {
+        "revery": {
+          "whatsapp_file": "adorys_sibiu.jpg",
+          "original_copyright": "FREE (Pixabay)",
+          "final_plan": "use_free_original",
+          "final_asset_url": "https://pixabay.com/photos/market-sibiu-big-market-3109817/",
+          "final_license": "Pixabay (free)",
+          "note": "Free; Piata Mare."
+        },
+        "tge": {
+          "whatsapp_file": "tge_sibiu.jpg",
+          "original_copyright": "FREE (Pixabay)",
+          "final_plan": "use_free_original",
+          "final_asset_url": "https://pixabay.com/photos/sibiu-transylvania-romania-1617812/",
+          "final_license": "Pixabay (free)",
+          "note": "Free; rooftop panorama."
+        }
+      }
+    },
+    {
+      "city_slug": "iasi",
+      "county": "Iași",
+      "county_slug": "iasi",
+      "brands": {
+        "revery": {
+          "whatsapp_file": "adorys_iasi.jpg",
+          "original_copyright": "FREE (likely)",
+          "final_plan": "use_curated_free",
+          "final_asset_url": "https://unsplash.com/photos/white-and-gray-concrete-building-uY8-Gd5E0Ro",
+          "final_license": "Unsplash (free, no attribution)",
+          "note": "Curated Palace of Culture (Ioan Bolfa). NB: Claudiu's orig was Roznovanu Palace."
+        }
+      }
+    },
+    {
+      "city_slug": "targu-mures",
+      "county": "Mureș",
+      "county_slug": "mures",
+      "brands": {
+        "tge": {
+          "whatsapp_file": "tge_targu-mures.jpg",
+          "original_copyright": "stock",
+          "final_plan": "buy_stock",
+          "final_asset_url": "https://www.shutterstock.com/image-photo/drone-view-medieval-fortress-targu-mures-1248518092",
+          "final_license": "paid",
+          "note": "Claudiu's exact = this drone stock (also on romaniatourism)."
+        },
+        "revery": {
+          "whatsapp_file": "adorys_targu-mures.jpg",
+          "original_copyright": "tourism board",
+          "final_plan": "use_curated_free",
+          "final_asset_url": "https://commons.wikimedia.org/wiki/Category:Culture_Palace,_T%C3%A2rgu_Mure%C8%99",
+          "final_license": "Wikimedia CC (verify)",
+          "note": "Orig was romaniatourism promo (gray); use clean Wikimedia Culture Palace."
+        }
+      }
+    },
+    {
+      "city_slug": "alba-iulia",
+      "county": "Alba",
+      "county_slug": "alba",
+      "brands": {
+        "revery": {
+          "whatsapp_file": "adorys_alba-iulia.jpg",
+          "original_copyright": "stock",
+          "final_plan": "use_curated_free",
+          "final_asset_url": "https://www.pexels.com/photo/view-of-the-gate-tower-to-the-coronation-cathedral-alba-iulia-romania-13876219/",
+          "final_license": "Pexels (free, no attribution)",
+          "note": "Orig stock; clean Pexels alt (~4082px)."
+        }
+      }
+    },
+    {
+      "city_slug": "brasov",
+      "county": "Brașov",
+      "county_slug": "brasov",
+      "brands": {
+        "revery": {
+          "whatsapp_file": "adorys_brasov.jpg",
+          "original_copyright": "stock",
+          "final_plan": "use_curated_free",
+          "final_asset_url": "https://unsplash.com/photos/brown-roofed-houses-tVTXgXM4PDU",
+          "final_license": "Unsplash (free, no attribution)",
+          "note": "Orig stock; strong free Unsplash alt (Daniela Turcanu)."
+        }
+      }
+    },
+    {
+      "city_slug": "braila",
+      "county": "Brăila",
+      "county_slug": "braila",
+      "brands": {
+        "revery": {
+          "whatsapp_file": "adorys_braila.jpg",
+          "original_copyright": "tourism board",
+          "final_plan": "buy_stock",
+          "final_asset_url": "https://stock.adobe.com/search?k=braila",
+          "final_license": "paid",
+          "note": "Orig romaniatourism promo (gray). Free coverage thin; recommend stock."
+        }
+      }
+    },
+    {
+      "city_slug": "constanta",
+      "county": "Constanța",
+      "county_slug": "constanta",
+      "brands": {
+        "tge": {
+          "whatsapp_file": "tge_constanta.jpg",
+          "original_copyright": "tourism board",
+          "final_plan": "buy_stock",
+          "final_asset_url": "https://stock.adobe.com/images/beautiful-summer-landscape-with-old-casino-symbol-of-the-constanta-city-romanian-coastal-destination-at-the-black-sea/112474362",
+          "final_license": "paid",
+          "note": "Casino, restored. Avoid derelict frames."
+        }
+      }
+    },
+    {
+      "city_slug": "craiova",
+      "county": "Dolj",
+      "county_slug": "dolj",
+      "brands": {
+        "tge": {
+          "whatsapp_file": "tge_craiova.jpg",
+          "original_copyright": "web",
+          "final_plan": "buy_stock",
+          "final_asset_url": "https://stock.adobe.com/images/craiova-romania-aerial-view/209326173",
+          "final_license": "paid",
+          "note": "Free coverage thin for Craiova."
+        },
+        "revery": {
+          "whatsapp_file": "adorys_craiova.jpg",
+          "original_copyright": "web/travel",
+          "final_plan": "buy_stock",
+          "final_asset_url": "https://www.shutterstock.com/search/craiova",
+          "final_license": "paid",
+          "note": "Orig travel-site (gray). No clean free cityscape; use stock."
+        }
+      }
+    },
+    {
+      "city_slug": "deva",
+      "county": "Hunedoara",
+      "county_slug": "hunedoara",
+      "brands": {
+        "revery": {
+          "whatsapp_file": "adorys_deva.jpg",
+          "original_copyright": "tourism board",
+          "final_plan": "use_curated_free",
+          "final_asset_url": "https://commons.wikimedia.org/wiki/Category:Deva_Citadel",
+          "final_license": "Wikimedia CC",
+          "note": "Orig romaniatourism promo; clean Wikimedia town+fortress (5274x3513)."
+        }
+      }
+    },
+    {
+      "city_slug": "galati",
+      "county": "Galați",
+      "county_slug": "galati",
+      "brands": {
+        "revery": {
+          "whatsapp_file": "adorys_galati.jpg",
+          "original_copyright": "stock",
+          "final_plan": "use_curated_free",
+          "final_asset_url": "https://commons.wikimedia.org/wiki/File:Overview_PANORAMA_Mazepa,_Galati_-_PANORAMA_Vedere_de_ansamblu_MAZEPA,_Galati_-_panoramio.jpg",
+          "final_license": "Wikimedia CC (verify res)",
+          "note": "Orig stock; Wikimedia panorama alt (verify >=1920)."
+        }
+      }
+    },
+    {
+      "city_slug": "miercurea-ciuc",
+      "county": "Harghita",
+      "county_slug": "harghita",
+      "brands": {
+        "revery": {
+          "whatsapp_file": "adorys_miercurea-ciuc.jpg",
+          "original_copyright": "tourism board",
+          "final_plan": "use_curated_free",
+          "final_asset_url": "https://commons.wikimedia.org/wiki/File:RO_HR_Miercurea_Ciuc_Miko_castle.jpg",
+          "final_license": "Wikimedia CC BY-SA (verify)",
+          "note": "Orig romaniatourism promo; Miko Castle Wikimedia."
+        }
+      }
+    },
+    {
+      "city_slug": "suceava",
+      "county": "Suceava",
+      "county_slug": "suceava",
+      "brands": {
+        "revery": {
+          "whatsapp_file": "adorys_suceava.jpg",
+          "original_copyright": "FREE/tourism",
+          "final_plan": "use_curated_free",
+          "final_asset_url": "https://commons.wikimedia.org/wiki/Category:Suceava_Capital_City_Fortress",
+          "final_license": "Wikimedia CC",
+          "note": "Seat Fortress; excellent free coverage (6016x4000)."
+        }
+      }
+    },
+    {
+      "city_slug": "tulcea",
+      "county": "Tulcea",
+      "county_slug": "tulcea",
+      "brands": {
+        "revery": {
+          "whatsapp_file": "adorys_tulcea.jpg",
+          "original_copyright": "tourism board",
+          "final_plan": "use_curated_free",
+          "final_asset_url": "https://commons.wikimedia.org/wiki/Category:Independence_Monument,_Tulcea",
+          "final_license": "Wikimedia CC",
+          "note": "Orig romaniatourism promo; Independence Monument Wikimedia (4608x3072)."
+        }
+      }
+    },
+    {
+      "city_slug": "sighisoara",
+      "county": "Mureș",
+      "county_slug": "mures",
+      "brands": {
+        "tge": {
+          "whatsapp_file": "tge_sighisoara.jpg",
+          "original_copyright": "stock",
+          "final_plan": "buy_stock",
+          "final_asset_url": "https://www.shutterstock.com/image-photo/panoramic-view-over-cityscape-roof-architecture-428692021",
+          "final_license": "paid",
+          "note": "Claudiu's exact = this stock (3277x2000 copy on rotraveler)."
+        },
+        "revery": {
+          "whatsapp_file": "adorys_sighisoara.jpg",
+          "original_copyright": "stock",
+          "final_plan": "use_curated_free",
+          "final_asset_url": "https://www.pexels.com/photo/sighisoara-27413478/",
+          "final_license": "Pexels (free, no attribution)",
+          "note": "Orig stock; clean Pexels blue-sky Clock Tower (~3913px)."
+        }
+      }
+    },
+    {
+      "city_slug": "buftea",
+      "county": "Ilfov",
+      "county_slug": "ilfov",
+      "brands": {
+        "revery": {
+          "whatsapp_file": "adorys_buftea.jpg",
+          "original_copyright": "news",
+          "final_plan": "use_curated_free",
+          "final_asset_url": "https://commons.wikimedia.org/wiki/Category:%C8%98tirbei_Palace,_Buftea",
+          "final_license": "Wikimedia CC BY-SA",
+          "note": "Orig ProTV news photo. Stirbei Palace (small town, modest res). Trap: not the Bucharest Stirbei."
+        }
+      }
+    },
+    {
+      "city_slug": "buzau",
+      "county": "Buzău",
+      "county_slug": "buzau",
+      "brands": {
+        "revery": {
+          "whatsapp_file": "adorys_buzau.jpg",
+          "original_copyright": "commercial (hotel)",
+          "final_plan": "use_curated_free",
+          "final_asset_url": "https://commons.wikimedia.org/wiki/File:Primaria_municipiului_Buzau.jpg",
+          "final_license": "Wikimedia CC BY-SA (5184x3456)",
+          "note": "Orig hotel-listing photo; clean Wikimedia City Hall."
+        }
+      }
+    },
+    {
+      "city_slug": "calarasi",
+      "county": "Călărași",
+      "county_slug": "calarasi",
+      "brands": {
+        "revery": {
+          "whatsapp_file": "adorys_calarasi.jpg",
+          "original_copyright": "blog",
+          "final_plan": "use_curated_free",
+          "final_asset_url": "https://commons.wikimedia.org/wiki/File:Calarasi_-_Casa_Crutescu_1.jpg",
+          "final_license": "Wikimedia CC BY-SA (3782x2522)",
+          "note": "Orig personal blog. No Danube hero on free; Casa Crutescu best free."
+        }
+      }
+    },
+    {
+      "city_slug": "drobeta-turnu-severin",
+      "county": "Mehedinți",
+      "county_slug": "mehedinti",
+      "brands": {
+        "revery": {
+          "whatsapp_file": "adorys_drobeta-turnu-severin.jpg",
+          "original_copyright": "FREE (Wikimedia)",
+          "final_plan": "use_free_original",
+          "final_asset_url": "https://commons.wikimedia.org/wiki/Category:Theodor_Costescu_Cultural_Palace,_Drobeta-Turnu_Severin",
+          "final_license": "Wikimedia CC BY-SA",
+          "note": "Claudiu's own source ~ Wikimedia. Landscape Palatul Cultural (4000x2664)."
+        }
+      }
+    },
+    {
+      "city_slug": "giurgiu",
+      "county": "Giurgiu",
+      "county_slug": "giurgiu",
+      "brands": {
+        "revery": {
+          "whatsapp_file": "adorys_giurgiu.jpg",
+          "original_copyright": "stock (Dreamstime)",
+          "final_plan": "buy_stock",
+          "final_asset_url": "https://www.dreamstime.com/photos-images/giurgiu.html",
+          "final_license": "paid",
+          "note": "Orig = Dreamstime editorial. Free alt: Wikimedia Turnul cu Ceas (commons File:Valeriu_Pantazi...)."
+        }
+      }
+    },
+    {
+      "city_slug": "slatina",
+      "county": "Olt",
+      "county_slug": "olt",
+      "brands": {
+        "revery": {
+          "whatsapp_file": "adorys_slatina.jpg",
+          "original_copyright": "municipality",
+          "final_plan": "use_curated_free",
+          "final_asset_url": "https://commons.wikimedia.org/wiki/File:Muzeul_Judetean_Olt_2012.JPG",
+          "final_license": "Wikimedia CC BY-SA (4608x3072)",
+          "note": "Orig primaria site (tiny). Olt County Museum best free landmark."
+        }
+      }
+    },
+    {
+      "city_slug": "slobozia",
+      "county": "Ialomița",
+      "county_slug": "ialomita",
+      "brands": {
+        "revery": {
+          "whatsapp_file": "adorys_slobozia.jpg",
+          "original_copyright": "local site",
+          "final_plan": "use_curated_free",
+          "final_asset_url": "https://commons.wikimedia.org/wiki/File:Slobozia_-_Catedrala_episcopala.jpg",
+          "final_license": "Wikimedia CC BY-SA (verify)",
+          "note": "Thinnest town. Cathedral landmark; verify res. Else buy stock."
+        }
+      }
+    },
+    {
+      "city_slug": "sebes",
+      "county": "Alba",
+      "county_slug": "alba",
+      "brands": {
+        "revery": {
+          "whatsapp_file": "adorys_sebes.jpg",
+          "original_copyright": "tourism/FREE",
+          "final_plan": "use_curated_free",
+          "final_asset_url": "https://commons.wikimedia.org/wiki/Category:Evangelical_Church,_Sebe%C8%99",
+          "final_license": "Wikimedia CC BY-SA (~3600x2400)",
+          "note": "Fortified church; good free coverage (74 files). NB: Sebes may not exist yet as a city record."
+        }
+      }
+    }
+  ]
+}

@@ -10,7 +10,8 @@
     "reserved": "Rezervat",
     "new": "Nou",
     "featured": "Recomandat",
-    "demoImageBadge": "Imagini demonstrative",
+    "demoImageBadge": "Exemplu — nu o proprietate reală",
+    "demoImageBadgeShort": "Exemplu",
     "propertyTypes": {
       "apartment": "Apartament",
       "house": "Casă",
