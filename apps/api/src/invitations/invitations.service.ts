@@ -165,6 +165,7 @@ export class InvitationsService {
       expiresAt,
       actorId,
       locale: dto.locale,
+      roleKind: 'staff',
     });
 
     this.metrics.invitationsCreated.inc({
@@ -287,6 +288,10 @@ export class InvitationsService {
     expiresAt: Date;
     actorId: string | null;
     locale: AgentInvitationLocale | undefined;
+    // 'agent' for the agent-onboarding flows, 'staff' for ADMIN/EDITOR
+    // platform invites — drives the role-appropriate intro copy (BUG-120).
+    // Defaults to 'agent' so the agent paths need no change.
+    roleKind?: 'agent' | 'staff';
   }) {
     const inviter = args.actorId
       ? await this.prisma.adminUser.findUnique({
@@ -302,6 +307,7 @@ export class InvitationsService {
       expiresAt: args.expiresAt,
       invitedByName: inviter?.name,
       locale: args.locale ?? 'ro',
+      roleKind: args.roleKind ?? 'agent',
     });
 
     if (mailResult.ok) {
