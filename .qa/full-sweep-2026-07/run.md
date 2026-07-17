@@ -44,3 +44,22 @@ API restarted with `DEV_AUTH_THROTTLE_DISABLED=1` (CI parity for Playwright; the
 **Environment note (mid-Phase-3):** the dev API (`nest start --watch`) fell into a phantom file-change restart loop (~every 3s, "Found 0 errors" each cycle, never rebinding :4000) — OneDrive file-event churn suspected (repo lives under OneDrive; see prior OneDrive incidents). Replaced for the remainder of the sweep with a watchless run: `nest build` + `node dist/apps/api/src/main.js` (same env). If contributors hit dev-API 503/"Failed to fetch" mid-session, this loop is the likely cause — consider moving the repo off OneDrive (standing recommendation).
 
 **Phase 1 exit: baseline recorded.** New reds ledgered as BUG-101 (lint), BUG-102 (e2e env leak), BUG-110 (webkit form). Automation-covered behaviors (to skip in manual phases): landing routes/forms/i18n/visual/interactive, revery routes/calculators/a11y/seo/responsive/rate-limit/not-found/property flows, admin auth/properties/agents/articles/inquiries/academy/data-sources/localized-editor/command-palette smokes, api invitation/password-reset/refresh-rotation/tier-scope/draft-leak(properties)/permission-guard invariants.
+
+---
+
+## Phase 3 — Admin manual sweep (2026-07-17), browser-driven
+
+Full matrix + AGENT pass in `admin-matrix.md`. Every planned module reached. Coverage: Tier A (properties create/edit/tier→brand/agent-assign, inquiries kanban+sheet+filters+archive, people team+invitations, academy courses/lessons), Tier B (dashboard, bank rates, indicators, testimonials, developers, counties, cities+per-brand heroes, brand visibility, articles, audit logs), full AGENT parallel pass.
+
+**Passing / verified working:** property create→edit round-trip (tier=affordable→REVERY, agent assigned, per-locale RO/EN blobs persisted, edit PATCH 200); inquiry sheet + source filter + archive; **city per-brand hero override UI (base + TGE + Adorys images)**; academy workspace (4 courses, lesson table/reorder/stats/export); bank rates + indicators (calculator inputs) render with real data; developers/testimonials/counties/cities lists; brand-visibility panels; ADMIN/EDITOR invitation flow (`POST /invitations/users` 201, accept-invite page reachable); **AGENT security fully intact** (nav scoped, 6/6 forbidden URLs→403, foreign property 404/write-403, own write 200).
+
+**New findings BUG-111 → BUG-122 (12).** Headline:
+- **BUG-117 Critical** — audit trail dead for ALL resource mutations (classify() never matches under `/api/v1` global prefix); only auth events logged.
+- **BUG-118 Critical** — team/users mgmt page non-functional (admin sends `limit` param that `/auth/users` `.strict()` schema 400s; client swallows → empty state); a never-tested module.
+- Major: BUG-115 (slug button no-ops without EN title), BUG-116 (empty year-built blocks save w/ raw NaN).
+- Minor/Trivial: BUG-111 (RO dashboard mislabel), BUG-112/113 (inquiry sheet badge + filter placeholder), BUG-114 (missing `Common.relations` key → 4.5k console errors + "1 Issue" overlay), BUG-119 (people-hub logins widget wrong action filter), BUG-120 (user-invite email uses agent copy), BUG-121 (unread badge counts limit=1), BUG-122 (raw `inquiries.typeLabel.viewing` key). BUG-106 (literal-EN property labels) reconfirmed.
+- Confirmed BUG-107 (in-app nav guard gap) — beforeunload dialog fires on full nav, but sidebar Link nav discards dirty forms silently.
+
+**Env:** switched API to watchless `node dist` mid-phase (BUG-noted watch-loop). Admin password now `QaTest123!` (qa-smoke rotation). Test artifacts in DB: 1 property (`qa-sweep-apartment-in-cluj-napoca`), 1 draft article, 2 inquiries, 1 pending EDITOR invite — cleanup at Phase 9.
+
+**Phase 3 exit: complete.** Admin is functionally solid on the happy paths; the two Criticals are both "feature silently non-functional" (audit, user list), not crashes.

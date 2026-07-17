@@ -11,21 +11,21 @@ Credentials: SUPER_ADMIN `admin@` (QaTest123!), EDITOR `editor@` (QaSweep123!), 
 | People: team + invitations | ❌ BUG-118 (list broken) / ✅ invite ADMIN/EDITOR works (BUG-120 email copy) | ⬜ | ✅ 403 |
 | People: agents CRUD + invite | ⬜ | ⬜ | ✅ self only (my-listings) |
 | Settings / users mgmt | ⬜ settings (BUG-118 users list) | ⬜ | ✅ 403 |
-| Academy: courses/lessons | ⬜ | ⬜ | ⬜ (403) |
-| Academy: students/invitations | ⬜ | ⬜ (manage=ADMIN+) | ⬜ (403) |
+| Academy: courses/lessons | ✅ workspace + 4 courses + lesson table/reorder/stats/export render | ⬜ | ✅ 403 |
+| Academy: students/invitations | ✅ list renders (0 students, fresh seed) | ⬜ (manage=ADMIN+) | ✅ 403 |
 
 ## Tier B — SUPER_ADMIN functional + AGENT 403 + EDITOR spot
 | Module | SUPER_ADMIN | EDITOR spot | AGENT 403/hidden |
 |---|---|---|---|
 | Dashboard | ⚠ pass (KPIs vs DB verified; BUG-111 label) | ⬜ | ⬜ (redirect my-listings) |
-| Bank rates CRUD | ⬜ | ⬜ | ⬜ |
-| Financial indicators | ⬜ | ⬜ | ⬜ |
-| Testimonials CRUD | ⬜ | ⬜ | ⬜ |
-| Developers CRUD | ⬜ | ⬜ | ⬜ |
-| Counties CRUD | ⬜ | ⬜ | ⬜ |
-| Cities CRUD + per-brand heroes | ⬜ | ⬜ | ⬜ |
-| Brand visibility | ⬜ | ⬜ | ⬜ |
-| Articles + content hub / locale meter | ⬜ | ⬜ | ⬜ |
+| Bank rates CRUD | ✅ list renders (7 real banks, filters) | ⬜ | ✅ POST→404 |
+| Financial indicators | ✅ EUR/RON 5.2359 + IRCC 5.58 render (calc inputs) | ⬜ | ⬜ |
+| Testimonials CRUD | ✅ list renders (4, ratings/quotes) | ⬜ | ⬜ |
+| Developers CRUD | ✅ list renders (4, promoted toggles, counts) | ⬜ | ⬜ |
+| Counties CRUD | ✅ (dialog CRUD; 42 seeded, visible in cities filter) | ⬜ | ⬜ |
+| Cities CRUD + per-brand heroes | ✅ list 46 + brand badges; **per-brand hero override UI works** (base+TGE+Adorys images on Cluj) | ⬜ | ⬜ |
+| Brand visibility | ✅ renders (TGE+Revery curation panels, empty=default order by design) | ⬜ | ✅ /403 |
+| Articles + content hub / locale meter | ✅ list + /articles/new + createHref (legacy P3-010 fixed); draft leak = BUG-109 (API) | ⬜ | ✅ /403 |
 | Audit logs | ❌ BUG-117 (page renders + filters/CSV present, but no mutation is ever audited) | ⬜ | ⬜ |
 
 ## Tier C — every-role smoke
