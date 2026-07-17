@@ -105,44 +105,43 @@ const PROPERTY_TYPE_VALUES = [
 const PROPERTY_STATUS_VALUES = ["available", "reserved", "sold"] as const;
 
 // The 18 amenity flags (mirror the Prisma boolean columns / amenityFlagsSchema).
-// Labels are literal English for now — i18n keys are a follow-up, same as the
-// brand/tier picker.
+// Labels come from i18n (`PropertyForm.amenities.<name>`).
 const AMENITY_FIELDS = [
-  ["hasBalcony", "Balcony"],
-  ["hasTerrace", "Terrace"],
-  ["hasParking", "Parking"],
-  ["hasGarage", "Garage"],
-  ["hasSeparateKitchen", "Separate kitchen"],
-  ["hasStorage", "Storage"],
-  ["hasElevator", "Elevator"],
-  ["hasInteriorStaircase", "Interior staircase"],
-  ["hasWashingMachine", "Washing machine"],
-  ["hasFridge", "Fridge"],
-  ["hasStove", "Stove"],
-  ["hasOven", "Oven"],
-  ["hasAC", "Air conditioning"],
-  ["hasBlinds", "Blinds"],
-  ["hasArmoredDoors", "Armored doors"],
-  ["hasIntercom", "Intercom"],
-  ["hasInternet", "Internet"],
-  ["hasCableTV", "Cable TV"],
+  "hasBalcony",
+  "hasTerrace",
+  "hasParking",
+  "hasGarage",
+  "hasSeparateKitchen",
+  "hasStorage",
+  "hasElevator",
+  "hasInteriorStaircase",
+  "hasWashingMachine",
+  "hasFridge",
+  "hasStove",
+  "hasOven",
+  "hasAC",
+  "hasBlinds",
+  "hasArmoredDoors",
+  "hasIntercom",
+  "hasInternet",
+  "hasCableTV",
 ] as const;
 
 // Optional classification enums (values mirror the Prisma enums). Each renders
-// as a Select with a "—" (none) option since they're optional.
+// as a Select with a "—" (none) option since they're optional. Group labels
+// come from `PropertyForm.classification.<name>`; option labels from
+// `PropertyForm.classificationValues.<value>`.
 const CLASSIFICATION_FIELDS = [
-  ["furnishing", "Furnishing", ["unfurnished", "semi_furnished", "furnished", "luxury"]],
-  ["material", "Construction", ["brick", "concrete", "bca", "wood", "stone", "mixed"]],
-  ["condition", "Condition", ["new_build", "renovated", "good", "needs_renovation", "under_construction"]],
-  ["sellerType", "Seller", ["private_seller", "agency", "developer"]],
-  ["heating", "Heating", ["central_gas", "centralized", "block_central", "electric", "heat_pump", "solid_fuel", "none"]],
-  ["ownership", "Ownership", ["personal", "company", "mixed"]],
-  ["windowType", "Windows", ["pvc_double", "pvc_triple", "wood", "aluminum", "mixed"]],
+  ["furnishing", ["unfurnished", "semi_furnished", "furnished", "luxury"]],
+  ["material", ["brick", "concrete", "bca", "wood", "stone", "mixed"]],
+  ["condition", ["new_build", "renovated", "good", "needs_renovation", "under_construction"]],
+  ["sellerType", ["private_seller", "agency", "developer"]],
+  ["heating", ["central_gas", "centralized", "block_central", "electric", "heat_pump", "solid_fuel", "none"]],
+  ["ownership", ["personal", "company", "mixed"]],
+  ["windowType", ["pvc_double", "pvc_triple", "wood", "aluminum", "mixed"]],
 ] as const;
 
 const NONE = "__none__";
-const humanize = (s: string) =>
-  (s.charAt(0).toUpperCase() + s.slice(1)).replace(/_/g, " ");
 
 interface PropertyFormProps {
   defaultValues?: Partial<PropertyFormValues>;
@@ -696,9 +695,13 @@ function PropertyMetadataFields({
         />
       </MetaSection>
 
-      <MetaSection title="Classification">
-        {CLASSIFICATION_FIELDS.map(([name, label, options]) => (
-          <MetaField key={name} id={`property-${name}`} label={label}>
+      <MetaSection title={t("sections.classification")}>
+        {CLASSIFICATION_FIELDS.map(([name, options]) => (
+          <MetaField
+            key={name}
+            id={`property-${name}`}
+            label={t(`classification.${name}`)}
+          >
             <Select
               value={(form.watch(name) as string | undefined) ?? NONE}
               onValueChange={(v) =>
@@ -712,7 +715,7 @@ function PropertyMetadataFields({
                 <SelectItem value={NONE}>—</SelectItem>
                 {options.map((o) => (
                   <SelectItem key={o} value={o}>
-                    {humanize(o)}
+                    {t(`classificationValues.${o}`)}
                   </SelectItem>
                 ))}
               </SelectContent>
@@ -721,18 +724,18 @@ function PropertyMetadataFields({
         ))}
       </MetaSection>
 
-      <MetaSection title="Amenities">
-        {AMENITY_FIELDS.map(([name, label]) => (
+      <MetaSection title={t("sections.amenities")}>
+        {AMENITY_FIELDS.map((name) => (
           <SwitchRow
             key={name}
-            label={label}
+            label={t(`amenities.${name}`)}
             checked={form.watch(name) as boolean | undefined}
             onCheckedChange={(v) => form.setValue(name, v as never)}
           />
         ))}
       </MetaSection>
 
-      <MetaSection title="Features">
+      <MetaSection title={t("sections.features")}>
         <div className="flex flex-col gap-2">
           {featureFields.map((field, i) => (
             <div key={field.id} className="flex items-center gap-2">
