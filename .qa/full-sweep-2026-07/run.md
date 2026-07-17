@@ -19,3 +19,26 @@ Ledger files: `bugs.md` (new findings, BUG-101+), `legacy-recheck.md`, `deferred
 - AGENT-pass test data: fixture agent `elena-popescu` owns **6 properties** (mixed luxury/affordable). Seed creates **0 inquiries**, so created 2 realistic ones via the public API (`type` must be lowercase enum — first attempt with `PROPERTY` 400'd, correct values: general|property|developer|viewing|valuation): 1× TGE_LUXURY viewing on `modern-villa-andrei-muresanu`, 1× REVERY property on `revery-studio-centru-cluj`, both status `new`.
 
 **Phase 0 exit criteria: ALL MET** — 5 ports up, 3 roles log in, brand memberships seeded, agent test data in place.
+
+---
+
+## Phase 1 — Automation baseline (2026-07-17)
+
+API restarted with `DEV_AUTH_THROTTLE_DISABLED=1` (CI parity for Playwright; the local `.env` ships it commented out).
+
+| Suite | Result | Notes |
+|---|---|---|
+| api Jest e2e (22 specs, testcontainers) | **179/186 pass, 7 fail** (×2 runs, deterministic) | All 7 = academy registration/verification. Root-caused: local `.env` `EMAIL_VERIFICATION_DISABLED=1` leaks into the Jest app (global-setup doesn't pin it); CI green because no `.env`. → **BUG-102** |
+| landing Playwright (desktop+mobile) | **143 pass / 17 skip / 0 fail** | Matches historical baseline exactly |
+| revery Playwright (3 browsers × 4 locales) | **701 pass / 1 fail / 3 skip** | Fail: contact form success state, webkit only, both retries — name input wiped pre-submit (screenshot). NOT a 429 (verified in API log). → **BUG-110**. The formerly "locked-red" fr/de i18n tests no longer fail (appear among skips) |
+| admin Playwright (chromium) | **41 pass / 0 fail** (re-run) | First run 401'd at auth.setup — caused by the qa-smoke password rotation (gotcha below), not the app |
+| qa-smoke.sh | **88 pass / 1 fail / 2 warn (known)** | The 1 fail = "Login did not 429 within 7 attempts" — self-inflicted: API runs with `DEV_AUTH_THROTTLE_DISABLED=1`. Env conflict between qa-smoke (wants throttle ON) and Playwright/CI parity (wants it OFF); not a product bug. Cross-tier leak checks all green |
+| qa-matrix.sh | **skipped (logged, not silent)** | Hardcodes `PASS="QaPass123!"` from `prisma/qa-reset.ts` fixtures — incompatible with sweep seed passwords; role×tier coverage redundant with Jest `permissions-page-guards`/tier-scope specs + qa-smoke F.2 |
+| lint:all | **FAIL — 4/5 apps** (revery passes) | CI has no lint gate. → **BUG-101** |
+| typecheck (api+admin, CI parity) | **clean** | |
+
+**Tooling gotcha (run-order):** `qa-smoke.sh` silently resets the super-admin password to `QaTest123!` by direct DB UPDATE (`RESET_PASSWORD=1` default) — it broke the subsequent admin suite's `SEED_ADMIN_PASSWORD` login (401). Admin password for the rest of the sweep: `QaTest123!` (editor/agent remain on the seeded sweep password). Run qa-smoke LAST or with `QA_RESET_PASSWORD=0` in future baselines.
+
+**Draft-probe artifacts (Phase 2 spillover):** article `qa-sweep-draft-probe` (draft) + 2 inquiries created — keep until Phase 9 cleanup.
+
+**Phase 1 exit: baseline recorded.** New reds ledgered as BUG-101 (lint), BUG-102 (e2e env leak), BUG-110 (webkit form). Automation-covered behaviors (to skip in manual phases): landing routes/forms/i18n/visual/interactive, revery routes/calculators/a11y/seo/responsive/rate-limit/not-found/property flows, admin auth/properties/agents/articles/inquiries/academy/data-sources/localized-editor/command-palette smokes, api invitation/password-reset/refresh-rotation/tier-scope/draft-leak(properties)/permission-guard invariants.
