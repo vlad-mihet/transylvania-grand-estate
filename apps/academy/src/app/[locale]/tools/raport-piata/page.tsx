@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import { Copy, Mail, Plus, Printer, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 import { AppHeader } from "@/components/app-header";
@@ -88,11 +88,16 @@ export default function RaportPiataPage() {
     "Dacă sunteți de acord cu planul, semnăm contractul de intermediere în exclusivitate (90 de zile) și programăm ședința foto mâine.",
   );
 
-  // Prefill the agent name from the logged-in profile once, without locking it.
+  // Prefill the agent name from the logged-in profile once it loads, without
+  // locking it (the `prev || …` keeps any edit the user already made). Adjust
+  // during render (React's "storing prior props" pattern) rather than in an
+  // effect, keyed on the profile name so it prefills exactly once per value.
   const profileName = session.profile?.name;
-  useEffect(() => {
-    if (profileName) setAgentNume((prev) => prev || profileName);
-  }, [profileName]);
+  const [prevProfileName, setPrevProfileName] = useState(profileName);
+  if (profileName && profileName !== prevProfileName) {
+    setPrevProfileName(profileName);
+    setAgentNume((prev) => prev || profileName);
+  }
 
   function updateComparable(idx: number, patch: Partial<Comparable>) {
     setComparabile((rows) =>

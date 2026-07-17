@@ -338,11 +338,7 @@ export class LessonPreviewController {
       type: lesson.type,
       readingTimeMinutes:
         lesson.type === 'text'
-          ? // Inline import — avoids dragging the helper into every
-            // module that touches lessons.
-            require('@tge/types/utils/reading-time').computeReadingTimeMinutes(
-              content.text,
-            )
+          ? computeReadingTimeMinutes(content.text)
           : null,
       videoDurationSeconds:
         lesson.type === 'video' ? lesson.videoDurationSeconds : null,

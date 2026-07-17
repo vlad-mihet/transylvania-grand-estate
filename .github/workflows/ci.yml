@@ -60,6 +60,42 @@ jobs:
           NEXT_PUBLIC_API_URL: http://localhost:3333/api/v1
           API_URL: http://localhost:3333/api/v1
 
+  lint:
+    name: Lint
+    # Added by the 2026-07 full sweep (BUG-101). Was ungated: academy's eslint
+    # config was silently broken (hiding real errors) and 4 apps had lint
+    # errors. Now green across all five, so it's a gate.
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      # @tge/types imports Prisma enums; a few app files import from @tge/types,
+      # so the client must exist before eslint resolves types.
+      - name: Generate Prisma client
+        run: pnpm --filter @tge/api exec prisma generate
+        env:
+          DATABASE_URL: postgresql://ci:ci@localhost:5432/ci
+
+      - name: Build shared types
+        run: pnpm --filter @tge/types build
+
+      - name: Lint all projects
+        run: pnpm lint:all
+
   e2e:
     name: API e2e
     # Testcontainers needs Docker. ubuntu-latest has it preinstalled.

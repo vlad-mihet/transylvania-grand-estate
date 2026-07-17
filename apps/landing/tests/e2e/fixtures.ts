@@ -62,6 +62,9 @@ export const test = base.extend<{ collector: ConsoleCollector }>({
         });
       }
     });
+    // Playwright's fixture `use` callback — not React's `use` hook. The
+    // react-hooks rule can't tell them apart in a non-component function.
+    // eslint-disable-next-line react-hooks/rules-of-hooks
     await use(collector);
   },
 });

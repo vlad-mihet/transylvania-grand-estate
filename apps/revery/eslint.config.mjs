@@ -10,6 +10,10 @@ const eslintConfig = defineConfig([
     "out/**",
     "build/**",
     "next-env.d.ts",
+    // Playwright output — bundled trace-viewer assets under
+    // playwright-report/ are minified vendor JS and must not be linted.
+    "playwright-report/**",
+    "test-results/**",
   ]),
 ]);
 

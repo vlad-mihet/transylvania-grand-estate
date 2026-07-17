@@ -43,6 +43,10 @@ export default function AuthCompletePage() {
     }
 
     if (!refreshToken) {
+      // Client-only mount effect: the token lives in location.hash, which is
+      // unavailable at render/SSR time, so this one-time setState can't move to
+      // render without a hydration mismatch. Runs once — no cascading renders.
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setError("missing_token");
       return;
     }
@@ -66,17 +70,20 @@ export default function AuthCompletePage() {
           <>
             <AlertCircle className="h-6 w-6 text-[var(--color-warning)]" />
             <p>{t("handoffFailed")}</p>
-            <a
-              href="/login"
+            <button
+              type="button"
               className="underline hover:text-foreground"
               onClick={() => {
+                // Hard navigation (not next/link) so the dashboard layout
+                // re-mounts AuthProvider and re-hydrates cleanly after the
+                // failed OAuth handoff.
                 if (typeof window !== "undefined") {
                   window.location.href = "/login?error=oauth_handoff";
                 }
               }}
             >
               {t("goToLogin")}
-            </a>
+            </button>
           </>
         ) : (
           <>

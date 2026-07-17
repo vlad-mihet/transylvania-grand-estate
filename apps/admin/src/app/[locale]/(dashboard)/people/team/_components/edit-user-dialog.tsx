@@ -58,12 +58,16 @@ export function EditUserDialog({
   const [editRole, setEditRole] = useState<AdminRole>("EDITOR");
   const [editAgentId, setEditAgentId] = useState<string>("");
 
-  useEffect(() => {
-    if (!editing) return;
+  // Sync the form fields when a different user is opened for editing. Adjust
+  // state during render (React's "storing prior props" pattern) rather than in
+  // an effect — keyed on the record id so re-opening the same row is a no-op.
+  const [prevEditingId, setPrevEditingId] = useState(editing?.id);
+  if (editing && editing.id !== prevEditingId) {
+    setPrevEditingId(editing.id);
     setEditName(editing.name);
     setEditRole(editing.role);
     setEditAgentId(editing.agentId ?? "");
-  }, [editing]);
+  }
 
   const invalidate = () => {
     queryClient.invalidateQueries({ queryKey: ["users"] });
