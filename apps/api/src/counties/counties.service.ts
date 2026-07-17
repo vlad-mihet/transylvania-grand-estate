@@ -117,20 +117,19 @@ export class CountiesService {
    * Overrides each county's stored (stale-0) property_count with the sum of its
    * cities' maintained counts. No-op for `light` rows that carry no cities.
    */
-  private withRolledUpPropertyCount<
-    T extends { cities?: { propertyCount: number }[] },
-  >(rows: T[]): T[] {
-    return rows.map((row) =>
-      row.cities
+  private withRolledUpPropertyCount<T>(rows: T[]): T[] {
+    return rows.map((row) => {
+      const cities = (row as { cities?: { propertyCount: number }[] }).cities;
+      return cities
         ? {
             ...row,
-            propertyCount: row.cities.reduce(
+            propertyCount: cities.reduce(
               (sum, city) => sum + city.propertyCount,
               0,
             ),
           }
-        : row,
-    );
+        : row;
+    });
   }
 
   async findBySlug(slug: string) {
