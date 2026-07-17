@@ -48,6 +48,18 @@ export function fetchProperties(
   return fetchApi<ApiProperty[]>(`/properties?${buildPropertyQuery(params, locale)}`);
 }
 
+// Non-throwing variant for decorative surfaces (e.g. the homepage featured
+// grid). A transient API error must degrade the section to empty, not 500 the
+// page — callers unwrap `.ok ? .data : []`.
+export function fetchPropertiesSafe(
+  params: PropertyListParams,
+  locale: Locale,
+) {
+  return fetchApiSafe<ApiProperty[]>(
+    `/properties?${buildPropertyQuery(params, locale)}`,
+  );
+}
+
 // Fetches only the total number of properties matching the given filters by
 // reading `meta.total` off the standard list envelope. Sends `limit=1` so the
 // payload stays tiny — we discard the single returned row. Strips UI-only

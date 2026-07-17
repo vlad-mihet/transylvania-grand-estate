@@ -12,6 +12,19 @@ Status values: `Open | Fixed@<sha> | Wontfix | Deferred`.
 
 ---
 
+## Post-triage findings (discovered during Wave work)
+
+### BUG-126 — `REBS_BASE_URL` schema default points at the PRODUCTION REBS instance (footgun)
+- **Severity:** Major (ops/data-safety) · **Surface:** api config · **Status:** Open
+- `apps/api/src/common/config/env.schema.ts:122-126`: `REBS_BASE_URL` defaults to **`https://client-396fe343.crmrebs.com/api/public`** (the real client/production instance) when unset — but the comment above it and `apps/api/.env.example` both advertise the **demo** instance `https://demo.crmrebs.com/api/public`. Anyone who sets `REBS_API_KEY` + `REBS_SYNC_ENABLED=1` without also setting `REBS_BASE_URL` (as the local `.env` does) silently pulls **live production customer listings + media into their dev DB**. Verified live: the local hourly cron created `sibiu-apartament-de-vanzare-in-sibiu-3207425` (real listing, 4 CRM-mirrored images from `*.crmrebs.com`) — published + visible on local Revery.
+- Sync is read-only against REBS (GET-only, no write-back) and writes only to the local DB, so **no production system is at risk** — but the default-hits-prod mismatch is a real defect.
+- **Fix direction:** change the default to the demo instance (or drop the default so the URL must be set explicitly). **Deferred to owner sign-off** — touching REBS config was explicitly out of scope for this sweep without approval.
+
+### OPS FLAG (not a code bug) — real production REBS key in local `apps/api/.env`
+- The local `.env` holds a **working production REBS API key** (`0d57…`). It is **gitignored and never committed** (verified: `git check-ignore` matches `.env*`, `git ls-files`/`git log` empty), so it is not leaked into history — but it is a live prod credential in local plaintext driving an hourly pull from production REBS. **For the owner to decide:** rotate/scope the key, or set `REBS_SYNC_ENABLED=0` / `REBS_BASE_URL=demo` locally. No action taken by the sweep.
+
+---
+
 ## BUG-101 — Lint errors in 4 of 5 apps (CI has no lint gate)
 - **Severity:** Minor · **Surface:** api, admin, landing, academy · **Status:** Open
 - **Found:** Phase 1 baseline, `pnpm lint:all` (2026-07-17)
