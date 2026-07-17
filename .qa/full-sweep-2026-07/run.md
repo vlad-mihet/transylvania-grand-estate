@@ -97,3 +97,33 @@ Full decision table in `deferred-audit.md`. 10 initiatives assessed.
 - **Closed:** invitation ADMIN/EDITOR extension (done, exercised Phase 3), academy CI+e2e (done this sweep).
 
 **Phase 6 exit: complete.**
+
+---
+
+## Phase 8 — Fix waves (2026-07-17)
+
+User approved all three waves + a deeper REBS investigation.
+
+**Wave 1 — Criticals (3/3 fixed + regression-tested + verified):**
+- BUG-117 audit trail: `classify()` now strips the `/api/v1` global prefix → resource mutations audited again (verified: property PATCH writes `property.update` row, was 0).
+- BUG-118 users list: `/auth/users` paginates when asked → team list + KPI work (verified: `?limit=500` → 3 users + meta.total; bare list still array).
+- BUG-105 SSR resilience: landing + revery homepages use `fetchApiSafe` → **verified 200 with API down** (was 500).
+- Regression: new `apps/api/test/audit-trail.e2e-spec.ts` (4 tests, audit interceptor had zero e2e).
+
+**Wave 2 — Majors (6 of 8 fixed):**
+- BUG-102 e2e env leak: pin feature flags in `test/global-setup.ts` → **all 36 academy e2e pass locally** (were 7 red).
+- BUG-109 draft leak: public articles forced to `published` on list + slug (verified 404/excluded; editors still see drafts). Regression: `article-public-visibility.e2e-spec.ts`.
+- BUG-108 GDPR purge: daily advisory-locked `purgeSoftDeleted()` cron. Regression: `inquiry-gdpr-purge.e2e-spec.ts`.
+- BUG-115 slug: derives from any filled localized title + diacritic-aware slugify (**verified**: "Casă în Brașov și Târgu Mureș" → `casa-in-brasov-si-targu-mures`).
+- BUG-116 year-built: empty→0 → friendly "≥1800" message not raw NaN.
+- BUG-103 landing filter: API-driven cities from listings (**verified**: 19 cities w/ diacritics vs old 5 ASCII). Surfaced BUG-127 (seed `property.city` diacritics).
+- **Remaining Wave 2:** BUG-110 (webkit contact form — needs Safari repro), BUG-125 (cookie banner — needs cookie-scope decision).
+
+**Wave 3 — Minors (6 fixed):**
+- BUG-111/114/122 admin i18n keys (Common.relations, typeLabel.viewing/valuation, RO dashboard label) — "Relații" DOM-verified. (Console spam clears on dev restart / prod build.)
+- BUG-121 unread badge → meta.total; BUG-119 recent-signins → `user.login-password`; BUG-113 filter placeholder → `reveria-contact`.
+- **Remaining Wave 3 (code-only):** BUG-106 (amenity EN labels i18n), BUG-107 (in-app nav guard), BUG-112 (sheet badge), BUG-120 (invite email copy), BUG-101 (lint), BUG-123 (dev axe).
+
+**Needs user input (not guessable):** BUG-104 (real social handles), BUG-124 (academy public-landing product decision), BUG-125 (which cookies are set), BUG-126 + REBS ops (owner sign-off — investigation confirmed local `.env` pulls **real prod REBS listings**; key gitignored; default URL points at prod — footgun).
+
+**REBS deep-dive result:** local `REBS_API_KEY` is a **real production key** hitting `client-396fe343.crmrebs.com` (not the demo the `.env.example` implies), pulling a live Sibiu listing hourly into the dev DB. Read-only against REBS, writes only local — no prod-system risk. `REBS_BASE_URL` schema **default points at prod** (BUG-126). Key is gitignored/never committed. Owner to decide: rotate/scope key, flip flags, fix default.
