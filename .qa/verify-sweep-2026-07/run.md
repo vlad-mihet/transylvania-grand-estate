@@ -51,8 +51,10 @@ Branch: `qa/verify-sweep-2026-07` off main@8803c14. Started 2026-07-17.
 | Admin Playwright (chromium) | ✅ **44/44** (was 42+2 red on first run — see throttle note) |
 | Landing Playwright (desktop+mobile) | ✅ **143 passed, 17 skipped** — matches prior baseline (first run had 6 `[mobile]` reds = BUG-201 manifestation) |
 | Academy Playwright | ✅ **13/13** |
-| Revery full matrix (3 browsers × 4 locales) | running |
-| qa-smoke.sh | queued last |
+| Revery full matrix (3 browsers × 4 locales) | ✅ **702 passed, 3 skipped, 0 failed** (6.6m) — incl. webkit forms (BUG-110) |
+| qa-smoke.sh (throttle-enabled API restart, run last) | ✅ **89 passed, 0 failed, 3 warn (known bugs)** (41s). Password rotation no-op by design (seed password == rotation value) |
 | qa-matrix.sh | ⏭ skipped — fixture-password incompatibility unchanged (logged, as prior sweep) |
+
+**Phase 1 exit: PASS** — every gate green under CI-parity env. Two findings filed from first-run reds: BUG-201 (Critical, listing-page SSR guard), BUG-202 (Critical, team page empty — found in Phase 2 but confirms why admin suite can be green while the page is broken: no spec walks it).
 
 **Env lesson (recorded for future baselines):** every CI Playwright job sets `DEV_AUTH_THROTTLE_DISABLED=1`; the first local runs were made without it. Result: admin suite's shared BFF session died on `/auth/refresh` 429s (10/min bucket) → 2 unsaved-changes reds; landing `[mobile]` cross-locale smoke got real 500s from listing pages when SSR fetches failed under throttle/load — which exposed **BUG-201** (listing pages unguarded against API failure; deterministic kill-API repro). Dev API restarted with the flag for all Playwright/browser phases; qa-smoke will run last against a throttle-ENABLED API restart (its 429 check needs it).
