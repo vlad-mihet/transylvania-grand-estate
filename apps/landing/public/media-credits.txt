@@ -1,0 +1,25 @@
+Transylvania Grand Estate — media credits
+
+Hero soundtrack:
+Track: Mozart Piano Concerto no. 21 in C major, K. 467 – II. Andante
+Performer: Markus Staab
+License: CC BY 3.0
+License URL: https://creativecommons.org/licenses/by/3.0/
+Source: Musopen — https://musopen.org/music/2635-piano-concerto-no-21-in-c-major-k-467/
+Changes: trimmed to the opening ~61s for the homepage hero video (/videos/hero.mp4).
+
+Sighișoara city image (images/cities/sighisoara.jpg):
+Source: File:Panoramic Schäßburg Medieval Citadel (20903916345).jpg (Wikimedia Commons)
+Author: Andrei-Daniel Nicolae
+URL: https://commons.wikimedia.org/wiki/File:Panoramic_Sch%C3%A4%C3%9Fburg_Medieval_Citadel_(20903916345).jpg
+License: CC BY 2.0
+License URL: https://creativecommons.org/licenses/by/2.0/
+Changes: cropped and downscaled from the original.
+
+Târnăveni city image (images/cities/tarnaveni.jpg):
+Source: File:Tarnaveni-PanoramicView.jpg (Wikimedia Commons)
+Author: Olario
+URL: https://commons.wikimedia.org/wiki/File:Tarnaveni-PanoramicView.jpg
+License: CC BY-SA 3.0
+License URL: https://creativecommons.org/licenses/by-sa/3.0/
+Changes: cropped and downscaled from the original.

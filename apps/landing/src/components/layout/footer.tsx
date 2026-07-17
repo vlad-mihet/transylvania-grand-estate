@@ -22,11 +22,15 @@ const contact = {
 
 const MAIN_OFFICE_LOCATION = "Cluj-Napoca, Cluj, România";
 
-const socialLinks = [
-  { platform: "instagram" as const, url: "https://instagram.com/tge" },
-  { platform: "facebook" as const, url: "https://facebook.com/tge" },
-  { platform: "linkedin" as const, url: "https://linkedin.com/company/tge" },
-  { platform: "youtube" as const, url: "https://youtube.com/@tge" },
+// BUG-104: the /tge handles below are placeholders — no real TGE profiles
+// exist yet, so linking them 404s and looks unfinished. The "Follow us"
+// column is hidden while this list is empty (see render guard below).
+// To re-enable: uncomment an entry once its real profile URL is live.
+const socialLinks: { platform: keyof typeof socialIcons; url: string }[] = [
+  // { platform: "instagram", url: "https://instagram.com/<real-handle>" },
+  // { platform: "facebook", url: "https://facebook.com/<real-handle>" },
+  // { platform: "linkedin", url: "https://linkedin.com/company/<real-handle>" },
+  // { platform: "youtube", url: "https://youtube.com/@<real-handle>" },
 ];
 
 export function Footer() {
@@ -102,27 +106,29 @@ export function Footer() {
             </div>
           </div>
 
-          <div>
-            <h3 className="font-serif text-lg text-cream mb-4">
-              {t("followUs")}
-            </h3>
-            <div className="flex gap-3">
-              {socialLinks.map((social) => {
-                const Icon = socialIcons[social.platform];
-                return (
-                  <a
-                    key={social.platform}
-                    href={social.url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="w-10 h-10 flex items-center justify-center rounded-full border border-copper/15 text-cream-muted/60 hover:text-copper hover:border-copper/30 hover:shadow-[0_0_12px_-3px_rgba(200,154,60,0.2)] transition-all duration-300"
-                  >
-                    <Icon className="h-4 w-4" />
-                  </a>
-                );
-              })}
+          {socialLinks.length > 0 && (
+            <div>
+              <h3 className="font-serif text-lg text-cream mb-4">
+                {t("followUs")}
+              </h3>
+              <div className="flex gap-3">
+                {socialLinks.map((social) => {
+                  const Icon = socialIcons[social.platform];
+                  return (
+                    <a
+                      key={social.platform}
+                      href={social.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="w-10 h-10 flex items-center justify-center rounded-full border border-copper/15 text-cream-muted/60 hover:text-copper hover:border-copper/30 hover:shadow-[0_0_12px_-3px_rgba(200,154,60,0.2)] transition-all duration-300"
+                    >
+                      <Icon className="h-4 w-4" />
+                    </a>
+                  );
+                })}
+              </div>
             </div>
-          </div>
+          )}
         </div>
       </Container>
 
@@ -150,6 +156,12 @@ export function Footer() {
             >
               {t("cookies")}
             </Link>
+            <a
+              href="/media-credits.txt"
+              className="hover:text-copper transition-colors"
+            >
+              {t("mediaCredits")}
+            </a>
           </div>
         </Container>
       </div>
