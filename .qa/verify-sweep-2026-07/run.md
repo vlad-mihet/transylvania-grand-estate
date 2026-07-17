@@ -43,4 +43,16 @@ Branch: `qa/verify-sweep-2026-07` off main@8803c14. Started 2026-07-17.
 
 ## Phase 1 — Automation baseline
 
-_(in progress)_
+| Gate | Result |
+|---|---|
+| Lint (`pnpm lint:all`, 5 projects) | ✅ 0 errors (26 pre-existing warnings) — BUG-101 holds |
+| Typecheck (CI-parity: api `tsc --noEmit -p tsconfig.build.json` + admin `tsc --noEmit`) | ✅ both clean. Note: `nx run-many --target=typecheck` runs nothing (no such target); CI does per-app tsc |
+| API e2e (testcontainers, `DEV_AUTH_THROTTLE_DISABLED=1`) | ✅ **198/198, 25 suites** (452s) |
+| Admin Playwright (chromium) | ✅ **44/44** (was 42+2 red on first run — see throttle note) |
+| Landing Playwright (desktop+mobile) | ✅ **143 passed, 17 skipped** — matches prior baseline (first run had 6 `[mobile]` reds = BUG-201 manifestation) |
+| Academy Playwright | ✅ **13/13** |
+| Revery full matrix (3 browsers × 4 locales) | running |
+| qa-smoke.sh | queued last |
+| qa-matrix.sh | ⏭ skipped — fixture-password incompatibility unchanged (logged, as prior sweep) |
+
+**Env lesson (recorded for future baselines):** every CI Playwright job sets `DEV_AUTH_THROTTLE_DISABLED=1`; the first local runs were made without it. Result: admin suite's shared BFF session died on `/auth/refresh` 429s (10/min bucket) → 2 unsaved-changes reds; landing `[mobile]` cross-locale smoke got real 500s from listing pages when SSR fetches failed under throttle/load — which exposed **BUG-201** (listing pages unguarded against API failure; deterministic kill-API repro). Dev API restarted with the flag for all Playwright/browser phases; qa-smoke will run last against a throttle-ENABLED API restart (its 429 check needs it).
