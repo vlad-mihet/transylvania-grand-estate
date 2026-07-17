@@ -20,7 +20,7 @@ End-to-end QA gate before live demo. Format mirrors `.qa/feature-landing/bugs.md
 
 ---
 
-### BUG-001 — `GET /articles/:slug` does not filter by `status=published` (drafts visible to public callers)
+### BUG-001 — `GET /articles/:slug` does not filter by `status=published` (drafts visible to public callers) — **FIXED 2026-07-17 (full-sweep BUG-109 @cdbdfd1 — public/non-ADMIN callers forced to `status=published` on both list and slug endpoints; escalated to Major when the sweep confirmed the list endpoint also leaked drafts)**
 - **Severity:** Minor (no current user-facing impact; flagged for defense-in-depth)
 - **App/Area:** api / `apps/api/src/articles/articles.service.ts:46`
 - **Phase:** Playwright (articles.spec.ts development)

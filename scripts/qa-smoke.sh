@@ -269,13 +269,15 @@ b3_auth_rbac() {
   resp=$(curl -s -X POST "$API/auth/login" -H "Content-Type: application/json" -H "X-Site: ADMIN" -d '{"email":"admin@transylvaniagrandestate.ro","password":"definitely-not-right"}')
   msg=$(echo "$resp" | json_get "error.message")
   [[ "$msg" == "Invalid credentials" ]] && ok "Bad password → 401 Invalid credentials" || warn "Bad password msg='$msg'"
-  # Short password (<6 chars) leaks requirement via Zod (KNOWN Minor bug)
+  # Short password must NOT leak the password policy via a Zod min-length error
+  # (fixed: full-sweep 2026-07 — loginSchema password is z.string().max(200),
+  # no .min(), so a bad login returns a generic 401, never "Too small").
   resp=$(curl -s -X POST "$API/auth/login" -H "Content-Type: application/json" -H "X-Site: ADMIN" -d '{"email":"admin@transylvaniagrandestate.ro","password":"x"}')
   path=$(echo "$resp" | json_get "error.fields")
   if [[ "$path" == *"Too small"* || "$path" == *"too_small"* ]]; then
-    warn "Short password leaks min-length via Zod (KNOWN Minor #9 in qa-report-2026-04-17.md)"
+    fail "Short password leaks min-length via Zod (regressed — loginSchema must not .min() password)"
   else
-    ok "Short password does NOT leak (bug fixed?)"
+    ok "Short password does not leak min-length policy"
   fi
   # Refresh flow
   resp=$(curl -s -X POST "$API/auth/refresh" -H "Content-Type: application/json" -H "X-Site: ADMIN" -d "{\"refreshToken\":\"$REFRESH_TOKEN\"}")
@@ -456,12 +458,17 @@ b8_file_uploads() {
   else
     warn "SVG with lied MIME accepted ($code) — KNOWN Critical #3 (magic-byte check missing)"
   fi
-  # Static serving broken → KNOWN Major #5
+  # qa-report Major #5 (static /uploads 404) is FIXED — verified in the
+  # full-sweep 2026-07 api-invariants: GET /uploads/properties/<real>.jpg → 200,
+  # missing → 404 (ServeStatic reader dir now matches the writer's). This probe
+  # hits the /uploads/ *directory root*, which ServeStatic legitimately 404s
+  # (no index file) even when file-serving works — so it stays a non-fatal
+  # note, not a hard assertion, to avoid a false failure on the root path.
   code=$(curl -s -o /dev/null -w "%{http_code}" "http://localhost:4000/uploads/")
   if [[ "$code" == "200" || "$code" == "403" ]]; then
-    ok "Static uploads root served ($code) — bug fixed?"
+    ok "Static uploads root reachable ($code)"
   else
-    warn "Static uploads 404 (KNOWN Major #5 — rootPath wrong)"
+    warn "Static uploads root → $code (expected for a dir root; file-serving verified fixed separately)"
   fi
 }
 
