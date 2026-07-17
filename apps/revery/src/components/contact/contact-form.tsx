@@ -31,19 +31,15 @@ export function ContactForm() {
   const tConsent = useTranslations("GdprConsent");
   const locale = useLocale() as InquiryLocale;
   const { submit, isSubmitting, isSuccess, error } = useInquirySubmission();
-  const [formData, setFormData] = useState({
-    name: "",
-    email: "",
-    phone: "",
-    budget: "",
-    message: "",
-  });
+  // Text fields are UNCONTROLLED (read from FormData on submit) — a controlled
+  // useState binding lost keystrokes typed before React hydrated on WebKit: the
+  // name went into the DOM with no listener attached, then the first later state
+  // update reconciled `value` back to "" and wiped it (BUG-110). Uncontrolled
+  // inputs keep pre-hydration keystrokes, matching the landing contact form.
+  // Only `budget` (a Select, chosen post-hydration) and `consent` stay stateful.
+  const [budget, setBudget] = useState("");
   const [consent, setConsent] = useState(false);
   const [consentError, setConsentError] = useState<string | null>(null);
-
-  const updateField = (field: keyof typeof formData, value: string) => {
-    setFormData((prev) => ({ ...prev, [field]: value }));
-  };
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -54,11 +50,11 @@ export function ContactForm() {
     setConsentError(null);
     const fd = new FormData(e.currentTarget);
     await submit({
-      name: formData.name,
-      email: formData.email,
-      phone: formData.phone,
-      budget: formData.budget,
-      message: formData.message,
+      name: String(fd.get("name") ?? ""),
+      email: String(fd.get("email") ?? ""),
+      phone: String(fd.get("phone") ?? ""),
+      budget,
+      message: String(fd.get("message") ?? ""),
       gdprConsent: true,
       locale,
       website: String(fd.get("website") ?? ""),
@@ -94,9 +90,8 @@ export function ContactForm() {
           </Label>
           <Input
             id="contact-name"
+            name="name"
             required
-            value={formData.name}
-            onChange={(e) => updateField("name", e.target.value)}
             className="h-11 rounded-lg border-border text-foreground placeholder:text-muted-foreground hover:border-primary focus-visible:border-primary focus-visible:ring-primary focus-visible:ring-[3px]"
           />
         </div>
@@ -109,10 +104,9 @@ export function ContactForm() {
           </Label>
           <Input
             id="contact-email"
+            name="email"
             required
             type="email"
-            value={formData.email}
-            onChange={(e) => updateField("email", e.target.value)}
             className="h-11 rounded-lg border-border text-foreground placeholder:text-muted-foreground hover:border-primary focus-visible:border-primary focus-visible:ring-primary focus-visible:ring-[3px]"
           />
         </div>
@@ -128,14 +122,13 @@ export function ContactForm() {
           </Label>
           <Input
             id="contact-phone"
+            name="phone"
             type="tel"
             inputMode="tel"
             autoComplete="tel"
             pattern="^\+?[0-9 ]{8,15}$"
             placeholder="+40 712 345 678"
             title={t("form.phonePlaceholder")}
-            value={formData.phone}
-            onChange={(e) => updateField("phone", e.target.value)}
             className="h-11 rounded-lg border-border text-foreground placeholder:text-muted-foreground hover:border-primary focus-visible:border-primary focus-visible:ring-primary focus-visible:ring-[3px]"
           />
         </div>
@@ -146,10 +139,7 @@ export function ContactForm() {
           >
             {t("form.budget")}
           </Label>
-          <Select
-            value={formData.budget}
-            onValueChange={(value) => updateField("budget", value)}
-          >
+          <Select value={budget} onValueChange={setBudget}>
             <SelectTrigger
               id="contact-budget"
               aria-label={t("form.budget")}
@@ -177,10 +167,9 @@ export function ContactForm() {
         </Label>
         <Textarea
           id="contact-message"
+          name="message"
           required
           rows={5}
-          value={formData.message}
-          onChange={(e) => updateField("message", e.target.value)}
           placeholder={t("form.messagePlaceholder")}
           className="rounded-lg border-border text-foreground placeholder:text-muted-foreground hover:border-primary focus-visible:border-primary focus-visible:ring-primary focus-visible:ring-[3px] resize-none"
         />
