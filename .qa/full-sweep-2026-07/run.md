@@ -170,3 +170,19 @@ User approved all three waves + a deeper REBS investigation.
 
 ### FINAL TALLY: 22 of 28 findings fixed (3 Critical · 7 Major · 12 Minor), all verified + regression-tested.
 **Remaining 6 (none code-completable without input):** BUG-104 (real social handles), BUG-110 (webkit contact-form repro — Safari-only), BUG-124 (academy public-landing product decision), BUG-125 (cookie banner — needs cookie inventory), BUG-126 + REBS ops (owner sign-off), BUG-128 (property-form dirty-on-load — minor, found last).
+
+---
+
+## Sweep closeout (2026-07-17, user-approved final batch)
+
+The last 6 open findings were resolved after the user made the four outstanding decisions (fix REBS default to demo but keep the local sync source; hide placeholder socials; keep academy login-gated; push + open a PR).
+
+- **BUG-128** (property `/new` dirty-on-load): aligned `useForm` defaultValues with every registered input's pristine value (`yearBuilt:0`, `garage/landArea/developerId/agentId:null`, `latitude/longitude:undefined`). Root cause was RHF's `isDirty` treating a present-key-holding-`undefined` as ≠ an absent key — verified via a temporary `window.__diff` probe. Re-enabled the clean-form e2e case. **Fixed@69a49ff.**
+- **BUG-110** (revery contact form wiped keystrokes on webkit): converted the text inputs to uncontrolled (read from `FormData` on submit, mirroring landing); only `budget`/`consent` stay stateful. `forms.spec.ts` 12/12 green incl. the previously-red webkit case. **Fixed@7756c29.**
+- **Attribution** (licence compliance): added `apps/landing/public/media-credits.txt` (Mozart/Staab CC BY 3.0 soundtrack + Sighișoara CC BY 2.0 + Târnăveni CC BY-SA 3.0), a footer "Media Credits" link in 4 locales, and a CREDITS.md Audio/Video row. **@53ffb7d.**
+- **BUG-104** (placeholder social handles): landing + revery footers now hide the "Follow us" column while `socialLinks` is empty; the placeholder URLs are commented out with a re-enable guide. **@53ffb7d (landing) / @dfa0bd7 (revery).**
+- **BUG-126** (REBS default hits prod tenant): schema default → `https://demo.crmrebs.com/api/public`; local keeps its live source via an explicit `REBS_BASE_URL` in the gitignored `.env`. **Fixed@53ffb7d.**
+- **BUG-124** (academy login-gate): **Wontfix (by design)** — internal training platform, no anonymous catalog wanted; the auth-gate is locked by the new academy e2e.
+- **BUG-125** (cookie banner): **Wontfix (not legally required)** — cookie inventory (source + on the wire) found only strictly-necessary cookies (NEXT_LOCALE + first-party auth), zero analytics/trackers, so the ePrivacy consent-banner exemption applies. Revisit if analytics are ever added.
+
+### FINAL TALLY: 26 of 28 findings fixed or closed (3 Critical · 7 Major · 12 Minor fixed; 2 Wontfix with evidence; 2 owner/external-blocked remain — BUG-127 seed reseed lands on next prod seed, and the REBS prod-flag intent is an owner reconciliation, not a code bug).
