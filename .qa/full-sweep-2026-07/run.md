@@ -85,3 +85,15 @@ Full matrix + AGENT pass in `admin-matrix.md`. Every planned module reached. Cov
 Full detail in `api-invariants.md`. **Brand isolation ✅** (cross-brand→404, missing→404, bogus→400), **realm isolation ✅** (academy↔admin token rejection), **uploads ✅** (qa-report #5 fixed — /uploads serves 200/404 correctly). **API-down failure mode ❌**: both landing + revery 500 on home AND properties (only static academy login survives) → **BUG-105 upgraded to Critical** and broadened to revery. Jest-covered invariants (tier-scope, refresh rotation, permission guards, draft-leak) not re-run per anti-duplication rule.
 
 **Phase 5 exit: complete.** One new Critical severity upgrade (BUG-105); every platform security invariant (brand + realm isolation) holds on the live stack.
+
+---
+
+## Phase 6 — Deferred-work audit (2026-07-17)
+
+Full decision table in `deferred-audit.md`. 10 initiatives assessed.
+- **Finish-now (compliance/legal, cheap):** cookie banner (**BUG-125**, new — no consent UI on any public site), CC-BY hero/city attribution, GDPR inquiry purge cron (BUG-108).
+- **⚠ Reconcile with owner:** **REBS sync is running locally** — real `REBS_API_KEY` set + `REBS_SYNC_ENABLED=1`, cron actively pulling/creating a real external listing hourly. Contradicts the documented "key not issued / gated off" state. Not a QA bug — a prod-intent status check.
+- **Keep deferred (external-blocked):** licensed city images Phase 2, academy phases 4–6 (no UI leakage), TGE logo lockups, revery fr/de translator pass.
+- **Closed:** invitation ADMIN/EDITOR extension (done, exercised Phase 3), academy CI+e2e (done this sweep).
+
+**Phase 6 exit: complete.**

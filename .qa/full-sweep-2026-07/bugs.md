@@ -122,6 +122,11 @@ Status values: `Open | Fixed@<sha> | Wontfix | Deferred`.
 - **Assessment:** for an internal agent-training academy this is defensible (course `visibility=public` means open-enrollment, not anonymous-visible). But (a) no landing page at the root and (b) can't preview the catalog before registering are conversion/UX gaps. **Confirm intent** — if a public catalog/landing is wanted, add `/`, `/catalog`, `/courses/*` (read-only) to `PUBLIC_PATHS`.
 - **Full loop otherwise verified PASS:** register → auto-verify (EMAIL_VERIFICATION_DISABLED) → login → open public lesson → **auto-enrolled** into course + lesson-progress row created. All correct.
 
+## BUG-125 — No cookie consent banner on any public site (GDPR/ePrivacy gap)
+- **Severity:** Major (compliance) · **Surface:** landing + revery + academy · **Status:** Open
+- Verified: no consent banner markup on any public site — only a footer "Politica de cookie-uri" **link**. `docs/contact-flow-prod-checklist.md:96` explicitly logs "cookie banner not implemented (out of scope)." EU/RO ePrivacy requires prior consent for non-essential cookies; a linked policy alone is insufficient if any analytics/marketing cookies are set.
+- **Finish-now candidate** — legal/compliance, and a shared consent component covers all three sites. Confirm what non-essential cookies are actually set before scoping (if truly first-party-essential-only, this drops to a documentation note).
+
 ## BUG-116 — Property form: empty "Anul construcției" blocks save with raw NaN error
 - **Severity:** Major · **Surface:** admin · **Status:** Open
 - New-property save with year-built left empty fails client validation: "Invalid input: expected number, received NaN" under the field; the save is blocked until a year is typed. Optional numeric fields must preprocess empty→undefined (`z.coerce`/preprocess) — check the same pattern on Locuri garaj / Suprafață teren / Lat/Long (those accepted empty, so the yearBuilt schema entry is the outlier).
