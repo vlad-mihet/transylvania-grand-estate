@@ -38,7 +38,7 @@ Status values: `Open | Fixed@<sha> | Wontfix | Deferred`.
 - **Note:** The `setState-in-effect` and `rules-of-hooks` errors are potential real defects, not just style — re-classify severity if any maps to observed misbehavior during the sweep.
 
 ## BUG-102 — API e2e harness leaks local `.env` flags → 7 academy tests red on any dev machine
-- **Severity:** Major (dev/test infra; product unaffected) · **Surface:** apps/api test harness · **Status:** Open
+- **Severity:** Major (dev/test infra; product unaffected) · **Surface:** apps/api test harness · **Status:** Fixed@cdbdfd1
 - **Found:** Phase 1 baseline, `pnpm --filter @tge/api test:e2e` (reproduced twice: 2 suites / 7 tests failed, 179 passed)
 - **Root cause (confirmed):** `apps/api/test/global-setup.ts` pins `DATABASE_URL`, `NODE_ENV`, JWT secrets — but not `EMAIL_VERIFICATION_DISABLED`. `ConfigModule.forRoot` (app.module.ts:90) loads `apps/api/.env`, whose documented dev value `EMAIL_VERIFICATION_DISABLED=1` makes academy registration auto-verify (academy-auth.service.ts:592 branch) → no verification email captured → every token-based registration test fails (`mockEmail.captured[0]` undefined, 410-token tests, resend anti-enumeration ×2, happy path, duplicate email, wildcard-enrollment guard).
 - **Why CI is green:** CI has no `.env`; the flag is unset there.
@@ -46,7 +46,7 @@ Status values: `Open | Fixed@<sha> | Wontfix | Deferred`.
 - **Fix direction:** pin `process.env.EMAIL_VERIFICATION_DISABLED = '0'` (and audit the other feature flags: `GOOGLE_AUTH_DISABLED`, `DEV_AUTH_THROTTLE_DISABLED`, `REBS_SYNC_ENABLED`) in `test/global-setup.ts` so local runs match CI.
 
 ## BUG-103 — Landing filter panel: hardcoded ASCII city list, not API-driven (re-file of landing BUG-005/006)
-- **Severity:** Major · **Surface:** landing · **Status:** Open
+- **Severity:** Major · **Surface:** landing · **Status:** Fixed@83e69b1
 - `apps/landing/src/components/property/property-filter-panel.tsx:19-33` hardcodes 5 cities with no diacritics (`"Timisoara"`, `"Brasov"`, `"Cluj-Napoca"`); DB has 46 seeded cities. Filter misses most cities and violates the diacritics rule. The type dropdown is also hardcoded (though `mansion`/`palace` are now legal enum values — that half of the legacy bug is fixed, see legacy-recheck #1).
 - **Expected:** cities fetched from `/cities` (X-Site aware), labels with diacritics.
 
@@ -55,7 +55,7 @@ Status values: `Open | Fixed@<sha> | Wontfix | Deferred`.
 - `apps/landing/src/components/layout/footer.tsx:26-29`: `instagram.com/tge`, `facebook.com/tge`, `linkedin.com/company/tge`, `youtube.com/@tge` — dead/wrong destinations on the live site.
 
 ## BUG-105 — Public homepages 500 when the API hiccups (SSR fetch not guarded) — landing AND revery (re-file of landing BUG-017)
-- **Severity:** Critical (upgraded — Phase 5 confirmed) · **Surface:** landing + revery · **Status:** Open
+- **Severity:** Critical (upgraded — Phase 5 confirmed) · **Surface:** landing + revery · **Status:** Fixed@a6e3065
 - `apps/landing/src/app/[locale]/page.tsx:21-26`: featured properties/cities/developers/testimonials fetched via bare `Promise.all` of throwing `fetchApi` — one failed decorative fetch rejects the page. `properties/page.tsx` already uses `fetchApiSafe`; home was never migrated.
 - **Phase 5 empirical (API stopped):** `/ro` (landing) → **500**, `/ro/properties` (landing) → **500**, `/ro` (revery) → **500**, `/ro/properties` (revery) → **500**. Only academy `/ro/login` (static) survived (200). Pages show a graceful Next error boundary, but the **HTTP status is 500** — a transient API blip takes both public homepages fully down (SEO/uptime-monitor/user impact). Home pages should degrade to **200 with empty featured sections**; data pages should show a "couldn't load" state, not 500.
 - **Fix direction:** wrap every decorative SSR fetch in `fetchApiSafe` (already exists, used on landing properties breadcrumb) across landing + revery home and list pages; reserve hard failure for the genuinely required primary fetch only.
@@ -69,11 +69,11 @@ Status values: `Open | Fixed@<sha> | Wontfix | Deferred`.
 - `apps/admin/src/hooks/use-unsaved-changes-warning.ts` covers only `beforeunload` (tab close/reload); App Router `<Link>`/`router.push` navigation silently discards dirty forms.
 
 ## BUG-108 — GDPR right-to-erasure hard-purge cron not implemented
-- **Severity:** Major (compliance) · **Surface:** api · **Status:** Open
+- **Severity:** Major (compliance) · **Surface:** api · **Status:** Fixed@cdbdfd1
 - `apps/api/src/inquiries/inquiries.service.ts:412-415`: delete is soft-only; TODO for 90-day hard-purge cron remains; grep confirms no inquiry purge cron exists (only token purges). Right-to-erasure is not enforced for inquiry PII.
 
 ## BUG-109 — Public articles API leaks drafts on BOTH list and slug endpoints (supersedes demo-readiness BUG-001)
-- **Severity:** Major · **Surface:** api (landing/revery indirectly) · **Status:** Open
+- **Severity:** Major · **Surface:** api (landing/revery indirectly) · **Status:** Fixed@cdbdfd1
 - **Empirically confirmed 2026-07-17:** created draft `qa-sweep-draft-probe` as admin → unauthenticated `GET /articles?limit=50` (X-Site: TGE_LUXURY) **includes it**; `GET /articles/qa-sweep-draft-probe` → **200**. The legacy claim that "the list endpoint filters published" is false — `articles.service.ts:28` only filters when the caller passes `?status=`, and `findBySlug` (`articles.service.ts:52-57`) has no status filter. Public sites happen to request published-only, so pages don't render drafts (verified on revery /ro/blog), but anyone can read unpublished editorial content via the open API.
 - **Expected:** public (unauthenticated / non-ADMIN X-Site) callers always get `status=published` forced server-side.
 - **Test data note:** probe article left in DB for fix-wave regression testing; remove at Phase 9.
@@ -85,48 +85,48 @@ Status values: `Open | Fixed@<sha> | Wontfix | Deferred`.
 - **Also noted:** Next.js dev-overlay badge "1 Issue" visible on the contact page screenshot — check the runtime error during Phase 4.
 
 ## BUG-111 — Dashboard attention card mislabels cross-entity EN-translation count as "Articole" (RO only)
-- **Severity:** Minor · **Surface:** admin · **Status:** Open
+- **Severity:** Minor · **Surface:** admin · **Status:** Fixed@7e9e905
 - Dashboard shows "ARTICOLE NETRADUSE (EN) 20" while the DB holds only 9 articles. `missingEnTotal` (API `/admin/dashboard/attention`, computed in `admin-content.service.ts` across ALL content types) is bound at `attention-strip.tsx:134-137` to the label `messages/ro.json:299` `"missingEn": "Articole netraduse (EN)"`. en/fr/de labels are correctly generic ("Missing English" etc.) — only the default RO locale claims they're articles.
 - **Expected:** RO label like "Conținut netradus (EN)".
 
 ## BUG-114 — Property form: missing i18n key `Common.relations` — raw key rendered + console error spam
-- **Severity:** Minor · **Surface:** admin · **Status:** Open
+- **Severity:** Minor · **Surface:** admin · **Status:** Fixed@7e9e905
 - Property new/edit metadata rail renders section header as literal "COMMON.RELATIONS"; console logs 8× `IntlError: MISSING_MESSAGE: Could not resolve 'Common.relations' in messages for locale 'ro'` per page view (component `PropertyMetadataFields`). Check all 4 locale files for the missing key.
 - This is the source of the admin dev-overlay "1 Issue" badge.
 
 ## BUG-115 — Property form: "Generează" slug button silently no-ops unless the EN title is filled
-- **Severity:** Major · **Surface:** admin · **Status:** Open
+- **Severity:** Major · **Surface:** admin · **Status:** Fixed@cdbdfd1
 - `apps/admin/src/components/forms/property-form.tsx:383-392` — `generateSlug()` reads `form.getValues("title.en")` only. Admins working RO-first (default locale) click Generează and get an empty slug with zero feedback; the save then fails slug validation. Repro: new property → fill RO title → click Generează → slug stays empty (verified in DOM).
 - **Expected:** derive from the active-locale title (fallback order en→ro), and transliterate diacritics (current regex deletes them: "București"→"bucureti").
 
 ## BUG-117 — Audit trail is dead for ALL resource mutations: classify() never matches under the global prefix
-- **Severity:** Critical (compliance/integrity feature silently non-functional) · **Surface:** api (admin UI affected) · **Status:** Open
+- **Severity:** Critical (compliance/integrity feature silently non-functional) · **Surface:** api (admin UI affected) · **Status:** Fixed@a6e3065
 - **Empirical:** after a property POST (201) + PATCH (200) via admin, `audit_logs` gained zero rows; the entire table contains only `user.login-password`/`user.logout` (from explicit `record()` calls in auth services). Admin "Jurnal audit" page with its 12 resource filters shows "Nimic de afișat" for every resource; dashboard audit-health widget reports 0 failures because the writes are never attempted.
 - **Root cause:** `AuditInterceptor.classify()` (`src/common/interceptors/audit.interceptor.ts:298+`) segments `req.url` and dispatches on the first segment — but `main.ts:37` sets `app.setGlobalPrefix('api/v1')`, so every URL is `/api/v1/...` and `head` is always `"api"` → `classify()` returns null → no audit for any POST/PATCH/DELETE. The `@AuditAction` decorator escape hatch is used by zero routes. The URL-allowlist path has therefore never worked in production.
 - **Fix direction:** strip the global prefix before classifying (or match on `req.route.path`), add an e2e that mutates a property and asserts an `audit_logs` row (the existing audit e2e only covers auth events).
 
 ## BUG-118 — Team/users management page is non-functional: admin sends `limit` that `/auth/users` strict schema rejects, 400 rendered as empty state
-- **Severity:** Critical (users cannot be viewed/managed in the UI at all) · **Surface:** admin + api contract · **Status:** Open
+- **Severity:** Critical (users cannot be viewed/managed in the UI at all) · **Surface:** admin + api contract · **Status:** Fixed@a6e3065
 - **Empirical:** `/ro/people/team` renders "Nimic de afișat încă" with 3 admin_users in DB; People-hub ECHIPĂ KPI shows 0. `curl GET /auth/users?limit=500` (SUPER_ADMIN) → **400 `Unrecognized key: "limit"`** — `listUsersSchema` (`packages/types/src/schemas/auth.ts:88-94`, `.strict()`) accepts only role/status/search, while the admin team page requests `limit=500`.
 - **Compound defect:** the client swallows the 400 and shows the friendly empty state + invite CTA — a SUPER_ADMIN has no signal anything failed. Query errors must surface as error states, not empty lists.
 - **Note:** never covered by the admin Playwright suite (no team spec) — one of the predicted never-tested modules.
 
 ## BUG-119 — People hub "Autentificări recente" queries a non-existent audit action — permanently empty
-- **Severity:** Minor · **Surface:** admin · **Status:** Open
+- **Severity:** Minor · **Surface:** admin · **Status:** Fixed@a45b945
 - Hub widget calls `GET /audit-logs?action=auth.login` (0 rows, verified) but login rows are recorded as `user.login-password` (5 rows returned for the correct filter). Widget shows "Nicio autentificare recentă" forever.
 
 ## BUG-120 — Platform-user invitation email reuses the agent template ("ca agent imobiliar")
-- **Severity:** Minor · **Surface:** api (email templates) · **Status:** Open
+- **Severity:** Minor · **Surface:** api (email templates) · **Status:** Fixed@e20481d
 - `POST /invitations/users` (EDITOR invite) sends: "Admin User te-a invitat să te alături TGE **ca agent imobiliar**…" — wrong for ADMIN/EDITOR invitees. Role-appropriate copy needed for the users variant.
 - Side note: dev email transport logs to console with the accept URL (works as designed); `email_sent_at` set, 1 attempt, no bounce.
 
 ## BUG-121 — Sidebar "Cereri" unread badge always shows 1 — counts items of a limit=1 query
-- **Severity:** Minor · **Surface:** admin · **Status:** Open
+- **Severity:** Minor · **Surface:** admin · **Status:** Fixed@a45b945
 - Badge showed "1" for SUPER_ADMIN with 26 new inquiries and "1" for AGENT with 2 new. The badge's data call is `GET /inquiries?status=new&limit=1` (`use-unread-inquiries.ts`) — the UI evidently renders the returned item count instead of the pagination total.
 - **Expected:** render `meta.total` (badge "26"), or a 9+ cap style.
 
 ## BUG-122 — My-inquiries TIP column renders raw i18n key for viewing-type inquiries
-- **Severity:** Minor · **Surface:** admin · **Status:** Open
+- **Severity:** Minor · **Surface:** admin · **Status:** Fixed@7e9e905
 - AGENT `/ro/my-inquiries`: property-type row shows "PROPRIETATE" but viewing-type shows literal "INQUIRIES.TYPELABEL.VIEWING". Missing `inquiries.typeLabel.viewing` key (check `valuation` and all 4 locales; check the admin /inquiries list too). Dev overlay logs 2 IntlErrors on the page.
 
 ## BUG-123 — Revery dev a11y checker (@axe-core/react) throws on init — broken in dev, prod unaffected
@@ -145,14 +145,14 @@ Status values: `Open | Fixed@<sha> | Wontfix | Deferred`.
 - **Finish-now candidate** — legal/compliance, and a shared consent component covers all three sites. Confirm what non-essential cookies are actually set before scoping (if truly first-party-essential-only, this drops to a documentation note).
 
 ## BUG-116 — Property form: empty "Anul construcției" blocks save with raw NaN error
-- **Severity:** Major · **Surface:** admin · **Status:** Open
+- **Severity:** Major · **Surface:** admin · **Status:** Fixed@cdbdfd1
 - New-property save with year-built left empty fails client validation: "Invalid input: expected number, received NaN" under the field; the save is blocked until a year is typed. Optional numeric fields must preprocess empty→undefined (`z.coerce`/preprocess) — check the same pattern on Locuri garaj / Suprafață teren / Lat/Long (those accepted empty, so the yearBuilt schema entry is the outlier).
 - Also part of the literal-EN pattern: raw Zod copy + "Please fix N fields…" toast + "Failed to fetch" toast are all untranslated English in the RO admin (fold into BUG-106 umbrella).
 
 ## BUG-112 — Inquiry peek sheet: status badge doesn't update after auto-mark-read
-- **Severity:** Trivial · **Surface:** admin · **Status:** Open
+- **Severity:** Trivial · **Surface:** admin · **Status:** Fixed@967b936
 - Opening an inquiry auto-marks it read (toast + row badge update to CITIT) but the sheet's own header badge keeps showing NOU until reopened.
 
 ## BUG-113 — Inquiry source filter placeholder suggests a tag that matches nothing
-- **Severity:** Trivial · **Surface:** admin · **Status:** Open
+- **Severity:** Trivial · **Surface:** admin · **Status:** Fixed@a45b945
 - Placeholder says `ex. revery-contact` but real submissions stamp `reveria-contact` (Revery app) / `tge-*` (landing). An admin typing the suggested example gets zero results. Align placeholder with the actual source vocabulary.
