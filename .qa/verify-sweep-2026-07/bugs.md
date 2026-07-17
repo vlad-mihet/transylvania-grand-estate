@@ -23,6 +23,13 @@ Status: `Open | Fixed@<sha> | Wontfix | Deferred`. Every non-Open stamp carries 
 - **Coverage gap:** no Playwright spec walks people/team (44/44 admin suite green while the page is broken). Fix wave must add a marker/regression spec asserting ≥3 users render on the seeded DB.
 - **Why fresh:** likely `expand=allLocales` was introduced to the shared client after the prior sweep's fix wave (localized-editor/i18n work) without re-walking this page.
 
+## BUG-204 — Inquiries kanban view completely non-functional: requests `limit=200`, schema caps at 100
+- **Severity:** Major · **Surface:** admin + api · **Status:** Open
+- **Repro:** `/ro/inquiries?view=kanban` → error card "Something went wrong / We couldn't load this"; Reîncearcă re-fails. Network: `GET /api/v1/inquiries?limit=200&expand=allLocales` → 400. Curl isolation: `limit=100` → 200, `limit=101` → 400 (`validation.limit.too_big`, "expected number to be <=100"). List view works (limit=20) — kanban is the only casualty.
+- **Same failure class as BUG-202/118:** admin client params drift out of sync with strict query schemas, and the UI degrades to a dead error card. Prior sweep verified kanban working (⚠ with BUG-112/113 notes), so this regressed since — likely a kanban page-size bump past the schema cap, or a schema cap added after.
+- **Fix direction:** either raise the schema cap / add kanban pagination, or drop the kanban fetch to ≤100 — plus the same client/schema parity sweep as BUG-202.
+- **Secondary:** error-card copy is English ("Something went wrong…", "Retry or refresh") on the RO locale — should use localized messages.
+
 ## BUG-203 — Property form "CARACTERISTICI" section: "+ Add feature" button hardcoded English in RO locale
 - **Severity:** Minor · **Surface:** admin · **Status:** Open
 - **Repro:** `/ro/properties/new` (html lang=ro), scroll to CARACTERISTICI → button label is "+ Add feature" (should be Romanian, e.g. "+ Adaugă caracteristică"). Same family as BUG-106's literal-EN labels; the amenity toggles (FACILITĂȚI) themselves are correctly localized, so this is one straggler key, likely untranslated or hardcoded.
