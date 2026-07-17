@@ -36,6 +36,18 @@ Status: `Open | Fixed@<sha> | Wontfix | Deferred`. Every non-Open stamp carries 
 - **Trap 2 (sticky locale):** the localized editor's `?loc=` persists across unrelated entity forms — after editing a testimonial's EN tab, `/ro/properties/new` opened with **EN active**; typing filled the EN locale while RO (required) stayed empty. Silent content mis-filing; fresh forms should open on the default locale.
 - **Also:** year-required-by-design makes no-year listings impossible via UI (awkward for land plots) — product question, noted not filed separately.
 
+## BUG-208 — EDITOR role: inquiries UI exposed but API denies all reads — whole Cereri section dead for the role
+- **Severity:** Major · **Surface:** admin + api · **Status:** Open
+- **Repro (fresh EDITOR via invite round-trip):** sidebar shows "Cereri" nav + dashboard shows CERERI NOI KPI and "Cereri recente" widget; but `GET /api/v1/inquiries?…` → **403** for every variant (list `limit=20`, widget `limit=5&sort=newest`, count `status=new&limit=1`). `/ro/inquiries` renders the filter shell then a dead error card.
+- **Inconsistency detail:** immediately post-login one count call returned 200, then all subsequent calls 403 (suspect stale-token edge on the login handoff — worth checking the accept-invite auto-login token's role claim vs the refreshed token).
+- **Decision needed:** either editors may read inquiries (grant API permission — prior sweep's matrix assumed an EDITOR inquiries column) or they may not (hide Cereri nav/KPI/widget for the role). Current state is the worst of both: visible + broken.
+
+## BUG-209 — EDITOR can read the full audit trail (API 200 + page renders all admin actions)
+- **Severity:** Major (RBAC exposure — needs owner confirmation) · **Surface:** admin + api · **Status:** Open
+- **Repro (EDITOR):** sidebar shows "Jurnal audit"; `/ro/audit-logs` renders 22 rows incl. other admins' emails, every resource action, diff links; `GET /api/v1/audit-logs?limit=50` → 200. AGENT correctly gets 403 (prior sweep + re-probe pending this sweep).
+- **Question for owner:** is audit-trail read intended for EDITOR? Convention is ADMIN+; the trail exposes operational metadata (who did what, admin emails). If intended, close Wontfix-with-note; if not, gate to ADMIN+ (nav + route + API).
+- **Related smaller notes (same role-surface review):** financial-indicators page shows an active "Sincronizează" (BNR sync) CTA to EDITOR — write-ish action, verify intent; bank-rates correctly hides the create button for EDITOR.
+
 ## BUG-207 — Article editor "Publică" button doesn't publish: saves with current Status-select value and toasts success
 - **Severity:** Major · **Surface:** admin · **Status:** Open
 - **Repro:** article in Ciornă (draft) → click **Publică** → toast "Articol actualizat", but DB status stays `draft` and public blog page stays 404. Reproduced twice (PATCH 200 each time, status unchanged). Setting the **Status select** to Publicat and clicking "Salvează schiță" DOES publish (status=published, public 200) — so the button pair semantics are inverted/overlapping: "Publică" doesn't set status, and "Salvează schiță" saves whatever the select says (including published).
