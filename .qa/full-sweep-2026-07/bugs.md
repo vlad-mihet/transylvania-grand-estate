@@ -30,7 +30,8 @@ Status values: `Open | Fixed@<sha> | Wontfix | Deferred`.
 ---
 
 ## BUG-101 — Lint errors in 4 of 5 apps (CI has no lint gate)
-- **Severity:** Minor · **Surface:** api, admin, landing, academy · **Status:** Open
+- **Severity:** Minor · **Surface:** api, admin, landing, academy · **Status:** Fixed@11a8b89
+- **Fix:** all 5 apps now `pnpm lint:all` green; added a `lint` CI job. **Notable discovery:** academy's eslint config was silently broken (FlatCompat circular-ref → exit 2, never actually linted), which had been hiding **5 real errors** — migrated it to flat config and fixed them. setState-in-effect cases converted to render-time "storing prior props" or lazy initializers where the trigger is a prop change; scoped disables (justified) only for genuine mount-only client patterns (hash parse, `useIsClient`, Playwright `use` fixture). Verified: admin 41, academy 13, landing forms/interactive/i18n 18, api academy 36 — all green.
 - **Found:** Phase 1 baseline, `pnpm lint:all` (2026-07-17)
 - **Repro:** `pnpm lint:all` → Nx fails `api:lint`, `admin:lint`, `landing:lint`, `academy:lint`; revery passes.
 - **Detail:** api: 1× `no-require-imports`. admin: ~18 errors — several `setState synchronously within an effect` (react-hooks) + repeated `no-html-link-for-pages` (`<a href="/login/">` instead of `<Link>`) + unused-var warnings in e2e specs. landing: 4 errors (1× setState-in-effect, 1× rules-of-hooks in a non-hook `collector` fn, 2× require-imports). academy: fails lint (error detail to re-capture at fix time).
