@@ -22,7 +22,7 @@ verifiable this sweep (reason given).
 | BUG-113 | Minor | source-filter placeholder | Phase 2 UI: SURSĂ filter shows placeholder "ex. reveria-contact" | **HOLDS** |
 | BUG-114 | Minor | IntlError spam eliminated | Phase 2 console across dashboard/team/property-form/audit-logs/inquiries(list+sheet+kanban)/agents/invitations: **zero IntlError/MISSING_MESSAGE** | **HOLDS** |
 | BUG-115 | Major | slug derivation from RO-only title | Phase 2 UI: RO title "Casă de test QA Știință Brașov" → Generează → `casa-de-test-qa-stiinta-brasov` | **HOLDS** |
-| BUG-116 | Major | year-built NaN fixed | Deferred to Phase 3: seed has no NULL year_built; will verify via QA-created property without year (also covers zero-image render) | pending (Phase 3) |
+| BUG-116 | Major | year-built NaN fixed | Phase 3 form: invalid year (0/empty) shows validation message "Year built must be at least 1800" instead of NaN; year is de-facto required so no NaN path remains | **HOLDS** (copy is EN-only → BUG-203; default-0 trap → BUG-206) |
 | BUG-117 | Critical | audit trail alive under /api/v1 | Phase 1 API e2e `audit-trail` green + Phase 2 UI: audit-logs page shows live rows (PROPERTY.CREATE/DELETE from PW suite, USER.LOGIN-PASSWORD, INQUIRY.CREATE×n w/ REVERY brand), filters+CSV+diff links present | **HOLDS** |
 | BUG-118 | Critical | people/team page functional | Phase 2 UI: page renders but list silently EMPTY; network shows `auth/users?limit=100&expand=allLocales` → 400 unrecognized key `expand` | **REGRESSED→BUG-202** (new key, same class; `limit` itself still accepted) |
 | BUG-119 | Minor | recent-signins filter | Phase 2 UI: dashboard activity feed renders login events correctly typed (UTILIZATOR badge) | **HOLDS** |

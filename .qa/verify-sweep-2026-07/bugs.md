@@ -24,6 +24,18 @@ Status: `Open | Fixed@<sha> | Wontfix | Deferred`. Every non-Open stamp carries 
 - **Coverage gap:** no Playwright spec walks people/team (44/44 admin suite green while the page is broken). Fix wave must add a marker/regression spec asserting ≥3 users render on the seeded DB.
 - **Why fresh:** likely `expand=allLocales` was introduced to the shared client after the prior sweep's fix wave (localized-editor/i18n work) without re-walking this page.
 
+## BUG-205 — Landing property detail 500s for a property with zero images (`images[0].src` unguarded)
+- **Severity:** Critical · **Surface:** landing (+admin pipeline) · **Status:** Open
+- **Repro:** created `apartament-qa-sweep-fara-imagini-cluj` via admin with no images (admin allows it; detail page shows "Încă nu există imagini."). Landing `/ro/properties/<slug>` → **500**, page source shows `TypeError: Cannot read properties of undefined (reading 'src')`. Seeded image-ful property → 200.
+- Legacy Blocker #1 territory (zero-image rendering) — either never covered for the landing detail template or regressed. Revery detail template should be checked for the same pattern in the fix wave.
+- **Fix direction:** guard the hero/gallery `images[0]` access with a placeholder (empty-gallery state), or block publishing image-less properties (product call) — but the public page must never 500 either way.
+
+## BUG-206 — Property /new form: default values fail the form's own validation; sticky cross-entity locale can silently mis-file content
+- **Severity:** Major · **Surface:** admin · **Status:** Open
+- **Trap 1 (defaults invalid):** a fresh form initializes `Anul construcției = 0` → save blocked with "Year built must be at least 1800"; clearing to empty ALSO fails (year is de-facto mandatory). Untouched `Cartier` similarly failed once registered ("Too small: expected string to have >=1 characters" — empty string vs optional). A minimal listing cannot be saved without hand-fixing fields the form itself pre-filled.
+- **Trap 2 (sticky locale):** the localized editor's `?loc=` persists across unrelated entity forms — after editing a testimonial's EN tab, `/ro/properties/new` opened with **EN active**; typing filled the EN locale while RO (required) stayed empty. Silent content mis-filing; fresh forms should open on the default locale.
+- **Also:** year-required-by-design makes no-year listings impossible via UI (awkward for land plots) — product question, noted not filed separately.
+
 ## BUG-204 — Inquiries kanban view completely non-functional: requests `limit=200`, schema caps at 100
 - **Severity:** Major · **Surface:** admin + api · **Status:** Open
 - **Repro:** `/ro/inquiries?view=kanban` → error card "Something went wrong / We couldn't load this"; Reîncearcă re-fails. Network: `GET /api/v1/inquiries?limit=200&expand=allLocales` → 400. Curl isolation: `limit=100` → 200, `limit=101` → 400 (`validation.limit.too_big`, "expected number to be <=100"). List view works (limit=20) — kanban is the only casualty.
@@ -34,6 +46,7 @@ Status: `Open | Fixed@<sha> | Wontfix | Deferred`. Every non-Open stamp carries 
 ## BUG-203 — Property form "CARACTERISTICI" section: "+ Add feature" button hardcoded English in RO locale
 - **Severity:** Minor · **Surface:** admin · **Status:** Open
 - **Repro:** `/ro/properties/new` (html lang=ro), scroll to CARACTERISTICI → button label is "+ Add feature" (should be Romanian, e.g. "+ Adaugă caracteristică"). Same family as BUG-106's literal-EN labels; the amenity toggles (FACILITĂȚI) themselves are correctly localized, so this is one straggler key, likely untranslated or hardcoded.
+- **Broadened during Phase 3 — all hardcoded-EN strings found on admin RO pages:** "+ Add feature" (CARACTERISTICI); "Find address" label + "Search an address to fill coordinates..." placeholder; validation messages ("Year built must be at least 1800", "Too small: expected string to have >=1 characters"); save toast "Please fix N fields before saving — check the highlighted fields."; error-card copy "Something went wrong / We couldn't load this. Retry or refresh the page." (invitations page + kanban, noted in BUG-204).
 - **Check in fix wave:** grep the property-form feature-list component for other hardcoded strings (empty-state text, remove-button title) across en/fr/de too.
 
 ## BUG-201 — Public listing pages 500 when the API is unreachable (SSR guard only covers homepages)

@@ -57,4 +57,16 @@ Branch: `qa/verify-sweep-2026-07` off main@8803c14. Started 2026-07-17.
 
 **Phase 1 exit: PASS** — every gate green under CI-parity env. Two findings filed from first-run reds: BUG-201 (Critical, listing-page SSR guard), BUG-202 (Critical, team page empty — found in Phase 2 but confirms why admin suite can be green while the page is broken: no spec walks it).
 
+---
+
+## Phase 2 — Prior-fix empirical spot-verification
+
+All browser checks via Claude in Chrome with console/network taps. Full dispositions in `fixed-verify.md` — summary: **22/28 dispositioned** (18 HOLDS incl. all i18n minors with zero-IntlError console bar; 1 REGRESSED→BUG-202; BUG-105 holds-with-extension→BUG-201; BUG-123 reconciled + old ledger restamped Fixed@290ba9c; BUG-124/125 Wontfix evidence re-verified). Remaining 6 ride on later phases by design: BUG-109/116/120 (Phase 3), BUG-104 revery half (Phase 4), BUG-126 (Phase 6), BUG-127 (Phase 7).
+
+**New findings this phase:** BUG-202 (Critical — team + invitations pages dead, `expand=allLocales` vs 2 strict schemas; blast-radius curl sweep of 15 endpoints in bugs.md), BUG-203 (Minor — "+ Add feature" EN in RO), BUG-204 (Major — inquiries kanban dead, limit=200 vs cap 100; error card also EN-only).
+
+**Also observed live:** audit trail records logins/PW-suite mutations with brand attribution; inquiry source persistence (REVERY-CONTACT badges + RO locale badge on sourceUrl); unsaved-changes beforeunload guard fired on a real hard-nav (blocked the automation dialog — guard works).
+
+---
+
 **Env lesson (recorded for future baselines):** every CI Playwright job sets `DEV_AUTH_THROTTLE_DISABLED=1`; the first local runs were made without it. Result: admin suite's shared BFF session died on `/auth/refresh` 429s (10/min bucket) → 2 unsaved-changes reds; landing `[mobile]` cross-locale smoke got real 500s from listing pages when SSR fetches failed under throttle/load — which exposed **BUG-201** (listing pages unguarded against API failure; deterministic kill-API repro). Dev API restarted with the flag for all Playwright/browser phases; qa-smoke will run last against a throttle-ENABLED API restart (its 429 check needs it).
