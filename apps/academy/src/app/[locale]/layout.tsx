@@ -1,3 +1,4 @@
+import { Suspense } from "react";
 import { NextIntlClientProvider, hasLocale } from "next-intl";
 import { getMessages } from "next-intl/server";
 import { notFound } from "next/navigation";
@@ -47,7 +48,17 @@ export default async function LocaleLayout({
         <NextIntlClientProvider messages={messages}>
           <Providers>
             <div className="flex min-h-screen flex-col">
-              <main className="flex-1">{children}</main>
+              {/*
+                One stable Suspense boundary for the whole route. The auth pages
+                read `useSearchParams()`, which Next requires be wrapped in
+                Suspense; having it here (instead of a per-page
+                `<Suspense fallback={null}>`) avoids a second, Next-injected
+                segment boundary landing at the same slot and reconciling
+                differently between server and client (BUG-212 hydration).
+              */}
+              <main className="flex-1">
+                <Suspense>{children}</Suspense>
+              </main>
             </div>
             <Toaster position="bottom-center" richColors closeButton />
           </Providers>
