@@ -21,17 +21,17 @@ export function useUnreadInquiries(): number {
 
   const query = useQuery({
     queryKey: ["inquiries-unread"],
+    // envelope:true so we read `meta.total` (the real unread count) instead of
+    // the returned row array length — without it the badge always showed "1"
+    // because limit=1 returns a single row (BUG-121).
     queryFn: () =>
-      apiClient<PaginatedResponse<InquiryRow> | InquiryRow[]>(
-        "/inquiries?status=new&limit=1",
-      ),
+      apiClient<PaginatedResponse<InquiryRow>>("/inquiries?status=new&limit=1", {
+        envelope: true,
+      }),
     enabled,
     staleTime: 30_000,
     refetchInterval: 60_000,
   });
 
-  const data = query.data;
-  if (!data) return 0;
-  if (Array.isArray(data)) return data.length;
-  return data.meta?.total ?? 0;
+  return query.data?.meta?.total ?? 0;
 }

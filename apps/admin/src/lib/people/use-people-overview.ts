@@ -179,9 +179,11 @@ export interface RecentSignin {
 }
 
 /**
- * Last 5 successful auth.login events. Pulls from the audit-log firehose;
- * gated behind audit-log.read. EDITORs without audit access just don't see
- * the card.
+ * Last 5 successful login events. Pulls from the audit-log firehose; gated
+ * behind audit-log.read. EDITORs without audit access just don't see the card.
+ * The audit action for a password login is `user.login-password` — querying
+ * the non-existent `auth.login` returned nothing, so the card was always empty
+ * (BUG-119).
  */
 export function useRecentSignins() {
   const { can } = usePermissions();
@@ -191,7 +193,7 @@ export function useRecentSignins() {
     queryKey: ["people-overview", "recent-signins"],
     queryFn: () =>
       apiClient<CountEnvelope<AuditEntry>>(
-        "/audit-logs?action=auth.login&limit=5",
+        "/audit-logs?action=user.login-password&limit=5",
         { envelope: true },
       ),
     enabled,
