@@ -159,3 +159,14 @@ User approved all three waves + a deeper REBS investigation.
 **BUG-127 note:** the fix lives in `packages/data`; it lands in any environment on the next `prisma db seed` (done locally). Prod picks it up on its next seed run.
 
 **Sweep complete.** 19 of 27 findings fixed + verified + regression-tested (3 Critical, 7 Major, 9 Minor). 8 remain: 3 larger code-only efforts, 5 needing user input/owner sign-off. Ledger fully stamped.
+
+---
+
+## Phase 8 continued — remaining code-only items (2026-07-17, user: "continue")
+
+- **BUG-101 (lint + CI gate):** all 5 apps `pnpm lint:all` green; added a `lint` CI job. **Discovered academy's eslint config was silently broken** (FlatCompat circular-ref → never linted), hiding **5 real errors** — migrated to flat config + fixed them. setState-in-effect → render-time "storing prior props"/lazy initializers; scoped disables only for genuine mount-only client patterns; ignored `playwright-report`/`test-results` in all app configs. Fixed@11a8b89.
+- **BUG-107 (in-app unsaved-changes guard):** capture-phase interception of internal `<Link>` clicks + popstate, not just `beforeunload`. Regression: `unsaved-changes.spec.ts`. Fixed@37fe5dc. Surfaced **BUG-128** (property /new form `isDirty` on load — minor, pre-existing).
+- **BUG-106 (property labels → i18n):** 18 amenity + 7 classification-group + ~30 option-value + 3 section labels → `PropertyForm.*` across ro/en/fr/de (RO diacritics). Verified in-browser. Fixed@d0f8361.
+
+### FINAL TALLY: 22 of 28 findings fixed (3 Critical · 7 Major · 12 Minor), all verified + regression-tested.
+**Remaining 6 (none code-completable without input):** BUG-104 (real social handles), BUG-110 (webkit contact-form repro — Safari-only), BUG-124 (academy public-landing product decision), BUG-125 (cookie banner — needs cookie inventory), BUG-126 + REBS ops (owner sign-off), BUG-128 (property-form dirty-on-load — minor, found last).
