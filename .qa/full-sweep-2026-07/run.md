@@ -127,3 +127,14 @@ User approved all three waves + a deeper REBS investigation.
 **Needs user input (not guessable):** BUG-104 (real social handles), BUG-124 (academy public-landing product decision), BUG-125 (which cookies are set), BUG-126 + REBS ops (owner sign-off — investigation confirmed local `.env` pulls **real prod REBS listings**; key gitignored; default URL points at prod — footgun).
 
 **REBS deep-dive result:** local `REBS_API_KEY` is a **real production key** hitting `client-396fe343.crmrebs.com` (not the demo the `.env.example` implies), pulling a live Sibiu listing hourly into the dev DB. Read-only against REBS, writes only local — no prod-system risk. `REBS_BASE_URL` schema **default points at prod** (BUG-126). Key is gitignored/never committed. Owner to decide: rotate/scope key, flip flags, fix default.
+
+**Wave 3 continued (7 more fixed after user's "continue admin sweep"):** BUG-119 (recent-signins filter), BUG-121 (unread badge total), BUG-113 (source-filter placeholder), BUG-120 (staff invite email copy — verified "echipei TGE"; unit test), BUG-112 (peek-sheet badge shows CITIT on open — verified), BUG-123 (revery dev axe crash guarded — verified no console error), BUG-127 (seed property.city diacritics).
+
+**Fixed total: 19** (3 Critical, 7 Major, 9 Minor). Automation-gate results:
+- **API e2e: 198/198 pass, 25/25 suites** (baseline 179 + 8 new regression specs, all academy env-leak failures resolved).
+- **Landing Playwright: 143/143 pass** (after flipping the BUG-005 marker test to assert the fix).
+- New regression coverage: `audit-trail`, `article-public-visibility`, `inquiry-gdpr-purge` (api e2e) + `agent-invitation.template` (unit) + academy `smoke`/`auth` (13 tests) + `playwright-academy` CI job.
+
+**Remaining (with reason):**
+- Code-only, larger effort: BUG-101 (lint across 4 apps — includes real setState-in-effect/rules-of-hooks defects), BUG-106 (property amenity/classification labels → i18n, ~240 careful translations — deferred to a review-quality pass), BUG-107 (in-app-nav unsaved guard — App Router interception, architecturally hard, documented limitation).
+- Needs user input: BUG-104 (real social-media handles), BUG-110 (webkit contact-form repro — Safari-only, needs a real WebKit run), BUG-124 (academy public-landing product decision), BUG-125 (cookie banner — needs the actual cookie inventory to scope), BUG-126 + REBS ops (owner sign-off).
