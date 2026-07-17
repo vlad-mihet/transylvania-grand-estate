@@ -63,20 +63,23 @@ export function EditCountyDialog({
     longitude: "",
   });
 
-  // Seed form whenever the dialog opens with a fresh county. Don't sync while
-  // the user is typing — that would clobber edits if a background refetch
-  // reseeded the parent's `county` prop.
-  useEffect(() => {
-    if (open && county) {
-      setForm({
-        name: county.name,
-        slug: county.slug,
-        code: county.code,
-        latitude: String(county.latitude),
-        longitude: String(county.longitude),
-      });
-    }
-  }, [open, county]);
+  // Seed the form when the dialog opens with a fresh county. Keyed on the
+  // county's stable slug and adjusted during render (React's "storing prior
+  // props" pattern): re-opening the same county — or a background refetch that
+  // swaps in an equal `county` object — is a no-op, so in-progress edits are
+  // never clobbered.
+  const openKey = open && county ? county.slug : null;
+  const [prevOpenKey, setPrevOpenKey] = useState<string | null>(null);
+  if (openKey && openKey !== prevOpenKey && county) {
+    setPrevOpenKey(openKey);
+    setForm({
+      name: county.name,
+      slug: county.slug,
+      code: county.code,
+      latitude: String(county.latitude),
+      longitude: String(county.longitude),
+    });
+  }
 
   const valid =
     form.name.trim().length >= 2 &&

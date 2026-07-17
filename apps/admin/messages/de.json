@@ -999,7 +999,7 @@
     "columnSource": "Quelle",
     "columnReceived": "Erhalten",
     "filterSource": "Quelle",
-    "filterSourcePlaceholder": "z. B. revery-contact",
+    "filterSourcePlaceholder": "z. B. reveria-contact",
     "markRead": "Als gelesen markieren",
     "archive": "Archivieren",
     "reopen": "Wieder öffnen",
@@ -1018,7 +1018,9 @@
     "typeLabel": {
       "general": "Allgemein",
       "property": "Immobilie",
-      "developer": "Bauträger"
+      "developer": "Bauträger",
+      "viewing": "Besichtigung",
+      "valuation": "Bewertung"
     },
     "sectionLabel": {
       "type": "Typ",
@@ -1147,6 +1149,72 @@
     "irccHint": "IRCC ändert sich vierteljährlich (Jan., Apr., Juli, Okt.). Manuelles Update."
   },
   "PropertyForm": {
+    "sections": {
+      "classification": "Klassifizierung",
+      "amenities": "Ausstattung",
+      "features": "Merkmale"
+    },
+    "amenities": {
+      "hasBalcony": "Balkon",
+      "hasTerrace": "Terrasse",
+      "hasParking": "Parkplatz",
+      "hasGarage": "Garage",
+      "hasSeparateKitchen": "Separate Küche",
+      "hasStorage": "Abstellraum",
+      "hasElevator": "Aufzug",
+      "hasInteriorStaircase": "Innentreppe",
+      "hasWashingMachine": "Waschmaschine",
+      "hasFridge": "Kühlschrank",
+      "hasStove": "Herd",
+      "hasOven": "Backofen",
+      "hasAC": "Klimaanlage",
+      "hasBlinds": "Jalousien",
+      "hasArmoredDoors": "Panzertüren",
+      "hasIntercom": "Gegensprechanlage",
+      "hasInternet": "Internet",
+      "hasCableTV": "Kabelfernsehen"
+    },
+    "classification": {
+      "furnishing": "Möblierung",
+      "material": "Bauweise",
+      "condition": "Zustand",
+      "sellerType": "Verkäufertyp",
+      "heating": "Heizung",
+      "ownership": "Eigentum",
+      "windowType": "Fenster"
+    },
+    "classificationValues": {
+      "unfurnished": "Unmöbliert",
+      "semi_furnished": "Teilmöbliert",
+      "furnished": "Möbliert",
+      "luxury": "Luxus",
+      "brick": "Ziegel",
+      "concrete": "Beton",
+      "bca": "Porenbeton",
+      "wood": "Holz",
+      "stone": "Stein",
+      "mixed": "Gemischt",
+      "new_build": "Neubau",
+      "renovated": "Renoviert",
+      "good": "Gut",
+      "needs_renovation": "Renovierungsbedürftig",
+      "under_construction": "Im Bau",
+      "private_seller": "Privatverkäufer",
+      "agency": "Agentur",
+      "developer": "Bauträger",
+      "central_gas": "Gastherme",
+      "centralized": "Zentralisiert",
+      "block_central": "Blockheizung",
+      "electric": "Elektrisch",
+      "heat_pump": "Wärmepumpe",
+      "solid_fuel": "Festbrennstoff",
+      "none": "Keine",
+      "personal": "Privat",
+      "company": "Firma",
+      "pvc_double": "PVC-Doppelverglasung",
+      "pvc_triple": "PVC-Dreifachverglasung",
+      "aluminum": "Aluminium"
+    },
     "basicInfo": "Grundinformationen",
     "title": "Titel",
     "slug": "Slug",
@@ -1248,6 +1316,7 @@
     "quote": "Zitat"
   },
   "Common": {
+    "relations": "Beziehungen",
     "cancel": "Abbrechen",
     "clear": "Löschen",
     "filters": "Filter",

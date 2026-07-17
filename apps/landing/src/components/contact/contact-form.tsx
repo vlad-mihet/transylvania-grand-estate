@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { useTranslations, useLocale } from "next-intl";
 import { Input } from "@tge/ui";
@@ -44,15 +44,23 @@ export function ContactForm({ properties }: ContactFormProps) {
   const [consentError, setConsentError] = useState<string | null>(null);
 
   // BUG-016 fix: property-detail "Request info" links pass `?property=<slug>`
-  // so the contact form can pre-select the property and skip a step. The
-  // effect runs once on mount and falls back gracefully when the slug isn't
-  // in the listed properties (just leaves the dropdown empty).
-  useEffect(() => {
-    const fromUrl = searchParams.get("property");
-    if (!fromUrl) return;
-    const match = properties.find((p) => p.slug === fromUrl);
-    if (match) setPropertySlug(match.slug);
-  }, [searchParams, properties]);
+  // so the contact form can pre-select the property and skip a step. Both
+  // `searchParams` and `properties` are available at render, so we derive this
+  // during render (React's "storing prior props" pattern) instead of an effect
+  // — tracked on the URL value so a later manual selection isn't clobbered, and
+  // falling back gracefully when the slug isn't in the listed properties.
+  const propertyFromUrl = searchParams.get("property");
+  const [prevPropertyFromUrl, setPrevPropertyFromUrl] = useState<string | null>(
+    null,
+  );
+  if (
+    propertyFromUrl &&
+    propertyFromUrl !== prevPropertyFromUrl &&
+    properties.some((p) => p.slug === propertyFromUrl)
+  ) {
+    setPrevPropertyFromUrl(propertyFromUrl);
+    setPropertySlug(propertyFromUrl);
+  }
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();

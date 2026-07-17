@@ -93,9 +93,14 @@ and update each app's `PrivacyPolicy.lastUpdated` string. Old consent
 records keep their original version so we can prove what each user agreed
 to.
 
-**Cookie banner**: not implemented (out of scope). The contact form
-itself doesn't set non-essential cookies, but if a third-party analytics
-tool is added later, a banner becomes mandatory under ePrivacy.
+**Cookie banner**: not implemented — and not required. Full-sweep 2026-07
+cookie inventory (source + on-the-wire) confirmed all three public sites
+set only strictly-necessary cookies (`NEXT_LOCALE` + first-party auth);
+zero analytics/marketing/third-party trackers. Strictly-necessary cookies
+are exempt from ePrivacy prior consent, so the linked cookie policy is
+sufficient and a banner is not mandatory (sweep BUG-125, closed Wontfix).
+**This changes the moment a non-essential cookie is added** — introducing
+any analytics/marketing tool makes a consent banner mandatory again.
 
 ---
 

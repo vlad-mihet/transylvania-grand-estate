@@ -118,12 +118,15 @@ const baseSchema = z.object({
   // '1') the sync no-ops with a warn — the rest of the API boots normally. A
   // base URL is still useful without the key for pointing local/dev runs at
   // the demo instance (https://demo.crmrebs.com/api/public) or a fixture.
+  // BUG-126: the default points at the *demo* instance so an unset env var
+  // never silently hits a real client tenant. Production and any run that
+  // must sync a live tenant set REBS_BASE_URL explicitly.
   REBS_API_KEY: z.string().optional(),
   REBS_BASE_URL: z
     .string()
     .url()
     .optional()
-    .default('https://client-396fe343.crmrebs.com/api/public'),
+    .default('https://demo.crmrebs.com/api/public'),
   REBS_SYNC_ENABLED: z.enum(['0', '1']).optional(),
 });
 

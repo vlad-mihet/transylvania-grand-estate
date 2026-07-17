@@ -90,6 +90,13 @@ export const listUsersSchema = z
     role: arrayParam(z.nativeEnum(AdminRole)),
     status: arrayParam(z.nativeEnum(AdminUserStatus)),
     search: z.string().max(200).optional(),
+    // Optional pagination — mirrors the /agents list contract so the admin
+    // People hub can read `meta.total` for its KPI and cap large pulls. When
+    // present the service returns `{ data, meta }`; when absent it returns a
+    // bare array (backward-compatible). The service clamps `limit`, so the
+    // upper bound here is deliberately loose (the admin sends limit=500).
+    page: z.coerce.number().int().min(1).optional(),
+    limit: z.coerce.number().int().min(1).max(1000).optional(),
   })
   .strict();
 

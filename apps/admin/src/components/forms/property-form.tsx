@@ -56,6 +56,14 @@ import type { ApiAgent, ApiCity, ApiDeveloper } from "@tge/types";
 // builtin which produces NaN on empty — fine, since required fields can't be
 // empty at submit time.
 const requiredNumber = { valueAsNumber: true } as const;
+// Like requiredNumber but maps an empty field to 0 instead of NaN. Used for
+// yearBuilt so clearing it surfaces the schema's friendly "must be at least
+// 1800" message (via superRefine) rather than the raw Zod "expected number,
+// received NaN" (BUG-116). Terrain listings legitimately accept 0.
+const requiredNumberOrZero = {
+  setValueAs: (v: unknown) =>
+    v === "" || v === null || v === undefined ? 0 : Number(v),
+} as const;
 const optionalNullableNumber = {
   setValueAs: (v: unknown) =>
     v === "" || v === null || v === undefined ? null : Number(v),
@@ -64,6 +72,23 @@ const optionalNumber = {
   setValueAs: (v: unknown) =>
     v === "" || v === null || v === undefined ? undefined : Number(v),
 } as const;
+
+// Diacritic-aware slugifier. NFKD decomposition + stripping combining marks
+// turns ă/â/î/ș/ț into a/a/i/s/t (rather than deleting them, which produced
+// "bucureti" from "București"); the cedilla variants ş/ţ are mapped explicitly
+// as a belt-and-braces fallback.
+function slugify(input: string): string {
+  return input
+    .normalize("NFKD")
+    .replace(/[\u0300-\u036f]/g, "") // strip combining diacritical marks
+    .replace(/[şŞ]/g, "s")
+    .replace(/[ţŢ]/g, "t")
+    .toLowerCase()
+    .replace(/[^a-z0-9\s-]/g, "")
+    .replace(/\s+/g, "-")
+    .replace(/-+/g, "-")
+    .replace(/^-+|-+$/g, "");
+}
 
 const PROPERTY_TYPE_VALUES = [
   "apartment",
@@ -80,44 +105,43 @@ const PROPERTY_TYPE_VALUES = [
 const PROPERTY_STATUS_VALUES = ["available", "reserved", "sold"] as const;
 
 // The 18 amenity flags (mirror the Prisma boolean columns / amenityFlagsSchema).
-// Labels are literal English for now — i18n keys are a follow-up, same as the
-// brand/tier picker.
+// Labels come from i18n (`PropertyForm.amenities.<name>`).
 const AMENITY_FIELDS = [
-  ["hasBalcony", "Balcony"],
-  ["hasTerrace", "Terrace"],
-  ["hasParking", "Parking"],
-  ["hasGarage", "Garage"],
-  ["hasSeparateKitchen", "Separate kitchen"],
-  ["hasStorage", "Storage"],
-  ["hasElevator", "Elevator"],
-  ["hasInteriorStaircase", "Interior staircase"],
-  ["hasWashingMachine", "Washing machine"],
-  ["hasFridge", "Fridge"],
-  ["hasStove", "Stove"],
-  ["hasOven", "Oven"],
-  ["hasAC", "Air conditioning"],
-  ["hasBlinds", "Blinds"],
-  ["hasArmoredDoors", "Armored doors"],
-  ["hasIntercom", "Intercom"],
-  ["hasInternet", "Internet"],
-  ["hasCableTV", "Cable TV"],
+  "hasBalcony",
+  "hasTerrace",
+  "hasParking",
+  "hasGarage",
+  "hasSeparateKitchen",
+  "hasStorage",
+  "hasElevator",
+  "hasInteriorStaircase",
+  "hasWashingMachine",
+  "hasFridge",
+  "hasStove",
+  "hasOven",
+  "hasAC",
+  "hasBlinds",
+  "hasArmoredDoors",
+  "hasIntercom",
+  "hasInternet",
+  "hasCableTV",
 ] as const;
 
 // Optional classification enums (values mirror the Prisma enums). Each renders
-// as a Select with a "—" (none) option since they're optional.
+// as a Select with a "—" (none) option since they're optional. Group labels
+// come from `PropertyForm.classification.<name>`; option labels from
+// `PropertyForm.classificationValues.<value>`.
 const CLASSIFICATION_FIELDS = [
-  ["furnishing", "Furnishing", ["unfurnished", "semi_furnished", "furnished", "luxury"]],
-  ["material", "Construction", ["brick", "concrete", "bca", "wood", "stone", "mixed"]],
-  ["condition", "Condition", ["new_build", "renovated", "good", "needs_renovation", "under_construction"]],
-  ["sellerType", "Seller", ["private_seller", "agency", "developer"]],
-  ["heating", "Heating", ["central_gas", "centralized", "block_central", "electric", "heat_pump", "solid_fuel", "none"]],
-  ["ownership", "Ownership", ["personal", "company", "mixed"]],
-  ["windowType", "Windows", ["pvc_double", "pvc_triple", "wood", "aluminum", "mixed"]],
+  ["furnishing", ["unfurnished", "semi_furnished", "furnished", "luxury"]],
+  ["material", ["brick", "concrete", "bca", "wood", "stone", "mixed"]],
+  ["condition", ["new_build", "renovated", "good", "needs_renovation", "under_construction"]],
+  ["sellerType", ["private_seller", "agency", "developer"]],
+  ["heating", ["central_gas", "centralized", "block_central", "electric", "heat_pump", "solid_fuel", "none"]],
+  ["ownership", ["personal", "company", "mixed"]],
+  ["windowType", ["pvc_double", "pvc_triple", "wood", "aluminum", "mixed"]],
 ] as const;
 
 const NONE = "__none__";
-const humanize = (s: string) =>
-  (s.charAt(0).toUpperCase() + s.slice(1)).replace(/_/g, " ");
 
 interface PropertyFormProps {
   defaultValues?: Partial<PropertyFormValues>;
@@ -168,6 +192,20 @@ export function PropertyForm({
       bathrooms: 0,
       area: 0,
       floors: 1,
+      // Every registered field must have a default matching what its input
+      // holds on a pristine form, or RHF's isDirty deep-compare (present-key
+      // vs absent-key, even for undefined) reports the create form dirty and
+      // arms the unsaved-changes guard before the user types (BUG-128). The
+      // setValueAs converters produce: yearBuilt → 0 (requiredNumberOrZero),
+      // garage/landArea → null (optionalNullableNumber), latitude/longitude →
+      // undefined (optionalNumber). developerId/agentId start unset (null).
+      yearBuilt: 0,
+      garage: null,
+      landArea: null,
+      latitude: undefined,
+      longitude: undefined,
+      developerId: null,
+      agentId: null,
       pool: false,
       features: [],
       featured: false,
@@ -381,14 +419,19 @@ function PropertyMetadataFields({
   };
 
   const generateSlug = () => {
-    const title = form.getValues("title.en");
-    const slug = title
-      .toLowerCase()
-      .replace(/[^a-z0-9\s-]/g, "")
-      .replace(/\s+/g, "-")
-      .replace(/-+/g, "-")
-      .trim();
-    form.setValue("slug", slug);
+    // Derive from whichever localized title is filled — RO-first editors were
+    // getting an empty slug because this only ever read `title.en` (BUG-115).
+    const titles = form.getValues("title");
+    const source =
+      titles?.en?.trim() ||
+      titles?.ro?.trim() ||
+      titles?.fr?.trim() ||
+      titles?.de?.trim() ||
+      "";
+    form.setValue("slug", slugify(source), {
+      shouldValidate: true,
+      shouldDirty: true,
+    });
   };
 
   return (
@@ -629,7 +672,7 @@ function PropertyMetadataFields({
               <Input
                 id="property-year-built"
                 type="number"
-                {...form.register("yearBuilt", requiredNumber)}
+                {...form.register("yearBuilt", requiredNumberOrZero)}
                 className="mono"
               />
             </MetaField>
@@ -666,9 +709,13 @@ function PropertyMetadataFields({
         />
       </MetaSection>
 
-      <MetaSection title="Classification">
-        {CLASSIFICATION_FIELDS.map(([name, label, options]) => (
-          <MetaField key={name} id={`property-${name}`} label={label}>
+      <MetaSection title={t("sections.classification")}>
+        {CLASSIFICATION_FIELDS.map(([name, options]) => (
+          <MetaField
+            key={name}
+            id={`property-${name}`}
+            label={t(`classification.${name}`)}
+          >
             <Select
               value={(form.watch(name) as string | undefined) ?? NONE}
               onValueChange={(v) =>
@@ -682,7 +729,7 @@ function PropertyMetadataFields({
                 <SelectItem value={NONE}>—</SelectItem>
                 {options.map((o) => (
                   <SelectItem key={o} value={o}>
-                    {humanize(o)}
+                    {t(`classificationValues.${o}`)}
                   </SelectItem>
                 ))}
               </SelectContent>
@@ -691,18 +738,18 @@ function PropertyMetadataFields({
         ))}
       </MetaSection>
 
-      <MetaSection title="Amenities">
-        {AMENITY_FIELDS.map(([name, label]) => (
+      <MetaSection title={t("sections.amenities")}>
+        {AMENITY_FIELDS.map((name) => (
           <SwitchRow
             key={name}
-            label={label}
+            label={t(`amenities.${name}`)}
             checked={form.watch(name) as boolean | undefined}
             onCheckedChange={(v) => form.setValue(name, v as never)}
           />
         ))}
       </MetaSection>
 
-      <MetaSection title="Features">
+      <MetaSection title={t("sections.features")}>
         <div className="flex flex-col gap-2">
           {featureFields.map((field, i) => (
             <div key={field.id} className="flex items-center gap-2">

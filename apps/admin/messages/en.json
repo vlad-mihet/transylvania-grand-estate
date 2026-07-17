@@ -999,7 +999,7 @@
     "columnSource": "Source",
     "columnReceived": "Received",
     "filterSource": "Source",
-    "filterSourcePlaceholder": "e.g. revery-contact",
+    "filterSourcePlaceholder": "e.g. reveria-contact",
     "markRead": "Mark as read",
     "archive": "Archive",
     "reopen": "Reopen",
@@ -1018,7 +1018,9 @@
     "typeLabel": {
       "general": "General",
       "property": "Property",
-      "developer": "Developer"
+      "developer": "Developer",
+      "viewing": "Viewing",
+      "valuation": "Valuation"
     },
     "sectionLabel": {
       "type": "Type",
@@ -1147,6 +1149,72 @@
     "irccHint": "IRCC changes quarterly (Jan, Apr, Jul, Oct). Update manually."
   },
   "PropertyForm": {
+    "sections": {
+      "classification": "Classification",
+      "amenities": "Amenities",
+      "features": "Features"
+    },
+    "amenities": {
+      "hasBalcony": "Balcony",
+      "hasTerrace": "Terrace",
+      "hasParking": "Parking",
+      "hasGarage": "Garage",
+      "hasSeparateKitchen": "Separate kitchen",
+      "hasStorage": "Storage",
+      "hasElevator": "Elevator",
+      "hasInteriorStaircase": "Interior staircase",
+      "hasWashingMachine": "Washing machine",
+      "hasFridge": "Fridge",
+      "hasStove": "Stove",
+      "hasOven": "Oven",
+      "hasAC": "Air conditioning",
+      "hasBlinds": "Blinds",
+      "hasArmoredDoors": "Armored doors",
+      "hasIntercom": "Intercom",
+      "hasInternet": "Internet",
+      "hasCableTV": "Cable TV"
+    },
+    "classification": {
+      "furnishing": "Furnishing",
+      "material": "Construction",
+      "condition": "Condition",
+      "sellerType": "Seller",
+      "heating": "Heating",
+      "ownership": "Ownership",
+      "windowType": "Windows"
+    },
+    "classificationValues": {
+      "unfurnished": "Unfurnished",
+      "semi_furnished": "Semi-furnished",
+      "furnished": "Furnished",
+      "luxury": "Luxury",
+      "brick": "Brick",
+      "concrete": "Concrete",
+      "bca": "AAC block",
+      "wood": "Wood",
+      "stone": "Stone",
+      "mixed": "Mixed",
+      "new_build": "New build",
+      "renovated": "Renovated",
+      "good": "Good",
+      "needs_renovation": "Needs renovation",
+      "under_construction": "Under construction",
+      "private_seller": "Private seller",
+      "agency": "Agency",
+      "developer": "Developer",
+      "central_gas": "Gas boiler",
+      "centralized": "Centralized",
+      "block_central": "Block heating",
+      "electric": "Electric",
+      "heat_pump": "Heat pump",
+      "solid_fuel": "Solid fuel",
+      "none": "None",
+      "personal": "Personal",
+      "company": "Company",
+      "pvc_double": "Double-glazed PVC",
+      "pvc_triple": "Triple-glazed PVC",
+      "aluminum": "Aluminum"
+    },
     "basicInfo": "Basic Information",
     "title": "Title",
     "slug": "Slug",
@@ -1248,6 +1316,7 @@
     "quote": "Quote"
   },
   "Common": {
+    "relations": "Relations",
     "cancel": "Cancel",
     "clear": "Clear",
     "filters": "Filters",

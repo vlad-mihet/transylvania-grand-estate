@@ -111,6 +111,12 @@ These files are byte-identical copies of the matching `apps/landing/public/image
 | `cities/targu-mures.jpg`  | `apps/landing/public/images/cities/targu-mures.jpg` |
 | `cities/timisoara.jpg`    | `apps/landing/public/images/cities/timisoara.jpg` |
 
+## Audio / Video (`apps/landing/public/videos/**`)
+
+| File | Track | Author / Performer | License |
+| --- | --- | --- | --- |
+| `videos/hero.mp4` (soundtrack) | Mozart — Piano Concerto no. 21 in C major, K. 467, II. Andante | Markus Staab (performer) | [CC BY 3.0](https://creativecommons.org/licenses/by/3.0/) — attribution surfaced at `apps/landing/public/media-credits.txt`; audio trimmed to the opening ~61s for the hero loop |
+
 ## Counts
 
 - Landing: 34 images (5 castles · 9 cities · 1 hero · 10 interiors · 5 nature · 4 towns)

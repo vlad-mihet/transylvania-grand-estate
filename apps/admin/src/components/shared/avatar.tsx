@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { useEffect, useState, type ReactNode } from "react";
+import { useState, type ReactNode } from "react";
 import { cn } from "@tge/utils";
 
 type AvatarSize = "sm" | "md" | "lg" | "xl";
@@ -64,13 +64,17 @@ export function Avatar({
   ring = "none",
 }: AvatarProps) {
   const [errored, setErrored] = useState(false);
+  const [prevSrc, setPrevSrc] = useState(src);
 
   // Reset the error gate when the caller swaps in a new `src` so a fresh URL
   // gets a fresh chance — without this, a row whose photo was just replaced
-  // would stay stuck on the fallback after one prior failure.
-  useEffect(() => {
+  // would stay stuck on the fallback after one prior failure. Adjusting state
+  // during render (React's "storing prior props" pattern) avoids the extra
+  // effect + cascading re-render the react-hooks rule flags.
+  if (src !== prevSrc) {
+    setPrevSrc(src);
     setErrored(false);
-  }, [src]);
+  }
 
   const showImage = !!src && !errored;
   const resolvedFallback =

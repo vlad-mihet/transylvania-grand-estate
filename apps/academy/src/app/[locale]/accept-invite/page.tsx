@@ -27,7 +27,10 @@ function AcceptInviteInner() {
   const searchParams = useSearchParams();
   const token = searchParams.get("token") ?? "";
   const [email, setEmail] = useState<string | null>(null);
-  const [invalid, setInvalid] = useState(false);
+  // Seed the "no token" invalid case from the lazy initializer (render-time) so
+  // the effect only does the async verify — keeps a synchronous setState out of
+  // the effect body (react-hooks).
+  const [invalid, setInvalid] = useState(() => !token);
   const accept = useAcceptInvite();
 
   const form = useForm<Values>({
@@ -40,10 +43,7 @@ function AcceptInviteInner() {
   );
 
   useEffect(() => {
-    if (!token) {
-      setInvalid(true);
-      return;
-    }
+    if (!token) return;
     apiFetch<{ email: string; expiresAt: string }>(
       "/academy/auth/invitations/verify",
       { method: "POST", body: { token }, skipAuth: true },

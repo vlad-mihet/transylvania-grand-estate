@@ -327,7 +327,7 @@ export const properties: Property[] = [
     type: "penthouse",
     status: "available",
     location: {
-      city: "Timisoara",
+      city: "Timișoara",
       citySlug: "timisoara",
       neighborhood: "Iosefin",
       address: {
@@ -470,7 +470,7 @@ export const properties: Property[] = [
     type: "estate",
     status: "available",
     location: {
-      city: "Brasov",
+      city: "Brașov",
       citySlug: "brasov",
       neighborhood: "Rasnov Area",
       address: {
@@ -1063,7 +1063,7 @@ export const properties: Property[] = [
     type: "palace",
     status: "reserved",
     location: {
-      city: "Timisoara",
+      city: "Timișoara",
       citySlug: "timisoara",
       neighborhood: "Iosefin",
       address: {
@@ -1218,7 +1218,7 @@ export const properties: Property[] = [
     type: "chalet",
     status: "available",
     location: {
-      city: "Brasov",
+      city: "Brașov",
       citySlug: "brasov",
       neighborhood: "Poiana Brasov",
       address: {
@@ -1647,7 +1647,7 @@ export const properties: Property[] = [
     type: "apartment",
     status: "available",
     location: {
-      city: "Timisoara",
+      city: "Timișoara",
       citySlug: "timisoara",
       neighborhood: "Fabric",
       address: {
@@ -1760,7 +1760,7 @@ export const properties: Property[] = [
     type: "house",
     status: "available",
     location: {
-      city: "Brasov",
+      city: "Brașov",
       citySlug: "brasov",
       neighborhood: "Tractorul",
       address: {
@@ -1981,7 +1981,7 @@ export const properties: Property[] = [
     type: "terrain",
     status: "available",
     location: {
-      city: "Timisoara",
+      city: "Timișoara",
       citySlug: "timisoara",
       neighborhood: "Dumbravita",
       address: {
@@ -2344,7 +2344,7 @@ export const properties: Property[] = [
     type: "apartment",
     status: "available",
     location: {
-      city: "Brasov",
+      city: "Brașov",
       citySlug: "brasov",
       neighborhood: "Centrul Civic",
       address: {
@@ -2472,7 +2472,7 @@ export const properties: Property[] = [
     type: "villa",
     status: "available",
     location: {
-      city: "Brasov",
+      city: "Brașov",
       citySlug: "brasov",
       neighborhood: "Sacele",
       address: {
@@ -2600,7 +2600,7 @@ export const properties: Property[] = [
     type: "penthouse",
     status: "available",
     location: {
-      city: "Brasov",
+      city: "Brașov",
       citySlug: "brasov",
       neighborhood: "Centrul Vechi",
       address: {
@@ -2729,7 +2729,7 @@ export const properties: Property[] = [
     type: "villa",
     status: "available",
     location: {
-      city: "Timisoara",
+      city: "Timișoara",
       citySlug: "timisoara",
       neighborhood: "Giroc",
       address: {
@@ -2859,7 +2859,7 @@ export const properties: Property[] = [
     type: "apartment",
     status: "available",
     location: {
-      city: "Timisoara",
+      city: "Timișoara",
       citySlug: "timisoara",
       neighborhood: "Iosefin",
       address: {
@@ -6794,7 +6794,7 @@ export const properties: Property[] = [
     type: "villa",
     status: "available",
     location: {
-      city: "Bucharest",
+      city: "București",
       citySlug: "bucuresti",
       neighborhood: "Pipera",
       address: {
@@ -6907,7 +6907,7 @@ export const properties: Property[] = [
     type: "penthouse",
     status: "available",
     location: {
-      city: "Bucharest",
+      city: "București",
       citySlug: "bucuresti",
       neighborhood: "Floreasca",
       address: {
@@ -7018,7 +7018,7 @@ export const properties: Property[] = [
     type: "estate",
     status: "available",
     location: {
-      city: "Bucharest",
+      city: "București",
       citySlug: "bucuresti",
       neighborhood: "Băneasa",
       address: {

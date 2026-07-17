@@ -89,12 +89,11 @@ function BrandPanel({ brand }: BrandPanelProps) {
   );
 
   const [draft, setDraft] = useState<string[] | null>(null);
-  // Sync local draft when the persisted list arrives or changes externally,
-  // but only when the user hasn't started editing — otherwise we'd clobber
-  // their in-progress changes on every refetch.
-  useEffect(() => {
-    if (draft === null) setDraft(persisted);
-  }, [persisted, draft]);
+  // Initialize the local draft from the persisted list once, the first render
+  // it's available. Adjusting state during render (React's documented pattern)
+  // instead of in an effect; the `draft === null` guard flips to false after
+  // the first set, so a background refetch never clobbers in-progress edits.
+  if (draft === null) setDraft(persisted);
 
   const list = draft ?? persisted;
 

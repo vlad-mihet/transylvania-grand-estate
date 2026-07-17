@@ -1,7 +1,7 @@
 import { getLocale, getTranslations } from "next-intl/server";
-import { fetchApi, fetchApiSafe } from "@tge/api-client";
+import { fetchApiSafe } from "@tge/api-client";
 import { mapApiProperties, mapApiArticles, mapApiCounties } from "@tge/api-client";
-import { fetchProperties } from "@/lib/properties";
+import { fetchPropertiesSafe } from "@/lib/properties";
 import type {
   ApiArticle,
   ApiCounty,
@@ -35,17 +35,26 @@ export default async function HomePage() {
   const locale = (await getLocale()) as Locale;
   const t = await getTranslations("HomePage");
 
-  const [propertiesRaw, cities, countiesRaw, articlesResult] = await Promise.all([
-    fetchProperties({ limit: 8, sort: "newest" }, locale),
-    fetchApi<City[]>("/cities?featured=true"),
-    fetchApi<ApiCounty[]>("/counties"),
-    fetchApiSafe<ApiArticle[]>(
-      "/articles?status=published&limit=6&sort=newest",
-    ),
-  ]);
+  // Every homepage section is decorative — a transient API error must degrade
+  // the section to empty, never 500 the whole page. All four fetches use the
+  // non-throwing `*Safe` variants and fall back to [].
+  const [propertiesResult, citiesResult, countiesResult, articlesResult] =
+    await Promise.all([
+      fetchPropertiesSafe({ limit: 8, sort: "newest" }, locale),
+      fetchApiSafe<City[]>("/cities?featured=true"),
+      fetchApiSafe<ApiCounty[]>("/counties"),
+      fetchApiSafe<ApiArticle[]>(
+        "/articles?status=published&limit=6&sort=newest",
+      ),
+    ]);
 
-  const featuredProperties = mapApiProperties(propertiesRaw);
-  const counties = mapApiCounties(countiesRaw);
+  const featuredProperties = mapApiProperties(
+    propertiesResult.ok ? propertiesResult.data : [],
+  );
+  const cities = citiesResult.ok ? citiesResult.data : [];
+  const counties = mapApiCounties(
+    countiesResult.ok ? countiesResult.data : [],
+  );
   const recentArticles = mapApiArticles(
     articlesResult.ok ? articlesResult.data : [],
   );

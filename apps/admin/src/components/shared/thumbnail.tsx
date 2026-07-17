@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { cn } from "@tge/utils";
 
 type ThumbnailSize = "sm" | "md" | "lg";
@@ -42,11 +42,15 @@ export function Thumbnail({
   className,
 }: ThumbnailProps) {
   const [errored, setErrored] = useState(false);
+  const [prevSrc, setPrevSrc] = useState(src);
 
-  // Reset on src change so a new URL gets a fresh attempt.
-  useEffect(() => {
+  // Reset on src change so a new URL gets a fresh attempt. Adjusting state
+  // during render (React's "storing prior props" pattern) avoids the extra
+  // effect + cascading re-render the react-hooks rule flags.
+  if (src !== prevSrc) {
+    setPrevSrc(src);
     setErrored(false);
-  }, [src]);
+  }
 
   const showImage = !!src && !errored;
 

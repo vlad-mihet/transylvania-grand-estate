@@ -1,3 +1,5 @@
+import fs from "node:fs";
+import path from "node:path";
 import { test, expect } from "./fixtures";
 
 test.describe("D-5 · property filters (desktop) [BUG-005/006/007/008 regressions]", () => {
@@ -22,25 +24,24 @@ test.describe("D-5 · property filters (desktop) [BUG-005/006/007/008 regression
     expect(filteredCount).toBeLessThanOrEqual(initialCount);
   });
 
-  test("BUG-005 evidence — Timisoara label in dropdown is missing diacritics", async ({
+  test("BUG-005/103/127 closed — Timișoara label in dropdown has diacritics", async ({
     page,
   }) => {
     await page.goto("/ro/properties");
     await page.getByRole("combobox").nth(0).click();
-    // Capture the actual rendered label of the Timisoara option.
+    // The city dropdown is now API-driven (BUG-103) with diacritic-correct seed
+    // names (BUG-127), so the label carries its proper ș.
     const timisoaraOption = page.getByRole("option", { name: /Timi.oara/ });
     const text = await timisoaraOption.textContent();
-    // Evidence assertion: this currently equals "Timisoara" (ASCII s, BUG-005).
-    // Flip to .toBe("Timișoara") once fixed.
-    expect(text?.trim()).toBe("Timisoara");
+    expect(text?.trim()).toBe("Timișoara");
   });
 
-  test("BUG-006 evidence — `propertyTypes` array exports `mansion` and `palace` types not in the schema (static check)", () => {
+  test("`propertyTypes` filter offers mansion + palace (now valid PropertyType enum values)", () => {
     // Static-source assertion — survives Select component variants and avoids
-    // Radix portal weirdness around dropdown items in the DOM.
-    const fs = require("node:fs") as typeof import("node:fs");
+    // Radix portal weirdness around dropdown items in the DOM. (BUG-006 closed:
+    // mansion/palace are legal enum values, so offering them is correct.)
     const src = fs.readFileSync(
-      require("node:path").resolve(
+      path.resolve(
         __dirname,
         "..",
         "..",

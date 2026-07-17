@@ -999,7 +999,7 @@
     "columnSource": "Source",
     "columnReceived": "Reçue",
     "filterSource": "Source",
-    "filterSourcePlaceholder": "ex. revery-contact",
+    "filterSourcePlaceholder": "ex. reveria-contact",
     "markRead": "Marquer comme lue",
     "archive": "Archiver",
     "reopen": "Rouvrir",
@@ -1018,7 +1018,9 @@
     "typeLabel": {
       "general": "Général",
       "property": "Propriété",
-      "developer": "Promoteur"
+      "developer": "Promoteur",
+      "viewing": "Visite",
+      "valuation": "Évaluation"
     },
     "sectionLabel": {
       "type": "Type",
@@ -1147,6 +1149,72 @@
     "irccHint": "L'IRCC change chaque trimestre (janv., avr., juil., oct.). Mise à jour manuelle."
   },
   "PropertyForm": {
+    "sections": {
+      "classification": "Classification",
+      "amenities": "Équipements",
+      "features": "Caractéristiques"
+    },
+    "amenities": {
+      "hasBalcony": "Balcon",
+      "hasTerrace": "Terrasse",
+      "hasParking": "Parking",
+      "hasGarage": "Garage",
+      "hasSeparateKitchen": "Cuisine séparée",
+      "hasStorage": "Rangement",
+      "hasElevator": "Ascenseur",
+      "hasInteriorStaircase": "Escalier intérieur",
+      "hasWashingMachine": "Lave-linge",
+      "hasFridge": "Réfrigérateur",
+      "hasStove": "Cuisinière",
+      "hasOven": "Four",
+      "hasAC": "Climatisation",
+      "hasBlinds": "Stores",
+      "hasArmoredDoors": "Portes blindées",
+      "hasIntercom": "Interphone",
+      "hasInternet": "Internet",
+      "hasCableTV": "Télévision par câble"
+    },
+    "classification": {
+      "furnishing": "Ameublement",
+      "material": "Construction",
+      "condition": "État",
+      "sellerType": "Type de vendeur",
+      "heating": "Chauffage",
+      "ownership": "Propriété",
+      "windowType": "Fenêtres"
+    },
+    "classificationValues": {
+      "unfurnished": "Non meublé",
+      "semi_furnished": "Semi-meublé",
+      "furnished": "Meublé",
+      "luxury": "Luxe",
+      "brick": "Brique",
+      "concrete": "Béton",
+      "bca": "Béton cellulaire",
+      "wood": "Bois",
+      "stone": "Pierre",
+      "mixed": "Mixte",
+      "new_build": "Neuf",
+      "renovated": "Rénové",
+      "good": "Bon",
+      "needs_renovation": "À rénover",
+      "under_construction": "En construction",
+      "private_seller": "Particulier",
+      "agency": "Agence",
+      "developer": "Promoteur",
+      "central_gas": "Chaudière à gaz",
+      "centralized": "Centralisé",
+      "block_central": "Chauffage collectif",
+      "electric": "Électrique",
+      "heat_pump": "Pompe à chaleur",
+      "solid_fuel": "Combustible solide",
+      "none": "Aucun",
+      "personal": "Personnelle",
+      "company": "Société",
+      "pvc_double": "PVC double vitrage",
+      "pvc_triple": "PVC triple vitrage",
+      "aluminum": "Aluminium"
+    },
     "basicInfo": "Informations de base",
     "title": "Titre",
     "slug": "Slug",
@@ -1248,6 +1316,7 @@
     "quote": "Citation"
   },
   "Common": {
+    "relations": "Relations",
     "cancel": "Annuler",
     "clear": "Effacer",
     "filters": "Filtres",

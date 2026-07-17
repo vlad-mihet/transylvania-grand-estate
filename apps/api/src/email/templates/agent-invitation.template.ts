@@ -7,12 +7,19 @@
 
 export type AgentInvitationLocale = 'en' | 'ro' | 'fr' | 'de';
 
+// Which kind of invitee this is, so the intro copy is role-appropriate: an
+// AGENT joins "as a real estate agent"; an ADMIN/EDITOR joins "the TGE team".
+// (BUG-120: platform users were told they were joining "as a real estate
+// agent" because both flows shared the agent template verbatim.)
+export type InvitationRoleKind = 'agent' | 'staff';
+
 export interface AgentInvitationInput {
   firstName: string;
   acceptUrl: string;
   expiresAt: Date;
   invitedByName?: string;
   locale?: AgentInvitationLocale;
+  roleKind?: InvitationRoleKind;
 }
 
 export interface RenderedEmail {
@@ -29,7 +36,7 @@ const COPY: Record<
   {
     subject: string;
     heading: (firstName: string) => string;
-    intro: (invitedBy: string) => string;
+    intro: (invitedBy: string, roleKind: InvitationRoleKind) => string;
     cta: string;
     expiresNote: (date: string) => string;
     fallback: string;
@@ -39,8 +46,10 @@ const COPY: Record<
   en: {
     subject: 'You’ve been invited to join TGE',
     heading: (firstName) => `Welcome, ${firstName}!`,
-    intro: (invitedBy) =>
-      `${invitedBy} invited you to join TGE as a real estate agent. Click the button below to set up your account — you can sign in with Google or set a password.`,
+    intro: (invitedBy, roleKind) =>
+      `${invitedBy} invited you to join ${
+        roleKind === 'agent' ? 'TGE as a real estate agent' : 'the TGE team'
+      }. Click the button below to set up your account — you can sign in with Google or set a password.`,
     cta: 'Accept invitation',
     expiresNote: (date) => `This link expires on ${date}.`,
     fallback:
@@ -50,8 +59,10 @@ const COPY: Record<
   ro: {
     subject: 'Ai fost invitat să te alături TGE',
     heading: (firstName) => `Bun venit, ${firstName}!`,
-    intro: (invitedBy) =>
-      `${invitedBy} te-a invitat să te alături TGE ca agent imobiliar. Apasă butonul de mai jos pentru a-ți configura contul — te poți autentifica prin Google sau îți poți seta o parolă.`,
+    intro: (invitedBy, roleKind) =>
+      `${invitedBy} te-a invitat să te alături ${
+        roleKind === 'agent' ? 'TGE ca agent imobiliar' : 'echipei TGE'
+      }. Apasă butonul de mai jos pentru a-ți configura contul — te poți autentifica prin Google sau îți poți seta o parolă.`,
     cta: 'Acceptă invitația',
     expiresNote: (date) => `Acest link expiră pe ${date}.`,
     fallback:
@@ -61,8 +72,12 @@ const COPY: Record<
   fr: {
     subject: 'Vous avez été invité à rejoindre TGE',
     heading: (firstName) => `Bienvenue, ${firstName} !`,
-    intro: (invitedBy) =>
-      `${invitedBy} vous a invité à rejoindre TGE en tant qu’agent immobilier. Cliquez sur le bouton ci-dessous pour configurer votre compte — vous pouvez vous connecter avec Google ou définir un mot de passe.`,
+    intro: (invitedBy, roleKind) =>
+      `${invitedBy} vous a invité à rejoindre ${
+        roleKind === 'agent'
+          ? 'TGE en tant qu’agent immobilier'
+          : 'l’équipe TGE'
+      }. Cliquez sur le bouton ci-dessous pour configurer votre compte — vous pouvez vous connecter avec Google ou définir un mot de passe.`,
     cta: "Accepter l'invitation",
     expiresNote: (date) => `Ce lien expire le ${date}.`,
     fallback:
@@ -72,8 +87,12 @@ const COPY: Record<
   de: {
     subject: 'Sie wurden eingeladen, TGE beizutreten',
     heading: (firstName) => `Willkommen, ${firstName}!`,
-    intro: (invitedBy) =>
-      `${invitedBy} hat Sie eingeladen, TGE als Immobilienmakler beizutreten. Klicken Sie auf die Schaltfläche unten, um Ihr Konto einzurichten — Sie können sich mit Google anmelden oder ein Passwort festlegen.`,
+    intro: (invitedBy, roleKind) =>
+      `${invitedBy} hat Sie eingeladen, ${
+        roleKind === 'agent'
+          ? 'TGE als Immobilienmakler'
+          : 'dem TGE-Team'
+      } beizutreten. Klicken Sie auf die Schaltfläche unten, um Ihr Konto einzurichten — Sie können sich mit Google anmelden oder ein Passwort festlegen.`,
     cta: 'Einladung annehmen',
     expiresNote: (date) => `Dieser Link läuft am ${date} ab.`,
     fallback:
@@ -113,6 +132,7 @@ export function renderAgentInvitation(
   input: AgentInvitationInput,
 ): RenderedEmail {
   const locale: AgentInvitationLocale = input.locale ?? 'ro';
+  const roleKind: InvitationRoleKind = input.roleKind ?? 'agent';
   const copy = COPY[locale];
   const invitedBy = input.invitedByName ?? INVITED_BY_DEFAULT[locale];
   const expires = new Intl.DateTimeFormat(DATE_LOCALE_MAP[locale], {
@@ -132,7 +152,7 @@ export function renderAgentInvitation(
       <tr><td>
         <h1 style="margin:0 0 16px;font-size:24px;font-weight:600;">${copy.heading(safeFirstName)}</h1>
         <p style="margin:0 0 24px;font-size:15px;line-height:1.55;color:#3a3a3a;">
-          ${copy.intro(safeInvitedBy)}
+          ${copy.intro(safeInvitedBy, roleKind)}
         </p>
         <p style="margin:0 0 32px;">
           <a href="${safeUrl}" style="display:inline-block;background:#111;color:#fff;text-decoration:none;padding:12px 22px;border-radius:8px;font-weight:500;font-size:15px;">
@@ -153,7 +173,7 @@ export function renderAgentInvitation(
   const text = [
     copy.heading(input.firstName),
     '',
-    copy.intro(invitedBy),
+    copy.intro(invitedBy, roleKind),
     '',
     `${copy.cta}: ${input.acceptUrl}`,
     '',

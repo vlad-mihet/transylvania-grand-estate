@@ -1,5 +1,5 @@
 import { getLocale, getTranslations } from "next-intl/server";
-import { fetchApi } from "@tge/api-client";
+import { fetchApiSafe } from "@tge/api-client";
 import { mapApiProperties } from "@tge/api-client";
 import type { City, Developer, Testimonial, ApiProperty, Locale } from "@tge/types";
 import { HomeHeroWithSplash } from "@/components/sections/home-hero-with-splash";
@@ -18,13 +18,24 @@ export default async function HomePage() {
   const t = await getTranslations("HomePage");
   const locale = (await getLocale()) as Locale;
 
-  const [propertiesRaw, cities, developers, testimonials] = await Promise.all([
-    fetchApi<ApiProperty[]>(`/properties?featured=true&limit=6&locale=${locale}`),
-    fetchApi<City[]>("/cities?featured=true"),
-    fetchApi<Developer[]>("/developers?featured=true"),
-    fetchApi<Testimonial[]>("/testimonials"),
-  ]);
-  const featuredProperties = mapApiProperties(propertiesRaw);
+  // All four are decorative homepage sections — a transient API error must
+  // degrade the section to empty, never 500 the whole page. fetchApiSafe
+  // returns a discriminated result instead of throwing; we fall back to [].
+  const [propertiesRes, citiesRes, developersRes, testimonialsRes] =
+    await Promise.all([
+      fetchApiSafe<ApiProperty[]>(
+        `/properties?featured=true&limit=6&locale=${locale}`,
+      ),
+      fetchApiSafe<City[]>("/cities?featured=true"),
+      fetchApiSafe<Developer[]>("/developers?featured=true"),
+      fetchApiSafe<Testimonial[]>("/testimonials"),
+    ]);
+  const cities = citiesRes.ok ? citiesRes.data : [];
+  const developers = developersRes.ok ? developersRes.data : [];
+  const testimonials = testimonialsRes.ok ? testimonialsRes.data : [];
+  const featuredProperties = mapApiProperties(
+    propertiesRes.ok ? propertiesRes.data : [],
+  );
 
   const showcaseItems = [
     {

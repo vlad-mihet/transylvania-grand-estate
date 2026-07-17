@@ -17,10 +17,10 @@ export function NavProgress({ pending }: { pending: boolean }) {
   const [visible, setVisible] = useState(false);
 
   useEffect(() => {
-    if (!pending) {
-      setVisible(false);
-      return;
-    }
+    // Only the pending=true branch schedules work; when pending is false the
+    // render gate below hides the bar, so no synchronous setState is needed in
+    // the effect body (react-hooks). Cleanup resets `visible` on pending change.
+    if (!pending) return;
     // Debounce so instant transitions don't flash the bar.
     const show = setTimeout(() => setVisible(true), 100);
     // Safety net: clear after 8s even if pending is stuck on.
@@ -28,8 +28,13 @@ export function NavProgress({ pending }: { pending: boolean }) {
     return () => {
       clearTimeout(show);
       clearTimeout(hide);
+      setVisible(false);
     };
   }, [pending]);
+
+  // Gate on `pending` too, so a false→true→false flip within the debounce
+  // window can never leave a stale bar showing.
+  const showBar = pending && visible;
 
   return (
     <div
@@ -38,7 +43,7 @@ export function NavProgress({ pending }: { pending: boolean }) {
     >
       <div
         className={`h-full bg-[color:var(--color-primary)] transition-all duration-300 ${
-          visible ? "w-2/3 opacity-100" : "w-0 opacity-0"
+          showBar ? "w-2/3 opacity-100" : "w-0 opacity-0"
         }`}
       />
     </div>
@@ -54,11 +59,20 @@ export function NavProgressOnRouteChange() {
   const pathname = usePathname();
   const [pending, setPending] = useState(false);
 
-  useEffect(() => {
+  // Flip `pending` true on a route change during render (React's "storing prior
+  // props" pattern), then let the effect below schedule the auto-clear timer —
+  // keeps a synchronous setState out of the effect body (react-hooks).
+  const [prevPathname, setPrevPathname] = useState(pathname);
+  if (pathname !== prevPathname) {
+    setPrevPathname(pathname);
     setPending(true);
+  }
+
+  useEffect(() => {
+    if (!pending) return;
     const t = setTimeout(() => setPending(false), 400);
     return () => clearTimeout(t);
-  }, [pathname]);
+  }, [pending]);
 
   return <NavProgress pending={pending} />;
 }

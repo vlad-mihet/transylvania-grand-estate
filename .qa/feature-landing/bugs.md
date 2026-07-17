@@ -94,7 +94,7 @@ End-to-end QA campaign on the TGE landing app (`apps/landing`). Format mirrors `
 - **Evidence:** compare `header.tsx:228-237` (desktop) vs `mobile-nav.tsx:94-123` (mobile).
 - **Suggested fix:** add a top-level link to `/properties` either as a new "Properties" entry in the mobile nav, or as a "View All" row inside the For Sale collapse.
 
-### BUG-005 — `cityLabels` in `PropertyFilterPanel` ships ASCII Romanian city names "Timisoara" / "Brasov"
+### BUG-005 — `cityLabels` in `PropertyFilterPanel` ships ASCII Romanian city names "Timisoara" / "Brasov" — **FIXED 2026-07-17 (full-sweep BUG-103 @83e69b1 — city list now derived from `/cities` with diacritics)**
 - **Severity:** Major
 - **App/Area:** landing (`property-filter-panel.tsx`)
 - **Phase:** D-1
@@ -110,7 +110,7 @@ End-to-end QA campaign on the TGE landing app (`apps/landing`). Format mirrors `
 - **Suspected cause:** the labels are hardcoded English-spelling fallbacks rather than translated or sourced from `/cities`.
 - **Suggested fix:** either (a) change the literals to "Timișoara" / "Brașov" (still locale-agnostic but correct in Romanian), or — better — (b) drop the static `cityLabels` map and source the dropdown from the same `/cities` API call already used by Header/MobileNav (so labels follow the locale). Note: the same labels surface in `listing-content.tsx:148-152` via `cityLabels[cityValue]` for active-filter chips, so any fix must update both sites.
 
-### BUG-006 — `PropertyFilterPanel` hardcoded city list (5 entries) is far smaller than the seeded property cities; many cities ungated by filter
+### BUG-006 — `PropertyFilterPanel` hardcoded city list (5 entries) is far smaller than the seeded property cities; many cities ungated by filter — **FIXED 2026-07-17 (full-sweep BUG-103 @83e69b1 — cities derived from the listings, no hardcoded map)**
 - **Severity:** Major
 - **App/Area:** landing
 - **Phase:** D-1
@@ -133,7 +133,7 @@ End-to-end QA campaign on the TGE landing app (`apps/landing`). Format mirrors `
 - **Actual:** `apps/landing/src/components/property/property-filter-panel.tsx:35-45` adds `mansion` + `palace`. The header / mobile-nav lists exclude both (`header.tsx:18-26`, `mobile-nav.tsx:15-23`). The `Common.propertyTypes` translations probably do not include `mansion`/`palace` keys either, so `tTypes("mansion")` will fall back to the key string. Selecting them filters to zero results.
 - **Suggested fix:** trim the array to the same 7 types used in header/mobile-nav. If "mansion" / "palace" are aspirational types, add them to the schema first (and to Common.propertyTypes translations across all 4 locales).
 
-### BUG-008 — Properties listing developer filter compares **slugified developer name** to URL slug instead of `developerSlug`
+### BUG-008 — Properties listing developer filter compares **slugified developer name** to URL slug instead of `developerSlug` — **FIXED 2026-07-17 (full-sweep legacy-recheck #2 — no `slugify` in landing; `properties/page.tsx:31-46` uses `params.developer` as the slug directly)**
 - **Severity:** Major
 - **App/Area:** landing (`listing-content.tsx`)
 - **Phase:** D-1
@@ -144,7 +144,7 @@ End-to-end QA campaign on the TGE landing app (`apps/landing`). Format mirrors `
 - **Actual:** filter logic at `apps/landing/src/app/[locale]/properties/listing-content.tsx:60-67` compares `developerName?.toLowerCase().replace(/\s+/g, "-") === developer`. This is a poor-man's slugifier — it loses diacritics, hyphens-from-original-slug differences, and any character normalization the API does. For developers whose slug is not a literal whitespace-to-hyphen of the name (e.g. "Atrium Boutique" → slug `atrium-boutique` happens to match, but "Carpathia Imobiliare" with diacritics or capitalization quirks may not), the filter returns empty. The DTO already has `developerSlug` available alongside `developerId`/`developerName`.
 - **Suggested fix:** change the comparison to `p.developerSlug === developer`. Verify `Property` (`@tge/types`) exposes `developerSlug`; if not, plumb it through `mapApiProperty`.
 
-### BUG-009 — Footer "Privacy" + "Terms" are static `<span>`s, not links — visually clickable, functionally inert
+### BUG-009 — Footer "Privacy" + "Terms" are static `<span>`s, not links — visually clickable, functionally inert — **FIXED 2026-07-17 (full-sweep legacy-recheck #3 — `footer.tsx` renders real `<Link>`s to /privacy, /terms, /cookies)**
 - **Severity:** Major
 - **App/Area:** landing (`footer.tsx`)
 - **Phase:** D-1
@@ -200,7 +200,7 @@ End-to-end QA campaign on the TGE landing app (`apps/landing`). Format mirrors `
 - **Evidence:** `apps/landing/src/components/layout/footer.tsx:22` (`const MAIN_OFFICE_LOCATION = "Cluj-Napoca, Cluj, România"`) → rendered at line 96 unconditionally.
 - **Suggested fix:** move into translations (`Footer.officeLocation`) so each locale can render the localized form. Romanian "România" is correct in `ro`; English page should likely show "Romania".
 
-### BUG-014 — Footer social links use placeholder URLs (`instagram.com/tge`, `facebook.com/tge`, `linkedin.com/company/tge`, `youtube.com/@tge`)
+### BUG-014 — Footer social links use placeholder URLs (`instagram.com/tge`, `facebook.com/tge`, `linkedin.com/company/tge`, `youtube.com/@tge`) — **RESOLVED 2026-07-17 (full-sweep BUG-104 @53ffb7d — placeholder handles removed; "Follow us" column hidden until real profile URLs exist)**
 - **Severity:** Minor (verification needed — these may be real handles)
 - **App/Area:** landing (`footer.tsx`)
 - **Phase:** D-1
@@ -218,7 +218,7 @@ End-to-end QA campaign on the TGE landing app (`apps/landing`). Format mirrors `
 - **Actual:** the Textarea has no `required` attribute (`apps/landing/src/components/contact/contact-form.tsx:139-145`). Form posts to the API; the API responds with a Zod error (`message: must be ≥10 characters`); the form surfaces the raw server error in the red strip. Functional, but UX is degraded vs. the inquiry modal which does mark the textarea `required minLength={10}` (`packages/ui/src/components/inquiry/inquiry-modal.tsx:198-206`).
 - **Suggested fix:** add `required minLength={10}` to the Textarea, matching the modal.
 
-### BUG-016 — `ContactForm` does not pre-select property when navigated with `?property=<slug>` URL param
+### BUG-016 — `ContactForm` does not pre-select property when navigated with `?property=<slug>` URL param — **FIXED 2026-07-17 (verified in full-sweep — `contact-form.tsx:46-52` reads `searchParams.get("property")` and pre-selects; explicit "BUG-016 fix" note in source)**
 - **Severity:** Minor
 - **App/Area:** landing (`contact-form.tsx`)
 - **Phase:** D-1
@@ -230,7 +230,7 @@ End-to-end QA campaign on the TGE landing app (`apps/landing`). Format mirrors `
 - **Suspected cause:** the form was authored for the bare contact route and never extended to consume the URL.
 - **Suggested fix:** read `useSearchParams().get("property")` on mount and seed `propertySlug`. Optionally also surface a "Pre-filled from listing X" hint above the form.
 
-### BUG-017 — Multiple SSR pages call `fetchApi` (which throws) on parallel data fetches without a guard — single API hiccup on any sub-fetch surfaces as a 500 on the whole page
+### BUG-017 — Multiple SSR pages call `fetchApi` (which throws) on parallel data fetches without a guard — single API hiccup on any sub-fetch surfaces as a 500 on the whole page — **FIXED 2026-07-17 (full-sweep BUG-105 @a6e3065 — every decorative SSR fetch on landing + revery home/list pages migrated to `fetchApiSafe`; upgraded to Critical when Phase 5 confirmed both public homes 500 on API-down)**
 - **Severity:** Major (per design choice; degrades to error.tsx fallback)
 - **App/Area:** landing (homepage, cities listing, developers listing, contact, transylvania)
 - **Phase:** D-1

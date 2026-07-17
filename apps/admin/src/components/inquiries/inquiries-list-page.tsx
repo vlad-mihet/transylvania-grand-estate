@@ -351,9 +351,14 @@ export function InquiriesListPage({ title }: InquiriesListPageProps = {}) {
   });
 
   const openInquiry = (inq: Inquiry) => {
-    setViewing(inq);
     if (inq.status === "new") {
       statusMutation.mutate({ id: inq.id, status: "read" });
+      // Reflect the read status in the sheet header immediately — otherwise its
+      // own badge stayed "NOU" until the sheet was reopened (BUG-112). The row
+      // badge already updates via the list refetch; this keeps the sheet in sync.
+      setViewing({ ...inq, status: "read" });
+    } else {
+      setViewing(inq);
     }
   };
 

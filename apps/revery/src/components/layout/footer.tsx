@@ -7,11 +7,22 @@ import { Container } from "./container";
 import { Instagram, Facebook, Linkedin, Youtube, Phone, Mail } from "lucide-react";
 import { CONTACT_PHONE } from "@/lib/contact";
 
-const socialLinks = [
-  { platform: "instagram" as const, icon: Instagram, url: "https://instagram.com/revery" },
-  { platform: "facebook" as const, icon: Facebook, url: "https://facebook.com/revery" },
-  { platform: "linkedin" as const, icon: Linkedin, url: "https://linkedin.com/company/revery" },
-  { platform: "youtube" as const, icon: Youtube, url: "https://youtube.com/@revery" },
+const socialIcons = {
+  instagram: Instagram,
+  facebook: Facebook,
+  linkedin: Linkedin,
+  youtube: Youtube,
+} as const;
+
+// BUG-104: the /revery handles below are placeholders — no real profiles
+// exist yet, so linking them 404s. The "Follow us" column is hidden while
+// this list is empty (see render guard below). To re-enable: uncomment an
+// entry once its real profile URL is live.
+const socialLinks: { platform: keyof typeof socialIcons; url: string }[] = [
+  // { platform: "instagram", url: "https://instagram.com/<real-handle>" },
+  // { platform: "facebook", url: "https://facebook.com/<real-handle>" },
+  // { platform: "linkedin", url: "https://linkedin.com/company/<real-handle>" },
+  // { platform: "youtube", url: "https://youtube.com/@<real-handle>" },
 ];
 
 const contact = {
@@ -140,25 +151,30 @@ export function Footer() {
           </div>
 
           {/* Social */}
-          <div>
-            <h3 className="text-sm font-semibold text-foreground uppercase tracking-wide mb-3">
-              {t("followUs")}
-            </h3>
-            <nav aria-label={t("social.navLabel")} className="flex gap-3">
-              {socialLinks.map((social) => (
-                <a
-                  key={social.platform}
-                  href={social.url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  aria-label={t(`social.${social.platform}`)}
-                  className="w-9 h-9 flex items-center justify-center rounded-full border border-border text-muted-foreground hover:text-primary hover:border-primary/30 transition-colors"
-                >
-                  <social.icon className="h-4 w-4" aria-hidden="true" />
-                </a>
-              ))}
-            </nav>
-          </div>
+          {socialLinks.length > 0 && (
+            <div>
+              <h3 className="text-sm font-semibold text-foreground uppercase tracking-wide mb-3">
+                {t("followUs")}
+              </h3>
+              <nav aria-label={t("social.navLabel")} className="flex gap-3">
+                {socialLinks.map((social) => {
+                  const Icon = socialIcons[social.platform];
+                  return (
+                    <a
+                      key={social.platform}
+                      href={social.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      aria-label={t(`social.${social.platform}`)}
+                      className="w-9 h-9 flex items-center justify-center rounded-full border border-border text-muted-foreground hover:text-primary hover:border-primary/30 transition-colors"
+                    >
+                      <Icon className="h-4 w-4" aria-hidden="true" />
+                    </a>
+                  );
+                })}
+              </nav>
+            </div>
+          )}
         </div>
       </Container>
 

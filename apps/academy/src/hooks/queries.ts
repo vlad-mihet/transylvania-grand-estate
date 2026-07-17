@@ -122,6 +122,10 @@ export type LessonDetail = {
  */
 function useIsClient(): boolean {
   const [isClient, setIsClient] = useState(false);
+  // Canonical SSR-safe "have we hydrated yet" flag: it MUST start false on the
+  // server + first client render and flip true only after mount, so this can't
+  // move to render-time without defeating its purpose. Runs once.
+  // eslint-disable-next-line react-hooks/set-state-in-effect
   useEffect(() => setIsClient(true), []);
   return isClient;
 }

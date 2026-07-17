@@ -14,12 +14,18 @@ import { randomUUID } from 'node:crypto';
 import { Cron, CronExpression } from '@nestjs/schedule';
 import { PrismaService } from '../prisma/prisma.service';
 import { AuditService } from '../audit/audit.service';
+import { paginate } from '../common/utils/pagination.util';
 import { LoginDto } from './dto/login.dto';
 import { RegisterDto } from './dto/register.dto';
 import { ChangePasswordDto } from './dto/change-password.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import type { ListUsersDto } from './dto/list-users.dto';
 import type { BulkUserActionDto } from './dto/bulk-user-action.dto';
+
+// Upper bound on a single paginated users pull. The admin People hub requests
+// limit=500; the team is small, so this cap is generous headroom, not a real
+// page size.
+const USERS_LIST_CAP = 1000;
 
 /**
  * Shape returned by every auth endpoint and used to hydrate JWT payloads.
@@ -214,10 +220,38 @@ export class AuthService {
         ];
       }
     }
+    const orderBy: Prisma.AdminUserOrderByWithRelationInput[] = [
+      { role: 'asc' },
+      { name: 'asc' },
+    ];
+    const include = { agent: { select: { id: true } } } as const;
+
+    // Paginate when the caller asks (page/limit) so the admin People hub can
+    // read `meta.total` for its KPI; otherwise keep the historical bare-array
+    // response. Mirrors the /agents list contract.
+    if (filters.page !== undefined || filters.limit !== undefined) {
+      const page = filters.page ?? 1;
+      const limit = Math.min(filters.limit ?? 50, USERS_LIST_CAP);
+      const result = await paginate(
+        (skip, take) =>
+          this.prisma.adminUser.findMany({
+            where,
+            orderBy,
+            include,
+            skip,
+            take,
+          }),
+        () => this.prisma.adminUser.count({ where }),
+        page,
+        limit,
+      );
+      return { ...result, data: result.data.map((u) => this.shapeListRow(u)) };
+    }
+
     const rows = await this.prisma.adminUser.findMany({
       where,
-      orderBy: [{ role: 'asc' }, { name: 'asc' }],
-      include: { agent: { select: { id: true } } },
+      orderBy,
+      include,
     });
     return rows.map((u) => this.shapeListRow(u));
   }

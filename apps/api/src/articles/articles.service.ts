@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
-import { Prisma } from '@prisma/client';
+import { AdminRole, ArticleStatus, Prisma } from '@prisma/client';
+import type { CurrentUserPayload } from '../common/decorators/user.decorator';
 import { PrismaService } from '../prisma/prisma.service';
 import { UploadsService } from '../uploads/uploads.service';
 import { CreateArticleDto } from './dto/create-article.dto';
@@ -19,13 +20,32 @@ export class ArticlesService {
     private uploads: UploadsService,
   ) {}
 
-  async findAll(query: QueryArticleDto) {
+  /**
+   * Only editors and above may see unpublished (draft) articles. Public and
+   * unauthenticated callers — and AGENT role — are always scoped to published.
+   */
+  private canSeeUnpublished(user?: CurrentUserPayload | null): boolean {
+    return (
+      user?.role === AdminRole.EDITOR ||
+      user?.role === AdminRole.ADMIN ||
+      user?.role === AdminRole.SUPER_ADMIN
+    );
+  }
+
+  async findAll(query: QueryArticleDto, user?: CurrentUserPayload | null) {
     const { page = 1, limit = 12, category, status, search, sort } = query;
 
     const where: Prisma.ArticleWhereInput = {};
 
     if (category) where.category = category;
-    if (status) where.status = status;
+    if (this.canSeeUnpublished(user)) {
+      // Editors may filter by any status (or omit it to see everything).
+      if (status) where.status = status;
+    } else {
+      // Public callers only ever see published — a `status` query param
+      // cannot widen this (BUG-109: drafts were readable via the open API).
+      where.status = ArticleStatus.published;
+    }
     if (search) {
       where.OR = [
         ...localizedJsonContainsAny('title', search).map((filter) => ({
@@ -49,9 +69,19 @@ export class ArticlesService {
     );
   }
 
-  async findBySlug(slug: string) {
+  async findBySlug(slug: string, user?: CurrentUserPayload | null) {
+    // Public callers get a 404 for a draft slug rather than the draft itself
+    // (BUG-109). Editors resolve the row regardless of status.
+    if (this.canSeeUnpublished(user)) {
+      return ensureFound(
+        this.prisma.article.findUnique({ where: { slug } }),
+        'Article',
+      );
+    }
     return ensureFound(
-      this.prisma.article.findUnique({ where: { slug } }),
+      this.prisma.article.findFirst({
+        where: { slug, status: ArticleStatus.published },
+      }),
       'Article',
     );
   }

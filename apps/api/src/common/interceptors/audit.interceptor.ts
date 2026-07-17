@@ -302,6 +302,14 @@ export class AuditInterceptor implements NestInterceptor {
   ): AuditMetadata | null {
     const [path] = rawUrl.split('?');
     const segments = path.split('/').filter(Boolean);
+    // Requests arrive with the global prefix applied (main.ts:
+    // setGlobalPrefix('api/v1')), so req.url is `/api/v1/<resource>/...`.
+    // Strip a leading `api/v<N>` before dispatching — otherwise `head` is
+    // always 'api', nothing below matches, and every POST/PATCH/DELETE goes
+    // silently unaudited (only the auth service's own recordCustom() rows land).
+    if (segments[0] === 'api' && /^v\d+$/.test(segments[1] ?? '')) {
+      segments.splice(0, 2);
+    }
     if (segments.length === 0) return null;
 
     const [head, second, third] = segments;

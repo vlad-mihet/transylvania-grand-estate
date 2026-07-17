@@ -8,9 +8,11 @@ import { Sentry } from '../common/sentry/sentry.init';
 import { CreateInquiryDto } from './dto/create-inquiry.dto';
 import { QueryInquiryDto } from './dto/query-inquiry.dto';
 import { UpdateInquiryStatusDto } from './dto/update-inquiry-status.dto';
+import { Cron, CronExpression } from '@nestjs/schedule';
 import { paginate } from '../common/utils/pagination.util';
 import { ensureFound } from '../common/utils/ensure-found.util';
 import { ensureRef } from '../common/utils/ensure-ref.util';
+import { withAdvisoryLock } from '../common/utils/advisory-lock.util';
 import { SiteId, type SiteContext } from '../common/site/site.types';
 import type { CurrentUserPayload } from '../common/decorators/user.decorator';
 import type { InquirySubmitterLocale } from '../email/templates/inquiry-submitter-confirmation.template';
@@ -409,13 +411,38 @@ export class InquiriesService {
 
   async remove(id: string) {
     await this.ensureExists(id);
-    // Soft-delete: flip `deletedAt` instead of dropping the row. A scheduled
-    // 90-day cron will hard-purge to satisfy GDPR right-to-erasure (TODO,
-    // tracked in Wave B-4 plan); for now the column gives operators a
-    // recoverable trash-can.
+    // Soft-delete: flip `deletedAt` instead of dropping the row. The column
+    // gives operators a recoverable trash-can; `purgeSoftDeleted()` below
+    // hard-deletes rows past the GDPR retention window.
     return this.prisma.inquiry.update({
       where: { id },
       data: { deletedAt: new Date() },
+    });
+  }
+
+  // GDPR right-to-erasure retention window: soft-deleted inquiries carry PII
+  // (name/email/phone/message) and must be hard-purged, not kept indefinitely.
+  private static readonly SOFT_DELETE_RETENTION_DAYS = 90;
+
+  /**
+   * Daily hard-purge of inquiries soft-deleted longer than the retention
+   * window. Satisfies GDPR right-to-erasure — the soft-delete trash-can is
+   * recoverable for 90 days, then the row (and its PII) is dropped for good.
+   * Advisory-locked so overlapping instances don't double-run.
+   */
+  @Cron(CronExpression.EVERY_DAY_AT_3AM)
+  async purgeSoftDeleted(): Promise<void> {
+    await withAdvisoryLock(this.prisma, 'inquiries.purge', async () => {
+      const cutoff = new Date(
+        Date.now() -
+          InquiriesService.SOFT_DELETE_RETENTION_DAYS * 24 * 60 * 60 * 1000,
+      );
+      const { count } = await this.prisma.inquiry.deleteMany({
+        where: { deletedAt: { not: null, lt: cutoff } },
+      });
+      if (count > 0) {
+        this.logger.log({ event: 'inquiries.purged_bulk', count });
+      }
     });
   }
 

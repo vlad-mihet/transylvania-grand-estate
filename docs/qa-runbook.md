@@ -5,6 +5,7 @@ A re-runnable record of the exploratory QA performed on 2026-04-17 against the `
 **Companion files:**
 - `scripts/qa-smoke.sh` — automated runner for every API-level and page-smoke check described below. Exit 0 = all real assertions passed (known-bug WARNs are allowed). See `scripts/qa-smoke.sh --help`.
 - `docs/qa-report-2026-04-17.md` — the bug report from the first run. Numbered issues (Blocker #1, Critical #3, etc.) in this runbook cross-reference that report.
+- `.qa/full-sweep-2026-07/` — the full-platform end-to-end sweep (admin + all public sites + API, 28 findings BUG-101..128). `run.md` is the campaign log, `bugs.md` the findings ledger with per-fix commit stamps. See the `## Full-sweep campaign (2026-07)` section at the bottom of this runbook.
 
 ---
 
@@ -315,7 +316,7 @@ These stay as `!` warnings until fixed. See `docs/qa-report-2026-04-17.md` for f
 | 5 | Major | "Static uploads 404 (KNOWN Major #5 — rootPath wrong)" | `apps/api/src/app.module.ts:34-38` |
 | 7 | Major | "maxBedrooms=5 silently discarded (KNOWN Major #7)" | `packages/types/src/schemas/property.ts` |
 | 8 | Major | "/health returns 404 (KNOWN Major #8)" | new `HealthController` in api |
-| 9 | Minor | "Short password leaks min-length via Zod (KNOWN Minor #9)" | `packages/types/src/schemas/auth.ts` |
+| 9 | Minor | ~~"Short password leaks min-length via Zod (KNOWN Minor #9)"~~ **FIXED (full-sweep 2026-07)** — `loginSchema` password is `z.string().max(200)`, no `.min()`; smoke check is now a hard assertion (a leak fails the run) | `packages/types/src/schemas/auth.ts` |
 | 11 | Minor | "DELETE non-UUID → 404 (KNOWN Minor #11)" | `apps/api/src/properties/properties.controller.ts` |
 
 ---
@@ -341,3 +342,22 @@ The rerun of this suite surfaced two additional issues that weren't in the initi
 - **Fix:** start the revery dev server, open `/en/blog`, grab the runtime error from the terminal/browser, fix the specific throw.
 
 Both new bugs also need entries in the severity-ranked report once they're investigated. The suite currently fails on Blocker #15 (`✗ revery /en/blog → 500`) and warns on Blocker #14 — adjust when fixed.
+
+---
+
+## Full-sweep campaign (2026-07)
+
+A full end-to-end sweep of the whole platform — admin + all public sites (TGE landing, Revery/Adorys, Academy) + the API — run 2026-07-17 against `qa/full-sweep-2026-07`. Document-everything-first, then fix. Ledger: **`.qa/full-sweep-2026-07/`**.
+
+**Ledger files:**
+- `run.md` — campaign log (phases 0–9, environment, per-phase findings, final tally).
+- `bugs.md` — the 28 findings (BUG-101..128), each with severity, surface, root cause, and a `Fixed@<sha>` / `Wontfix` stamp.
+- `admin-matrix.md` — admin module × role coverage grid.
+- `api-invariants.md` — brand/realm isolation, uploads, audit, and cross-cutting API checks.
+- `legacy-recheck.md` — re-verification of the older `.qa/feature-*` ledgers against current code.
+- `deferred-audit.md` — deferred-work triage (finish-now vs owner-reconcile vs keep-deferred).
+- `triage.md` — the fix-wave triage gate.
+
+**Outcome:** 26 of 28 findings fixed or closed. New CI gates added (`lint`, `playwright-academy`); new API e2e coverage (audit-trail, article public-visibility, GDPR purge, invitation templates) and an academy Playwright suite. Two closed as Wontfix with evidence: BUG-124 (academy login-gate, by design) and BUG-125 (cookie banner not legally required — essential-only cookies). Remaining open items are external-blocked (licensed city images, revery fr/de human-translator pass) or owner-reconcile (REBS prod flag intent) — see `deferred-audit.md`.
+
+**Re-running:** the sweep was largely manual (module-by-module + Playwright per app). For a quick regression, run `pnpm lint:all`, each app's Playwright suite, and the API e2e (`pnpm --filter @tge/api test:e2e`); `scripts/qa-smoke.sh` still covers the API/page smoke layer.

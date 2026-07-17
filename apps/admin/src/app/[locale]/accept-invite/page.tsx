@@ -42,18 +42,18 @@ function AcceptInviteInner() {
   const token = params.get("token") ?? "";
   const t = useTranslations("AcceptInvite");
   const { user, isLoading: authLoading, logout } = useAuth();
-  const [verify, setVerify] = useState<VerifyState>({ status: "loading" });
+  // Resolve the synchronous "no token / no API base" cases in the lazy
+  // initializer (render-time) so the effect only ever does the async verify —
+  // keeps a synchronous setState out of the effect body (react-hooks).
+  const [verify, setVerify] = useState<VerifyState>(() =>
+    token && process.env.NEXT_PUBLIC_API_URL
+      ? { status: "loading" }
+      : { status: "notFound" },
+  );
 
   useEffect(() => {
-    if (!token) {
-      setVerify({ status: "notFound" });
-      return;
-    }
     const apiBase = process.env.NEXT_PUBLIC_API_URL;
-    if (!apiBase) {
-      setVerify({ status: "notFound" });
-      return;
-    }
+    if (!token || !apiBase) return;
     const ac = new AbortController();
     fetch(
       `${apiBase}/invitations/verify?token=${encodeURIComponent(token)}`,

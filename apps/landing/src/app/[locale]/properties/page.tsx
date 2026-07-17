@@ -52,6 +52,20 @@ export default async function PropertiesPage({
     : null;
 
   const properties = mapApiProperties(raw);
+  // Derive the city-filter options from the listings themselves — every
+  // property carries its city + citySlug, so the dropdown covers exactly the
+  // cities that have luxury listings, with correct diacritics, instead of a
+  // hardcoded five-city ASCII list (BUG-103). No extra API round-trip.
+  const filterCities = Array.from(
+    new Map(
+      properties
+        .filter((p) => p.location.citySlug && p.location.city)
+        .map((p) => [
+          p.location.citySlug,
+          { slug: p.location.citySlug, name: p.location.city },
+        ]),
+    ).values(),
+  ).sort((a, b) => a.name.localeCompare(b.name, "ro"));
   const contextCity = contextCityRaw ? mapApiCity(contextCityRaw) : null;
   const contextDeveloper = contextDeveloperRaw
     ? mapApiDeveloper(contextDeveloperRaw)
@@ -98,9 +112,9 @@ export default async function PropertiesPage({
       <section className="pb-16 md:pb-20 lg:pb-24 bg-background">
         <Container>
           <div className="lg:flex lg:gap-10 xl:gap-12">
-            <PropertyFilter />
+            <PropertyFilter cities={filterCities} />
             <div className="flex-1 min-w-0">
-              <PropertyListingContent properties={properties} />
+              <PropertyListingContent properties={properties} cities={filterCities} />
             </div>
           </div>
         </Container>
