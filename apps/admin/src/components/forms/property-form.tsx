@@ -56,6 +56,14 @@ import type { ApiAgent, ApiCity, ApiDeveloper } from "@tge/types";
 // builtin which produces NaN on empty — fine, since required fields can't be
 // empty at submit time.
 const requiredNumber = { valueAsNumber: true } as const;
+// Like requiredNumber but maps an empty field to 0 instead of NaN. Used for
+// yearBuilt so clearing it surfaces the schema's friendly "must be at least
+// 1800" message (via superRefine) rather than the raw Zod "expected number,
+// received NaN" (BUG-116). Terrain listings legitimately accept 0.
+const requiredNumberOrZero = {
+  setValueAs: (v: unknown) =>
+    v === "" || v === null || v === undefined ? 0 : Number(v),
+} as const;
 const optionalNullableNumber = {
   setValueAs: (v: unknown) =>
     v === "" || v === null || v === undefined ? null : Number(v),
@@ -64,6 +72,23 @@ const optionalNumber = {
   setValueAs: (v: unknown) =>
     v === "" || v === null || v === undefined ? undefined : Number(v),
 } as const;
+
+// Diacritic-aware slugifier. NFKD decomposition + stripping combining marks
+// turns ă/â/î/ș/ț into a/a/i/s/t (rather than deleting them, which produced
+// "bucureti" from "București"); the cedilla variants ş/ţ are mapped explicitly
+// as a belt-and-braces fallback.
+function slugify(input: string): string {
+  return input
+    .normalize("NFKD")
+    .replace(/[\u0300-\u036f]/g, "") // strip combining diacritical marks
+    .replace(/[şŞ]/g, "s")
+    .replace(/[ţŢ]/g, "t")
+    .toLowerCase()
+    .replace(/[^a-z0-9\s-]/g, "")
+    .replace(/\s+/g, "-")
+    .replace(/-+/g, "-")
+    .replace(/^-+|-+$/g, "");
+}
 
 const PROPERTY_TYPE_VALUES = [
   "apartment",
@@ -381,14 +406,19 @@ function PropertyMetadataFields({
   };
 
   const generateSlug = () => {
-    const title = form.getValues("title.en");
-    const slug = title
-      .toLowerCase()
-      .replace(/[^a-z0-9\s-]/g, "")
-      .replace(/\s+/g, "-")
-      .replace(/-+/g, "-")
-      .trim();
-    form.setValue("slug", slug);
+    // Derive from whichever localized title is filled — RO-first editors were
+    // getting an empty slug because this only ever read `title.en` (BUG-115).
+    const titles = form.getValues("title");
+    const source =
+      titles?.en?.trim() ||
+      titles?.ro?.trim() ||
+      titles?.fr?.trim() ||
+      titles?.de?.trim() ||
+      "";
+    form.setValue("slug", slugify(source), {
+      shouldValidate: true,
+      shouldDirty: true,
+    });
   };
 
   return (
@@ -629,7 +659,7 @@ function PropertyMetadataFields({
               <Input
                 id="property-year-built"
                 type="number"
-                {...form.register("yearBuilt", requiredNumber)}
+                {...form.register("yearBuilt", requiredNumberOrZero)}
                 className="mono"
               />
             </MetaField>

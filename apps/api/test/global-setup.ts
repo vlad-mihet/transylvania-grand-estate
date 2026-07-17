@@ -50,6 +50,18 @@ export default async function globalSetup(): Promise<void> {
   process.env.ADMIN_PUBLIC_URL =
     process.env.ADMIN_PUBLIC_URL ?? 'http://admin.test';
 
+  // Pin feature flags so a developer's local `apps/api/.env` can't leak into
+  // the hermetic test run (BUG-102). CI has no .env, so the flags are unset
+  // there; locally `EMAIL_VERIFICATION_DISABLED=1` made academy registration
+  // auto-verify, breaking the 7 token-based verification tests that pass in CI.
+  // Set unconditionally — @nestjs/config never overwrites an already-set
+  // process.env value with the .env file, so this wins over the file.
+  // Verification ON (real token flow), google/REBS off (no external calls).
+  process.env.EMAIL_VERIFICATION_DISABLED = '0';
+  process.env.GOOGLE_AUTH_DISABLED = '0';
+  process.env.REBS_SYNC_ENABLED = '0';
+  delete process.env.REBS_API_KEY;
+
   // Sync schema to the test container. Using `db push` instead of `migrate
   // deploy` because some committed seed migrations (e.g.
   // `20260505003000_seed_revery_romania_cities`) assert the existence of

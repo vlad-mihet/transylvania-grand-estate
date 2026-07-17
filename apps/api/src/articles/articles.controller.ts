@@ -18,6 +18,10 @@ import { QueryArticleDto } from './dto/query-article.dto';
 import { Public } from '../common/decorators/public.decorator';
 import { Roles } from '../common/decorators/roles.decorator';
 import { LocaleScope } from '../common/locale';
+import {
+  CurrentUser,
+  type CurrentUserPayload,
+} from '../common/decorators/user.decorator';
 
 @ApiTags('Articles')
 @Controller('articles')
@@ -27,15 +31,21 @@ export class ArticlesController {
   @Public()
   @LocaleScope('public')
   @Get()
-  async findAll(@Query() query: QueryArticleDto) {
-    return this.articlesService.findAll(query);
+  async findAll(
+    @Query() query: QueryArticleDto,
+    @CurrentUser() user: CurrentUserPayload | null,
+  ) {
+    return this.articlesService.findAll(query, user);
   }
 
   @Public()
   @LocaleScope('public')
   @Get(':slug')
-  async findBySlug(@Param('slug') slug: string) {
-    return this.articlesService.findBySlug(slug);
+  async findBySlug(
+    @Param('slug') slug: string,
+    @CurrentUser() user: CurrentUserPayload | null,
+  ) {
+    return this.articlesService.findBySlug(slug, user);
   }
 
   @Roles(AdminRole.EDITOR, AdminRole.ADMIN, AdminRole.SUPER_ADMIN)
