@@ -92,7 +92,7 @@ test.describe("D-7 · Romanian diacritics regression", () => {
     expect(offenders).toEqual([]);
   });
 
-  test("BUG-005 evidence — `cityLabels` source still has ASCII Timisoara/Brasov", () => {
+  test("BUG-005/103 closed — filter panel is API-driven, no hardcoded ASCII city map", () => {
     const src = fs.readFileSync(
       path.resolve(
         __dirname,
@@ -105,9 +105,12 @@ test.describe("D-7 · Romanian diacritics regression", () => {
       ),
       "utf8",
     );
-    // Documents the current state — flip when BUG-005 closes.
-    expect(src).toMatch(/timisoara: "Timisoara"/);
-    expect(src).toMatch(/brasov: "Brasov"/);
+    // BUG-103 fix: the hardcoded ASCII cityLabels map is gone; cities now come
+    // from live API data (FilterCity[] prop derived from the listings).
+    expect(src).not.toMatch(/timisoara: "Timisoara"/);
+    expect(src).not.toMatch(/brasov: "Brasov"/);
+    expect(src).toMatch(/cities\.map\(\(city\)/);
+    expect(src).toContain("FilterCity");
   });
 
   test("BUG-011 evidence — RootLayout default description has ASCII Romanian city names", () => {
