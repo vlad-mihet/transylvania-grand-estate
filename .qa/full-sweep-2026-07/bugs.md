@@ -66,7 +66,7 @@ Status values: `Open | Fixed@<sha> | Wontfix | Deferred`.
 - **Fix direction:** wrap every decorative SSR fetch in `fetchApiSafe` (already exists, used on landing properties breadcrumb) across landing + revery home and list pages; reserve hard failure for the genuinely required primary fetch only.
 
 ## BUG-106 — Admin property form: amenity/classification labels literal English (known partial)
-- **Severity:** Minor · **Surface:** admin · **Status:** Open
+- **Severity:** Minor · **Surface:** admin · **Status:** Fixed@d0f8361
 - `apps/admin/src/components/forms/property-form.tsx:82-108+` — hardcoded EN labels with "for now" comment; admin is otherwise fully localized ro/en/fr/de.
 
 ## BUG-107 — Admin unsaved-changes guard doesn't cover in-app navigation (known partial)
