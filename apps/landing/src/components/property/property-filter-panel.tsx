@@ -16,21 +16,18 @@ import { Label } from "@tge/ui";
 import { Search, X, SlidersHorizontal } from "lucide-react";
 import { useCallback, useState } from "react";
 
-export const cities = [
-  "cluj-napoca",
-  "oradea",
-  "timisoara",
-  "brasov",
-  "sibiu",
-];
+// A city option for the filter dropdown. Sourced from live API data (each
+// property carries its city + citySlug), so labels keep their diacritics and
+// the list covers every city that actually has listings — not a hardcoded
+// five-city subset (BUG-103).
+export interface FilterCity {
+  slug: string;
+  name: string;
+}
 
-export const cityLabels: Record<string, string> = {
-  "cluj-napoca": "Cluj-Napoca",
-  oradea: "Oradea",
-  timisoara: "Timisoara",
-  brasov: "Brasov",
-  sibiu: "Sibiu",
-};
+// Fallback used only if no cities are passed (e.g. a stray render with no
+// data). Real usage always receives the API-derived list from the page.
+const FALLBACK_CITIES: FilterCity[] = [];
 
 export const propertyTypes = [
   "apartment",
@@ -53,7 +50,11 @@ export const priceRanges = [
   { value: "3+", labelKey: "price3plus" as const },
 ];
 
-export function PropertyFilterPanel() {
+export function PropertyFilterPanel({
+  cities = FALLBACK_CITIES,
+}: {
+  cities?: FilterCity[];
+}) {
   const t = useTranslations("PropertiesPage.filter");
   const tTypes = useTranslations("Common.propertyTypes");
   const searchParams = useSearchParams();
@@ -165,8 +166,8 @@ export function PropertyFilterPanel() {
           <SelectContent>
             <SelectItem value="all">{t("allCities")}</SelectItem>
             {cities.map((city) => (
-              <SelectItem key={city} value={city}>
-                {cityLabels[city]}
+              <SelectItem key={city.slug} value={city.slug}>
+                {city.name}
               </SelectItem>
             ))}
           </SelectContent>

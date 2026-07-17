@@ -14,6 +14,10 @@ Status values: `Open | Fixed@<sha> | Wontfix | Deferred`.
 
 ## Post-triage findings (discovered during Wave work)
 
+### BUG-127 — Seed data: some luxury property `city` values lack diacritics / use EN name
+- **Severity:** Minor (data quality) · **Surface:** packages/data seed · **Status:** Open
+- With BUG-103 fixed, the landing city filter now reflects real API city names — surfacing that a few seeded `property.city` values are ASCII/English: "Brasov" (→ Brașov), "Timisoara" (→ Timișoara), "Bucharest" (→ București) appear alongside correctly-accented ones (Bistrița, Iași, Sighișoara, Târgu Mureș). Violates the diacritics rule ([[feedback_diacritics]]). Fix in `packages/data` seed + reseed. Note: cities feeding via `citySlug`→City table are fine; this is the denormalized `property.city` string.
+
 ### BUG-126 — `REBS_BASE_URL` schema default points at the PRODUCTION REBS instance (footgun)
 - **Severity:** Major (ops/data-safety) · **Surface:** api config · **Status:** Open
 - `apps/api/src/common/config/env.schema.ts:122-126`: `REBS_BASE_URL` defaults to **`https://client-396fe343.crmrebs.com/api/public`** (the real client/production instance) when unset — but the comment above it and `apps/api/.env.example` both advertise the **demo** instance `https://demo.crmrebs.com/api/public`. Anyone who sets `REBS_API_KEY` + `REBS_SYNC_ENABLED=1` without also setting `REBS_BASE_URL` (as the local `.env` does) silently pulls **live production customer listings + media into their dev DB**. Verified live: the local hourly cron created `sibiu-apartament-de-vanzare-in-sibiu-3207425` (real listing, 4 CRM-mirrored images from `*.crmrebs.com`) — published + visible on local Revery.

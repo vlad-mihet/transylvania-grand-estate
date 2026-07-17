@@ -4,7 +4,7 @@ import { useState } from "react";
 import { useTranslations } from "next-intl";
 import { useSearchParams } from "next/navigation";
 import { useScrollDirection } from "@tge/hooks";
-import { PropertyFilterPanel } from "./property-filter-panel";
+import { PropertyFilterPanel, type FilterCity } from "./property-filter-panel";
 import {
   Sheet,
   SheetContent,
@@ -17,7 +17,7 @@ import { Button } from "@tge/ui";
 import { SlidersHorizontal } from "lucide-react";
 import { cn } from "@tge/utils";
 
-export function PropertyFilter() {
+export function PropertyFilter({ cities }: { cities: FilterCity[] }) {
   const t = useTranslations("PropertiesPage.filter");
   const searchParams = useSearchParams();
   const { scrollDirection, scrollY } = useScrollDirection();
@@ -49,7 +49,7 @@ export function PropertyFilter() {
         )}
       >
         <div className="frosted-glass-refined p-7 max-h-[calc(100vh-6rem)] overflow-y-auto">
-          <PropertyFilterPanel />
+          <PropertyFilterPanel cities={cities} />
         </div>
       </aside>
 
@@ -86,7 +86,7 @@ export function PropertyFilter() {
             </SheetDescription>
           </SheetHeader>
           <ScrollArea className="flex-1 px-7 py-7">
-            <PropertyFilterPanel />
+            <PropertyFilterPanel cities={cities} />
           </ScrollArea>
         </SheetContent>
       </Sheet>

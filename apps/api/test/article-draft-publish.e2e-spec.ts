@@ -157,12 +157,17 @@ describe('PATCH /articles/:id — draft/publish flow (e2e)', () => {
   it('public read endpoint serves live values, never drafts', async () => {
     const { id } = await createArticle();
 
+    // Publish the article (so it's publicly visible per the published-status
+    // gate) while stashing a draft-title snapshot. The live title stays
+    // 'Original RO'; the draft holds 'Hidden draft RO'. This isolates the
+    // draft-snapshot contract from publish-status gating (BUG-109).
     await request(app.getHttpServer())
       .patch(`/api/v1/articles/${id}`)
       .set(bearer(admin.accessToken))
       .set('X-Site', 'ADMIN')
       .send({
         mode: 'draft',
+        status: 'published',
         title: { ro: 'Hidden draft RO', en: 'Hidden draft EN' },
       });
 

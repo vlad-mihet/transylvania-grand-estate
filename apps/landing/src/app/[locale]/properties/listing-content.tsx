@@ -16,17 +16,24 @@ import {
 import { Badge } from "@tge/ui";
 import { ArrowUpDown, X } from "lucide-react";
 import {
-  cityLabels,
   priceRanges,
+  type FilterCity,
 } from "@/components/property/property-filter-panel";
 
 interface PropertyListingContentProps {
   properties: Property[];
+  cities: FilterCity[];
 }
 
 export function PropertyListingContent({
   properties,
+  cities,
 }: PropertyListingContentProps) {
+  // slug → display name (with diacritics) for the active-filter chip.
+  const cityLabels = useMemo(
+    () => Object.fromEntries(cities.map((c) => [c.slug, c.name])),
+    [cities],
+  );
   const searchParams = useSearchParams();
   const router = useRouter();
   const pathname = usePathname();
