@@ -77,7 +77,33 @@ Full dispositions in `admin-matrix.md`. **EDITOR column (biggest prior gap) full
 
 **Verified working:** audit trail live w/ brand attribution (BUG-117), draft leak closed (BUG-109), invite+password round-trips w/ correct RO email copy (BUG-120), brand-visibility curation → landing homepage reorder (cross-app), multi-image upload, AGENT scoping + RBAC (own PATCH 200 / foreign 403 / users 403 / audit 403).
 
-**Cleanup done inline:** reset `site_config.tge_homepage_cities` to default after curation test; QA artifacts remaining for Phase 9 cleanup: QA property (apartament-qa-sweep-fara-imagini-cluj, now with 2 images), QA testimonial, QA bank rate, 2 QA inquiries, 1 accepted EDITOR (qa-sweep-editor@example.com).
+**Cleanup done inline:** reset `site_config.tge_homepage_cities` to default after curation test; QA artifacts remaining for Phase 9 cleanup: QA property (apartament-qa-sweep-fara-imagini-cluj, now with 2 images), QA testimonial, QA bank rate, QA inquiries (2 seed-probes + landing + revery contact), 1 accepted EDITOR (qa-sweep-editor@example.com), 1 academy student (qa-sweep-student@example.com, enrolled Ghidul Vânzărilor).
+
+---
+
+## Phase 4 — Public sites sweep (ro+en deep, fr+de spot)
+
+- **Landing (TGE):** home hero video (`hero.webm`) + Media Credits link; contact round-trip → "Mulțumim!" + DB `siteId=TGE_LUXURY / source=tge-contact / locale=ro`; footer 0 socials; 404 clean.
+- **Revery (Adorys):** list 18 demo-labeled cards; **Leaflet map works** (30 tiles + clustered pins synced to list); calculators → **BUG-214** + QA-Sweep-Bank chip cross-app confirmed; contact round-trip → DB `siteId=REVERY / source=revery-contact`; footer 0 socials + "Credite foto"; **no axe error (BUG-123 confirmed fixed)**; routes are EN segments.
+- **Academy:** register → auto-verify → enroll → complete lesson → **progress persists across reload** (1/3, ✓ CITITĂ) + auto-advance; login-gate holds (BUG-124); BUG-212 hydration mismatch on every page.
+- **Cross-tier isolation (UI):** affordable → revery 200/landing 404; luxury → landing 200/revery 404. Clean.
+- **fr/de spot:** all fr+de routes 200, no raw i18n keys leaking (copy drift = translator deferral).
+
+**Findings:** BUG-211 (audit label key), BUG-212 (academy hydration), BUG-213 (radix select focus), BUG-214 (calc label+precision).
+
+---
+
+## Phase 5 — API + cross-cutting invariants (curl vs local :4000)
+
+All ✅ (skipped what Jest e2e already covers):
+- **Brand isolation:** cross-brand slug (luxury via REVERY X-Site) → 404; same slug via TGE_LUXURY → 200; bogus X-Site → 400; **UNKNOWN (no X-Site/Origin) → empty list** (the known misconfiguration failure mode, confirmed contained).
+- **Tier widening ignored:** `?tier=luxury` via REVERY X-Site → results stay `{affordable}` only.
+- **Realm isolation:** academy(student) token → admin `/auth/users` → 401; student token → `/admin/academy/enrollments` → 401; student → own realm `/academy/courses` → 200.
+- **Zod error shape:** malformed inquiry → 400 / `ValidationError` / `fields[]` / `requestId` (consistent structured envelope).
+- **Uploads:** static `/uploads/<missing>` → 404; unauth `POST /admin/uploads/inline-images` → 401 (real routes are `admin/uploads` + `admin/academy/enrollments`, not the bare paths).
+- **Rate limit:** re-hammer showed 401s not 429s because the dev API is currently `DEV_AUTH_THROTTLE_DISABLED=1` (browser-phase config); the 429 enforcement was confirmed by the throttle-ENABLED qa-smoke run in Phase 1 (89/0).
+
+**Phase 5 exit: PASS** — no new findings.
 
 ---
 
