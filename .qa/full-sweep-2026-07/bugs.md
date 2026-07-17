@@ -15,18 +15,20 @@ Status values: `Open | Fixed@<sha> | Wontfix | Deferred`.
 ## Post-triage findings (discovered during Wave work)
 
 ### BUG-128 — Property `/new` form reports `isDirty === true` on load (over-eager unsaved-changes guard)
-- **Severity:** Minor · **Surface:** admin · **Status:** Open
+- **Severity:** Minor · **Surface:** admin · **Status:** Fixed@69a49ff
 - The property create form's `form.formState.isDirty` is true immediately on mount, before any edit — so the unsaved-changes guard (both the old `beforeunload` and the new BUG-107 in-app interceptor) prompts even when the user typed nothing and clicks away. Discovered writing the BUG-107 regression test. Pre-existing (affected `beforeunload` too); BUG-107 just makes it more visible since in-app nav is common. Likely a `defaultValues` ↔ registered-value mismatch or a `setValue(..., { shouldDirty: true })` on mount. Fix: align the form's initial values so a pristine create form is not dirty.
+- **Fix:** aligned `useForm` `defaultValues` with what each registered input holds on a pristine form (`yearBuilt: 0`, `garage/landArea/developerId/agentId: null`, `latitude/longitude: undefined`). Root cause was RHF's `isDirty` deep-compare treating a *present* key holding `undefined` as different from an *absent* key — verified live via a temporary `window.__diff` probe (`getValues()` JSON-equalled defaults yet `isDirty` stayed true until every registered key was seeded). Re-enabled the "clean form navigates without a prompt" e2e case; 4/4 unsaved-changes specs green.
 
 ### BUG-127 — Seed data: some luxury property `city` values lack diacritics / use EN name
 - **Severity:** Minor (data quality) · **Surface:** packages/data seed · **Status:** Open
 - With BUG-103 fixed, the landing city filter now reflects real API city names — surfacing that a few seeded `property.city` values are ASCII/English: "Brasov" (→ Brașov), "Timisoara" (→ Timișoara), "Bucharest" (→ București) appear alongside correctly-accented ones (Bistrița, Iași, Sighișoara, Târgu Mureș). Violates the diacritics rule ([[feedback_diacritics]]). Fix in `packages/data` seed + reseed. Note: cities feeding via `citySlug`→City table are fine; this is the denormalized `property.city` string.
 
 ### BUG-126 — `REBS_BASE_URL` schema default points at the PRODUCTION REBS instance (footgun)
-- **Severity:** Major (ops/data-safety) · **Surface:** api config · **Status:** Open
+- **Severity:** Major (ops/data-safety) · **Surface:** api config · **Status:** Fixed@53ffb7d
 - `apps/api/src/common/config/env.schema.ts:122-126`: `REBS_BASE_URL` defaults to **`https://client-396fe343.crmrebs.com/api/public`** (the real client/production instance) when unset — but the comment above it and `apps/api/.env.example` both advertise the **demo** instance `https://demo.crmrebs.com/api/public`. Anyone who sets `REBS_API_KEY` + `REBS_SYNC_ENABLED=1` without also setting `REBS_BASE_URL` (as the local `.env` does) silently pulls **live production customer listings + media into their dev DB**. Verified live: the local hourly cron created `sibiu-apartament-de-vanzare-in-sibiu-3207425` (real listing, 4 CRM-mirrored images from `*.crmrebs.com`) — published + visible on local Revery.
 - Sync is read-only against REBS (GET-only, no write-back) and writes only to the local DB, so **no production system is at risk** — but the default-hits-prod mismatch is a real defect.
 - **Fix direction:** change the default to the demo instance (or drop the default so the URL must be set explicitly). **Deferred to owner sign-off** — touching REBS config was explicitly out of scope for this sweep without approval.
+- **Fix (owner-approved):** `env.schema.ts` default is now `https://demo.crmrebs.com/api/public`. Per the owner's chosen option the local sync keeps its current live source — an explicit `REBS_BASE_URL=https://client-396fe343.crmrebs.com/api/public` was added to the gitignored `apps/api/.env` (never committed). Production/any live-tenant run must now set the URL explicitly; an unset var can only ever reach the demo instance.
 
 ### OPS FLAG (not a code bug) — real production REBS key in local `apps/api/.env`
 - The local `.env` holds a **working production REBS API key** (`0d57…`). It is **gitignored and never committed** (verified: `git check-ignore` matches `.env*`, `git ls-files`/`git log` empty), so it is not leaked into history — but it is a live prod credential in local plaintext driving an hourly pull from production REBS. **For the owner to decide:** rotate/scope the key, or set `REBS_SYNC_ENABLED=0` / `REBS_BASE_URL=demo` locally. No action taken by the sweep.
@@ -56,8 +58,9 @@ Status values: `Open | Fixed@<sha> | Wontfix | Deferred`.
 - **Expected:** cities fetched from `/cities` (X-Site aware), labels with diacritics.
 
 ## BUG-104 — Landing footer social URLs are placeholders (re-file of landing BUG-014)
-- **Severity:** Minor · **Surface:** landing · **Status:** Open
+- **Severity:** Minor · **Surface:** landing · **Status:** Fixed@53ffb7d
 - `apps/landing/src/components/layout/footer.tsx:26-29`: `instagram.com/tge`, `facebook.com/tge`, `linkedin.com/company/tge`, `youtube.com/@tge` — dead/wrong destinations on the live site.
+- **Fix (owner decision — hide until real handles exist):** the placeholder URLs are commented out and `socialLinks` is now empty; the "Follow us" column renders only when the list is non-empty, so nothing broken is shown. Re-enabling is uncommenting a real profile URL. **Revery had the same pattern** (`/revery` handles) — fixed identically in the same batch (`apps/revery/src/components/layout/footer.tsx`, refactored to a `socialIcons` map + render guard). Academy has no footer/social row, so nothing to hide there.
 
 ## BUG-105 — Public homepages 500 when the API hiccups (SSR fetch not guarded) — landing AND revery (re-file of landing BUG-017)
 - **Severity:** Critical (upgraded — Phase 5 confirmed) · **Surface:** landing + revery · **Status:** Fixed@a6e3065
@@ -84,10 +87,12 @@ Status values: `Open | Fixed@<sha> | Wontfix | Deferred`.
 - **Test data note:** probe article left in DB for fix-wave regression testing; remove at Phase 9.
 
 ## BUG-110 — Revery contact form: name field wiped on webkit → submit blocked (suite red locally)
-- **Severity:** Major (potential real Safari impact — investigate before downgrading) · **Surface:** revery · **Status:** Open
+- **Severity:** Major (potential real Safari impact — investigate before downgrading) · **Surface:** revery · **Status:** Fixed@7756c29
 - Phase 1 baseline: `forms.spec.ts:33` failed twice (initial + retry) on webkit only: screenshot shows name input EMPTY with focus ring while email/phone/message remain filled → required-field validation blocks submit → no success heading. Chromium/firefox pass. Not a 429 (all three 429s in the API log were the rate-limit spec's spoofed probes).
 - Suspected controlled-input hydration race (early keystrokes wiped when React hydrates). Per house rule, reproduce empirically before dismissing as automation artifact.
 - **Also noted:** Next.js dev-overlay badge "1 Issue" visible on the contact page screenshot — check the runtime error during Phase 4.
+- **Root cause (confirmed):** the name/email/phone/message inputs were controlled via `useState`; keystrokes landing before React hydrated on WebKit never reached state and were reconciled back to `""` on the first later state update. Landing's contact form is immune because its text inputs are uncontrolled (read via `new FormData(e.currentTarget)` on submit).
+- **Fix:** converted revery's text inputs to uncontrolled with `name=` attributes, reading values from `FormData` on submit (mirrors landing). Only `budget` (a Select chosen post-hydration) + `consent` stay stateful. Verified: `forms.spec.ts` 12/12 green across all 3 browsers, including the previously-red webkit `valid submit reaches success state`.
 
 ## BUG-111 — Dashboard attention card mislabels cross-entity EN-translation count as "Articole" (RO only)
 - **Severity:** Minor · **Surface:** admin · **Status:** Fixed@7e9e905
@@ -139,15 +144,18 @@ Status values: `Open | Fixed@<sha> | Wontfix | Deferred`.
 - Every Revery page in dev logs `TypeError: Cannot set property createElement of [object Module] which has only a getter` at `reactAxe`/`AxeInitializer.useEffect`. `AxeInitializer` is correctly gated to `NODE_ENV==="development"` (`layout.tsx:74`, dead-code-eliminated in prod) — so no production impact, but the dev a11y tooling never runs (regression vs its intent). Likely an ESM interop issue with the current `@axe-core/react` + React 19. Source of the Revery dev-overlay "1 Issue".
 
 ## BUG-124 — Academy has no anonymous landing/catalog: root `/ro` bounces straight to login (product decision to confirm)
-- **Severity:** Minor (product decision) · **Surface:** academy · **Status:** Open
+- **Severity:** Minor (product decision) · **Surface:** academy · **Status:** Wontfix (by design — owner-confirmed 2026-07-17)
 - `apps/academy/src/proxy.ts:15-24` `PUBLIC_PATHS` = only the 8 auth pages. Home `/`, `/catalog`, `/courses/*`, `/tools/raport-piata` all 307→`/login?returnTo=…` when unauthenticated (verified). So visiting `tge-academy.fly.dev` shows a login screen, not a landing page or course preview, while the register page markets "Deblochează toate cursurile … gratuit."
 - **Assessment:** for an internal agent-training academy this is defensible (course `visibility=public` means open-enrollment, not anonymous-visible). But (a) no landing page at the root and (b) can't preview the catalog before registering are conversion/UX gaps. **Confirm intent** — if a public catalog/landing is wanted, add `/`, `/catalog`, `/courses/*` (read-only) to `PUBLIC_PATHS`.
 - **Full loop otherwise verified PASS:** register → auto-verify (EMAIL_VERIFICATION_DISABLED) → login → open public lesson → **auto-enrolled** into course + lesson-progress row created. All correct.
+- **Resolution (owner decision):** keep the academy login-gated. It is an internal agent-training platform, not a public marketing surface — an anonymous catalog/landing is explicitly not wanted. The new academy smoke/auth e2e specs lock the auth-gate contract in CI (unauthenticated root → 307 `/login`), so a regression that accidentally exposes it would fail the suite. No code change.
 
 ## BUG-125 — No cookie consent banner on any public site (GDPR/ePrivacy gap)
-- **Severity:** Major (compliance) · **Surface:** landing + revery + academy · **Status:** Open
+- **Severity:** Major (compliance) · **Surface:** landing + revery + academy · **Status:** Wontfix (not legally required — evidence-based, 2026-07-17)
 - Verified: no consent banner markup on any public site — only a footer "Politica de cookie-uri" **link**. `docs/contact-flow-prod-checklist.md:96` explicitly logs "cookie banner not implemented (out of scope)." EU/RO ePrivacy requires prior consent for non-essential cookies; a linked policy alone is insufficient if any analytics/marketing cookies are set.
 - **Finish-now candidate** — legal/compliance, and a shared consent component covers all three sites. Confirm what non-essential cookies are actually set before scoping (if truly first-party-essential-only, this drops to a documentation note).
+- **Cookie inventory (verified in source + on the wire):** the only cookies any public site sets are **strictly necessary** — `NEXT_LOCALE` (next-intl locale persistence) and, post-login, first-party auth/session cookies (`academy_refresh` on academy; admin/BFF session on the authenticated surfaces). **Zero** analytics, marketing, or third-party tracking cookies; no Google Analytics / Meta Pixel / tag-manager / embedded-media scripts in any of the three apps (grepped for gtag/GA/fbq/hotjar/segment/mixpanel — none). Under ePrivacy, strictly-necessary cookies are **exempt from the prior-consent requirement**, so a banner is not legally required; the linked cookie policy is sufficient.
+- **Resolution:** closed as not-required by analysis. **Revisit if analytics/marketing are ever added** — the moment a non-essential cookie is introduced, a consent banner (and this bug) come back into scope. Documented in `deferred-audit.md` and against `docs/contact-flow-prod-checklist.md:96`.
 
 ## BUG-116 — Property form: empty "Anul construcției" blocks save with raw NaN error
 - **Severity:** Major · **Surface:** admin · **Status:** Fixed@cdbdfd1
