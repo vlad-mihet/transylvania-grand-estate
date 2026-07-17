@@ -37,9 +37,11 @@ Status values: `Open | Fixed@<sha> | Wontfix | Deferred`.
 - **Severity:** Minor · **Surface:** landing · **Status:** Open
 - `apps/landing/src/components/layout/footer.tsx:26-29`: `instagram.com/tge`, `facebook.com/tge`, `linkedin.com/company/tge`, `youtube.com/@tge` — dead/wrong destinations on the live site.
 
-## BUG-105 — Landing home page SSR: unguarded `Promise.all` of 4 throwing fetches (re-file of landing BUG-017)
-- **Severity:** Major (upgrade to Critical if Phase 5 API-down test 500s the homepage) · **Surface:** landing · **Status:** Open
+## BUG-105 — Public homepages 500 when the API hiccups (SSR fetch not guarded) — landing AND revery (re-file of landing BUG-017)
+- **Severity:** Critical (upgraded — Phase 5 confirmed) · **Surface:** landing + revery · **Status:** Open
 - `apps/landing/src/app/[locale]/page.tsx:21-26`: featured properties/cities/developers/testimonials fetched via bare `Promise.all` of throwing `fetchApi` — one failed decorative fetch rejects the page. `properties/page.tsx` already uses `fetchApiSafe`; home was never migrated.
+- **Phase 5 empirical (API stopped):** `/ro` (landing) → **500**, `/ro/properties` (landing) → **500**, `/ro` (revery) → **500**, `/ro/properties` (revery) → **500**. Only academy `/ro/login` (static) survived (200). Pages show a graceful Next error boundary, but the **HTTP status is 500** — a transient API blip takes both public homepages fully down (SEO/uptime-monitor/user impact). Home pages should degrade to **200 with empty featured sections**; data pages should show a "couldn't load" state, not 500.
+- **Fix direction:** wrap every decorative SSR fetch in `fetchApiSafe` (already exists, used on landing properties breadcrumb) across landing + revery home and list pages; reserve hard failure for the genuinely required primary fetch only.
 
 ## BUG-106 — Admin property form: amenity/classification labels literal English (known partial)
 - **Severity:** Minor · **Surface:** admin · **Status:** Open

@@ -77,3 +77,11 @@ Full matrix + AGENT pass in `admin-matrix.md`. Every planned module reached. Cov
 **Academy e2e suite created (plan's file-writing exception):** `apps/academy/playwright.config.ts` (chromium, port 3053) + `tests/e2e/{smoke,auth}.spec.ts` (13 tests: auth-gate contract, public auth pages × ro/en, form validation). Added `@playwright/test` devDep + `test:e2e` script. **13/13 green.** Added `playwright-academy` job to `.github/workflows/ci.yml` (closes the academy CI gap). YAML validated.
 
 **Phase 4 exit: complete.** All three public sites functionally sound; the real defects are the landing filter panel (BUG-103, Major) and content/UX minors. Academy now has its first regression net.
+
+---
+
+## Phase 5 — API + cross-cutting invariants (2026-07-17)
+
+Full detail in `api-invariants.md`. **Brand isolation ✅** (cross-brand→404, missing→404, bogus→400), **realm isolation ✅** (academy↔admin token rejection), **uploads ✅** (qa-report #5 fixed — /uploads serves 200/404 correctly). **API-down failure mode ❌**: both landing + revery 500 on home AND properties (only static academy login survives) → **BUG-105 upgraded to Critical** and broadened to revery. Jest-covered invariants (tier-scope, refresh rotation, permission guards, draft-leak) not re-run per anti-duplication rule.
+
+**Phase 5 exit: complete.** One new Critical severity upgrade (BUG-105); every platform security invariant (brand + realm isolation) holds on the live stack.
