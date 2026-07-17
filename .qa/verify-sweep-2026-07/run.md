@@ -146,3 +146,20 @@ All fixes in one commit `Fixed@9275f3e`. **12 of 14 findings fixed; 2 deferred w
 ---
 
 **Env lesson (recorded for future baselines):** every CI Playwright job sets `DEV_AUTH_THROTTLE_DISABLED=1`; the first local runs were made without it. Result: admin suite's shared BFF session died on `/auth/refresh` 429s (10/min bucket) → 2 unsaved-changes reds; landing `[mobile]` cross-locale smoke got real 500s from listing pages when SSR fetches failed under throttle/load — which exposed **BUG-201** (listing pages unguarded against API failure; deterministic kill-API repro). Dev API restarted with the flag for all Playwright/browser phases; qa-smoke will run last against a throttle-ENABLED API restart (its 429 check needs it).
+
+---
+
+## Phase 9 — Final re-verify + closeout
+
+- **Fresh reseed** (user-consented): all sweep artifacts cleared (QA property/testimonial/bank-rate/inquiries, accepted EDITOR, academy student → 0 each); diacritics correct (0 ASCII city rows).
+- **Full green gate on clean data (fixes applied):** API e2e **203/203, 26 suites** (198 baseline + 5 new regression tests); Admin PW **44/44**; Landing PW **143/143**; Academy PW **13/13**; Revery chromium core **231 passed** (3 flaky→passed on retry, locale route/calc timing; 1 skip); Lint **5 projects clean**.
+- **`.env` restored:** `REBS_SYNC_ENABLED=1`.
+- **Ledgers complete:** `fixed-verify.md` — all 28 prior stamps dispositioned; `bugs.md` — zero bare Open (12 Fixed@9275f3e, 2 Deferred-with-reason); `admin-matrix.md` zero ⬜; `prod-checks.md` + `deferred-refresh.md` done.
+
+**Phase 9 exit: PASS.**
+
+## FINAL TALLY — verify-sweep-2026-07
+
+28 prior stamps re-verified (all hold; BUG-118's regression caught + refixed). **14 new findings (BUG-201–214): 12 fixed + regression-tested, 2 deferred with reason.** BUG-127 also closed on prod (backup + targeted normalization). Platform swept end-to-end (admin all roles, 3 public sites, API, prod) — every gate green.
+
+**Owner-decision list** (see `deferred-refresh.md`): REBS prod key/flags; contact-flow go-live (DNS/Resend/legal); licensed city images Phase 2; fr/de translation; 1 prod real-listing city (`Stefanestii de Jos` → Ștefăneștii de Jos); BUG-212/213 deferred Minors. Prod public sites are pre-DNS-launch (custom domains unresolved), reachable only via Vercel URLs.

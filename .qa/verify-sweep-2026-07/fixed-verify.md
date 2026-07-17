@@ -26,12 +26,12 @@ verifiable this sweep (reason given).
 | BUG-117 | Critical | audit trail alive under /api/v1 | Phase 1 API e2e `audit-trail` green + Phase 2 UI: audit-logs page shows live rows (PROPERTY.CREATE/DELETE from PW suite, USER.LOGIN-PASSWORD, INQUIRY.CREATE×n w/ REVERY brand), filters+CSV+diff links present | **HOLDS** |
 | BUG-118 | Critical | people/team page functional | Phase 2 UI: page renders but list silently EMPTY; network shows `auth/users?limit=100&expand=allLocales` → 400 unrecognized key `expand` | **REGRESSED→BUG-202** (new key, same class; `limit` itself still accepted) |
 | BUG-119 | Minor | recent-signins filter | Phase 2 UI: dashboard activity feed renders login events correctly typed (UTILIZATOR badge) | **HOLDS** |
-| BUG-120 | Minor | staff invite email role-appropriate copy | Phase 3: EDITOR invite round-trip will surface the email via API stdout (Resend unset) | pending (Phase 3) |
+| BUG-120 | Minor | staff invite email role-appropriate copy | Phase 3: EDITOR invite email (API stdout) = correct RO team copy "Ai fost invitat să te alături TGE… echipei TGE" | **HOLDS** |
 | BUG-121 | Minor | unread badge total | Phase 2 UI: sidebar Cereri badge tracked list state (31→30 after mark-as-read) | **HOLDS** |
 | BUG-122 | Minor | inquiries typeLabel.viewing key | Phase 2 UI: TIP badges render (GENERAL/PROPRIETATE); zero missing-key errors in console | **HOLDS** |
 | BUG-123 | Trivial | revery dev axe crash guarded | Phase 2: revery `/ro` dev console — zero errors. Ledger discrepancy resolved: old bugs.md restamped `Fixed@290ba9c` (was stale-Open) | **HOLDS** + reconciled |
 | BUG-124 | Wontfix | academy login-gate by design | Phase 2: logged-out deep URL `/ro/courses/…/lessons` → 307 `/ro/login?returnTo=…` (returnTo intact); academy e2e 13/13 locks contract | **HOLDS** (Wontfix evidence valid) |
 | BUG-125 | Wontfix | cookie banner not required (essential-only cookies) | Phase 2 local: Set-Cookie inventory = `NEXT_LOCALE` only (landing+revery), none on academy pre-auth; zero trackers. Prod re-check in Phase 7 | **HOLDS** (local; prod pending) |
-| BUG-126 | Major | REBS schema default → demo tenant | Phase 6 config check (no live sync this sweep) | pending |
+| BUG-126 | Major | REBS schema default → demo tenant | Phase 6: `env.schema.ts` default = `https://demo.crmrebs.com/api/public`; local keeps live source via explicit REBS_BASE_URL | **HOLDS** |
 | BUG-127 | Open→Fixed | seed city diacritics (prod) | Phase 0 local PASS + **Phase 7 prod: backup taken → targeted UPDATE (22 rows: Brasov/Bucharest/Bucuresti/Timisoara → diacritics) → prod API verified all-correct** | **FIXED on prod** (full reseed avoided — prod had non-seed real data a reseed would destroy) |
 | BUG-128 | Minor | fresh /new form not dirty | Phase 1 admin PW "a clean form navigates without a prompt" green | **HOLDS** (AUTO) |
