@@ -14,6 +14,10 @@ Status values: `Open | Fixed@<sha> | Wontfix | Deferred`.
 
 ## Post-triage findings (discovered during Wave work)
 
+### BUG-128 — Property `/new` form reports `isDirty === true` on load (over-eager unsaved-changes guard)
+- **Severity:** Minor · **Surface:** admin · **Status:** Open
+- The property create form's `form.formState.isDirty` is true immediately on mount, before any edit — so the unsaved-changes guard (both the old `beforeunload` and the new BUG-107 in-app interceptor) prompts even when the user typed nothing and clicks away. Discovered writing the BUG-107 regression test. Pre-existing (affected `beforeunload` too); BUG-107 just makes it more visible since in-app nav is common. Likely a `defaultValues` ↔ registered-value mismatch or a `setValue(..., { shouldDirty: true })` on mount. Fix: align the form's initial values so a pristine create form is not dirty.
+
 ### BUG-127 — Seed data: some luxury property `city` values lack diacritics / use EN name
 - **Severity:** Minor (data quality) · **Surface:** packages/data seed · **Status:** Open
 - With BUG-103 fixed, the landing city filter now reflects real API city names — surfacing that a few seeded `property.city` values are ASCII/English: "Brasov" (→ Brașov), "Timisoara" (→ Timișoara), "Bucharest" (→ București) appear alongside correctly-accented ones (Bistrița, Iași, Sighișoara, Târgu Mureș). Violates the diacritics rule ([[feedback_diacritics]]). Fix in `packages/data` seed + reseed. Note: cities feeding via `citySlug`→City table are fine; this is the denormalized `property.city` string.
@@ -66,7 +70,7 @@ Status values: `Open | Fixed@<sha> | Wontfix | Deferred`.
 - `apps/admin/src/components/forms/property-form.tsx:82-108+` — hardcoded EN labels with "for now" comment; admin is otherwise fully localized ro/en/fr/de.
 
 ## BUG-107 — Admin unsaved-changes guard doesn't cover in-app navigation (known partial)
-- **Severity:** Minor · **Surface:** admin · **Status:** Open
+- **Severity:** Minor · **Surface:** admin · **Status:** Fixed@pending
 - `apps/admin/src/hooks/use-unsaved-changes-warning.ts` covers only `beforeunload` (tab close/reload); App Router `<Link>`/`router.push` navigation silently discards dirty forms.
 
 ## BUG-108 — GDPR right-to-erasure hard-purge cron not implemented
