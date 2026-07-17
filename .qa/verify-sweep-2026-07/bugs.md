@@ -62,6 +62,11 @@ Status: `Open | Fixed@<sha> | Wontfix | Deferred`. Every non-Open stamp carries 
 - **Fix direction:** either raise the schema cap / add kanban pagination, or drop the kanban fetch to ≤100 — plus the same client/schema parity sweep as BUG-202.
 - **Secondary:** error-card copy is English ("Something went wrong…", "Retry or refresh") on the RO locale — should use localized messages.
 
+## BUG-210 — Counties list shows "PROPRIETĂȚI 0" for every county despite 96 properties
+- **Severity:** Minor · **Surface:** admin (+api aggregate) · **Status:** Open
+- **Repro:** `/ro/counties` — all 42 counties show property count 0 and city counts of 1–2, while the platform has 96 properties across those counties. The per-county property aggregate appears unwired or joins on the wrong key (properties link via city, county count likely never rolled up). Cosmetic/reporting only; listings themselves are fine.
+- **Check:** whether the count is meant to be live; if so, fix the aggregate; if vestigial, drop the column.
+
 ## BUG-203 — Property form "CARACTERISTICI" section: "+ Add feature" button hardcoded English in RO locale
 - **Severity:** Minor · **Surface:** admin · **Status:** Open
 - **Repro:** `/ro/properties/new` (html lang=ro), scroll to CARACTERISTICI → button label is "+ Add feature" (should be Romanian, e.g. "+ Adaugă caracteristică"). Same family as BUG-106's literal-EN labels; the amenity toggles (FACILITĂȚI) themselves are correctly localized, so this is one straggler key, likely untranslated or hardcoded.

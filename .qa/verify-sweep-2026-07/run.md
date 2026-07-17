@@ -69,4 +69,16 @@ All browser checks via Claude in Chrome with console/network taps. Full disposit
 
 ---
 
+## Phase 3 — Admin manual sweep (delta matrix)
+
+Full dispositions in `admin-matrix.md`. **EDITOR column (biggest prior gap) fully walked**, Tier C round-trips all pass, deep-CRUD exercised, never-matrixed hub modules all render, AGENT security re-probe clean.
+
+**8 findings filed:** BUG-202 (Critical, team+invitations dead — BUG-118 regressed), BUG-205 (Critical, zero-image landing 500), BUG-204/206/207/208/209 (Major: kanban dead / form default+locale traps / Publică no-op / EDITOR inquiries dead-but-exposed / EDITOR reads audit trail), BUG-203 broadened + BUG-210 (Minor: EN stragglers / county count=0).
+
+**Verified working:** audit trail live w/ brand attribution (BUG-117), draft leak closed (BUG-109), invite+password round-trips w/ correct RO email copy (BUG-120), brand-visibility curation → landing homepage reorder (cross-app), multi-image upload, AGENT scoping + RBAC (own PATCH 200 / foreign 403 / users 403 / audit 403).
+
+**Cleanup done inline:** reset `site_config.tge_homepage_cities` to default after curation test; QA artifacts remaining for Phase 9 cleanup: QA property (apartament-qa-sweep-fara-imagini-cluj, now with 2 images), QA testimonial, QA bank rate, 2 QA inquiries, 1 accepted EDITOR (qa-sweep-editor@example.com).
+
+---
+
 **Env lesson (recorded for future baselines):** every CI Playwright job sets `DEV_AUTH_THROTTLE_DISABLED=1`; the first local runs were made without it. Result: admin suite's shared BFF session died on `/auth/refresh` 429s (10/min bucket) → 2 unsaved-changes reds; landing `[mobile]` cross-locale smoke got real 500s from listing pages when SSR fetches failed under throttle/load — which exposed **BUG-201** (listing pages unguarded against API failure; deterministic kill-API repro). Dev API restarted with the flag for all Playwright/browser phases; qa-smoke will run last against a throttle-ENABLED API restart (its 429 check needs it).
