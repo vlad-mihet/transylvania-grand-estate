@@ -192,6 +192,20 @@ export function PropertyForm({
       bathrooms: 0,
       area: 0,
       floors: 1,
+      // Every registered field must have a default matching what its input
+      // holds on a pristine form, or RHF's isDirty deep-compare (present-key
+      // vs absent-key, even for undefined) reports the create form dirty and
+      // arms the unsaved-changes guard before the user types (BUG-128). The
+      // setValueAs converters produce: yearBuilt → 0 (requiredNumberOrZero),
+      // garage/landArea → null (optionalNullableNumber), latitude/longitude →
+      // undefined (optionalNumber). developerId/agentId start unset (null).
+      yearBuilt: 0,
+      garage: null,
+      landArea: null,
+      latitude: undefined,
+      longitude: undefined,
+      developerId: null,
+      agentId: null,
       pool: false,
       features: [],
       featured: false,

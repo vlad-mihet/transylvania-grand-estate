@@ -50,8 +50,23 @@ test.describe('unsaved-changes navigation guard', () => {
     await expect(page).toHaveURL(/\/developers/);
   });
 
-  // NB: a "clean form navigates without a prompt" case can't be asserted on the
-  // property /new form — it reports form.formState.isDirty === true on load
-  // (see BUG-128), so the guard arms immediately. The two cases above prove the
-  // interceptor fires and both confirm outcomes route correctly.
+  test('a clean form navigates without a prompt', async ({ page }) => {
+    // BUG-128 regression: the create form used to report isDirty on load
+    // (yearBuilt/garage/landArea missing from defaultValues), arming the
+    // guard before any edit. A pristine form must navigate silently.
+    await page.goto('/ro/properties/new');
+    await expect(
+      page.locator('input[id^="title-"]:visible').first(),
+    ).toBeVisible();
+
+    let dialogSeen = false;
+    page.on('dialog', (dialog) => {
+      dialogSeen = true;
+      void dialog.dismiss();
+    });
+
+    await page.getByRole('link', { name: DEV_LINK }).first().click();
+    await expect(page).toHaveURL(/\/developers/);
+    expect(dialogSeen).toBe(false);
+  });
 });
