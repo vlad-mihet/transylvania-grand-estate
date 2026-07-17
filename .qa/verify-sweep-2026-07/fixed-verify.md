@@ -11,7 +11,7 @@ verifiable this sweep (reason given).
 | BUG-102 | Major | e2e env-leak fixed | Phase 1 API e2e suite | pending |
 | BUG-103 | Major | landing city filter API-driven w/ diacritics | Phase 2 UI | pending |
 | BUG-104 | Minor | placeholder socials hidden (both footers) | Phase 2 UI | pending |
-| BUG-105 | Critical | public homepages survive API down (SSR guarded) | Phase 2 kill-API probe | pending |
+| BUG-105 | Critical | public homepages survive API down (SSR guarded) | Kill-API probe (pulled into Phase 1): landing `/ro` 200, revery `/ro` 200 with API stopped | **HOLDS** (literal claim) — but guard doesn't extend to listing pages → **BUG-201** filed (Critical) |
 | BUG-106 | Minor | amenity labels localized | Phase 2 UI ro + en/fr/de spot | pending |
 | BUG-107 | Minor | unsaved-changes guard on sidebar nav | Phase 1 admin PW + Phase 2 UI | pending |
 | BUG-108 | Major | GDPR hard-purge cron registered | Phase 1 API e2e (inquiry-gdpr-purge) + Phase 2 boot logs | pending |
