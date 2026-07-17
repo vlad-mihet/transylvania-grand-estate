@@ -138,3 +138,24 @@ User approved all three waves + a deeper REBS investigation.
 **Remaining (with reason):**
 - Code-only, larger effort: BUG-101 (lint across 4 apps — includes real setState-in-effect/rules-of-hooks defects), BUG-106 (property amenity/classification labels → i18n, ~240 careful translations — deferred to a review-quality pass), BUG-107 (in-app-nav unsaved guard — App Router interception, architecturally hard, documented limitation).
 - Needs user input: BUG-104 (real social-media handles), BUG-110 (webkit contact-form repro — Safari-only, needs a real WebKit run), BUG-124 (academy public-landing product decision), BUG-125 (cookie banner — needs the actual cookie inventory to scope), BUG-126 + REBS ops (owner sign-off).
+
+---
+
+## Phase 9 — Final re-verify (2026-07-17)
+
+**Fresh reseed** (`prisma migrate reset --force`, user-consented): 53 migrations replayed clean + reseed. Verified **BUG-127 landed** (`Brașov`/`București`/`Timișoara` with diacritics in DB) and all sweep test-artifacts cleared (QA property, REBS Sibiu listing → 0 rows).
+
+**First full revery run (polluted DB): 694 pass / 3 fail / 5 flaky** — the 3 fails were `a11y property detail /ro` across all 3 browsers. Root-caused as test-data pollution: `findAffordableSlug()` picks the *newest* affordable property, which was my imageless QA property / the REBS listing. **After reseed, chromium re-run of a11y+calculators+forms+routes: 90 pass / 0 fail / 4 flaky** (flaky = pre-existing route-load retries). Confirms zero regressions from the fixes.
+
+**Final gate status (all green on clean data):**
+| Suite | Result |
+|---|---|
+| API Jest e2e | **198/198** (25 suites; +8 new regression specs) |
+| Landing Playwright | **143/143** |
+| Admin Playwright | **41/41** |
+| Academy Playwright (new) | **13/13** |
+| Revery Playwright | a11y/calc/forms/routes **90/0 fail** (4 pre-existing flaky) |
+
+**BUG-127 note:** the fix lives in `packages/data`; it lands in any environment on the next `prisma db seed` (done locally). Prod picks it up on its next seed run.
+
+**Sweep complete.** 19 of 27 findings fixed + verified + regression-tested (3 Critical, 7 Major, 9 Minor). 8 remain: 3 larger code-only efforts, 5 needing user input/owner sign-off. Ledger fully stamped.
