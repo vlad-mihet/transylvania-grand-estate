@@ -86,6 +86,30 @@ Status values: `Open | Fixed@<sha> | Wontfix | Deferred`.
 - **Root cause:** `AuditInterceptor.classify()` (`src/common/interceptors/audit.interceptor.ts:298+`) segments `req.url` and dispatches on the first segment — but `main.ts:37` sets `app.setGlobalPrefix('api/v1')`, so every URL is `/api/v1/...` and `head` is always `"api"` → `classify()` returns null → no audit for any POST/PATCH/DELETE. The `@AuditAction` decorator escape hatch is used by zero routes. The URL-allowlist path has therefore never worked in production.
 - **Fix direction:** strip the global prefix before classifying (or match on `req.route.path`), add an e2e that mutates a property and asserts an `audit_logs` row (the existing audit e2e only covers auth events).
 
+## BUG-118 — Team/users management page is non-functional: admin sends `limit` that `/auth/users` strict schema rejects, 400 rendered as empty state
+- **Severity:** Critical (users cannot be viewed/managed in the UI at all) · **Surface:** admin + api contract · **Status:** Open
+- **Empirical:** `/ro/people/team` renders "Nimic de afișat încă" with 3 admin_users in DB; People-hub ECHIPĂ KPI shows 0. `curl GET /auth/users?limit=500` (SUPER_ADMIN) → **400 `Unrecognized key: "limit"`** — `listUsersSchema` (`packages/types/src/schemas/auth.ts:88-94`, `.strict()`) accepts only role/status/search, while the admin team page requests `limit=500`.
+- **Compound defect:** the client swallows the 400 and shows the friendly empty state + invite CTA — a SUPER_ADMIN has no signal anything failed. Query errors must surface as error states, not empty lists.
+- **Note:** never covered by the admin Playwright suite (no team spec) — one of the predicted never-tested modules.
+
+## BUG-119 — People hub "Autentificări recente" queries a non-existent audit action — permanently empty
+- **Severity:** Minor · **Surface:** admin · **Status:** Open
+- Hub widget calls `GET /audit-logs?action=auth.login` (0 rows, verified) but login rows are recorded as `user.login-password` (5 rows returned for the correct filter). Widget shows "Nicio autentificare recentă" forever.
+
+## BUG-120 — Platform-user invitation email reuses the agent template ("ca agent imobiliar")
+- **Severity:** Minor · **Surface:** api (email templates) · **Status:** Open
+- `POST /invitations/users` (EDITOR invite) sends: "Admin User te-a invitat să te alături TGE **ca agent imobiliar**…" — wrong for ADMIN/EDITOR invitees. Role-appropriate copy needed for the users variant.
+- Side note: dev email transport logs to console with the accept URL (works as designed); `email_sent_at` set, 1 attempt, no bounce.
+
+## BUG-121 — Sidebar "Cereri" unread badge always shows 1 — counts items of a limit=1 query
+- **Severity:** Minor · **Surface:** admin · **Status:** Open
+- Badge showed "1" for SUPER_ADMIN with 26 new inquiries and "1" for AGENT with 2 new. The badge's data call is `GET /inquiries?status=new&limit=1` (`use-unread-inquiries.ts`) — the UI evidently renders the returned item count instead of the pagination total.
+- **Expected:** render `meta.total` (badge "26"), or a 9+ cap style.
+
+## BUG-122 — My-inquiries TIP column renders raw i18n key for viewing-type inquiries
+- **Severity:** Minor · **Surface:** admin · **Status:** Open
+- AGENT `/ro/my-inquiries`: property-type row shows "PROPRIETATE" but viewing-type shows literal "INQUIRIES.TYPELABEL.VIEWING". Missing `inquiries.typeLabel.viewing` key (check `valuation` and all 4 locales; check the admin /inquiries list too). Dev overlay logs 2 IntlErrors on the page.
+
 ## BUG-116 — Property form: empty "Anul construcției" blocks save with raw NaN error
 - **Severity:** Major · **Surface:** admin · **Status:** Open
 - New-property save with year-built left empty fails client validation: "Invalid input: expected number, received NaN" under the field; the save is blocked until a year is typed. Optional numeric fields must preprocess empty→undefined (`z.coerce`/preprocess) — check the same pattern on Locuri garaj / Suprafață teren / Lat/Long (those accepted empty, so the yearBuilt schema entry is the outlier).

@@ -8,9 +8,9 @@ Credentials: SUPER_ADMIN `admin@` (QaTest123!), EDITOR `editor@` (QaSweep123!), 
 |---|---|---|---|
 | Properties (list/create/edit/images/delete) | ⚠ list/create/edit pass (BUG-114/115/116; images→Phase 5, delete→end of pass) | ⬜ | ⬜ (own only) |
 | Inquiries kanban / my-inquiries | ⚠ pass (list+sheet+filters+archive; BUG-112/113) | ⬜ | ⬜ |
-| People: team + invitations | ⬜ | ⬜ | ⬜ (403) |
-| People: agents CRUD + invite | ⬜ | ⬜ | ⬜ (self only) |
-| Settings / users mgmt | ⬜ | ⬜ | ⬜ (403) |
+| People: team + invitations | ❌ BUG-118 (list broken) / ✅ invite ADMIN/EDITOR works (BUG-120 email copy) | ⬜ | ✅ 403 |
+| People: agents CRUD + invite | ⬜ | ⬜ | ✅ self only (my-listings) |
+| Settings / users mgmt | ⬜ settings (BUG-118 users list) | ⬜ | ✅ 403 |
 | Academy: courses/lessons | ⬜ | ⬜ | ⬜ (403) |
 | Academy: students/invitations | ⬜ | ⬜ (manage=ADMIN+) | ⬜ (403) |
 
@@ -36,10 +36,18 @@ Credentials: SUPER_ADMIN `admin@` (QaTest123!), EDITOR `editor@` (QaSweep123!), 
 | Forgot/reset password | ⬜ (one flow, any role) | | |
 | Accept-invite | ⬜ (via Phase 3 invite flows) | | |
 
+## AGENT parallel pass — ✅ PASS (security intact)
+- Nav correctly narrowed to Astăzi / Cererile mele / Anunțurile mele / Profil.
+- Direct-URL probes → all `/ro/403`: people/team, settings, audit-logs, articles, academy/courses, bank-rates (6/6).
+- my-listings scoped to own 7 properties; my-inquiries scoped to own 2 (incl. the one on the QA-created property).
+- Foreign-property edit URL renders "Proprietatea nu a fost găsită" (API GET→404) — no data leak; write blocked (API PATCH→403).
+- API RBAC spot (agent token): PATCH foreign→403, GET foreign→404, PATCH own→200, /auth/users→403, /audit-logs→403, POST /bank-rates→404. All correct.
+- Minor UX only: foreign edit route shows not-found rather than 403 (acceptable; noted, not filed).
+
 ## Cross-cutting
 - ⬜ Two-tab refresh-token race
-- ⬜ Dirty-form in-app nav (documents BUG-107 behavior)
-- ⬜ BFF conduct across API restart
-- ⬜ AGENT direct-URL probes (~6 URLs) + curl PATCH foreign property
-- ⬜ i18n spot-check (en) on 2–3 modules
-- ⬜ Audit-log entry appears after each Tier A/B mutation (checked in module passes)
+- ✅ Dirty-form in-app nav — confirmed BUG-107 (navigated away from dirty property form via sidebar, no guard prompt; beforeunload-only by design)
+- ⚠ BFF conduct across API restart — observed during the watch-loop incident: API-down → admin mutations returned 503 + "Failed to fetch" toast; recovered cleanly once API rebound (no rebuild needed). Acceptable.
+- ✅ AGENT direct-URL probes (6 URLs) + curl PATCH foreign property — see AGENT pass above
+- ⚠ i18n spot-check (en) — property form literal-EN (BUG-106); missing keys Common.relations (BUG-114), inquiries.typeLabel.viewing (BUG-122); dashboard RO mislabel (BUG-111)
+- ❌ Audit-log entry after mutations — BUG-117 (no entries ever written for resource mutations)
