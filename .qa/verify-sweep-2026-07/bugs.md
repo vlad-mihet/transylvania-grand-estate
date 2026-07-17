@@ -15,7 +15,7 @@ Status: `Open | Fixed@<sha> | Wontfix | Deferred`. Every non-Open stamp carries 
 ---
 
 ## BUG-202 — Team page AND Invitations page dead: `expand=allLocales` rejected by strict users + invitations query schemas
-- **Severity:** Critical · **Surface:** admin + api · **Status:** Open
+- **Severity:** Critical · **Surface:** admin + api · **Status:** Fixed@9275f3e
 - **Blast radius (curl sweep of 15 admin list endpoints with `?limit=10&expand=allLocales`):** exactly two reject it — `auth/users` → 400 (team page silently empty) and `invitations` → 400 (invitations page dead error-card "Something went wrong"). All other list endpoints (inquiries, agents, properties, articles, developers, testimonials, cities, counties, financial-data/indicators, audit-logs, search/history) tolerate it.
 - **Regression-of:** BUG-118 (same failure class: admin client query param rejected by `.strict()` schema → team page renders "Nimic de afișat încă" with zero users and no error surfaced). The BUG-118 fix admitted `limit`; the client now also appends `expand=allLocales` and `GET /api/v1/auth/users?limit=100&expand=allLocales` → 400 `Unrecognized key: "expand"`.
 - **Empirical isolation (curl, SUPER_ADMIN token):** `?limit=100` → 200; `?limit=100&expand=allLocales` → 400 (`validation.value.unrecognized_keys`).
@@ -25,76 +25,76 @@ Status: `Open | Fixed@<sha> | Wontfix | Deferred`. Every non-Open stamp carries 
 - **Why fresh:** likely `expand=allLocales` was introduced to the shared client after the prior sweep's fix wave (localized-editor/i18n work) without re-walking this page.
 
 ## BUG-205 — Landing property detail 500s for a property with zero images (`images[0].src` unguarded)
-- **Severity:** Critical · **Surface:** landing (+admin pipeline) · **Status:** Open
+- **Severity:** Critical · **Surface:** landing (+admin pipeline) · **Status:** Fixed@9275f3e
 - **Repro:** created `apartament-qa-sweep-fara-imagini-cluj` via admin with no images (admin allows it; detail page shows "Încă nu există imagini."). Landing `/ro/properties/<slug>` → **500**, page source shows `TypeError: Cannot read properties of undefined (reading 'src')`. Seeded image-ful property → 200.
 - Legacy Blocker #1 territory (zero-image rendering) — either never covered for the landing detail template or regressed. Revery detail template should be checked for the same pattern in the fix wave.
 - **Fix direction:** guard the hero/gallery `images[0]` access with a placeholder (empty-gallery state), or block publishing image-less properties (product call) — but the public page must never 500 either way.
 
 ## BUG-206 — Property /new form: default values fail the form's own validation; sticky cross-entity locale can silently mis-file content
-- **Severity:** Major · **Surface:** admin · **Status:** Open
+- **Severity:** Major · **Surface:** admin · **Status:** Fixed@9275f3e
 - **Trap 1 (defaults invalid):** a fresh form initializes `Anul construcției = 0` → save blocked with "Year built must be at least 1800"; clearing to empty ALSO fails (year is de-facto mandatory). Untouched `Cartier` similarly failed once registered ("Too small: expected string to have >=1 characters" — empty string vs optional). A minimal listing cannot be saved without hand-fixing fields the form itself pre-filled.
 - **Trap 2 (sticky locale):** the localized editor's `?loc=` persists across unrelated entity forms — after editing a testimonial's EN tab, `/ro/properties/new` opened with **EN active**; typing filled the EN locale while RO (required) stayed empty. Silent content mis-filing; fresh forms should open on the default locale.
 - **Also:** year-required-by-design makes no-year listings impossible via UI (awkward for land plots) — product question, noted not filed separately.
 
 ## BUG-208 — EDITOR role: inquiries UI exposed but API denies all reads — whole Cereri section dead for the role
-- **Severity:** Major · **Surface:** admin + api · **Status:** Open
+- **Severity:** Major · **Surface:** admin + api · **Status:** Fixed@9275f3e
 - **Repro (fresh EDITOR via invite round-trip):** sidebar shows "Cereri" nav + dashboard shows CERERI NOI KPI and "Cereri recente" widget; but `GET /api/v1/inquiries?…` → **403** for every variant (list `limit=20`, widget `limit=5&sort=newest`, count `status=new&limit=1`). `/ro/inquiries` renders the filter shell then a dead error card.
 - **Inconsistency detail:** immediately post-login one count call returned 200, then all subsequent calls 403 (suspect stale-token edge on the login handoff — worth checking the accept-invite auto-login token's role claim vs the refreshed token).
 - **Decision needed:** either editors may read inquiries (grant API permission — prior sweep's matrix assumed an EDITOR inquiries column) or they may not (hide Cereri nav/KPI/widget for the role). Current state is the worst of both: visible + broken.
 
 ## BUG-209 — EDITOR can read the full audit trail (API 200 + page renders all admin actions)
-- **Severity:** Major (RBAC exposure — needs owner confirmation) · **Surface:** admin + api · **Status:** Open
+- **Severity:** Major (RBAC exposure — needs owner confirmation) · **Surface:** admin + api · **Status:** Fixed@9275f3e
 - **Repro (EDITOR):** sidebar shows "Jurnal audit"; `/ro/audit-logs` renders 22 rows incl. other admins' emails, every resource action, diff links; `GET /api/v1/audit-logs?limit=50` → 200. AGENT correctly gets 403 (prior sweep + re-probe pending this sweep).
 - **Question for owner:** is audit-trail read intended for EDITOR? Convention is ADMIN+; the trail exposes operational metadata (who did what, admin emails). If intended, close Wontfix-with-note; if not, gate to ADMIN+ (nav + route + API).
 - **Related smaller notes (same role-surface review):** financial-indicators page shows an active "Sincronizează" (BNR sync) CTA to EDITOR — write-ish action, verify intent; bank-rates correctly hides the create button for EDITOR.
 
 ## BUG-207 — Article editor "Publică" button doesn't publish: saves with current Status-select value and toasts success
-- **Severity:** Major · **Surface:** admin · **Status:** Open
+- **Severity:** Major · **Surface:** admin · **Status:** Fixed@9275f3e
 - **Repro:** article in Ciornă (draft) → click **Publică** → toast "Articol actualizat", but DB status stays `draft` and public blog page stays 404. Reproduced twice (PATCH 200 each time, status unchanged). Setting the **Status select** to Publicat and clicking "Salvează schiță" DOES publish (status=published, public 200) — so the button pair semantics are inverted/overlapping: "Publică" doesn't set status, and "Salvează schiță" saves whatever the select says (including published).
 - **Impact:** an editor clicking the obvious publish CTA believes the article went live (success toast) while it remains draft — silent publish failure.
 - **Fix direction:** "Publică" must force `status: published` in its payload (and "Salvează schiță" arguably should force draft, or the Status select should be the single source with one Save button).
 - **Side note (BUG-109 context):** draft articles correctly 404 publicly and disappear from `/blog` list — the leak fix holds; this is a new authoring defect, not a leak.
 
 ## BUG-204 — Inquiries kanban view completely non-functional: requests `limit=200`, schema caps at 100
-- **Severity:** Major · **Surface:** admin + api · **Status:** Open
+- **Severity:** Major · **Surface:** admin + api · **Status:** Fixed@9275f3e
 - **Repro:** `/ro/inquiries?view=kanban` → error card "Something went wrong / We couldn't load this"; Reîncearcă re-fails. Network: `GET /api/v1/inquiries?limit=200&expand=allLocales` → 400. Curl isolation: `limit=100` → 200, `limit=101` → 400 (`validation.limit.too_big`, "expected number to be <=100"). List view works (limit=20) — kanban is the only casualty.
 - **Same failure class as BUG-202/118:** admin client params drift out of sync with strict query schemas, and the UI degrades to a dead error card. Prior sweep verified kanban working (⚠ with BUG-112/113 notes), so this regressed since — likely a kanban page-size bump past the schema cap, or a schema cap added after.
 - **Fix direction:** either raise the schema cap / add kanban pagination, or drop the kanban fetch to ≤100 — plus the same client/schema parity sweep as BUG-202.
 - **Secondary:** error-card copy is English ("Something went wrong…", "Retry or refresh") on the RO locale — should use localized messages.
 
 ## BUG-214 — Mortgage calculator: "Grad de Îndatorare" shows LTV, not DTI; monthly payment ~0.24% low
-- **Severity:** Minor · **Surface:** revery (instrumente) · **Status:** Open
+- **Severity:** Minor · **Surface:** revery (instrumente) · **Status:** Fixed@9275f3e
 - **Label defect:** for price 120k / avans 20% / 25y / 7.6%, the calculator shows **"Grad de Îndatorare 80.0%"** — that is exactly the LTV (loan 96k ÷ price 120k). "Grad de îndatorare" is Romanian for **debt-to-income**, a BNR-regulated metric capped at ~40% that requires monthly income (not collected here). An 80% "indebtedness" reading is alarming and wrong terminology; it should read "Grad de finanțare / LTV" (or add an income field for a real DTI).
 - **Precision note:** displayed monthly = **714 EUR**; annuity formula gives **715.69** (total interest 118,706 vs displayed 118,330). A consistent ~0.24% under-estimate across all three outputs — not rounding noise. Likely the rate slider's internal value differs from the displayed "7.6%". Confirm the slider step/precision; immaterial to users but a QA flag for a financial tool.
 - **Verified working:** loan amount (96k) correct; amortization chart renders; **QA Sweep Bank — 5.5% chip present** (cross-app confirmation of Phase-3 bank-rate create); all 4 instrumente pages 200 (qa-smoke).
 
 ## BUG-213 — Admin Select dropdowns throw repeated `useTypeaheadSearch` focus TypeError
-- **Severity:** Minor (likely benign dev noise — verify) · **Surface:** admin · **Status:** Open
+- **Severity:** Minor (likely benign dev noise — verify) · **Surface:** admin · **Status:** Deferred (needs focused repro / dep bump; Minor + prod-self-healing)
 - **Repro:** interacting with admin `<Select>` dropdowns (property form, brand-visibility, etc.) emits repeated `TypeError: Cannot read properties of null (reading 'focus')` at `SelectContentImpl.useTypeaheadSearch` (@radix-ui/react-select). The selects still function. Known radix issue when typeahead runs against an unmounted/null content ref. Confirm it's harmless in prod (minified) or bump radix; either way an uncaught exception spamming the console is worth silencing. Low priority.
 
 ## BUG-211 — Audit action `property.image` renders raw i18n key in dashboard feed + audit log
-- **Severity:** Minor · **Surface:** admin · **Status:** Open
+- **Severity:** Minor · **Surface:** admin · **Status:** Fixed@9275f3e
 - **Repro:** upload/remove a property image (creates a `property.image` audit action) → admin dashboard "Activitate recentă" and `/ro/audit-logs` show the literal string **"AuditLogs.actionLabel.property.image"** instead of a localized label. Console: `IntlError: INSUFFICIENT_PATH: Message at 'AuditLogs.actionLabel.property.image' resolved to 'object'` — the key is a nested object (likely `{create,delete,update}`) but the feed calls it as a leaf string.
 - Same family as BUG-114 (audit-label i18n). Directly visible in the dashboard screenshot, not just console. Fix: add the leaf label (or map the sub-action) for `property.image` in all 4 locales.
 
 ## BUG-212 — Academy pages throw React hydration mismatch (`<main>` vs `<Suspense>`)
-- **Severity:** Minor (dev-confirmed; prod = client-regen flash) · **Surface:** academy · **Status:** Open
+- **Severity:** Minor (dev-confirmed; prod = client-regen flash) · **Surface:** academy · **Status:** Deferred (needs focused repro / dep bump; Minor + prod-self-healing)
 - **Repro:** load any academy page (e.g. `/ro/login`) in dev → console `Error: Hydration failed because the server rendered HTML didn't match the client` with the diff at `SessionRestorer` → `<main className="flex-1">` (client) vs `<Suspense>` (server) inside the LocaleLayout. Tree regenerates on client. Prod (minified) suppresses the overlay but the mismatch still forces a client re-render (layout flash/perf).
 - **Fix direction:** align the server/client render in `SessionRestorer`/layout — likely a `Suspense` boundary present on server but replaced by `<main>` on client, or a session-gated branch that differs pre-hydration. Wrap consistently or gate with `suppressHydrationWarning` only if truly unavoidable.
 
 ## BUG-210 — Counties list shows "PROPRIETĂȚI 0" for every county despite 96 properties
-- **Severity:** Minor · **Surface:** admin (+api aggregate) · **Status:** Open
+- **Severity:** Minor · **Surface:** admin (+api aggregate) · **Status:** Fixed@9275f3e
 - **Repro:** `/ro/counties` — all 42 counties show property count 0 and city counts of 1–2, while the platform has 96 properties across those counties. The per-county property aggregate appears unwired or joins on the wrong key (properties link via city, county count likely never rolled up). Cosmetic/reporting only; listings themselves are fine.
 - **Check:** whether the count is meant to be live; if so, fix the aggregate; if vestigial, drop the column.
 
 ## BUG-203 — Property form "CARACTERISTICI" section: "+ Add feature" button hardcoded English in RO locale
-- **Severity:** Minor · **Surface:** admin · **Status:** Open
+- **Severity:** Minor · **Surface:** admin · **Status:** Fixed@9275f3e
 - **Repro:** `/ro/properties/new` (html lang=ro), scroll to CARACTERISTICI → button label is "+ Add feature" (should be Romanian, e.g. "+ Adaugă caracteristică"). Same family as BUG-106's literal-EN labels; the amenity toggles (FACILITĂȚI) themselves are correctly localized, so this is one straggler key, likely untranslated or hardcoded.
 - **Broadened during Phase 3 — all hardcoded-EN strings found on admin RO pages:** "+ Add feature" (CARACTERISTICI); "Find address" label + "Search an address to fill coordinates..." placeholder; validation messages ("Year built must be at least 1800", "Too small: expected string to have >=1 characters"); save toast "Please fix N fields before saving — check the highlighted fields."; error-card copy "Something went wrong / We couldn't load this. Retry or refresh the page." (invitations page + kanban, noted in BUG-204).
 - **Check in fix wave:** grep the property-form feature-list component for other hardcoded strings (empty-state text, remove-button title) across en/fr/de too.
 
 ## BUG-201 — Public listing pages 500 when the API is unreachable (SSR guard only covers homepages)
-- **Severity:** Critical · **Surface:** landing + revery · **Status:** Open
+- **Severity:** Critical · **Surface:** landing + revery · **Status:** Fixed@9275f3e
 - **Extends:** BUG-105 (full-sweep-2026-07) — that fix guarded the two homepages, which still return 200 with the API down. The listing pages were left unguarded.
 - **Repro (deterministic):** stop the API, then GET: landing `/en/cities` → 500, `/en/developers` → 500, `/ro/properties` → 500; revery `/ro/properties` → 500, `/ro/cities` → 500. Homepages (`/ro` both sites) and static pages (`/en/about`) correctly 200.
 - **Real-world trigger observed this sweep:** during the Phase-1 landing Playwright run (concurrent with API-e2e testcontainers load), SSR fetches timed out and 6 `[mobile]` cross-locale smoke tests failed with genuine 500s on `cities`/`developers` (en/fr/de). Same URLs 200 once load subsided. In prod (Vercel SSR → Fly API, cross-cloud) transient hiccups are expected; core browse pages should degrade like the homepages do, not 500.

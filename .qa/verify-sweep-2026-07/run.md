@@ -123,4 +123,26 @@ Full detail in `prod-checks.md`. **Phase 7 exit: PASS**, BUG-127 closed on prod.
 
 ---
 
+## Phase 8 — Fix waves (user: "everything fixable now"; EDITOR policy: inquiries-yes / audit-no)
+
+All fixes in one commit `Fixed@9275f3e`. **12 of 14 findings fixed; 2 deferred with reason.**
+
+**Wave 1 (Critical):** BUG-201 (SSR guards on 5 listing pages → empty state not 500), BUG-202 (drop `.strict()` from users+invitations query schemas), BUG-205 (port revery's empty-images gallery guard to landing).
+**Wave 2 (Major):** BUG-204 (inquiries limit cap 100→500 for kanban), BUG-206 (drop cross-entity sessionStorage locale resume), BUG-207 (article Publică/Salvează force status by button intent), BUG-208 (grant EDITOR inquiries read), BUG-209 (audit list ADMIN+ only, remove EDITOR nav perm), BUG-214 (RO `ltvRatio` label → "Grad de finanțare (LTV)").
+**Wave 3 (Minor):** BUG-203 (localize property-form strings, 4 locales), BUG-210 (roll up county propertyCount live from cities), BUG-211 (audit feed uses full action path → `property.image.*` resolves leaf).
+**Deferred (Minor, prod-self-healing, need focused repro / dep bump):** BUG-212 (academy hydration mismatch — layout `<main>` is static, SessionRestorer unconditional, nested layouts passthrough; root cause needs bisection, not a blind change), BUG-213 (radix Select 2.2.6 typeahead focus TypeError — upstream; fix is a `radix-ui` bump needing its own regression cycle).
+
+**Verified empirically (fresh API build + restart):**
+- BUG-201: all 5 listing pages → **200 with API stopped** (were 500).
+- BUG-202: `auth/users` + `invitations` with `expand=allLocales` → **200**.
+- BUG-204: `inquiries?limit=200` → **200**.
+- BUG-205: zero-image landing detail → **200 + "Fără imagini" placeholder**, no crash.
+- BUG-208: EDITOR inquiries → **200**; BUG-209: EDITOR audit → **403**.
+- BUG-210: counties now report real counts (Alba 3, Bihor 2, Cluj 2, …; 9 non-zero).
+- Typecheck clean: api, admin, landing, revery.
+
+**Regression coverage added:** `apps/api/test/verify-sweep-regressions.e2e-spec.ts` locks BUG-202/204/208/209 (BUG-202/204 are repeat regressions of the strict-schema / limit-cap class → spec stops a third recurrence).
+
+---
+
 **Env lesson (recorded for future baselines):** every CI Playwright job sets `DEV_AUTH_THROTTLE_DISABLED=1`; the first local runs were made without it. Result: admin suite's shared BFF session died on `/auth/refresh` 429s (10/min bucket) → 2 unsaved-changes reds; landing `[mobile]` cross-locale smoke got real 500s from listing pages when SSR fetches failed under throttle/load — which exposed **BUG-201** (listing pages unguarded against API failure; deterministic kill-API repro). Dev API restarted with the flag for all Playwright/browser phases; qa-smoke will run last against a throttle-ENABLED API restart (its 429 check needs it).
