@@ -1018,7 +1018,9 @@
     "typeLabel": {
       "general": "General",
       "property": "Property",
-      "developer": "Developer"
+      "developer": "Developer",
+      "viewing": "Viewing",
+      "valuation": "Valuation"
     },
     "sectionLabel": {
       "type": "Type",
@@ -1248,6 +1250,7 @@
     "quote": "Quote"
   },
   "Common": {
+    "relations": "Relations",
     "cancel": "Cancel",
     "clear": "Clear",
     "filters": "Filters",

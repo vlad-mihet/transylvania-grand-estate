@@ -1018,7 +1018,9 @@
     "typeLabel": {
       "general": "Général",
       "property": "Propriété",
-      "developer": "Promoteur"
+      "developer": "Promoteur",
+      "viewing": "Visite",
+      "valuation": "Évaluation"
     },
     "sectionLabel": {
       "type": "Type",
@@ -1248,6 +1250,7 @@
     "quote": "Citation"
   },
   "Common": {
+    "relations": "Relations",
     "cancel": "Annuler",
     "clear": "Effacer",
     "filters": "Filtres",

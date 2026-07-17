@@ -1018,7 +1018,9 @@
     "typeLabel": {
       "general": "Allgemein",
       "property": "Immobilie",
-      "developer": "Bauträger"
+      "developer": "Bauträger",
+      "viewing": "Besichtigung",
+      "valuation": "Bewertung"
     },
     "sectionLabel": {
       "type": "Typ",
@@ -1248,6 +1250,7 @@
     "quote": "Zitat"
   },
   "Common": {
+    "relations": "Beziehungen",
     "cancel": "Abbrechen",
     "clear": "Löschen",
     "filters": "Filter",

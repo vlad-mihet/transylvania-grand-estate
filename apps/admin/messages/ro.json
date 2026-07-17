@@ -296,7 +296,7 @@
     "attention": {
       "newInquiries": "Cereri noi",
       "draftArticles": "Articole în draft",
-      "missingEn": "Articole netraduse (EN)",
+      "missingEn": "Conținut netradus (EN)",
       "pendingAcademyInvites": "Invitații Academy în așteptare",
       "suspendedUsers": "Membri suspendați",
       "auditFailures": "Eșecuri audit",
@@ -1018,7 +1018,9 @@
     "typeLabel": {
       "general": "General",
       "property": "Proprietate",
-      "developer": "Dezvoltator"
+      "developer": "Dezvoltator",
+      "viewing": "Vizionare",
+      "valuation": "Evaluare"
     },
     "sectionLabel": {
       "type": "Tip",
@@ -1248,6 +1250,7 @@
     "quote": "Citat"
   },
   "Common": {
+    "relations": "Relații",
     "cancel": "Anulează",
     "clear": "Șterge",
     "filters": "Filtre",
