@@ -36,6 +36,13 @@ Status: `Open | Fixed@<sha> | Wontfix | Deferred`. Every non-Open stamp carries 
 - **Trap 2 (sticky locale):** the localized editor's `?loc=` persists across unrelated entity forms — after editing a testimonial's EN tab, `/ro/properties/new` opened with **EN active**; typing filled the EN locale while RO (required) stayed empty. Silent content mis-filing; fresh forms should open on the default locale.
 - **Also:** year-required-by-design makes no-year listings impossible via UI (awkward for land plots) — product question, noted not filed separately.
 
+## BUG-207 — Article editor "Publică" button doesn't publish: saves with current Status-select value and toasts success
+- **Severity:** Major · **Surface:** admin · **Status:** Open
+- **Repro:** article in Ciornă (draft) → click **Publică** → toast "Articol actualizat", but DB status stays `draft` and public blog page stays 404. Reproduced twice (PATCH 200 each time, status unchanged). Setting the **Status select** to Publicat and clicking "Salvează schiță" DOES publish (status=published, public 200) — so the button pair semantics are inverted/overlapping: "Publică" doesn't set status, and "Salvează schiță" saves whatever the select says (including published).
+- **Impact:** an editor clicking the obvious publish CTA believes the article went live (success toast) while it remains draft — silent publish failure.
+- **Fix direction:** "Publică" must force `status: published` in its payload (and "Salvează schiță" arguably should force draft, or the Status select should be the single source with one Save button).
+- **Side note (BUG-109 context):** draft articles correctly 404 publicly and disappear from `/blog` list — the leak fix holds; this is a new authoring defect, not a leak.
+
 ## BUG-204 — Inquiries kanban view completely non-functional: requests `limit=200`, schema caps at 100
 - **Severity:** Major · **Surface:** admin + api · **Status:** Open
 - **Repro:** `/ro/inquiries?view=kanban` → error card "Something went wrong / We couldn't load this"; Reîncearcă re-fails. Network: `GET /api/v1/inquiries?limit=200&expand=allLocales` → 400. Curl isolation: `limit=100` → 200, `limit=101` → 400 (`validation.limit.too_big`, "expected number to be <=100"). List view works (limit=20) — kanban is the only casualty.

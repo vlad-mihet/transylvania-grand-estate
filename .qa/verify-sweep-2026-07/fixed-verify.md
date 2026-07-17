@@ -15,7 +15,7 @@ verifiable this sweep (reason given).
 | BUG-106 | Minor | amenity labels localized | Phase 2 UI ro: FACILITĂȚI fully localized w/ diacritics (Terasă, Mașină de spălat, Uși blindate…). One straggler found → BUG-203 ("+ Add feature" EN in RO). en/fr/de spot in Phase 3 | **HOLDS** (with BUG-203 side-finding) |
 | BUG-107 | Minor | unsaved-changes guard on sidebar nav | Phase 1 admin PW unsaved-changes spec (dismiss/accept/clean 3/3 green) | **HOLDS** (AUTO) |
 | BUG-108 | Major | GDPR hard-purge cron registered | Phase 1 API e2e `inquiry-gdpr-purge` green + `@Cron(EVERY_DAY_AT_3AM) purgeSoftDeleted` + ScheduleModule init in boot log | **HOLDS** (AUTO+boot) |
-| BUG-109 | Major | draft article leak closed | Phase 1 API e2e (article-public-visibility) + Phase 3 UI publish/unpublish | pending |
+| BUG-109 | Major | draft article leak closed | Phase 1 API e2e (article-public-visibility) + Phase 3 UI: unpublish → revery /blog 404 + gone from list; republish → 200 | **HOLDS** (new authoring defect found alongside → BUG-207) |
 | BUG-110 | Minor | webkit contact form fixed | Phase 1 revery full matrix incl. webkit forms specs — 702/702 | **HOLDS** (AUTO) |
 | BUG-111 | Minor | dashboard RO label fixed | Phase 2 UI: dashboard KPI labels all proper RO (CERERI NOI / ARTICOLE ÎN DRAFT / CONȚINUT NETRADUS / INVITAȚII…); console clean | **HOLDS** |
 | BUG-112 | Minor | inquiry peek-sheet badge reflects read status | Phase 2 UI: opened sheet → "Marcat ca citit" toast, row badge flipped NOU→CITIT live | **HOLDS** |
