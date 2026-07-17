@@ -17,21 +17,21 @@ verifiable this sweep (reason given).
 | BUG-108 | Major | GDPR hard-purge cron registered | Phase 1 API e2e `inquiry-gdpr-purge` green + `@Cron(EVERY_DAY_AT_3AM) purgeSoftDeleted` + ScheduleModule init in boot log | **HOLDS** (AUTO+boot) |
 | BUG-109 | Major | draft article leak closed | Phase 1 API e2e (article-public-visibility) + Phase 3 UI publish/unpublish | pending |
 | BUG-110 | Minor | webkit contact form fixed | Phase 1 revery full matrix incl. webkit forms specs — 702/702 | **HOLDS** (AUTO) |
-| BUG-111 | Minor | admin i18n minor | Phase 2 console pass | pending |
-| BUG-112 | Minor | admin i18n minor | Phase 2 console pass | pending |
-| BUG-113 | Minor | admin i18n minor | Phase 2 console pass | pending |
-| BUG-114 | Minor | IntlError spam eliminated | Phase 2 console pass (zero IntlError bar) | pending |
+| BUG-111 | Minor | dashboard RO label fixed | Phase 2 UI: dashboard KPI labels all proper RO (CERERI NOI / ARTICOLE ÎN DRAFT / CONȚINUT NETRADUS / INVITAȚII…); console clean | **HOLDS** |
+| BUG-112 | Minor | inquiry peek-sheet badge reflects read status | Phase 2 UI: opened sheet → "Marcat ca citit" toast, row badge flipped NOU→CITIT live | **HOLDS** |
+| BUG-113 | Minor | source-filter placeholder | Phase 2 UI: SURSĂ filter shows placeholder "ex. reveria-contact" | **HOLDS** |
+| BUG-114 | Minor | IntlError spam eliminated | Phase 2 console across dashboard/team/property-form/audit-logs/inquiries(list+sheet+kanban)/agents/invitations: **zero IntlError/MISSING_MESSAGE** | **HOLDS** |
 | BUG-115 | Major | slug derivation from RO-only title | Phase 2 UI: RO title "Casă de test QA Știință Brașov" → Generează → `casa-de-test-qa-stiinta-brasov` | **HOLDS** |
-| BUG-116 | Major | year-built NaN fixed | Phase 2 UI | pending |
-| BUG-117 | Critical | audit trail alive under /api/v1 | Phase 1 API e2e (audit-trail) + Phase 2 audit-logs page | pending |
+| BUG-116 | Major | year-built NaN fixed | Deferred to Phase 3: seed has no NULL year_built; will verify via QA-created property without year (also covers zero-image render) | pending (Phase 3) |
+| BUG-117 | Critical | audit trail alive under /api/v1 | Phase 1 API e2e `audit-trail` green + Phase 2 UI: audit-logs page shows live rows (PROPERTY.CREATE/DELETE from PW suite, USER.LOGIN-PASSWORD, INQUIRY.CREATE×n w/ REVERY brand), filters+CSV+diff links present | **HOLDS** |
 | BUG-118 | Critical | people/team page functional | Phase 2 UI: page renders but list silently EMPTY; network shows `auth/users?limit=100&expand=allLocales` → 400 unrecognized key `expand` | **REGRESSED→BUG-202** (new key, same class; `limit` itself still accepted) |
-| BUG-119 | Minor | admin i18n minor | Phase 2 console pass | pending |
-| BUG-120 | Minor | (per prior ledger) | Phase 1 suites / Phase 2 | pending |
-| BUG-121 | Minor | admin i18n minor | Phase 2 console pass | pending |
-| BUG-122 | Minor | admin i18n minor | Phase 2 console pass | pending |
-| BUG-123 | Trivial | revery dev axe crash guarded — **ledger says Open, run.md says fixed: reconcile** | Phase 2 dev console | pending |
-| BUG-124 | Wontfix | academy login-gate by design | Phase 2 logged-out probes + Phase 4 | pending |
-| BUG-125 | Wontfix | cookie banner not required (essential-only cookies) | Phase 2 local + Phase 7 prod cookie inventory | pending |
+| BUG-119 | Minor | recent-signins filter | Phase 2 UI: dashboard activity feed renders login events correctly typed (UTILIZATOR badge) | **HOLDS** |
+| BUG-120 | Minor | staff invite email role-appropriate copy | Phase 3: EDITOR invite round-trip will surface the email via API stdout (Resend unset) | pending (Phase 3) |
+| BUG-121 | Minor | unread badge total | Phase 2 UI: sidebar Cereri badge tracked list state (31→30 after mark-as-read) | **HOLDS** |
+| BUG-122 | Minor | inquiries typeLabel.viewing key | Phase 2 UI: TIP badges render (GENERAL/PROPRIETATE); zero missing-key errors in console | **HOLDS** |
+| BUG-123 | Trivial | revery dev axe crash guarded | Phase 2: revery `/ro` dev console — zero errors. Ledger discrepancy resolved: old bugs.md restamped `Fixed@290ba9c` (was stale-Open) | **HOLDS** + reconciled |
+| BUG-124 | Wontfix | academy login-gate by design | Phase 2: logged-out deep URL `/ro/courses/…/lessons` → 307 `/ro/login?returnTo=…` (returnTo intact); academy e2e 13/13 locks contract | **HOLDS** (Wontfix evidence valid) |
+| BUG-125 | Wontfix | cookie banner not required (essential-only cookies) | Phase 2 local: Set-Cookie inventory = `NEXT_LOCALE` only (landing+revery), none on academy pre-auth; zero trackers. Prod re-check in Phase 7 | **HOLDS** (local; prod pending) |
 | BUG-126 | Major | REBS schema default → demo tenant | Phase 6 config check (no live sync this sweep) | pending |
 | BUG-127 | Open | seed city diacritics (prod pending reseed) | Phase 0 local SELECT + Phase 7 gated prod reseed | pending |
 | BUG-128 | Minor | fresh /new form not dirty | Phase 1 admin PW "a clean form navigates without a prompt" green | **HOLDS** (AUTO) |

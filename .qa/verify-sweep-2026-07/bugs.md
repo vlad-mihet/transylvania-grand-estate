@@ -14,8 +14,9 @@ Status: `Open | Fixed@<sha> | Wontfix | Deferred`. Every non-Open stamp carries 
 
 ---
 
-## BUG-202 — People/Team page silently empty again: `expand=allLocales` rejected by strict users query schema
+## BUG-202 — Team page AND Invitations page dead: `expand=allLocales` rejected by strict users + invitations query schemas
 - **Severity:** Critical · **Surface:** admin + api · **Status:** Open
+- **Blast radius (curl sweep of 15 admin list endpoints with `?limit=10&expand=allLocales`):** exactly two reject it — `auth/users` → 400 (team page silently empty) and `invitations` → 400 (invitations page dead error-card "Something went wrong"). All other list endpoints (inquiries, agents, properties, articles, developers, testimonials, cities, counties, financial-data/indicators, audit-logs, search/history) tolerate it.
 - **Regression-of:** BUG-118 (same failure class: admin client query param rejected by `.strict()` schema → team page renders "Nimic de afișat încă" with zero users and no error surfaced). The BUG-118 fix admitted `limit`; the client now also appends `expand=allLocales` and `GET /api/v1/auth/users?limit=100&expand=allLocales` → 400 `Unrecognized key: "expand"`.
 - **Empirical isolation (curl, SUPER_ADMIN token):** `?limit=100` → 200; `?limit=100&expand=allLocales` → 400 (`validation.value.unrecognized_keys`).
 - **Blast-radius note:** the admin client appends `expand=allLocales` to every list call; `inquiries`, `agents?unlinked=true`, `search/history` all tolerate it (200). Only the users endpoint's schema is strict without it — fix should sweep ALL admin list query schemas for parity with the client's global params, not just patch this one key (that's how BUG-118's fix missed this).

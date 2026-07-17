@@ -140,7 +140,8 @@ Status values: `Open | Fixed@<sha> | Wontfix | Deferred`.
 - AGENT `/ro/my-inquiries`: property-type row shows "PROPRIETATE" but viewing-type shows literal "INQUIRIES.TYPELABEL.VIEWING". Missing `inquiries.typeLabel.viewing` key (check `valuation` and all 4 locales; check the admin /inquiries list too). Dev overlay logs 2 IntlErrors on the page.
 
 ## BUG-123 — Revery dev a11y checker (@axe-core/react) throws on init — broken in dev, prod unaffected
-- **Severity:** Trivial (dev-only) · **Surface:** revery · **Status:** Open
+- **Severity:** Trivial (dev-only) · **Surface:** revery · **Status:** Fixed@290ba9c
+- **Ledger correction (verify-sweep-2026-07):** status was stale — the guard landed in Wave 3 (`fix(qa-sweep) Wave 3: guard @axe-core/react init against React 19 module-freeze`, 290ba9c) and run.md recorded the verification, but this ledger row was never restamped. Re-verified 2026-07-17: revery `/ro` in dev, zero console errors.
 - Every Revery page in dev logs `TypeError: Cannot set property createElement of [object Module] which has only a getter` at `reactAxe`/`AxeInitializer.useEffect`. `AxeInitializer` is correctly gated to `NODE_ENV==="development"` (`layout.tsx:74`, dead-code-eliminated in prod) — so no production impact, but the dev a11y tooling never runs (regression vs its intent). Likely an ESM interop issue with the current `@axe-core/react` + React 19. Source of the Revery dev-overlay "1 Issue".
 
 ## BUG-124 — Academy has no anonymous landing/catalog: root `/ro` bounces straight to login (product decision to confirm)
