@@ -1,6 +1,5 @@
 "use client";
 
-import { Suspense } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -149,9 +148,5 @@ function LoginInner() {
 }
 
 export default function LoginPage() {
-  return (
-    <Suspense fallback={null}>
-      <LoginInner />
-    </Suspense>
-  );
+  return <LoginInner />;
 }

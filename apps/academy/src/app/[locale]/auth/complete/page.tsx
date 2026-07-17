@@ -1,6 +1,6 @@
 "use client";
 
-import { Suspense, useEffect } from "react";
+import { useEffect } from "react";
 import { Loader2 } from "lucide-react";
 import { useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "@/i18n/navigation";
@@ -76,9 +76,5 @@ function AuthCompleteInner() {
 }
 
 export default function AuthCompletePage() {
-  return (
-    <Suspense fallback={null}>
-      <AuthCompleteInner />
-    </Suspense>
-  );
+  return <AuthCompleteInner />;
 }

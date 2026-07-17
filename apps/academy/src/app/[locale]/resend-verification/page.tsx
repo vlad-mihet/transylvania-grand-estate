@@ -1,6 +1,5 @@
 "use client";
 
-import { Suspense } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -85,9 +84,5 @@ function ResendVerificationInner() {
 }
 
 export default function ResendVerificationPage() {
-  return (
-    <Suspense fallback={null}>
-      <ResendVerificationInner />
-    </Suspense>
-  );
+  return <ResendVerificationInner />;
 }
