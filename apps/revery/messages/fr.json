@@ -1,16 +1,16 @@
 {
   "Navigation": {
-    "home": "Home",
+    "home": "Accueil",
     "language": "Langue",
-    "properties": "Properties",
-    "cities": "Cities",
-    "developers": "Developers",
+    "properties": "Biens",
+    "cities": "Villes",
+    "developers": "Promoteurs",
     "agents": "Agents",
     "blog": "Blog",
-    "about": "About",
+    "about": "À propos",
     "courses": "Cours",
     "contact": "Contact",
-    "scheduleViewing": "Get Started",
+    "scheduleViewing": "Commencer",
     "tools": "Outils",
     "menuTitle": "Menu",
     "menuDescription": "Navigation du site et sélection de la langue",
@@ -21,22 +21,22 @@
   "HomePage": {
     "hero": {
       "title": "La maison que vous adorerez",
-      "subtitle": "Quality properties across Romania — from cozy apartments to family houses, all within your reach.",
-      "cta": "Browse Properties",
-      "propertyCount": "{count} properties available",
+      "subtitle": "Des biens de qualité partout en Roumanie — de l'appartement douillet à la maison familiale, tous à votre portée.",
+      "cta": "Parcourir les biens",
+      "propertyCount": "{count} biens disponibles",
       "searchForm": {
-        "tabBuy": "Buy",
-        "tabRent": "Rent",
-        "typePlaceholder": "Property Type",
-        "allTypes": "All Types",
-        "forSale": "For Sale",
-        "forRent": "For Rent",
-        "addressPlaceholder": "Type address",
-        "priceLabel": "Price",
-        "areaLabel": "Area",
-        "from": "from",
-        "to": "to",
-        "searchButton": "Search",
+        "tabBuy": "Acheter",
+        "tabRent": "Louer",
+        "typePlaceholder": "Type de bien",
+        "allTypes": "Tous les types",
+        "forSale": "À vendre",
+        "forRent": "À louer",
+        "addressPlaceholder": "Saisir une adresse",
+        "priceLabel": "Prix",
+        "areaLabel": "Surface",
+        "from": "de",
+        "to": "à",
+        "searchButton": "Rechercher",
         "minPriceSr": "Prix minimum",
         "maxPriceSr": "Prix maximum",
         "minAreaSr": "Surface minimale",
@@ -48,30 +48,30 @@
       }
     },
     "valueProposition": {
-      "title": "Why Adorys",
-      "subtitle": "A property platform that works differently.",
+      "title": "Pourquoi Adorys",
+      "subtitle": "Une plateforme immobilière qui fonctionne autrement.",
       "features": {
         "approach": {
-          "title": "Fewer listings, better vetted",
-          "description": "Most platforms dump thousands of listings and leave you to figure it out. We're building Adorys around a different idea — a smaller selection of properties, each one reviewed, with someone local to help you through the process.",
-          "cta": "Browse properties"
+          "title": "Moins d'annonces, mieux vérifiées",
+          "description": "La plupart des plateformes déversent des milliers d'annonces et vous laissent vous débrouiller. Chez Adorys, nous construisons autour d'une idée différente — une sélection plus restreinte de biens, chacun vérifié, avec quelqu'un sur place pour vous accompagner tout au long du processus.",
+          "cta": "Parcourir les biens"
         },
         "curated": {
-          "title": "Every listing is reviewed",
-          "description": "Before a property goes live on Adorys, it goes through our review process. We check the details, flag anything that doesn't add up, and only publish listings we'd be comfortable recommending.",
-          "cta": "See our selection"
+          "title": "Chaque annonce est vérifiée",
+          "description": "Avant qu'un bien ne soit publié sur Adorys, il passe par notre processus de vérification. Nous contrôlons les détails, signalons tout ce qui ne colle pas et ne publions que les annonces que nous serions à l'aise de recommander.",
+          "cta": "Voir notre sélection"
         },
         "guidance": {
-          "title": "Agents who actually know the city",
-          "description": "Our agents live in the cities they cover. They know which neighborhoods are growing, which buildings are well-built, and what a fair price looks like on any given street. That's not something you get from a listing page.",
-          "cta": "Talk to an agent"
+          "title": "Des agents qui connaissent vraiment la ville",
+          "description": "Nos agents vivent dans les villes qu'ils couvrent. Ils savent quels quartiers se développent, quels immeubles sont bien construits et à quoi ressemble un prix juste dans chaque rue. Ce n'est pas quelque chose que l'on trouve sur une page d'annonce.",
+          "cta": "Parler à un agent"
         }
       }
     },
     "featured": {
-      "subtitle": "Hand-Picked For You",
-      "title": "Featured Properties",
-      "viewAll": "View All",
+      "subtitle": "Sélectionnés pour vous",
+      "title": "Biens en vedette",
+      "viewAll": "Voir tout",
       "scrollPrevious": "Précédent",
       "scrollNext": "Suivant"
     },
@@ -102,96 +102,96 @@
       }
     },
     "cities": {
-      "subtitle": "Explore By City",
-      "title": "Popular Cities",
-      "propertyCount": "{count} properties",
+      "subtitle": "Explorer par ville",
+      "title": "Villes populaires",
+      "propertyCount": "{count} biens",
       "viewAll": "Voir Toutes les Villes",
       "tabs": {
-        "all": "All Properties",
-        "new": "New Listings",
-        "featured": "Featured"
+        "all": "Tous les biens",
+        "new": "Nouvelles annonces",
+        "featured": "En vedette"
       }
     },
     "faq": {
-      "title": "Frequently Asked Questions",
-      "viewAll": "View All FAQ",
+      "title": "Questions fréquentes",
+      "viewAll": "Voir toutes les questions",
       "items": {
         "0": {
-          "question": "What is Adorys and how can it help me?",
-          "answer": "Adorys is a real estate platform focused on affordable, quality properties across Romania. We help buyers find carefully curated homes priced up to €999,999, with transparent listings and expert agent support throughout the process."
+          "question": "Qu'est-ce qu'Adorys et comment peut-il m'aider ?",
+          "answer": "Adorys est une plateforme immobilière axée sur des biens abordables et de qualité partout en Roumanie. Nous aidons les acheteurs à trouver des logements soigneusement sélectionnés, au prix maximum de 999 999 €, avec des annonces transparentes et l'accompagnement d'agents experts tout au long du processus."
         },
         "1": {
-          "question": "What types of properties can I find on Adorys?",
-          "answer": "You can find apartments, houses, villas, terrains, penthouses, and more. We cover a wide range of property types across multiple cities in Romania, all within the affordable price segment."
+          "question": "Quels types de biens puis-je trouver sur Adorys ?",
+          "answer": "Vous pouvez trouver des appartements, des maisons, des villas, des terrains, des penthouses et bien plus encore. Nous couvrons un large éventail de types de biens dans plusieurs villes de Roumanie, tous dans le segment de prix abordable."
         },
         "2": {
-          "question": "In which cities are properties available?",
-          "answer": "We currently feature properties in Cluj-Napoca, Oradea, Timișoara, Brașov, and Sibiu — with more cities being added regularly."
+          "question": "Dans quelles villes des biens sont-ils disponibles ?",
+          "answer": "Nous proposons actuellement des biens à Cluj-Napoca, Oradea, Timișoara, Brașov et Sibiu — et d'autres villes s'ajoutent régulièrement."
         },
         "3": {
-          "question": "How does the buying process work through Adorys?",
-          "answer": "Browse our listings, contact our agents for viewings, and get guided support through the entire purchase process including documentation, negotiations, and closing. Our agents are here to make it seamless."
+          "question": "Comment se déroule le processus d'achat avec Adorys ?",
+          "answer": "Parcourez nos annonces, contactez nos agents pour des visites et bénéficiez d'un accompagnement guidé tout au long du processus d'achat, y compris la documentation, les négociations et la signature. Nos agents sont là pour que tout se passe sans accroc."
         },
         "4": {
-          "question": "Are Adorys listings verified?",
-          "answer": "Yes. Every property listed on Adorys goes through a review process. We verify ownership, accuracy of descriptions, and ensure photos accurately represent the property."
+          "question": "Les annonces d'Adorys sont-elles vérifiées ?",
+          "answer": "Oui. Chaque bien publié sur Adorys passe par un processus de vérification. Nous vérifions la propriété, l'exactitude des descriptions et nous assurons que les photos représentent fidèlement le bien."
         },
         "5": {
-          "question": "Is it free to use Adorys as a buyer?",
-          "answer": "Absolutely. Browsing properties, contacting agents, and scheduling viewings is completely free for buyers. There are no hidden fees or registration requirements."
+          "question": "L'utilisation d'Adorys est-elle gratuite pour un acheteur ?",
+          "answer": "Tout à fait. Parcourir les biens, contacter les agents et planifier des visites est entièrement gratuit pour les acheteurs. Il n'y a aucuns frais cachés ni obligation d'inscription."
         }
       }
     },
     "articles": {
-      "title": "Recent Articles",
-      "viewAll": "View All Articles",
+      "title": "Articles récents",
+      "viewAll": "Voir tous les articles",
       "scrollPrevious": "Précédent",
       "scrollNext": "Suivant"
     },
     "cta": {
-      "title": "Ready to Find Your Home?",
-      "subtitle": "Browse our collection or get in touch — we're here to help you every step of the way.",
-      "button": "Contact Us"
+      "title": "Prêt à trouver votre logement ?",
+      "subtitle": "Parcourez notre collection ou contactez-nous — nous sommes là pour vous accompagner à chaque étape.",
+      "button": "Nous contacter"
     }
   },
   "PropertiesPage": {
     "hero": {
-      "title": "Properties",
-      "subtitle": "Browse Quality Homes Across Romania"
+      "title": "Biens",
+      "subtitle": "Parcourez des logements de qualité partout en Roumanie"
     },
     "contextual": {
-      "propertiesInCity": "Properties in {city}",
-      "propertiesByDeveloper": "Properties by {developer}",
-      "exploreCityDetails": "Explore {city}",
-      "aboutDeveloper": "About {developer}"
+      "propertiesInCity": "Biens à {city}",
+      "propertiesByDeveloper": "Biens de {developer}",
+      "exploreCityDetails": "Découvrir {city}",
+      "aboutDeveloper": "À propos de {developer}"
     },
     "filter": {
-      "search": "Search properties...",
-      "city": "City",
+      "search": "Rechercher des biens...",
+      "city": "Ville",
       "location": "Emplacement",
-      "type": "Property Type",
-      "priceRange": "Price Range",
-      "sort": "Sort By",
-      "allCities": "All Cities",
-      "allTypes": "All Types",
-      "allPrices": "All Prices",
-      "priceLowHigh": "Price: Low to High",
-      "priceHighLow": "Price: High to Low",
-      "newest": "Newest First",
-      "results": "{count} properties found",
-      "searchButton": "Search",
-      "clearAll": "Clear All",
-      "activeFilters": "Active Filters",
-      "filterBy": "Filter By",
-      "priceFrom": "from (€)",
-      "priceTo": "to (€)",
-      "areaRange": "Area (m²)",
-      "areaFrom": "from (m²)",
-      "areaTo": "to (m²)",
-      "bedrooms": "Bedrooms",
-      "anyBedrooms": "Any",
-      "bathrooms": "Bathrooms",
-      "anyBathrooms": "Any",
+      "type": "Type de bien",
+      "priceRange": "Fourchette de prix",
+      "sort": "Trier par",
+      "allCities": "Toutes les villes",
+      "allTypes": "Tous les types",
+      "allPrices": "Tous les prix",
+      "priceLowHigh": "Prix : croissant",
+      "priceHighLow": "Prix : décroissant",
+      "newest": "Plus récents d'abord",
+      "results": "{count} biens trouvés",
+      "searchButton": "Rechercher",
+      "clearAll": "Tout effacer",
+      "activeFilters": "Filtres actifs",
+      "filterBy": "Filtrer par",
+      "priceFrom": "de (€)",
+      "priceTo": "à (€)",
+      "areaRange": "Surface (m²)",
+      "areaFrom": "de (m²)",
+      "areaTo": "à (m²)",
+      "bedrooms": "Chambres",
+      "anyBedrooms": "Indifférent",
+      "bathrooms": "Salles de bain",
+      "anyBathrooms": "Indifférent",
       "moreFilters": "Plus de filtres",
       "lessFilters": "Moins de filtres",
       "clearFilters": "Effacer les filtres",
@@ -246,51 +246,51 @@
       "hasImages": "Avec images"
     },
     "noResults": {
-      "title": "No Properties Found",
-      "description": "Try adjusting your filters to find what you're looking for."
+      "title": "Aucun bien trouvé",
+      "description": "Essayez d'ajuster vos filtres pour trouver ce que vous cherchez."
     },
     "cta": {
-      "title": "Can't Find What You're Looking For?",
-      "subtitle": "Get in touch and we'll help you find the perfect property.",
-      "button": "Contact Us"
+      "title": "Vous ne trouvez pas ce que vous cherchez ?",
+      "subtitle": "Contactez-nous et nous vous aiderons à trouver le bien idéal.",
+      "button": "Nous contacter"
     }
   },
   "PropertyDetail": {
-    "backToProperties": "Back to Properties",
-    "overview": "Overview",
-    "features": "Features & Amenities",
-    "location": "Location",
+    "backToProperties": "Retour aux biens",
+    "overview": "Aperçu",
+    "features": "Caractéristiques et équipements",
+    "location": "Emplacement",
     "specs": {
-      "bedrooms": "Bedrooms",
-      "bathrooms": "Bathrooms",
-      "area": "Living Area",
-      "landArea": "Land Area",
-      "floors": "Floors",
-      "yearBuilt": "Year Built",
-      "garage": "Garage Spaces"
+      "bedrooms": "Chambres",
+      "bathrooms": "Salles de bain",
+      "area": "Surface habitable",
+      "landArea": "Surface du terrain",
+      "floors": "Étages",
+      "yearBuilt": "Année de construction",
+      "garage": "Places de garage"
     },
     "description": "Description",
-    "requestInfo": "Request Information",
-    "scheduleViewing": "Schedule a Viewing",
-    "shareProperty": "Share Property",
+    "requestInfo": "Demander des informations",
+    "scheduleViewing": "Planifier une visite",
+    "shareProperty": "Partager le bien",
     "similarProperties": {
-      "subtitle": "You May Also Like",
-      "title": "Similar Properties"
+      "subtitle": "Vous aimerez peut-être aussi",
+      "title": "Biens similaires"
     },
-    "price": "Price",
+    "price": "Prix",
     "status": {
-      "available": "Available",
-      "sold": "Sold",
-      "reserved": "Reserved"
+      "available": "Disponible",
+      "sold": "Vendu",
+      "reserved": "Réservé"
     },
     "cta": {
-      "title": "Interested in This Property?",
-      "subtitle": "Get in touch to learn more or schedule a viewing."
+      "title": "Ce bien vous intéresse ?",
+      "subtitle": "Contactez-nous pour en savoir plus ou planifier une visite."
     },
     "agent": {
-      "title": "Your Agent",
-      "callAgent": "Call Agent",
-      "emailAgent": "Email Agent",
+      "title": "Votre agent",
+      "callAgent": "Appeler l'agent",
+      "emailAgent": "Envoyer un e-mail à l'agent",
       "roleAgent": "Agent Adorys",
       "roleTeam": "Équipe Adorys"
     },
@@ -473,24 +473,24 @@
   },
   "AgentsPage": {
     "hero": {
-      "title": "Our Agents",
-      "subtitle": "Meet our local experts who know Romania's property market inside and out."
+      "title": "Nos agents",
+      "subtitle": "Rencontrez nos experts locaux qui connaissent le marché immobilier roumain sur le bout des doigts."
     },
-    "viewProfile": "View Profile",
+    "viewProfile": "Voir le profil",
     "viewPhone": "Afficher le numéro",
-    "propertiesManaged": "{count} properties"
+    "propertiesManaged": "{count} biens"
   },
   "AgentDetailPage": {
-    "about": "About {name}",
-    "properties": "Properties by {name}",
-    "contactAgent": "Contact Agent",
-    "callAgent": "Call",
+    "about": "À propos de {name}",
+    "properties": "Biens de {name}",
+    "contactAgent": "Contacter l'agent",
+    "callAgent": "Appeler",
     "emailAgent": "Email",
     "viewPhone": "Afficher le numéro",
     "cta": {
-      "title": "Work with {name}",
-      "subtitle": "Get personalized property recommendations and expert advice.",
-      "button": "Send a Message"
+      "title": "Travailler avec {name}",
+      "subtitle": "Recevez des recommandations de biens personnalisées et des conseils d'experts.",
+      "button": "Envoyer un message"
     }
   },
   "FAQPage": {
@@ -549,19 +549,19 @@
   "BlogPage": {
     "hero": {
       "title": "Blog",
-      "subtitle": "Insights, guides, and market updates for homebuyers in Romania."
+      "subtitle": "Analyses, guides et actualités du marché pour les acheteurs de logements en Roumanie."
     },
-    "readMore": "Read More",
-    "minRead": "{count} min read",
+    "readMore": "Lire la suite",
+    "minRead": "{count} min de lecture",
     "categories": {
-      "all": "All",
+      "all": "Tout",
       "guide": "Guides",
-      "news": "News",
-      "market-report": "Market Reports"
+      "news": "Actualités",
+      "market-report": "Rapports de marché"
     },
     "noArticles": {
-      "title": "No Articles Yet",
-      "description": "Check back soon for insights, guides, and market updates."
+      "title": "Pas encore d'articles",
+      "description": "Revenez bientôt pour des analyses, des guides et des actualités du marché."
     },
     "loadError": {
       "title": "Impossible de charger les articles",
@@ -780,14 +780,14 @@
     }
   },
   "Breadcrumb": {
-    "home": "Home",
-    "properties": "Properties",
-    "cities": "Cities",
-    "developers": "Developers",
+    "home": "Accueil",
+    "properties": "Biens",
+    "cities": "Villes",
+    "developers": "Promoteurs",
     "agents": "Agents",
     "blog": "Blog",
     "faq": "FAQ",
-    "about": "About",
+    "about": "À propos",
     "contact": "Contact",
     "tools": "Outils",
     "mortgageCalculator": "Calculateur Hypothécaire",
@@ -796,24 +796,24 @@
     "borrowingCapacity": "Capacité d'Emprunt"
   },
   "Footer": {
-    "tagline": "Quality Homes Across Romania",
-    "quickLinks": "Quick Links",
-    "explore": "Explore",
+    "tagline": "Des logements de qualité partout en Roumanie",
+    "quickLinks": "Liens rapides",
+    "explore": "Explorer",
     "exploreLinks": {
-      "cities": "Cities",
-      "developers": "Developers",
+      "cities": "Villes",
+      "developers": "Promoteurs",
       "agents": "Agents",
       "blog": "Blog"
     },
-    "resources": "Resources",
+    "resources": "Ressources",
     "resourceLinks": {
       "faq": "FAQ",
-      "contact": "Contact Us",
+      "contact": "Nous contacter",
       "tools": "Outils Utiles",
       "courses": "Cours"
     },
     "contact": "Contact",
-    "followUs": "Follow Us",
+    "followUs": "Suivez-nous",
     "social": {
       "navLabel": "Suivez-nous sur les réseaux sociaux",
       "instagram": "Adorys sur Instagram",
@@ -821,11 +821,11 @@
       "linkedin": "Adorys sur LinkedIn",
       "youtube": "Adorys sur YouTube"
     },
-    "copyright": "© {year} Adorys. All rights reserved.",
-    "privacy": "Privacy Policy",
-    "terms": "Terms of Service",
-    "cookies": "Cookie Policy",
-    "imageCredits": "Image Credits"
+    "copyright": "© {year} Adorys. Tous droits réservés.",
+    "privacy": "Politique de confidentialité",
+    "terms": "Conditions d'utilisation",
+    "cookies": "Politique relative aux cookies",
+    "imageCredits": "Crédits photos"
   },
   "NotFoundPage": {
     "title": "Page introuvable",

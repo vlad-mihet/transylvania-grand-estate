@@ -215,14 +215,14 @@
     "subtitle": "Entrez l'adresse e-mail de votre compte. Si elle correspond, nous enverrons un lien de réinitialisation.",
     "email": "E-mail",
     "submit": "Envoyer le lien",
-    "submitting": "Envoi en cours\u2026",
+    "submitting": "Envoi en cours…",
     "failed": "L'envoi a échoué. Réessayez dans un instant.",
     "sentTitle": "Vérifiez votre boîte de réception",
     "sentBody": "Si un compte existe pour cet e-mail, nous venons d'envoyer un lien de réinitialisation. Valable une heure.",
     "backToLogin": "Retour à la connexion"
   },
   "ResetPassword": {
-    "verifying": "Vérification du lien\u2026",
+    "verifying": "Vérification du lien…",
     "headingNamed": "Bonjour {firstName}, définissez un nouveau mot de passe",
     "headingGeneric": "Définissez un nouveau mot de passe",
     "subtitle": "Choisissez un mot de passe fort. Vous serez connecté automatiquement après enregistrement.",
@@ -230,7 +230,7 @@
     "confirmPassword": "Confirmer le mot de passe",
     "hint": "Au moins 12 caractères avec minuscule, majuscule et chiffre.",
     "submit": "Réinitialiser le mot de passe",
-    "submitting": "Réinitialisation\u2026",
+    "submitting": "Réinitialisation…",
     "failed": "Impossible de réinitialiser le mot de passe. Demandez un nouveau lien et réessayez.",
     "expiredTitle": "Ce lien a expiré",
     "expiredBody": "Les liens sont valables une heure. Demandez-en un nouveau depuis Mot de passe oublié.",
@@ -609,7 +609,7 @@
     "expiresIn": "Expire dans {days, plural, one {# jour} other {# jours}}"
   },
   "AcceptInvite": {
-    "verifying": "Vérification de l'invitation\u2026",
+    "verifying": "Vérification de l'invitation…",
     "welcome": "Bienvenue, {firstName} !",
     "subtitle": "Vous avez été invité à rejoindre Transylvania Grand Estate. Choisissez comment vous souhaitez vous connecter.",
     "continueWithGoogle": "Continuer avec Google",
@@ -618,7 +618,7 @@
     "confirmPassword": "Confirmer le mot de passe",
     "hint": "Au moins 12 caractères avec minuscule, majuscule et chiffre.",
     "createAccount": "Créer le compte",
-    "submitting": "Création du compte\u2026",
+    "submitting": "Création du compte…",
     "failed": "Impossible de finaliser l'invitation. Réessayez ou contactez votre administrateur.",
     "expiredTitle": "Cette invitation a expiré",
     "expiredBody": "Les invitations ont une durée limitée. Demandez à votre administrateur de vous envoyer un nouveau lien.",
@@ -627,7 +627,7 @@
     "alreadySignedInTitle": "Vous êtes déjà connecté",
     "alreadySignedInBody": "Vous êtes connecté en tant que {currentEmail}. Cette invitation est pour {inviteEmail}. Déconnectez-vous d'abord pour l'accepter.",
     "signOutAndAccept": "Se déconnecter",
-    "signingOut": "Déconnexion\u2026"
+    "signingOut": "Déconnexion…"
   },
   "Cities": {
     "title": "Villes",
@@ -1248,8 +1248,8 @@
     "specifications": "Spécifications",
     "bedrooms": "Chambres",
     "bathrooms": "Salles de bain",
-    "area": "Surface (m\u00b2)",
-    "landArea": "Surface terrain (m\u00b2)",
+    "area": "Surface (m²)",
+    "landArea": "Surface terrain (m²)",
     "floors": "Étages",
     "yearBuilt": "Année de construction",
     "garageSpots": "Places de garage",

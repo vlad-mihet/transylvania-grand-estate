@@ -215,14 +215,14 @@
     "subtitle": "Geben Sie die E-Mail-Adresse Ihres Kontos ein. Bei Übereinstimmung senden wir einen Reset-Link.",
     "email": "E-Mail",
     "submit": "Reset-Link senden",
-    "submitting": "Wird gesendet\u2026",
+    "submitting": "Wird gesendet…",
     "failed": "Konnte nicht gesendet werden. Versuchen Sie es in einem Moment erneut.",
     "sentTitle": "Posteingang prüfen",
     "sentBody": "Falls ein Konto mit dieser E-Mail existiert, haben wir soeben einen Reset-Link gesendet. Läuft in einer Stunde ab.",
     "backToLogin": "Zurück zur Anmeldung"
   },
   "ResetPassword": {
-    "verifying": "Reset-Link wird überprüft\u2026",
+    "verifying": "Reset-Link wird überprüft…",
     "headingNamed": "Hallo {firstName}, neues Passwort festlegen",
     "headingGeneric": "Neues Passwort festlegen",
     "subtitle": "Wählen Sie ein starkes Passwort. Sie werden nach dem Speichern automatisch angemeldet.",
@@ -230,7 +230,7 @@
     "confirmPassword": "Passwort bestätigen",
     "hint": "Mindestens 12 Zeichen mit Klein-, Großbuchstaben und einer Ziffer.",
     "submit": "Passwort zurücksetzen",
-    "submitting": "Wird zurückgesetzt\u2026",
+    "submitting": "Wird zurückgesetzt…",
     "failed": "Passwort konnte nicht zurückgesetzt werden. Neuen Link anfordern und erneut versuchen.",
     "expiredTitle": "Dieser Reset-Link ist abgelaufen",
     "expiredBody": "Links sind eine Stunde gültig. Fordern Sie einen neuen über Passwort vergessen an.",
@@ -609,7 +609,7 @@
     "expiresIn": "Läuft in {days, plural, one {# Tag} other {# Tagen}} ab"
   },
   "AcceptInvite": {
-    "verifying": "Einladung wird überprüft\u2026",
+    "verifying": "Einladung wird überprüft…",
     "welcome": "Willkommen, {firstName}!",
     "subtitle": "Sie wurden eingeladen, Transylvania Grand Estate beizutreten. Wählen Sie, wie Sie sich anmelden möchten.",
     "continueWithGoogle": "Mit Google fortfahren",
@@ -618,7 +618,7 @@
     "confirmPassword": "Passwort bestätigen",
     "hint": "Mindestens 12 Zeichen mit Klein-, Großbuchstaben und einer Ziffer.",
     "createAccount": "Konto erstellen",
-    "submitting": "Konto wird erstellt\u2026",
+    "submitting": "Konto wird erstellt…",
     "failed": "Einladung konnte nicht abgeschlossen werden. Erneut versuchen oder Administrator kontaktieren.",
     "expiredTitle": "Diese Einladung ist abgelaufen",
     "expiredBody": "Einladungen sind nur begrenzt gültig. Bitten Sie Ihren Administrator um einen neuen Link.",
@@ -627,7 +627,7 @@
     "alreadySignedInTitle": "Sie sind bereits angemeldet",
     "alreadySignedInBody": "Sie sind angemeldet als {currentEmail}. Diese Einladung ist für {inviteEmail}. Melden Sie sich zuerst ab, um sie anzunehmen.",
     "signOutAndAccept": "Abmelden",
-    "signingOut": "Wird abgemeldet\u2026"
+    "signingOut": "Wird abgemeldet…"
   },
   "Cities": {
     "title": "Städte",
@@ -688,7 +688,7 @@
     "cannotDeleteSelf": "Sie können Ihr eigenes Konto nicht löschen",
     "cannotDemoteSelf": "Sie können sich nicht selbst von SUPER_ADMIN herabstufen",
     "cannotSuspendSelf": "Sie können Ihr eigenes Konto nicht sperren",
-    "agentLink": "Agent",
+    "agentLink": "Makler",
     "selectAgent": "Agent auswählen",
     "noUnlinkedAgents": "Keine freien Agenten verfügbar. Erstellen Sie zuerst einen unter Makler.",
     "agentLinkRequiredForAgentRole": "Die Rolle AGENT erfordert die Verknüpfung mit einem Agent.",
@@ -1248,8 +1248,8 @@
     "specifications": "Spezifikationen",
     "bedrooms": "Schlafzimmer",
     "bathrooms": "Badezimmer",
-    "area": "Fläche (m\u00b2)",
-    "landArea": "Grundstücksfläche (m\u00b2)",
+    "area": "Fläche (m²)",
+    "landArea": "Grundstücksfläche (m²)",
     "floors": "Stockwerke",
     "yearBuilt": "Baujahr",
     "garageSpots": "Garagenplätze",
