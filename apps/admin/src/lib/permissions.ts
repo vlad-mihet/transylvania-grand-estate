@@ -152,8 +152,9 @@ const matrix: Record<AdminRole, ReadonlySet<Action> | "all"> = {
     "academy.user.manage",
   ]),
   EDITOR: new Set<Action>([
-    // Server scopes audit reads to Article/Property/Testimonial only.
-    "audit-log.read",
+    // Audit trail is ADMIN+ only — the global list exposes cross-entity
+    // operational metadata (other admins' actions + emails), so it is not
+    // surfaced to EDITOR. Matches audit.controller @Roles(SUPER_ADMIN, ADMIN).
     "property.read",
     "developer.read",
     "agent.read",

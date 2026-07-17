@@ -69,6 +69,9 @@ export const inquirySiteIdSchema = z.enum(["TGE_LUXURY", "REVERY", "ACADEMY"]);
 export const inquiryAppSchema = z.enum(["landing", "revery", "academy", "admin"]);
 
 export const queryInquirySchema = paginationSchema.extend({
+  // Kanban pulls the whole active board in one request (no board pagination),
+  // so inquiries raises the shared max(100) cap. Service still clamps in query.
+  limit: z.coerce.number().int().min(1).max(500).default(12),
   type: z.nativeEnum(InquiryType).optional(),
   status: z.nativeEnum(InquiryStatus).optional(),
   siteId: inquirySiteIdSchema.optional(),

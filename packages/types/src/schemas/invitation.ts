@@ -87,8 +87,10 @@ export const listInvitationsSchema = z
       .optional(),
     page: z.coerce.number().int().min(1).default(1),
     limit: z.coerce.number().int().min(1).max(100).default(20),
-  })
-  .strict();
+  });
+// List/query params are intentionally non-strict (see queryPropertySchema): the
+// admin client appends cross-cutting params like `expand=allLocales`, and a
+// rejected GET is worse than a quietly-stripped unknown key.
 
 export type InvitationLocale = z.infer<typeof invitationLocaleSchema>;
 export type InviteAgentInput = z.infer<typeof inviteAgentSchema>;

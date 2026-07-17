@@ -69,7 +69,12 @@ export class InquiriesController {
     return this.inquiriesService.create(dto, site);
   }
 
-  @Roles(AdminRole.ADMIN, AdminRole.SUPER_ADMIN, AdminRole.AGENT)
+  @Roles(
+    AdminRole.ADMIN,
+    AdminRole.SUPER_ADMIN,
+    AdminRole.EDITOR,
+    AdminRole.AGENT,
+  )
   @Get()
   async findAll(
     @Query() query: QueryInquiryDto,
@@ -79,7 +84,12 @@ export class InquiriesController {
     return this.inquiriesService.findAll(query, user, site);
   }
 
-  @Roles(AdminRole.ADMIN, AdminRole.SUPER_ADMIN, AdminRole.AGENT)
+  @Roles(
+    AdminRole.ADMIN,
+    AdminRole.SUPER_ADMIN,
+    AdminRole.EDITOR,
+    AdminRole.AGENT,
+  )
   @UseGuards(OwnershipGuard)
   @OwnsResource(inquiryOwnership)
   @Get(':id')

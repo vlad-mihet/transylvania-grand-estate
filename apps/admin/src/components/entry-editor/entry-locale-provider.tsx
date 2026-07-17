@@ -4,7 +4,6 @@ import {
   createContext,
   useCallback,
   useContext,
-  useEffect,
   useMemo,
   type ReactNode,
 } from "react";
@@ -16,7 +15,6 @@ import {
   type LocaleKey,
 } from "./types";
 
-const SESSION_KEY = "tge.entryLocale";
 const URL_PARAM_ACTIVE = "loc";
 const URL_PARAM_COMPARE = "cmp";
 
@@ -40,25 +38,6 @@ const EntryLocaleContext = createContext<EntryLocaleContextValue | null>(null);
 interface EntryLocaleProviderProps {
   children: ReactNode;
   available?: readonly LocaleKey[];
-}
-
-function readSession(): LocaleKey | null {
-  if (typeof window === "undefined") return null;
-  try {
-    const value = window.sessionStorage.getItem(SESSION_KEY);
-    return isLocaleKey(value) ? value : null;
-  } catch {
-    return null;
-  }
-}
-
-function writeSession(locale: LocaleKey) {
-  if (typeof window === "undefined") return;
-  try {
-    window.sessionStorage.setItem(SESSION_KEY, locale);
-  } catch {
-    // sessionStorage can be unavailable (private mode, quota); silently skip.
-  }
 }
 
 export function EntryLocaleProvider({
@@ -87,7 +66,6 @@ export function EntryLocaleProvider({
 
   const pushParams = useCallback(
     (next: { active: LocaleKey; compareLocale: LocaleKey | null }) => {
-      writeSession(next.active);
       const params = new URLSearchParams(searchParams.toString());
       if (next.active === PRIMARY_LOCALE) {
         params.delete(URL_PARAM_ACTIVE);
@@ -124,18 +102,10 @@ export function EntryLocaleProvider({
     [pushParams, available, active],
   );
 
-  // One-shot mount hydration from sessionStorage if the URL has no `loc`.
-  useEffect(() => {
-    if (isLocaleKey(urlActive) && available.includes(urlActive)) return;
-    const session = readSession();
-    if (session && available.includes(session) && session !== PRIMARY_LOCALE) {
-      const params = new URLSearchParams(searchParams.toString());
-      params.set(URL_PARAM_ACTIVE, session);
-      router.replace(`${pathname}?${params.toString()}`, { scroll: false });
-    }
-    // Run only once on mount; subsequent locale changes go through `setActive`.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  // No cross-entity locale persistence: the URL `loc` param is the sole source
+  // of truth, so a fresh form always opens on the primary locale unless the URL
+  // says otherwise. (Previously a sessionStorage resume leaked the last-edited
+  // locale from one entity's form into the next — BUG-206.)
 
   const value = useMemo<EntryLocaleContextValue>(
     () => ({

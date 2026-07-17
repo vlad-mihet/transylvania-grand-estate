@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { useFormContext } from "react-hook-form";
+import { useTranslations } from "next-intl";
 import { Input } from "@tge/ui";
 import { apiClient } from "@/lib/api-client";
 import type { PropertyFormValues } from "@/lib/validations/property";
@@ -32,6 +33,7 @@ interface LocationSearchResponse {
 }
 
 export function AddressGeocodeField() {
+  const t = useTranslations("PropertyForm");
   const form = useFormContext<PropertyFormValues>();
   const [query, setQuery] = useState("");
   const [results, setResults] = useState<AddressResult[]>([]);
@@ -84,7 +86,7 @@ export function AddressGeocodeField() {
   return (
     <div ref={boxRef} className="relative">
       <Input
-        placeholder="Search an address to fill coordinates…"
+        placeholder={t("geocodeSearchPlaceholder")}
         value={query}
         onChange={(e) => setQuery(e.target.value)}
         onFocus={() => results.length > 0 && setOpen(true)}
@@ -93,7 +95,7 @@ export function AddressGeocodeField() {
       {open && (loading || results.length > 0) && (
         <div className="absolute z-20 mt-1 max-h-64 w-full overflow-auto rounded-md border bg-popover shadow-md">
           {loading && (
-            <p className="px-3 py-2 text-xs text-muted-foreground">Searching…</p>
+            <p className="px-3 py-2 text-xs text-muted-foreground">{t("geocodeSearching")}</p>
           )}
           {results.map((r, i) => (
             <button

@@ -1,5 +1,5 @@
 import { getTranslations } from "next-intl/server";
-import { fetchApi } from "@tge/api-client";
+import { fetchApiSafe } from "@tge/api-client";
 import type { Developer, ApiCity } from "@tge/types";
 import { mapApiCity } from "@tge/api-client";
 import { HeroSection } from "@/components/sections/hero-section";
@@ -28,11 +28,16 @@ export default async function CitiesPage() {
   // endpoints already filter by `city_brands`, so the union stays inside the
   // brand's visibility — featured ⊂ all-tagged. Dedupe preserves first
   // occurrence so curated order wins for the overlap.
-  const [featuredRaw, defaultRaw, developers] = await Promise.all([
-    fetchApi<ApiCity[]>("/cities?featured=true"),
-    fetchApi<ApiCity[]>("/cities"),
-    fetchApi<Developer[]>("/developers"),
+  // Guard SSR fetches: an API hiccup should degrade to an empty-state page,
+  // not a 500. Mirrors the homepage's fetchApiSafe fallback (BUG-201).
+  const [featuredRes, defaultRes, developersRes] = await Promise.all([
+    fetchApiSafe<ApiCity[]>("/cities?featured=true"),
+    fetchApiSafe<ApiCity[]>("/cities"),
+    fetchApiSafe<Developer[]>("/developers"),
   ]);
+  const featuredRaw = featuredRes.ok ? featuredRes.data : [];
+  const defaultRaw = defaultRes.ok ? defaultRes.data : [];
+  const developers = developersRes.ok ? developersRes.data : [];
   const seen = new Set<string>();
   const cities = [...featuredRaw, ...defaultRaw]
     .filter((c) => (seen.has(c.slug) ? false : (seen.add(c.slug), true)))

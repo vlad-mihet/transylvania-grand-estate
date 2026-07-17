@@ -97,8 +97,10 @@ export const listUsersSchema = z
     // upper bound here is deliberately loose (the admin sends limit=500).
     page: z.coerce.number().int().min(1).optional(),
     limit: z.coerce.number().int().min(1).max(1000).optional(),
-  })
-  .strict();
+  });
+// List/query params are intentionally non-strict (see queryPropertySchema): the
+// admin client appends cross-cutting params like `expand=allLocales`, and a
+// rejected GET is worse than a quietly-stripped unknown key.
 
 /**
  * Bulk action over a set of admin user ids. The server caps `ids` at 100;

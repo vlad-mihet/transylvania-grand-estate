@@ -55,6 +55,8 @@ export default async function PropertiesPage({
     }
   }
 
+  // Guard every SSR fetch: an API outage should degrade this listing to an
+  // empty-state page, not a 500 (BUG-201). The context lookup was already safe.
   const [
     raw,
     mapPinsRaw,
@@ -62,13 +64,13 @@ export default async function PropertiesPage({
     contextCityResult,
     initialResultCount,
   ] = await Promise.all([
-    fetchProperties({ limit: 100 }, locale),
-    fetchPropertyMapPins({}, locale),
-    fetchApi<ApiCounty[]>("/counties"),
+    fetchProperties({ limit: 100 }, locale).catch(() => []),
+    fetchPropertyMapPins({}, locale).catch(() => []),
+    fetchApi<ApiCounty[]>("/counties").catch(() => [] as ApiCounty[]),
     fromContext === "city" && citySlug
       ? fetchApiSafe<ApiCity>(`/cities/${citySlug}`)
       : Promise.resolve(null),
-    fetchPropertiesCount(filterQs, locale),
+    fetchPropertiesCount(filterQs, locale).catch(() => 0),
   ]);
 
   const properties = mapApiProperties(raw);
