@@ -373,6 +373,108 @@ jobs:
           path: apps/revery/playwright-report
           retention-days: 7
 
+  playwright-academy:
+    name: Playwright (academy)
+    # Academy shipped with zero automated coverage and no gate (added by the
+    # 2026-07 full-sweep). Chromium-only smoke + auth: the proxy auth-gate
+    # contract and the public auth pages per locale. Academy's
+    # playwright.config.ts boots `next dev` on 3053 itself; we provide
+    # Postgres + the seeded API it proxies to.
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_USER: ci
+          POSTGRES_PASSWORD: ci
+          POSTGRES_DB: ci
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+    env:
+      DATABASE_URL: postgresql://ci:ci@localhost:5432/ci
+      JWT_ADMIN_ACCESS_SECRET: ci_admin_access_secret_ge_32_chars_xxx
+      JWT_ADMIN_REFRESH_SECRET: ci_admin_refresh_secret_ge_32_chars_xx
+      JWT_ACADEMY_ACCESS_SECRET: ci_academy_access_secret_ge_32_chars_x
+      JWT_ACADEMY_REFRESH_SECRET: ci_academy_refresh_secret_ge_32_chars
+      INVITATION_TOKEN_SECRET: ci_invitation_secret_ge_32_chars_xxxxxx
+      AUDIT_IP_PEPPER: ci_audit_pepper_ge_16_chars
+      ADMIN_PUBLIC_URL: http://admin.ci
+      CORS_ORIGINS: http://localhost:3050,http://localhost:3051,http://localhost:3052,http://localhost:3053
+      PORT: 4000
+      NEXT_PUBLIC_API_URL: http://localhost:4000/api/v1
+      NEXT_PUBLIC_SITE: ACADEMY
+      DEV_AUTH_THROTTLE_DISABLED: "1"
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Generate Prisma client
+        run: pnpm --filter @tge/api exec prisma generate
+
+      - name: Build shared types
+        run: pnpm --filter @tge/types build
+
+      - name: Build shared data
+        run: pnpm --filter @tge/data build
+
+      - name: Apply migrations + seed
+        run: |
+          pnpm --filter @tge/api exec prisma migrate deploy
+          pnpm --filter @tge/api exec prisma db seed
+
+      - name: Build API
+        run: pnpm --filter @tge/api build
+
+      - name: Start API in background
+        run: |
+          pnpm --filter @tge/api start:prod > /tmp/api.log 2>&1 &
+          echo "API_PID=$!" >> $GITHUB_ENV
+
+      - name: Wait for API health
+        run: |
+          for i in {1..60}; do
+            if curl -sf http://localhost:4000/api/v1/health > /dev/null; then
+              echo "API up"
+              exit 0
+            fi
+            sleep 2
+          done
+          echo "API did not become healthy in 120s. Last logs:"
+          tail -100 /tmp/api.log
+          exit 1
+
+      - name: Install Playwright browsers
+        run: pnpm --filter @tge/academy exec playwright install --with-deps chromium
+
+      - name: Run academy Playwright suite (chromium only)
+        run: pnpm --filter @tge/academy exec playwright test
+
+      - name: Upload Playwright report on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-academy-report
+          path: apps/academy/playwright-report
+          retention-days: 7
+
   playwright-admin:
     name: Playwright (admin)
     # The admin suite rotted silently while it was local-only (2026-07-06:

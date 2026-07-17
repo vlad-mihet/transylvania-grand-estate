@@ -63,3 +63,17 @@ Full matrix + AGENT pass in `admin-matrix.md`. Every planned module reached. Cov
 **Env:** switched API to watchless `node dist` mid-phase (BUG-noted watch-loop). Admin password now `QaTest123!` (qa-smoke rotation). Test artifacts in DB: 1 property (`qa-sweep-apartment-in-cluj-napoca`), 1 draft article, 2 inquiries, 1 pending EDITOR invite — cleanup at Phase 9.
 
 **Phase 3 exit: complete.** Admin is functionally solid on the happy paths; the two Criticals are both "feature silently non-functional" (audit, user list), not crashes.
+
+---
+
+## Phase 4 — Public sites sweep (2026-07-17)
+
+**Landing (TGE luxury):** home video hero + featured sections render (demo cards honestly labeled "EXEMPLU — NU O PROPRIETATE REALĂ"), 72 properties, property detail full w/ diacritics, footer legal links present (BUG-009 fixed). **Contact form round-trip verified**: POST 201 → "Mulțumim!" → DB row `TGE_LUXURY / landing / tge-contact / new`. Confirmed live: **BUG-103** (ORAȘ dropdown = 5 hardcoded ASCII cities: Cluj-Napoca/Oradea/**Timisoara**/**Brasov**/Sibiu, while properties exist in Satu Mare/Arad/etc.), **BUG-104** (footer socials = instagram.com/tge etc.). No console errors on home/detail.
+
+**Revery (Adorys affordable):** purple/white theme, home + search render. **Tier isolation end-to-end confirmed**: the QA-created affordable property (56.000 EUR, created+edited in admin) appears on Revery's Cluj-Napoca list (4 results) and NOT on luxury landing. City filter here IS real (`?city=` param works) — contrast with landing's hardcoded dropdown. Mortgage calculator correct (120k→714 EUR/mo, bank-rate chips from admin data, amortization chart). New: **BUG-123** (dev-only @axe-core/react crash, prod-safe).
+
+**Academy:** **full loop PASS** — register → auto-verify (EMAIL_VERIFICATION_DISABLED) → login → open public lesson → **auto-enrolled** + lesson-progress row. Lesson content renders fully (diacritics, Adorys branding). New: **BUG-124** (everything behind login; no anonymous landing/catalog — product decision to confirm).
+
+**Academy e2e suite created (plan's file-writing exception):** `apps/academy/playwright.config.ts` (chromium, port 3053) + `tests/e2e/{smoke,auth}.spec.ts` (13 tests: auth-gate contract, public auth pages × ro/en, form validation). Added `@playwright/test` devDep + `test:e2e` script. **13/13 green.** Added `playwright-academy` job to `.github/workflows/ci.yml` (closes the academy CI gap). YAML validated.
+
+**Phase 4 exit: complete.** All three public sites functionally sound; the real defects are the landing filter panel (BUG-103, Major) and content/UX minors. Academy now has its first regression net.

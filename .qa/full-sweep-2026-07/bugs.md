@@ -110,6 +110,16 @@ Status values: `Open | Fixed@<sha> | Wontfix | Deferred`.
 - **Severity:** Minor · **Surface:** admin · **Status:** Open
 - AGENT `/ro/my-inquiries`: property-type row shows "PROPRIETATE" but viewing-type shows literal "INQUIRIES.TYPELABEL.VIEWING". Missing `inquiries.typeLabel.viewing` key (check `valuation` and all 4 locales; check the admin /inquiries list too). Dev overlay logs 2 IntlErrors on the page.
 
+## BUG-123 — Revery dev a11y checker (@axe-core/react) throws on init — broken in dev, prod unaffected
+- **Severity:** Trivial (dev-only) · **Surface:** revery · **Status:** Open
+- Every Revery page in dev logs `TypeError: Cannot set property createElement of [object Module] which has only a getter` at `reactAxe`/`AxeInitializer.useEffect`. `AxeInitializer` is correctly gated to `NODE_ENV==="development"` (`layout.tsx:74`, dead-code-eliminated in prod) — so no production impact, but the dev a11y tooling never runs (regression vs its intent). Likely an ESM interop issue with the current `@axe-core/react` + React 19. Source of the Revery dev-overlay "1 Issue".
+
+## BUG-124 — Academy has no anonymous landing/catalog: root `/ro` bounces straight to login (product decision to confirm)
+- **Severity:** Minor (product decision) · **Surface:** academy · **Status:** Open
+- `apps/academy/src/proxy.ts:15-24` `PUBLIC_PATHS` = only the 8 auth pages. Home `/`, `/catalog`, `/courses/*`, `/tools/raport-piata` all 307→`/login?returnTo=…` when unauthenticated (verified). So visiting `tge-academy.fly.dev` shows a login screen, not a landing page or course preview, while the register page markets "Deblochează toate cursurile … gratuit."
+- **Assessment:** for an internal agent-training academy this is defensible (course `visibility=public` means open-enrollment, not anonymous-visible). But (a) no landing page at the root and (b) can't preview the catalog before registering are conversion/UX gaps. **Confirm intent** — if a public catalog/landing is wanted, add `/`, `/catalog`, `/courses/*` (read-only) to `PUBLIC_PATHS`.
+- **Full loop otherwise verified PASS:** register → auto-verify (EMAIL_VERIFICATION_DISABLED) → login → open public lesson → **auto-enrolled** into course + lesson-progress row created. All correct.
+
 ## BUG-116 — Property form: empty "Anul construcției" blocks save with raw NaN error
 - **Severity:** Major · **Surface:** admin · **Status:** Open
 - New-property save with year-built left empty fails client validation: "Invalid input: expected number, received NaN" under the field; the save is blocked until a year is typed. Optional numeric fields must preprocess empty→undefined (`z.coerce`/preprocess) — check the same pattern on Locuri garaj / Suprafață teren / Lat/Long (those accepted empty, so the yearBuilt schema entry is the outlier).
