@@ -107,4 +107,20 @@ All ✅ (skipped what Jest e2e already covers):
 
 ---
 
+## Phase 6 — Deferred-items refresh
+
+All deferrals re-verified clean (academy 4–6 grep-clean, logo text-wordmark intact, REBS schema default = demo, licensed images pending, fr/de translator). Full table + owner-decision list in `deferred-refresh.md`. No findings.
+
+---
+
+## Phase 7 — Prod verification
+
+- **Read-only:** prod API healthy (Fly v92, today); brand isolation correct (luxury 72 / revery 36 / bogus 400); landing+revery Vercel prod = **8803c14 (baseline, current)**; academy live. Custom domains (tge.ro/revery.ro/adorys.ro) **don't resolve — DNS deferred**; public sites reachable only via protected Vercel URLs.
+- **BUG-127 prod: FIXED** (user-approved, backup-conditioned). `pg_dump`'d prod first (1.27 MB, 33 tables → `scratchpad/prod-backup-2026-07-17.sql`); chose **targeted UPDATE over full reseed** after discovering prod holds non-seed real listings (Stefanestii de Jos, Voluntari) a `SEED_RESET` would destroy; fixed 22 rows (Brasov/Bucharest/Bucuresti/Timisoara → diacritics) in one transaction; prod API verified all-correct. 1 real non-seed listing left for owner.
+- **Approved probes: executed + cleaned up.** Contact (prod /inquiries → 201, TGE_LUXURY) and academy registration (200, auto-verifies) both work; both QA-PROBE rows hard-deleted after (0 remaining). Authed admin browse deferred (no prod creds).
+
+Full detail in `prod-checks.md`. **Phase 7 exit: PASS**, BUG-127 closed on prod.
+
+---
+
 **Env lesson (recorded for future baselines):** every CI Playwright job sets `DEV_AUTH_THROTTLE_DISABLED=1`; the first local runs were made without it. Result: admin suite's shared BFF session died on `/auth/refresh` 429s (10/min bucket) → 2 unsaved-changes reds; landing `[mobile]` cross-locale smoke got real 500s from listing pages when SSR fetches failed under throttle/load — which exposed **BUG-201** (listing pages unguarded against API failure; deterministic kill-API repro). Dev API restarted with the flag for all Playwright/browser phases; qa-smoke will run last against a throttle-ENABLED API restart (its 429 check needs it).

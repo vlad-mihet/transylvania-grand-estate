@@ -33,5 +33,5 @@ verifiable this sweep (reason given).
 | BUG-124 | Wontfix | academy login-gate by design | Phase 2: logged-out deep URL `/ro/courses/…/lessons` → 307 `/ro/login?returnTo=…` (returnTo intact); academy e2e 13/13 locks contract | **HOLDS** (Wontfix evidence valid) |
 | BUG-125 | Wontfix | cookie banner not required (essential-only cookies) | Phase 2 local: Set-Cookie inventory = `NEXT_LOCALE` only (landing+revery), none on academy pre-auth; zero trackers. Prod re-check in Phase 7 | **HOLDS** (local; prod pending) |
 | BUG-126 | Major | REBS schema default → demo tenant | Phase 6 config check (no live sync this sweep) | pending |
-| BUG-127 | Open | seed city diacritics (prod pending reseed) | Phase 0 local SELECT + Phase 7 gated prod reseed | pending |
+| BUG-127 | Open→Fixed | seed city diacritics (prod) | Phase 0 local PASS + **Phase 7 prod: backup taken → targeted UPDATE (22 rows: Brasov/Bucharest/Bucuresti/Timisoara → diacritics) → prod API verified all-correct** | **FIXED on prod** (full reseed avoided — prod had non-seed real data a reseed would destroy) |
 | BUG-128 | Minor | fresh /new form not dirty | Phase 1 admin PW "a clean form navigates without a prompt" green | **HOLDS** (AUTO) |
