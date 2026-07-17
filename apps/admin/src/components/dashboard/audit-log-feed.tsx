@@ -49,13 +49,23 @@ export function AuditLogFeed() {
   // human phrase. Falls back to a humanised version of the raw string so
   // unmapped actions still read reasonably.
   const actionLabel = (action: string): string => {
-    const [noun, verb] = action.split(".");
-    if (noun && verb) {
-      const key = `actionLabel.${noun}.${verb}` as Parameters<
+    // Use the FULL dotted action as the message path so nested actions like
+    // "property.image.create" resolve their leaf, not the intermediate
+    // "property.image" object (which `has()` reports present, then throws
+    // INSUFFICIENT_PATH when read — BUG-211).
+    if (action) {
+      const key = `actionLabel.${action}` as Parameters<
         typeof tAudit.has
       >[0];
+      // `has()` returns true for intermediate object paths too, and reading one
+      // throws INSUFFICIENT_PATH — so guard the read and only accept strings.
       if (tAudit.has(key)) {
-        return tAudit(key as Parameters<typeof tAudit>[0]);
+        try {
+          const label = tAudit(key as Parameters<typeof tAudit>[0]);
+          if (typeof label === "string") return label;
+        } catch {
+          // fall through to the humanised fallback
+        }
       }
     }
     return action.replace(/[-.]/g, " ");

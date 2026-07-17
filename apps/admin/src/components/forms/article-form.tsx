@@ -152,7 +152,14 @@ export function ArticleForm({
         onSubmit(rest);
         return;
       }
-      onSubmit(values, saveMode);
+      // The button's intent is authoritative over the (stale) status select:
+      // "Publică" forces published, "Salvează schiță" forces draft. Without
+      // this, clicking Publică on a draft PATCHed status:"draft" and the
+      // article silently stayed unpublished (BUG-207).
+      onSubmit(
+        { ...values, status: saveMode === "publish" ? "published" : "draft" },
+        saveMode,
+      );
     });
 
   const submitDraft = submitWithMode("draft");

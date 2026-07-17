@@ -1,5 +1,5 @@
 import { getTranslations } from "next-intl/server";
-import { fetchApi } from "@tge/api-client";
+import { fetchApiSafe } from "@tge/api-client";
 import { mapApiCity } from "@tge/api-client";
 import type { Developer, City, ApiCity } from "@tge/types";
 import { HeroSection } from "@/components/sections/hero-section";
@@ -20,11 +20,13 @@ export default async function DevelopersPage() {
   const t = await getTranslations("DevelopersPage");
   const tBreadcrumb = await getTranslations("Breadcrumb");
 
-  const [developers, citiesRaw] = await Promise.all([
-    fetchApi<Developer[]>("/developers"),
-    fetchApi<ApiCity[]>("/cities"),
+  // Guard SSR fetches so an API hiccup degrades to an empty page, not 500 (BUG-201).
+  const [developersRes, citiesRes] = await Promise.all([
+    fetchApiSafe<Developer[]>("/developers"),
+    fetchApiSafe<ApiCity[]>("/cities"),
   ]);
-  const cities: City[] = citiesRaw.map(mapApiCity);
+  const developers = developersRes.ok ? developersRes.data : [];
+  const cities: City[] = (citiesRes.ok ? citiesRes.data : []).map(mapApiCity);
 
   return (
     <>

@@ -60,9 +60,18 @@ export class CountiesService {
     }
 
     const orderBy = resolveCountySort(query.sort);
+    // Pull each county's cities WITH their (maintained) property_count so we can
+    // roll it up into the county. County.property_count is a stored column that
+    // is never kept in sync (seeded 0), so the admin list showed 0 for every
+    // county (BUG-210) — derive it live from the cities instead.
     const include = query.light
       ? undefined
-      : { cities: { orderBy: { name: 'asc' as const }, select: { id: true } } };
+      : {
+          cities: {
+            orderBy: { name: 'asc' as const },
+            select: { id: true, propertyCount: true },
+          },
+        };
 
     const isPaginated =
       query.page !== undefined ||
@@ -74,14 +83,16 @@ export class CountiesService {
       const page = query.page ?? 1;
       const limit = Math.min(query.limit ?? 50, UNPAGINATED_CAP);
       return paginate(
-        (skip, take) =>
-          this.prisma.county.findMany({
-            where,
-            include,
-            orderBy,
-            skip,
-            take,
-          }),
+        async (skip, take) =>
+          this.withRolledUpPropertyCount(
+            await this.prisma.county.findMany({
+              where,
+              include,
+              orderBy,
+              skip,
+              take,
+            }),
+          ),
         () => this.prisma.county.count({ where }),
         page,
         limit,
@@ -91,9 +102,7 @@ export class CountiesService {
     const rows = await this.prisma.county.findMany({
       where,
       orderBy,
-      include: query.light
-        ? undefined
-        : { cities: { orderBy: { name: 'asc' } } },
+      include,
       take: UNPAGINATED_CAP,
     });
     if (rows.length === UNPAGINATED_CAP) {
@@ -101,7 +110,26 @@ export class CountiesService {
         `Counties unpaginated cap hit (${UNPAGINATED_CAP}) — switch the caller to pagination.`,
       );
     }
-    return rows;
+    return this.withRolledUpPropertyCount(rows);
+  }
+
+  /**
+   * Overrides each county's stored (stale-0) property_count with the sum of its
+   * cities' maintained counts. No-op for `light` rows that carry no cities.
+   */
+  private withRolledUpPropertyCount<T>(rows: T[]): T[] {
+    return rows.map((row) => {
+      const cities = (row as { cities?: { propertyCount: number }[] }).cities;
+      return cities
+        ? {
+            ...row,
+            propertyCount: cities.reduce(
+              (sum, city) => sum + city.propertyCount,
+              0,
+            ),
+          }
+        : row;
+    });
   }
 
   async findBySlug(slug: string) {

@@ -1,0 +1,37 @@
+# Prior-Stamp Verification — full-sweep-2026-07 dispositions
+
+One row per prior Fixed@/Wontfix stamp. Verification is **empirical** (UI/wire on a fresh
+build), not code-reading. `HOLDS` = re-verified working; `REGRESSED→BUG-2xx` = refiled in
+bugs.md; `AUTO` = covered by a green suite run in Phase 1 (suite named); `N-V` = not
+verifiable this sweep (reason given).
+
+| BUG | Severity | Claim (short) | How verified | Result |
+|---|---|---|---|---|
+| BUG-101 | Minor | lint clean across 4 apps + CI gate | Phase 1 `pnpm lint:all` — 0 errors / 26 warnings, 5 projects | **HOLDS** (AUTO) |
+| BUG-102 | Major | e2e env-leak fixed | Phase 1 API e2e — 25/25 suites, 198/198 | **HOLDS** (AUTO) |
+| BUG-103 | Major | landing city filter API-driven w/ diacritics | Phase 2 UI: dropdown = 19 brand-scoped cities from API, full diacritics (Brașov/București/Târgu Mureș…); filter works (Brașov → 6 results, `?city=brasov`) | **HOLDS** |
+| BUG-104 | Minor | placeholder socials hidden (both footers) | Phase 2 UI: landing footer has 0 social links + "Credite media" link present; revery footer in Phase 4 | **HOLDS** (landing; revery pending Phase 4) |
+| BUG-105 | Critical | public homepages survive API down (SSR guarded) | Kill-API probe (pulled into Phase 1): landing `/ro` 200, revery `/ro` 200 with API stopped | **HOLDS** (literal claim) — but guard doesn't extend to listing pages → **BUG-201** filed (Critical) |
+| BUG-106 | Minor | amenity labels localized | Phase 2 UI ro: FACILITĂȚI fully localized w/ diacritics (Terasă, Mașină de spălat, Uși blindate…). One straggler found → BUG-203 ("+ Add feature" EN in RO). en/fr/de spot in Phase 3 | **HOLDS** (with BUG-203 side-finding) |
+| BUG-107 | Minor | unsaved-changes guard on sidebar nav | Phase 1 admin PW unsaved-changes spec (dismiss/accept/clean 3/3 green) | **HOLDS** (AUTO) |
+| BUG-108 | Major | GDPR hard-purge cron registered | Phase 1 API e2e `inquiry-gdpr-purge` green + `@Cron(EVERY_DAY_AT_3AM) purgeSoftDeleted` + ScheduleModule init in boot log | **HOLDS** (AUTO+boot) |
+| BUG-109 | Major | draft article leak closed | Phase 1 API e2e (article-public-visibility) + Phase 3 UI: unpublish → revery /blog 404 + gone from list; republish → 200 | **HOLDS** (new authoring defect found alongside → BUG-207) |
+| BUG-110 | Minor | webkit contact form fixed | Phase 1 revery full matrix incl. webkit forms specs — 702/702 | **HOLDS** (AUTO) |
+| BUG-111 | Minor | dashboard RO label fixed | Phase 2 UI: dashboard KPI labels all proper RO (CERERI NOI / ARTICOLE ÎN DRAFT / CONȚINUT NETRADUS / INVITAȚII…); console clean | **HOLDS** |
+| BUG-112 | Minor | inquiry peek-sheet badge reflects read status | Phase 2 UI: opened sheet → "Marcat ca citit" toast, row badge flipped NOU→CITIT live | **HOLDS** |
+| BUG-113 | Minor | source-filter placeholder | Phase 2 UI: SURSĂ filter shows placeholder "ex. reveria-contact" | **HOLDS** |
+| BUG-114 | Minor | IntlError spam eliminated | Phase 2 console across dashboard/team/property-form/audit-logs/inquiries(list+sheet+kanban)/agents/invitations: **zero IntlError/MISSING_MESSAGE** | **HOLDS** |
+| BUG-115 | Major | slug derivation from RO-only title | Phase 2 UI: RO title "Casă de test QA Știință Brașov" → Generează → `casa-de-test-qa-stiinta-brasov` | **HOLDS** |
+| BUG-116 | Major | year-built NaN fixed | Phase 3 form: invalid year (0/empty) shows validation message "Year built must be at least 1800" instead of NaN; year is de-facto required so no NaN path remains | **HOLDS** (copy is EN-only → BUG-203; default-0 trap → BUG-206) |
+| BUG-117 | Critical | audit trail alive under /api/v1 | Phase 1 API e2e `audit-trail` green + Phase 2 UI: audit-logs page shows live rows (PROPERTY.CREATE/DELETE from PW suite, USER.LOGIN-PASSWORD, INQUIRY.CREATE×n w/ REVERY brand), filters+CSV+diff links present | **HOLDS** |
+| BUG-118 | Critical | people/team page functional | Phase 2 UI: page renders but list silently EMPTY; network shows `auth/users?limit=100&expand=allLocales` → 400 unrecognized key `expand` | **REGRESSED→BUG-202** (new key, same class; `limit` itself still accepted) |
+| BUG-119 | Minor | recent-signins filter | Phase 2 UI: dashboard activity feed renders login events correctly typed (UTILIZATOR badge) | **HOLDS** |
+| BUG-120 | Minor | staff invite email role-appropriate copy | Phase 3: EDITOR invite email (API stdout) = correct RO team copy "Ai fost invitat să te alături TGE… echipei TGE" | **HOLDS** |
+| BUG-121 | Minor | unread badge total | Phase 2 UI: sidebar Cereri badge tracked list state (31→30 after mark-as-read) | **HOLDS** |
+| BUG-122 | Minor | inquiries typeLabel.viewing key | Phase 2 UI: TIP badges render (GENERAL/PROPRIETATE); zero missing-key errors in console | **HOLDS** |
+| BUG-123 | Trivial | revery dev axe crash guarded | Phase 2: revery `/ro` dev console — zero errors. Ledger discrepancy resolved: old bugs.md restamped `Fixed@290ba9c` (was stale-Open) | **HOLDS** + reconciled |
+| BUG-124 | Wontfix | academy login-gate by design | Phase 2: logged-out deep URL `/ro/courses/…/lessons` → 307 `/ro/login?returnTo=…` (returnTo intact); academy e2e 13/13 locks contract | **HOLDS** (Wontfix evidence valid) |
+| BUG-125 | Wontfix | cookie banner not required (essential-only cookies) | Phase 2 local: Set-Cookie inventory = `NEXT_LOCALE` only (landing+revery), none on academy pre-auth; zero trackers. Prod re-check in Phase 7 | **HOLDS** (local; prod pending) |
+| BUG-126 | Major | REBS schema default → demo tenant | Phase 6: `env.schema.ts` default = `https://demo.crmrebs.com/api/public`; local keeps live source via explicit REBS_BASE_URL | **HOLDS** |
+| BUG-127 | Open→Fixed | seed city diacritics (prod) | Phase 0 local PASS + **Phase 7 prod: backup taken → targeted UPDATE (22 rows: Brasov/Bucharest/Bucuresti/Timisoara → diacritics) → prod API verified all-correct** | **FIXED on prod** (full reseed avoided — prod had non-seed real data a reseed would destroy) |
+| BUG-128 | Minor | fresh /new form not dirty | Phase 1 admin PW "a clean form navigates without a prompt" green | **HOLDS** (AUTO) |

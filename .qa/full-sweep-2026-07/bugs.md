@@ -20,7 +20,7 @@ Status values: `Open | Fixed@<sha> | Wontfix | Deferred`.
 - **Fix:** aligned `useForm` `defaultValues` with what each registered input holds on a pristine form (`yearBuilt: 0`, `garage/landArea/developerId/agentId: null`, `latitude/longitude: undefined`). Root cause was RHF's `isDirty` deep-compare treating a *present* key holding `undefined` as different from an *absent* key — verified live via a temporary `window.__diff` probe (`getValues()` JSON-equalled defaults yet `isDirty` stayed true until every registered key was seeded). Re-enabled the "clean form navigates without a prompt" e2e case; 4/4 unsaved-changes specs green.
 
 ### BUG-127 — Seed data: some luxury property `city` values lack diacritics / use EN name
-- **Severity:** Minor (data quality) · **Surface:** packages/data seed · **Status:** Open
+- **Severity:** Minor (data quality) · **Surface:** packages/data seed · **Status:** Fixed (local @ prior sweep; **prod normalized 2026-07-17 in verify-sweep** — backup taken, 22 rows `Brasov/Bucharest/Bucuresti/Timisoara`→diacritics via targeted UPDATE, prod API verified. Full reseed deliberately avoided: prod holds non-seed real listings a `SEED_RESET` would destroy. Detail in `.qa/verify-sweep-2026-07/prod-checks.md`. Owner follow-up: 1 real non-seed listing `Stefanestii de Jos`→Ștefăneștii de Jos.)
 - With BUG-103 fixed, the landing city filter now reflects real API city names — surfacing that a few seeded `property.city` values are ASCII/English: "Brasov" (→ Brașov), "Timisoara" (→ Timișoara), "Bucharest" (→ București) appear alongside correctly-accented ones (Bistrița, Iași, Sighișoara, Târgu Mureș). Violates the diacritics rule ([[feedback_diacritics]]). Fix in `packages/data` seed + reseed. Note: cities feeding via `citySlug`→City table are fine; this is the denormalized `property.city` string.
 
 ### BUG-126 — `REBS_BASE_URL` schema default points at the PRODUCTION REBS instance (footgun)
@@ -140,7 +140,8 @@ Status values: `Open | Fixed@<sha> | Wontfix | Deferred`.
 - AGENT `/ro/my-inquiries`: property-type row shows "PROPRIETATE" but viewing-type shows literal "INQUIRIES.TYPELABEL.VIEWING". Missing `inquiries.typeLabel.viewing` key (check `valuation` and all 4 locales; check the admin /inquiries list too). Dev overlay logs 2 IntlErrors on the page.
 
 ## BUG-123 — Revery dev a11y checker (@axe-core/react) throws on init — broken in dev, prod unaffected
-- **Severity:** Trivial (dev-only) · **Surface:** revery · **Status:** Open
+- **Severity:** Trivial (dev-only) · **Surface:** revery · **Status:** Fixed@290ba9c
+- **Ledger correction (verify-sweep-2026-07):** status was stale — the guard landed in Wave 3 (`fix(qa-sweep) Wave 3: guard @axe-core/react init against React 19 module-freeze`, 290ba9c) and run.md recorded the verification, but this ledger row was never restamped. Re-verified 2026-07-17: revery `/ro` in dev, zero console errors.
 - Every Revery page in dev logs `TypeError: Cannot set property createElement of [object Module] which has only a getter` at `reactAxe`/`AxeInitializer.useEffect`. `AxeInitializer` is correctly gated to `NODE_ENV==="development"` (`layout.tsx:74`, dead-code-eliminated in prod) — so no production impact, but the dev a11y tooling never runs (regression vs its intent). Likely an ESM interop issue with the current `@axe-core/react` + React 19. Source of the Revery dev-overlay "1 Issue".
 
 ## BUG-124 — Academy has no anonymous landing/catalog: root `/ro` bounces straight to login (product decision to confirm)

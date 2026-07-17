@@ -4,7 +4,7 @@ import {
   QueryClient,
   dehydrate,
 } from "@tanstack/react-query";
-import { fetchApi, fetchApiSafe } from "@tge/api-client";
+import { fetchApiSafe } from "@tge/api-client";
 import { mapApiCity, mapApiDeveloper, mapApiProperties } from "@tge/api-client";
 import type { Locale, ApiCity, ApiDeveloper, ApiProperty } from "@tge/types";
 import { Container } from "@/components/layout/container";
@@ -33,19 +33,20 @@ export default async function PropertiesPage({
   const fromContext =
     typeof params.from === "string" ? params.from : undefined;
 
-  // Fetch the properties list eagerly; context lookups are optional breadcrumb
-  // breadcrumb hints — a missing city or developer shouldn't crash the page,
-  // so fetchApiSafe swallows per-request errors while we still surface the
-  // primary listing failure if `/properties` is down.
-  const [raw, contextCityResult, contextDeveloperResult] = await Promise.all([
-    fetchApi<ApiProperty[]>(`/properties?limit=100&locale=${locale}`),
-    fromContext === "city" && citySlug
-      ? fetchApiSafe<ApiCity>(`/cities/${citySlug}`)
-      : Promise.resolve({ ok: false as const, error: null }),
-    fromContext === "developer" && developerSlug
-      ? fetchApiSafe<ApiDeveloper>(`/developers/${developerSlug}`)
-      : Promise.resolve({ ok: false as const, error: null }),
-  ]);
+  // Guard every SSR fetch: an API outage should degrade this listing to an
+  // empty-state page, not a 500 (BUG-201). Context lookups are optional
+  // breadcrumb hints and were already safe.
+  const [rawResult, contextCityResult, contextDeveloperResult] =
+    await Promise.all([
+      fetchApiSafe<ApiProperty[]>(`/properties?limit=100&locale=${locale}`),
+      fromContext === "city" && citySlug
+        ? fetchApiSafe<ApiCity>(`/cities/${citySlug}`)
+        : Promise.resolve({ ok: false as const, error: null }),
+      fromContext === "developer" && developerSlug
+        ? fetchApiSafe<ApiDeveloper>(`/developers/${developerSlug}`)
+        : Promise.resolve({ ok: false as const, error: null }),
+    ]);
+  const raw = rawResult.ok ? rawResult.data : [];
   const contextCityRaw = contextCityResult.ok ? contextCityResult.data : null;
   const contextDeveloperRaw = contextDeveloperResult.ok
     ? contextDeveloperResult.data

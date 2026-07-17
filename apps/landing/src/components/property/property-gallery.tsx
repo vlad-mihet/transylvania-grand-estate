@@ -5,7 +5,7 @@ import Image from "next/image";
 import { useLocale } from "next-intl";
 import { PropertyImage, Locale } from "@tge/types";
 import { Dialog, DialogContent, DialogClose, DialogTitle } from "@tge/ui";
-import { ChevronLeft, ChevronRight, X, ZoomIn, ZoomOut, Maximize2 } from "lucide-react";
+import { ChevronLeft, ChevronRight, X, ZoomIn, ZoomOut, Maximize2, ImageOff } from "lucide-react";
 import { cn, localize } from "@tge/utils";
 import { DemoImageBadge } from "./demo-image-badge";
 
@@ -23,6 +23,11 @@ export function PropertyGallery({ images }: PropertyGalleryProps) {
   const [isDragging, setIsDragging] = useState(false);
   const dragStart = useRef({ x: 0, y: 0 });
 
+  // A listing can legitimately have zero images (a fresh admin entry, or a
+  // synced listing whose media hasn't mirrored yet). Without this guard the
+  // hero render dereferences `heroImage.src` on `undefined` and the whole
+  // detail page trips its error boundary. Show a neutral placeholder instead.
+  const hasImages = images.length > 0;
   const heroImage = images.find((img) => img.isHero) || images[0];
   const thumbnails = images.filter((img) => !img.isHero).slice(0, 4);
 
@@ -119,6 +124,20 @@ export function PropertyGallery({ images }: PropertyGalleryProps) {
       resetZoom();
     }
   }, [zoom, resetZoom]);
+
+  if (!hasImages) {
+    return (
+      <div className="relative w-full aspect-[16/9] rounded-xl overflow-hidden bg-muted flex flex-col items-center justify-center gap-2 text-muted-foreground/50">
+        <ImageOff className="h-10 w-10" />
+        <span className="text-xs font-medium tracking-wide">
+          {localize(
+            { ro: "Fără imagini", en: "No images", fr: "Aucune image", de: "Keine Bilder" },
+            locale,
+          )}
+        </span>
+      </div>
+    );
+  }
 
   return (
     <>

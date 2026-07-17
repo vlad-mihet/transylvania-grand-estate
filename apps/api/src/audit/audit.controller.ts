@@ -36,7 +36,7 @@ export class AuditController {
   // for their own profile or the properties they own, both of which are
   // reachable via /audit-logs/by-entity below. The global list is reserved
   // for ADMIN+, who manage cross-entity audit reads.
-  @Roles(AdminRole.SUPER_ADMIN, AdminRole.ADMIN, AdminRole.EDITOR)
+  @Roles(AdminRole.SUPER_ADMIN, AdminRole.ADMIN)
   @Get()
   async findAll(
     @CurrentUser() user: CurrentUserPayload | null,

@@ -618,7 +618,7 @@ function PropertyMetadataFields({
         >
           <Input id="property-neighborhood" {...form.register("neighborhood")} />
         </MetaField>
-        <MetaField id="property-geocode" label="Find address">
+        <MetaField id="property-geocode" label={t("findAddress")}>
           <AddressGeocodeField />
         </MetaField>
         <MetaField id="property-latitude" label={t("latitude")} error={fe("latitude")}>
@@ -768,7 +768,7 @@ function PropertyMetadataFields({
                 variant="outline"
                 size="sm"
                 onClick={() => removeFeature(i)}
-                aria-label="Remove feature"
+                aria-label={t("removeFeature")}
               >
                 ✕
               </Button>
@@ -780,7 +780,7 @@ function PropertyMetadataFields({
             size="sm"
             onClick={() => appendFeature({ en: "", ro: "" })}
           >
-            + Add feature
+            {t("addFeature")}
           </Button>
         </div>
       </MetaSection>

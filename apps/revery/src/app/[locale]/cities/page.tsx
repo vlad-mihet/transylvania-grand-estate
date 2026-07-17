@@ -1,7 +1,7 @@
 import Image from "next/image";
 import { getTranslations } from "next-intl/server";
 import { Link } from "@/i18n/navigation";
-import { fetchApi } from "@tge/api-client";
+import { fetchApiSafe } from "@tge/api-client";
 import type { City, Locale } from "@tge/types";
 import { Container } from "@/components/layout/container";
 import { PageHeader } from "@/components/layout/page-header";
@@ -27,7 +27,9 @@ export default async function CitiesPage({
   const { locale } = await params;
   const t = await getTranslations("CitiesPage");
   const tBreadcrumb = await getTranslations("Breadcrumb");
-  const cities = await fetchApi<City[]>("/cities");
+  // Guard SSR fetch so an API hiccup degrades to an empty page, not 500 (BUG-201).
+  const citiesRes = await fetchApiSafe<City[]>("/cities");
+  const cities = citiesRes.ok ? citiesRes.data : [];
 
   return (
     <>
