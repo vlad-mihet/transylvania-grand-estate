@@ -14,6 +14,15 @@ Status: `Open | Fixed@<sha> | Wontfix | Deferred`. Every non-Open stamp carries 
 
 ---
 
+## BUG-202 — People/Team page silently empty again: `expand=allLocales` rejected by strict users query schema
+- **Severity:** Critical · **Surface:** admin + api · **Status:** Open
+- **Regression-of:** BUG-118 (same failure class: admin client query param rejected by `.strict()` schema → team page renders "Nimic de afișat încă" with zero users and no error surfaced). The BUG-118 fix admitted `limit`; the client now also appends `expand=allLocales` and `GET /api/v1/auth/users?limit=100&expand=allLocales` → 400 `Unrecognized key: "expand"`.
+- **Empirical isolation (curl, SUPER_ADMIN token):** `?limit=100` → 200; `?limit=100&expand=allLocales` → 400 (`validation.value.unrecognized_keys`).
+- **Blast-radius note:** the admin client appends `expand=allLocales` to every list call; `inquiries`, `agents?unlinked=true`, `search/history` all tolerate it (200). Only the users endpoint's schema is strict without it — fix should sweep ALL admin list query schemas for parity with the client's global params, not just patch this one key (that's how BUG-118's fix missed this).
+- **Secondary defect, same page:** the 400 is swallowed — UI shows the empty-state ("Nimic de afișat încă") instead of an error state, exactly the silent-failure UX that let this regress unnoticed. Consider surfacing fetch errors on the team list.
+- **Coverage gap:** no Playwright spec walks people/team (44/44 admin suite green while the page is broken). Fix wave must add a marker/regression spec asserting ≥3 users render on the seeded DB.
+- **Why fresh:** likely `expand=allLocales` was introduced to the shared client after the prior sweep's fix wave (localized-editor/i18n work) without re-walking this page.
+
 ## BUG-201 — Public listing pages 500 when the API is unreachable (SSR guard only covers homepages)
 - **Severity:** Critical · **Surface:** landing + revery · **Status:** Open
 - **Extends:** BUG-105 (full-sweep-2026-07) — that fix guarded the two homepages, which still return 200 with the API down. The listing pages were left unguarded.
