@@ -62,6 +62,26 @@ Status: `Open | Fixed@<sha> | Wontfix | Deferred`. Every non-Open stamp carries 
 - **Fix direction:** either raise the schema cap / add kanban pagination, or drop the kanban fetch to ≤100 — plus the same client/schema parity sweep as BUG-202.
 - **Secondary:** error-card copy is English ("Something went wrong…", "Retry or refresh") on the RO locale — should use localized messages.
 
+## BUG-214 — Mortgage calculator: "Grad de Îndatorare" shows LTV, not DTI; monthly payment ~0.24% low
+- **Severity:** Minor · **Surface:** revery (instrumente) · **Status:** Open
+- **Label defect:** for price 120k / avans 20% / 25y / 7.6%, the calculator shows **"Grad de Îndatorare 80.0%"** — that is exactly the LTV (loan 96k ÷ price 120k). "Grad de îndatorare" is Romanian for **debt-to-income**, a BNR-regulated metric capped at ~40% that requires monthly income (not collected here). An 80% "indebtedness" reading is alarming and wrong terminology; it should read "Grad de finanțare / LTV" (or add an income field for a real DTI).
+- **Precision note:** displayed monthly = **714 EUR**; annuity formula gives **715.69** (total interest 118,706 vs displayed 118,330). A consistent ~0.24% under-estimate across all three outputs — not rounding noise. Likely the rate slider's internal value differs from the displayed "7.6%". Confirm the slider step/precision; immaterial to users but a QA flag for a financial tool.
+- **Verified working:** loan amount (96k) correct; amortization chart renders; **QA Sweep Bank — 5.5% chip present** (cross-app confirmation of Phase-3 bank-rate create); all 4 instrumente pages 200 (qa-smoke).
+
+## BUG-213 — Admin Select dropdowns throw repeated `useTypeaheadSearch` focus TypeError
+- **Severity:** Minor (likely benign dev noise — verify) · **Surface:** admin · **Status:** Open
+- **Repro:** interacting with admin `<Select>` dropdowns (property form, brand-visibility, etc.) emits repeated `TypeError: Cannot read properties of null (reading 'focus')` at `SelectContentImpl.useTypeaheadSearch` (@radix-ui/react-select). The selects still function. Known radix issue when typeahead runs against an unmounted/null content ref. Confirm it's harmless in prod (minified) or bump radix; either way an uncaught exception spamming the console is worth silencing. Low priority.
+
+## BUG-211 — Audit action `property.image` renders raw i18n key in dashboard feed + audit log
+- **Severity:** Minor · **Surface:** admin · **Status:** Open
+- **Repro:** upload/remove a property image (creates a `property.image` audit action) → admin dashboard "Activitate recentă" and `/ro/audit-logs` show the literal string **"AuditLogs.actionLabel.property.image"** instead of a localized label. Console: `IntlError: INSUFFICIENT_PATH: Message at 'AuditLogs.actionLabel.property.image' resolved to 'object'` — the key is a nested object (likely `{create,delete,update}`) but the feed calls it as a leaf string.
+- Same family as BUG-114 (audit-label i18n). Directly visible in the dashboard screenshot, not just console. Fix: add the leaf label (or map the sub-action) for `property.image` in all 4 locales.
+
+## BUG-212 — Academy pages throw React hydration mismatch (`<main>` vs `<Suspense>`)
+- **Severity:** Minor (dev-confirmed; prod = client-regen flash) · **Surface:** academy · **Status:** Open
+- **Repro:** load any academy page (e.g. `/ro/login`) in dev → console `Error: Hydration failed because the server rendered HTML didn't match the client` with the diff at `SessionRestorer` → `<main className="flex-1">` (client) vs `<Suspense>` (server) inside the LocaleLayout. Tree regenerates on client. Prod (minified) suppresses the overlay but the mismatch still forces a client re-render (layout flash/perf).
+- **Fix direction:** align the server/client render in `SessionRestorer`/layout — likely a `Suspense` boundary present on server but replaced by `<main>` on client, or a session-gated branch that differs pre-hydration. Wrap consistently or gate with `suppressHydrationWarning` only if truly unavoidable.
+
 ## BUG-210 — Counties list shows "PROPRIETĂȚI 0" for every county despite 96 properties
 - **Severity:** Minor · **Surface:** admin (+api aggregate) · **Status:** Open
 - **Repro:** `/ro/counties` — all 42 counties show property count 0 and city counts of 1–2, while the platform has 96 properties across those counties. The per-county property aggregate appears unwired or joins on the wrong key (properties link via city, county count likely never rolled up). Cosmetic/reporting only; listings themselves are fine.
