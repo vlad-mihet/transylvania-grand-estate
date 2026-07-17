@@ -70,7 +70,7 @@ Status values: `Open | Fixed@<sha> | Wontfix | Deferred`.
 - `apps/admin/src/components/forms/property-form.tsx:82-108+` — hardcoded EN labels with "for now" comment; admin is otherwise fully localized ro/en/fr/de.
 
 ## BUG-107 — Admin unsaved-changes guard doesn't cover in-app navigation (known partial)
-- **Severity:** Minor · **Surface:** admin · **Status:** Fixed@pending
+- **Severity:** Minor · **Surface:** admin · **Status:** Fixed@37fe5dc
 - `apps/admin/src/hooks/use-unsaved-changes-warning.ts` covers only `beforeunload` (tab close/reload); App Router `<Link>`/`router.push` navigation silently discards dirty forms.
 
 ## BUG-108 — GDPR right-to-erasure hard-purge cron not implemented
