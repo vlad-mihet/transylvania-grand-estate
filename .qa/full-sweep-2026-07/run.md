@@ -41,4 +41,6 @@ API restarted with `DEV_AUTH_THROTTLE_DISABLED=1` (CI parity for Playwright; the
 
 **Draft-probe artifacts (Phase 2 spillover):** article `qa-sweep-draft-probe` (draft) + 2 inquiries created — keep until Phase 9 cleanup.
 
+**Environment note (mid-Phase-3):** the dev API (`nest start --watch`) fell into a phantom file-change restart loop (~every 3s, "Found 0 errors" each cycle, never rebinding :4000) — OneDrive file-event churn suspected (repo lives under OneDrive; see prior OneDrive incidents). Replaced for the remainder of the sweep with a watchless run: `nest build` + `node dist/apps/api/src/main.js` (same env). If contributors hit dev-API 503/"Failed to fetch" mid-session, this loop is the likely cause — consider moving the repo off OneDrive (standing recommendation).
+
 **Phase 1 exit: baseline recorded.** New reds ledgered as BUG-101 (lint), BUG-102 (e2e env leak), BUG-110 (webkit form). Automation-covered behaviors (to skip in manual phases): landing routes/forms/i18n/visual/interactive, revery routes/calculators/a11y/seo/responsive/rate-limit/not-found/property flows, admin auth/properties/agents/articles/inquiries/academy/data-sources/localized-editor/command-palette smokes, api invitation/password-reset/refresh-rotation/tier-scope/draft-leak(properties)/permission-guard invariants.

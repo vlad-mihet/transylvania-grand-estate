@@ -64,3 +64,37 @@ Status values: `Open | Fixed@<sha> | Wontfix | Deferred`.
 - Phase 1 baseline: `forms.spec.ts:33` failed twice (initial + retry) on webkit only: screenshot shows name input EMPTY with focus ring while email/phone/message remain filled → required-field validation blocks submit → no success heading. Chromium/firefox pass. Not a 429 (all three 429s in the API log were the rate-limit spec's spoofed probes).
 - Suspected controlled-input hydration race (early keystrokes wiped when React hydrates). Per house rule, reproduce empirically before dismissing as automation artifact.
 - **Also noted:** Next.js dev-overlay badge "1 Issue" visible on the contact page screenshot — check the runtime error during Phase 4.
+
+## BUG-111 — Dashboard attention card mislabels cross-entity EN-translation count as "Articole" (RO only)
+- **Severity:** Minor · **Surface:** admin · **Status:** Open
+- Dashboard shows "ARTICOLE NETRADUSE (EN) 20" while the DB holds only 9 articles. `missingEnTotal` (API `/admin/dashboard/attention`, computed in `admin-content.service.ts` across ALL content types) is bound at `attention-strip.tsx:134-137` to the label `messages/ro.json:299` `"missingEn": "Articole netraduse (EN)"`. en/fr/de labels are correctly generic ("Missing English" etc.) — only the default RO locale claims they're articles.
+- **Expected:** RO label like "Conținut netradus (EN)".
+
+## BUG-114 — Property form: missing i18n key `Common.relations` — raw key rendered + console error spam
+- **Severity:** Minor · **Surface:** admin · **Status:** Open
+- Property new/edit metadata rail renders section header as literal "COMMON.RELATIONS"; console logs 8× `IntlError: MISSING_MESSAGE: Could not resolve 'Common.relations' in messages for locale 'ro'` per page view (component `PropertyMetadataFields`). Check all 4 locale files for the missing key.
+- This is the source of the admin dev-overlay "1 Issue" badge.
+
+## BUG-115 — Property form: "Generează" slug button silently no-ops unless the EN title is filled
+- **Severity:** Major · **Surface:** admin · **Status:** Open
+- `apps/admin/src/components/forms/property-form.tsx:383-392` — `generateSlug()` reads `form.getValues("title.en")` only. Admins working RO-first (default locale) click Generează and get an empty slug with zero feedback; the save then fails slug validation. Repro: new property → fill RO title → click Generează → slug stays empty (verified in DOM).
+- **Expected:** derive from the active-locale title (fallback order en→ro), and transliterate diacritics (current regex deletes them: "București"→"bucureti").
+
+## BUG-117 — Audit trail is dead for ALL resource mutations: classify() never matches under the global prefix
+- **Severity:** Critical (compliance/integrity feature silently non-functional) · **Surface:** api (admin UI affected) · **Status:** Open
+- **Empirical:** after a property POST (201) + PATCH (200) via admin, `audit_logs` gained zero rows; the entire table contains only `user.login-password`/`user.logout` (from explicit `record()` calls in auth services). Admin "Jurnal audit" page with its 12 resource filters shows "Nimic de afișat" for every resource; dashboard audit-health widget reports 0 failures because the writes are never attempted.
+- **Root cause:** `AuditInterceptor.classify()` (`src/common/interceptors/audit.interceptor.ts:298+`) segments `req.url` and dispatches on the first segment — but `main.ts:37` sets `app.setGlobalPrefix('api/v1')`, so every URL is `/api/v1/...` and `head` is always `"api"` → `classify()` returns null → no audit for any POST/PATCH/DELETE. The `@AuditAction` decorator escape hatch is used by zero routes. The URL-allowlist path has therefore never worked in production.
+- **Fix direction:** strip the global prefix before classifying (or match on `req.route.path`), add an e2e that mutates a property and asserts an `audit_logs` row (the existing audit e2e only covers auth events).
+
+## BUG-116 — Property form: empty "Anul construcției" blocks save with raw NaN error
+- **Severity:** Major · **Surface:** admin · **Status:** Open
+- New-property save with year-built left empty fails client validation: "Invalid input: expected number, received NaN" under the field; the save is blocked until a year is typed. Optional numeric fields must preprocess empty→undefined (`z.coerce`/preprocess) — check the same pattern on Locuri garaj / Suprafață teren / Lat/Long (those accepted empty, so the yearBuilt schema entry is the outlier).
+- Also part of the literal-EN pattern: raw Zod copy + "Please fix N fields…" toast + "Failed to fetch" toast are all untranslated English in the RO admin (fold into BUG-106 umbrella).
+
+## BUG-112 — Inquiry peek sheet: status badge doesn't update after auto-mark-read
+- **Severity:** Trivial · **Surface:** admin · **Status:** Open
+- Opening an inquiry auto-marks it read (toast + row badge update to CITIT) but the sheet's own header badge keeps showing NOU until reopened.
+
+## BUG-113 — Inquiry source filter placeholder suggests a tag that matches nothing
+- **Severity:** Trivial · **Surface:** admin · **Status:** Open
+- Placeholder says `ex. revery-contact` but real submissions stamp `reveria-contact` (Revery app) / `tge-*` (landing). An admin typing the suggested example gets zero results. Align placeholder with the actual source vocabulary.
