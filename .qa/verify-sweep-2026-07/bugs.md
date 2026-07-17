@@ -69,7 +69,7 @@ Status: `Open | Fixed@<sha> | Wontfix | Deferred`. Every non-Open stamp carries 
 - **Verified working:** loan amount (96k) correct; amortization chart renders; **QA Sweep Bank — 5.5% chip present** (cross-app confirmation of Phase-3 bank-rate create); all 4 instrumente pages 200 (qa-smoke).
 
 ## BUG-213 — Admin Select dropdowns throw repeated `useTypeaheadSearch` focus TypeError
-- **Severity:** Minor (likely benign dev noise — verify) · **Surface:** admin · **Status:** Deferred (needs focused repro / dep bump; Minor + prod-self-healing)
+- **Severity:** Minor (likely benign dev noise — verify) · **Surface:** admin · **Status:** Fixed@793f334 (radix-ui 1.4.3→1.6.2 → @radix-ui/react-select 2.3.3 incl. the 2.3.1 typeahead fix; verified Select typeahead, zero console errors)
 - **Repro:** interacting with admin `<Select>` dropdowns (property form, brand-visibility, etc.) emits repeated `TypeError: Cannot read properties of null (reading 'focus')` at `SelectContentImpl.useTypeaheadSearch` (@radix-ui/react-select). The selects still function. Known radix issue when typeahead runs against an unmounted/null content ref. Confirm it's harmless in prod (minified) or bump radix; either way an uncaught exception spamming the console is worth silencing. Low priority.
 
 ## BUG-211 — Audit action `property.image` renders raw i18n key in dashboard feed + audit log
@@ -78,7 +78,7 @@ Status: `Open | Fixed@<sha> | Wontfix | Deferred`. Every non-Open stamp carries 
 - Same family as BUG-114 (audit-label i18n). Directly visible in the dashboard screenshot, not just console. Fix: add the leaf label (or map the sub-action) for `property.image` in all 4 locales.
 
 ## BUG-212 — Academy pages throw React hydration mismatch (`<main>` vs `<Suspense>`)
-- **Severity:** Minor (dev-confirmed; prod = client-regen flash) · **Surface:** academy · **Status:** Deferred (needs focused repro / dep bump; Minor + prod-self-healing)
+- **Severity:** Minor (dev-confirmed; prod = client-regen flash) · **Surface:** academy · **Status:** Fixed@793f334 (hoisted single Suspense into academy locale layout, dropped 7 per-page wrappers; verified no hydration error on hard reload)
 - **Repro:** load any academy page (e.g. `/ro/login`) in dev → console `Error: Hydration failed because the server rendered HTML didn't match the client` with the diff at `SessionRestorer` → `<main className="flex-1">` (client) vs `<Suspense>` (server) inside the LocaleLayout. Tree regenerates on client. Prod (minified) suppresses the overlay but the mismatch still forces a client re-render (layout flash/perf).
 - **Fix direction:** align the server/client render in `SessionRestorer`/layout — likely a `Suspense` boundary present on server but replaced by `<main>` on client, or a session-gated branch that differs pre-hydration. Wrap consistently or gate with `suppressHydrationWarning` only if truly unavoidable.
 
